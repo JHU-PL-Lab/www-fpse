@@ -1,6 +1,6 @@
 
-<link rel="stylesheet" href="/pl2/css/friendly.css" />
-<link rel="stylesheet" href="/pl2/css/lecture-style.css" />
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<link rel="stylesheet" href="/fpse/css/lecture-style.css" />
 <meta charset="utf-8" />
 
 

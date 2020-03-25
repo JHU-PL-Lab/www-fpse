@@ -12,8 +12,7 @@
               <h2>Dateline</h2>
             </header>
 <p>
-  We will fill in this M/W dateline as we go based on the topics covered on the indicated day.  The <a href="syllabus.shtml">Syllabus</a> contains the general plan we are following.  For the Friday schedule, see <a href="https://pl.cs.jhu.edu/seminars/fall-2019/">The fall PL Lab Seminar Schedule</a>.
-  <p>
+  We will fill in this dateline as we go based on the topics covered on the indicated day.  The <a href="syllabus.shtml">Syllabus</a> contains the general plan we are following.
   Lecture material and assigments are under the indicated links.</p>
 
 <p>
@@ -37,13 +36,13 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Aug 30</div>
+            <div align="center" class="body">Aug 31</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">"Mon"</div>
+            <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/more-fp.html">More Functional Programming</a>
+            <div align="left" class="body">&nbsp;
 	    </div>
           </td>
           <td width="30%"> 
@@ -56,13 +55,13 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 4</div>
+            <div align="center" class="body">Sep 2</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/more-fp.html">More Functional Programming</a>
+            <div align="left" class="body">&nbsp;</a>
 	    </div> 
           </td>
           </td>
@@ -75,7 +74,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 9</div>
+            <div align="center" class="body">Sep 7</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -92,7 +91,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 11</div>
+            <div align="center" class="body">Sep 9</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -109,7 +108,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 16</div>
+            <div align="center" class="body">Sep 14</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -126,10 +125,27 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 18</div>
+            <div align="center" class="body">Sep 16</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
+          </td>
+          <td width="30%"> 
+            <div align="left" class="body">&nbsp;</div>
+          </td>
+          <td width="30%"> 
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+          <td width="15%"> 
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+        </tr>
+        <tr> 
+          <td width="8%"> 
+            <div align="center" class="body">Sep 21</div>
+          </td>
+          <td width="8%"> 
+            <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
             <div align="left" class="body">&nbsp;</div>
@@ -146,7 +162,7 @@
             <div align="center" class="body">Sep 23</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Mon</div>
+            <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
             <div align="left" class="body">&nbsp;</div>
@@ -160,10 +176,10 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 25</div>
+            <div align="center" class="body">Sep 28</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Wed</div>
+            <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
             <div align="left" class="body">&nbsp;</div>
@@ -180,23 +196,6 @@
             <div align="center" class="body">Sep 30</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Mon</div>
-          </td>
-          <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
-          </td>
-          <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-          <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-        </tr>
-        <tr> 
-          <td width="8%"> 
-            <div align="center" class="body">Oct 2</div>
-          </td>
-          <td width="8%"> 
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
@@ -211,7 +210,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 7</div>
+            <div align="center" class="body">Oct 5</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -228,7 +227,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 9</div>
+            <div align="center" class="body">Oct 7</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -246,7 +245,7 @@
 	
        <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 14</div>
+            <div align="center" class="body">Oct 12</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -263,7 +262,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 16</div>
+            <div align="center" class="body">Oct 14</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -277,12 +276,29 @@
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
           </td>
+        <tr> 
+          <td width="8%"> 
+            <div align="center" class="body">Oct 19</div>
+          </td>
+          <td width="8%"> 
+            <div align="center" class="body">Mon</div>
+          </td>
+          <td width="30%"> 
+            <div align="left" class="body">&nbsp;</div>
+          </td>
+          <td width="30%"> 
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+          <td width="15%"> 
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+        </tr>
         <tr> 
           <td width="8%"> 
             <div align="center" class="body">Oct 21</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Mon</div>
+            <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
             <div align="left" class="body">&nbsp;</div>
@@ -296,10 +312,10 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 23</div>
+            <div align="center" class="body">Oct 26</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Wed</div>
+            <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
             <div align="left" class="body">&nbsp;</div>
@@ -314,23 +330,6 @@
         <tr> 
           <td width="8%"> 
             <div align="center" class="body">Oct 28</div>
-          </td>
-          <td width="8%"> 
-            <div align="center" class="body">Mon</div>
-          </td>
-          <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
-          </td>
-          <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-          <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-        </tr>
-        <tr> 
-          <td width="8%"> 
-            <div align="center" class="body">Oct 30</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -348,7 +347,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 4</div>
+            <div align="center" class="body">Nov 2</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -365,7 +364,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 6</div>
+            <div align="center" class="body">Nov 4</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -382,7 +381,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 11</div>
+            <div align="center" class="body">Nov 9</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -399,10 +398,27 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 13</div>
+            <div align="center" class="body">Nov 11</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
+          </td>
+          <td width="30%"> 
+            <div align="left" class="body">&nbsp;</div>
+          </td>
+          <td width="30%"> 
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+          <td width="15%"> 
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+        </tr>
+        <tr> 
+          <td width="8%"> 
+            <div align="center" class="body">Nov 16</div>
+          </td>
+          <td width="8%"> 
+            <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
             <div align="left" class="body">&nbsp;</div>
@@ -419,7 +435,7 @@
             <div align="center" class="body">Nov 18</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Mon</div>
+            <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
             <div align="left" class="body">&nbsp;</div>
@@ -433,10 +449,10 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 20</div>
+            <div align="center" class="body">Nov 23</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Wed</div>
+            <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
             <div align="left" class="body">&nbsp;</div>
@@ -453,23 +469,6 @@
             <div align="center" class="body">Nov 25</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Mon</div>
-          </td>
-          <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
-          </td>
-          <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-          <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-        </tr>
-        <tr> 
-          <td width="8%"> 
-            <div align="center" class="body">Nov 27</div>
-          </td>
-          <td width="8%"> 
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
@@ -484,7 +483,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Dec 2</div>
+            <div align="center" class="body">Nov 30</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -501,7 +500,7 @@
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Dec 4</div>
+            <div align="center" class="body">Dec 2</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
