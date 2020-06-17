@@ -1,7 +1,62 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.shtml" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.shtml">Logistics</a></li>
+          <li><a href="/fpse/syllabus.shtml">Syllabus</a></li>
+          <li><a href="/fpse/dateline.shtml">Dateline</a></li>
+          <li><a href="/fpse/coding.shtml">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/TBA">Piazza</a></li>
+          <li><a href="/fpse/contact.shtml">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
-
-<link rel="stylesheet" href="/fpse/css/lecture-style.css" />
 
 <meta charset="utf-8" />
 
@@ -113,8 +168,8 @@
 
 <ul>
   <li>What is fold on lists doing?  Visit all the elements applying an accumulating operator</li>
-  <li>Tree fold is to do the same thing on a tree structure</li>
-  <li>Here is a simple example from the Cornell notes.</li>
+  <li>The idea of Tree fold is to do the same thing on a tree structure</li>
+  <li>Here is a simple example derived from the Cornell notes.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">btree</span> <span class="o">=</span> 
@@ -134,7 +189,7 @@
 <span class="n">size</span> <span class="n">tex</span>
 </code></pre></div></div>
 
-<h5 id="catamorphisms">Catamorphisms</h5>
+<h5 id="catamorphism">Catamorphism</h5>
 
 <ul>
   <li>This is a fancy word for a fold over any data type.</li>
@@ -175,7 +230,7 @@
 
 <ul>
   <li>It is not worth getting <em>too</em> excited by this stuff as many functions on data structures are not just a simple fold.</li>
-  <li>Example: determining if an expression in the above language is closed is impossible with <code class="highlighter-rouge">exprfold</code></li>
+  <li>Example: determining if an expression in the above language is closed is impossible with just <code class="highlighter-rouge">exprfold</code></li>
 </ul>
 
 <h4 id="ocaml-functors">OCaml functors</h4>
@@ -461,3 +516,15 @@ Error: This expression has type string but an expression was expected of type
 
 <p>A practical library example: <a href="https://github.com/hannesm/gmap">Gmap</a></p>
 
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>

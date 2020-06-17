@@ -1,6 +1,5 @@
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
-<link rel="stylesheet" href="/fpse/css/lecture-style.css" />
 <meta charset="utf-8" />
 
 

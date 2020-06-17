@@ -150,7 +150,7 @@
 	header.major {
 		padding-bottom: 1.5em;
 		text-align: center;
-		text-transform: uppercase;
+
 	}
 
 		header.major h2 {
@@ -407,7 +407,6 @@
 		ul.special-icons h3 {
 			margin-bottom: 0.80em;
 			line-height: 2em;
-			text-transform: uppercase;
 			font-weight: 700;
 			font-size: 1.2em;
 		}
@@ -509,7 +508,6 @@
 		letter-spacing: 1px;
 		text-align: center;
 		text-decoration: none;
-		text-transform: uppercase;
 		font-size: 1.4em;
 		-moz-transition: all 0.35s ease-in-out;
 		-webkit-transition: all 0.35s ease-in-out;
@@ -581,7 +579,6 @@
 					margin-bottom: 0.70em;
 					letter-spacing: 1px;
 					line-height: 1.4em;
-					text-transform: uppercase;
 					font-size: 1.8em;
 					font-weight: 400;
 				}
@@ -598,7 +595,6 @@
 				margin-bottom: 1em;
 				letter-spacing: 1px;
 				line-height: 1.4em;
-				text-transform: uppercase;
 				font-size: 1.6em;
 				font-weight: 400;
 			}
@@ -666,7 +662,6 @@
 	#logo {
 		line-height: 2em;
 		letter-spacing: 2px;
-		text-transform: uppercase;
 		font-size: 2em;
 		font-weight: 400;
 	}
@@ -703,7 +698,6 @@
 					line-height: 4em;
 					letter-spacing: 2px;
 					text-decoration: none;
-					text-transform: uppercase;
 					font-weight: 400;
 					font-size: 1em;
 				}
@@ -741,7 +735,6 @@
 				color: inherit;
 				letter-spacing: 2px;
 				text-decoration: none;
-				text-transform: uppercase;
 			}
 
 			.dropotron > li.active > a, .dropotron > li:hover > a {
@@ -759,7 +752,6 @@
 	#banner {
 		padding: 6em 0em 3em 0em;
 		text-align: center;
-		text-transform: uppercase;
 		color: white;
 	}
 
@@ -780,7 +772,6 @@
 		#banner span, #banner p {
 			display: block;
 			letter-spacing: 1px;
-			text-transform: uppercase;
 			font-size: 1.6em;
 			font-weight: 300;
 		}
@@ -847,7 +838,6 @@
 
 	#copyright {
 		position: relative;
-		text-transform: uppercase;
 		text-align: center;
 		padding: 3em 0em 3em 0em;
 		color: inherit;
@@ -866,7 +856,6 @@
 		margin-bottom: 1em;
 		letter-spacing: 1px;
 		line-height: 1.4em;
-		text-transform: uppercase;
 		font-size: 1.8em;
 		font-weight: 400;
 	}
@@ -876,7 +865,6 @@
 		margin-bottom: 1em;
 		letter-spacing: 1px;
 		line-height: 1.4em;
-		text-transform: uppercase;
 		font-size: 1.6em;
 		font-weight: 400;
 	}
@@ -886,6 +874,5 @@
 	#team h3 {
 		margin-bottom: 0.50em;
 		letter-spacing: 2px;
-		text-transform: uppercase;
 		font-weight: 700;
 	}

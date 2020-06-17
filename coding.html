@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.shtml" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/TBA">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+<h2 id="ocaml-coding-information">OCaml Coding Information</h2>
+
+<h3 id="installing-ocaml-4100-and-associated-tools">Installing OCaml 4.10.0 and associated tools</h3>
+
+<p>We are using OCaml version 4.10.0.  We also require that you use the <a href="https://opam.ocaml.org">OPAM packaging<br />
+system</a> for installing OCaml and its extensions.  Once you get <code class="highlighter-rouge">opam</code> installed and working, everything else should be easy .. so the only hard part can be the step.</p>
+
+<ul>
+  <li>For Linux or Mac see <a href="https://opam.ocaml.org/doc/Install.html">The OPAM install page</a> for install instructions.  Depending on which method you use you may then need to run some terminal commands to set up the basics:
+    <ol>
+      <li><code class="highlighter-rouge">opam init</code> to initialize OPAM;</li>
+      <li><code class="highlighter-rouge">opam switch create 4.10.0</code> to build OCaml version 4.10.0 (the initial install is usually a slightly outdated version; also, if you already have an OPAM install you may need to <code class="highlighter-rouge">opam update</code>  to make sure OPAM is aware of the latest version before performing the <code class="highlighter-rouge">create</code>);</li>
+      <li><code class="highlighter-rouge">eval `opam env`</code> to let the shell know where the OPAM files are; and</li>
+      <li>also add the very same line, <code class="highlighter-rouge">eval `opam env`</code>, to your<code class="highlighter-rouge">.profile</code>/<code class="highlighter-rouge">.bashrc</code>/<code class="highlighter-rouge">.zshrc</code> shell init file so you will not have to keep doing that over and over.</li>
+    </ol>
+  </li>
+  <li>Windows Windows Windows.. the OCaml toolchain is unfortunately not good in straight Windows.
+    <ul>
+      <li>If you are running a recent Windows install, we recommend installing <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL 2</a> which once you have set up will allow you to follow the Linux Ubuntu install instructions to get <code class="highlighter-rouge">opam</code>.</li>
+      <li>Option 2 is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, <a href="https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098">here is one of them</a>.Once your virtual Linux box is set up, you can follow the <code class="highlighter-rouge">opam</code> Linux install instructions.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="required-opam-standard-packages">Required OPAM Standard packages</h4>
+
+<p>Once you have the basics installed, run the following command to install additional necessary packages for the class:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam install merlin ocp-indent user-setup tuareg menhir utop base bisect_ppx
+</code></pre></div></div>
+
+<h3 id="the-official-ocaml-manual">The Official OCaml Manual</h3>
+
+<p>The manual is <a href="http://caml.inria.fr/pub/docs/manual-ocaml/">here</a>.<br />
+Let us give a high-level overview of sections of the manual we will be using in the course.</p>
+
+<ul>
+  <li>We will cover most of Part I Chapters 1 and 2.</li>
+  <li>Chapter 7 is the language reference where you can look up details if needed.</li>
+  <li>We will be covering a few topics in the <a href="http://caml.inria.fr/pub/docs/manual-ocaml/extn.html">language extensions</a> chapter:
+    <ul>
+      <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/locallyabstract.html">locally abstract types</a>,</li>
+      <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/firstclassmodules.html">First-class modules</a>, and</li>
+      <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/gadts.html">GADT’s</a>.</li>
+    </ul>
+  </li>
+  <li>Part III documents the tools.  We will use some of the standard tools but third parties have improved on many of them.  See below in the Tools list where we give “our” list of tools.</li>
+  <li>Part IV describes the standard libraries; we will mainly use Jane Street’s base which replaces these, but we may look at a few of the <a href="http://caml.inria.fr/pub/docs/manual-ocaml/stdlib.html">standard library modules</a>.</li>
+</ul>
+
+<h3 id="the-fpse-ocaml-toolbox">The FPSE OCaml Toolbox</h3>
+
+<p>Here are all the tools we will be using for the record.  You are required to have a build for which all these tools work, and the above <code class="highlighter-rouge">opam</code> one-liner should install them all.</p>
+
+<ul>
+  <li><a href="https://opam.ocaml.org"><code class="highlighter-rouge">opam</code></a> is the package management system which is required.  See above for install instructions.</li>
+  <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/comp.html"><code class="highlighter-rouge">ocamlc</code></a> is the standalone compiler which we will generally be invoking via the <code class="highlighter-rouge">dune</code> build tool.</li>
+  <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/toplevel.html"><code class="highlighter-rouge">ocaml</code></a> is the interactive REPL (read-eval-print loop) which we will generally be using via the more feature-laden <code class="highlighter-rouge">utop</code> extension.</li>
+  <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/ocamldoc.html"><code class="highlighter-rouge">ocamldoc</code></a> is the documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.</li>
+  <li><a href="https://dune.build"><code class="highlighter-rouge">dune</code></a> is the build tool (think <code class="highlighter-rouge">make</code>) that we will be using.  <code class="highlighter-rouge">ocamlbuild</code> is the standard build tool but it is not very flexible.</li>
+  <li><a href="https://github.com/aantron/bisect_ppx"><code class="highlighter-rouge">bisect_ppx</code></a> will be used for code coverage.</li>
+  <li><a href="https://opensource.janestreet.com/base/">Base</a> is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a “more modern” version of lists, sets, hash tables, etc, with lots of little improvements in many places.  We are going to use Base as it is what real OCaml software engineers today are using.</li>
+</ul>
+
+<h3 id="other-ocaml-resources">Other OCaml Resources</h3>
+
+<ul>
+  <li><a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> has recently been updated to a new edition and contains very nice tutorial descriptions of some of the newer features and also uses Jane Street’s Base extensively.</li>
+</ul>
+
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>
