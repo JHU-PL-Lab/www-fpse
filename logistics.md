@@ -42,5 +42,4 @@ See the [Contact](contact.html) page.
 
 There might be a final exam.
 
-
-
+	
