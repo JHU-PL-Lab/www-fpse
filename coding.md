@@ -52,12 +52,12 @@ Here are all the tools we will be using.  You are required to have a build for w
 * [`utop`](https://opam.ocaml.org/blog/about-utop/) is a replacement for `ocaml` which has a lot more features.
 * [`ocamldoc`](http://caml.inria.fr/pub/docs/manual-ocaml/ocamldoc.html) is the documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.
 * [`dune`](https://dune.build) is the build tool (think `make`) that we will be using.  `ocamlbuild` is the standard build tool but it is not very flexible.
-* [`bisect_ppx`](https://github.com/aantron/bisect_ppx) will be used for code coverage.
 * [OUnit](https://github.com/gildor478/ounit) is the unit tester for OCaml.  The opam package is called `ounit2` for obscure reasons.
 * [QCheck](https://github.com/c-cube/qcheck) is a fuzz tester / automated test generator for OCaml.
+* [`bisect_ppx`](https://github.com/aantron/bisect_ppx) will be used for code coverage.
 * [Base](https://opensource.janestreet.com/base/) is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a "more modern" version of lists, sets, hash tables, etc, with lots of little improvements in many places.  We are going to use Base as it is what real OCaml software engineers today are using. 
 * [Async](https://opensource.janestreet.com/async/) is a non-preempting asychronous threads library.
-* (TBA: ppx extensions?  `ppx_let` and `ppx_deriving` for example; former comes with async)
+* (TBA: ppx extensions?  `ppx_let` and `ppx_deriving` (alt to ppx_jane) and `ppx_jane` (s-expression) (https://github.com/janestreet/ppx_sexp_conv) for example; former comes with async)
 
 ### Development Environments for OCaml
 
