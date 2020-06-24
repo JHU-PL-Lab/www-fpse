@@ -6,24 +6,26 @@
 
 * Basic OCaml
     - expressions, functions, lists, pattern matching, higher-order functions, variants
-    - elementary `ocaml`, `utop`, `ocamlc`, `dune`
+    - elementary `ocaml`, `utop`
 * Modules
     - structures, functors
     - type abstraction, module signatures
+    - Simple whole programs -- see `code/set_example`.. might want to change to use `In_Channel` to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.
 
 ##### New stuff not in PLI for Basic OCaml now.
 * @@ application
 * _ - all the places it works
 * pipelining
-* Pipelining for functional data construction - `List.([] |>  cons 1 |> cons 2 |> cons 3 |> cons 4)` (notice it makes it in reverse)
+* Pipelining for functional data construction - `List.([] |>  cons 1 |> cons 2 |> cons 3 |> cons 4)` (notice it makes it in reverse).  similar to message chaining of OOP.
 * `let rec sum = function | [] -> ..` (needs function not fun)
 * Minimal commands for dune, .ocamlinit, top loop.  Basically fixed recipes to start with.
+* let is a special application - needed for monads later
 
 ### More OCaml
 
 ##### Advanced Functions
-* Named and optional function arguments
-* Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.
+* Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.ll
+* Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.  see RWOC prefix and infix operators.
 * `begin`/`end` to replace parens
 
 ##### Advanced data structures
@@ -100,6 +102,7 @@
     - Make code more parametric (or less if not needed)
     - Rename
     - Lift or hide (demote) functions/variables
+    - Inline definition or converse - inline let definitions if simple, make more if too complex
     - Move around reponsibilties, make more modular by putting fewer things in public interface
     - Type refactoring - remove unneeded things, generalize (make polymorphic or GADT)
     - Module refactoring - pull out code into a new module, move a function from one module to another.
@@ -154,8 +157,6 @@ Monads proper.
 #### Streams
 (Have above now, decide whether it is its own later topic)
 
-#### Async, Promises and Continuations
-
 #### Under the hood of functional language runtimes
 * Substitution notion of running functions and `let` - informal PLI stuff.
 * Tail recursion Cornell 3.1.1.5.  
@@ -199,6 +200,5 @@ Smaller things
 ### Books etc to absorb
 
 * Real World OCaml topics:  need to read through this in more detail for fodder
-* Grossman PL course topics: ditto, files are in icloud.  It is SML though.
 * PLII - go through that again.
 * Many Jane Street libraries.
