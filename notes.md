@@ -27,7 +27,7 @@
 * `begin`/`end` to replace parens
 
 ##### Advanced data structures
-* Advanced patterns - `p when e`, `'a' .. 'z'`, patterns in let, etc.  Cornell 3.1.7
+* Advanced patterns - `p when e`, `'a' .. 'z'`, patterns in let, `{x;y}` is same as `{x=x;y=y}`...  Cornell 3.1.7
 * Polymorphic variants aka anonymous variants - Cornell 3.2.4.4
 * Extensible variants - OCaml manual 8.14
 * Pretty printing data with `ppx_deriving`
