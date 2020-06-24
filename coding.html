@@ -91,7 +91,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Once you have <code class="highlighter-rouge">opam</code> and <code class="highlighter-rouge">ocaml</code> 4.10.0 installed, run the following <code class="highlighter-rouge">opam</code> command to install additional necessary packages for the class:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam install merlin ocp-indent user-setup tuareg menhir utop base bisect_ppx ounit2 qcheck async
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam install merlin ocp-indent user-setup tuareg menhir utop ppx_deriving base bisect_ppx ounit2 qcheck async
 </code></pre></div></div>
 
 <h3 id="the-official-ocaml-manual">The Official OCaml Manual</h3>
@@ -124,12 +124,13 @@ Let us give a high-level overview of sections of the manual we will be using in 
   <li><a href="https://opam.ocaml.org/blog/about-utop/"><code class="highlighter-rouge">utop</code></a> is a replacement for <code class="highlighter-rouge">ocaml</code> which has a lot more features.</li>
   <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/ocamldoc.html"><code class="highlighter-rouge">ocamldoc</code></a> is the documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.</li>
   <li><a href="https://dune.build"><code class="highlighter-rouge">dune</code></a> is the build tool (think <code class="highlighter-rouge">make</code>) that we will be using.  <code class="highlighter-rouge">ocamlbuild</code> is the standard build tool but it is not very flexible.</li>
-  <li><a href="https://github.com/aantron/bisect_ppx"><code class="highlighter-rouge">bisect_ppx</code></a> will be used for code coverage.</li>
   <li><a href="https://github.com/gildor478/ounit">OUnit</a> is the unit tester for OCaml.  The opam package is called <code class="highlighter-rouge">ounit2</code> for obscure reasons.</li>
   <li><a href="https://github.com/c-cube/qcheck">QCheck</a> is a fuzz tester / automated test generator for OCaml.</li>
+  <li><a href="https://github.com/aantron/bisect_ppx"><code class="highlighter-rouge">bisect_ppx</code></a> will be used for code coverage.</li>
   <li><a href="https://opensource.janestreet.com/base/">Base</a> is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a “more modern” version of lists, sets, hash tables, etc, with lots of little improvements in many places.  We are going to use Base as it is what real OCaml software engineers today are using.</li>
   <li><a href="https://opensource.janestreet.com/async/">Async</a> is a non-preempting asychronous threads library.</li>
-  <li>(TBA: ppx extensions?  <code class="highlighter-rouge">ppx_let</code> and <code class="highlighter-rouge">ppx_deriving</code> for example; former comes with async)</li>
+  <li><a href="https://github.com/ocaml-ppx/ppx_deriving"><code class="highlighter-rouge">ppx_deriving</code></a> adds boilerplate copde to type declarations such as the all-important pretty printing.</li>
+  <li>Other ppx extensions, details forthcoming.  <code class="highlighter-rouge">ppx_let</code> and <code class="highlighter-rouge">ppx_jane</code> (s-expression) (https://github.com/janestreet/ppx_sexp_conv) for example; former comes with async)</li>
 </ul>
 
 <h3 id="development-environments-for-ocaml">Development Environments for OCaml</h3>
@@ -138,10 +139,10 @@ Let us give a high-level overview of sections of the manual we will be using in 
 
 <dl>
   <dt><strong><a href="https://code.visualstudio.com">Visual Studio Code</a></strong></dt>
-  <dd>VSCode has very good OCaml support. Install the <strong>OCaml and Reason IDE</strong> extension to get syntax highlighting, type information, etc: from the <code class="highlighter-rouge">View</code> menu select <code class="highlighter-rouge">Extensions</code>, then type in OCaml and this extension will show up; install it. You can also easily run a <code class="highlighter-rouge">utop</code> shell from within VSCode, just open up a shell from the <code class="highlighter-rouge">Terminal</code> menu and type <code class="highlighter-rouge">utop</code>.</dd>
+  <dd>VSCode has very good OCaml support and is the “officially recommended editor”. Install the <strong>OCaml and Reason IDE</strong> extension to get syntax highlighting, type information, etc: from the <code class="highlighter-rouge">View</code> menu select <code class="highlighter-rouge">Extensions</code>, then type in OCaml and this extension will show up; install it. You can also easily run a <code class="highlighter-rouge">utop</code> shell from within VSCode, just open up a shell from the <code class="highlighter-rouge">Terminal</code> menu and type <code class="highlighter-rouge">utop</code>.</dd>
   <dt><a href="https://atom.io"><strong>Atom</strong></a></dt>
   <dd>
-    <p>Install Atom, read a <a href="https://flight-manual.atom.io">tutorial</a> if you are not so familiar with it, and then install the <code class="highlighter-rouge">atom</code> and <code class="highlighter-rouge">apm</code> shell commands (see the <strong>Atom..Install Shell Commands</strong> menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command <code class="highlighter-rouge">Window: Install Shell Commands</code>). With those commands installed, type into a terminal</p>
+    <p>Atom is also very good with OCaml.  Install Atom, read a <a href="https://flight-manual.atom.io">tutorial</a> if you are not so familiar with it, and then install the <code class="highlighter-rouge">atom</code> and <code class="highlighter-rouge">apm</code> shell commands (see the <strong>Atom..Install Shell Commands</strong> menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command <code class="highlighter-rouge">Window: Install Shell Commands</code>). With those commands installed, type into a terminal</p>
 
     <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apm install language-ocaml linter ocaml-indent ocaml-merlin
 </code></pre></div>    </div>

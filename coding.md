@@ -24,7 +24,7 @@ We require that you use the [OPAM packaging system](https://opam.ocaml.org) for 
 
 Once you have `opam` and `ocaml` 4.10.0 installed, run the following `opam` command to install additional necessary packages for the class:
 
-    opam install merlin ocp-indent user-setup tuareg menhir utop base bisect_ppx ounit2 qcheck async
+    opam install merlin ocp-indent user-setup tuareg menhir utop ppx_deriving base bisect_ppx ounit2 qcheck async
 
 
 ### The Official OCaml Manual
@@ -57,7 +57,8 @@ Here are all the tools we will be using.  You are required to have a build for w
 * [`bisect_ppx`](https://github.com/aantron/bisect_ppx) will be used for code coverage.
 * [Base](https://opensource.janestreet.com/base/) is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a "more modern" version of lists, sets, hash tables, etc, with lots of little improvements in many places.  We are going to use Base as it is what real OCaml software engineers today are using. 
 * [Async](https://opensource.janestreet.com/async/) is a non-preempting asychronous threads library.
-* (TBA: ppx extensions?  `ppx_let` and `ppx_deriving` (alt to ppx_jane) and `ppx_jane` (s-expression) (https://github.com/janestreet/ppx_sexp_conv) for example; former comes with async)
+* [`ppx_deriving`](https://github.com/ocaml-ppx/ppx_deriving) adds boilerplate copde to type declarations such as the all-important pretty printing.
+* Other ppx extensions, details forthcoming.  `ppx_let` and `ppx_jane` (s-expression) (https://github.com/janestreet/ppx_sexp_conv) for example; former comes with async)
 
 ### Development Environments for OCaml
 
