@@ -1,0 +1,204 @@
+
+
+## Syllabus Extended Notes
+
+### Basic Functional Programming in OCaml
+
+* Basic OCaml
+    - expressions, functions, lists, pattern matching, higher-order functions, variants
+    - elementary `ocaml`, `utop`, `ocamlc`, `dune`
+* Modules
+    - structures, functors
+    - type abstraction, module signatures
+
+##### New stuff not in PLI for Basic OCaml now.
+* @@ application
+* _ - all the places it works
+* pipelining
+* Pipelining for functional data construction - `List.([] |>  cons 1 |> cons 2 |> cons 3 |> cons 4)` (notice it makes it in reverse)
+* `let rec sum = function | [] -> ..` (needs function not fun)
+* Minimal commands for dune, .ocamlinit, top loop.  Basically fixed recipes to start with.
+
+### More OCaml
+
+##### Advanced Functions
+* Named and optional function arguments
+* Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.
+* `begin`/`end` to replace parens
+
+##### Advanced data structures
+* Advanced patterns - `p when e`, `'a' .. 'z'`, patterns in let, etc.  Cornell 3.1.7
+* Polymorphic variants aka anonymous variants - Cornell 3.2.4.4
+* Extensible variants - OCaml manual 8.14
+* Pretty printing data with `ppx_deriving`
+* GADTS - see PLII lecture notes
+
+* Streams and laziness - Cornell 12.1
+* Memoization - Cornell 12.4
+
+#### Mutation
+
+* Standard mutation topics: ref, mutable records, arrays.  Printing earlier - ?
+* sequencing; `ignore(3+4); print_string "hi"` to avoid warnings.  Cornell 8.3
+* `==` vs `=` - Cornell 8.6
+* Mutable stack eg - Cornell 8.8; get a Base alternative example, e.g. `Hashtbl` (see next topic)
+* Weakly polymorphic types `‘_a` - Cornell 8.8
+
+### Libraries:
+
+* [`Base`](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/index.html)
+    - Lists in Base - RWOC 1 a bit (tour) and RWOC 3.  Worth covering, lots of important functions available.
+    - `Map` (and `List.Assoc` a bit).  RWOC 13.
+    - Hashtbl, good example of mutable code.  RWOC 13
+* `Stdio`
+    - Channels, 
+* Command line parsing - RWOC ch14
+* JSON data - RWOC ch15
+
+#### More modules
+* `include` - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it
+* Nested modules - in RWOC 4.
+* First-class modules - RWOC 10.
+* `let open List in ..` and `List.(...map....)` syntax
+* Anonymous functors:  `module F = functor (M : S) -> ... -> functor (M : S) -> struct  ... end`
+* more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3
+* passing anonymous structs to functors Cornell 5.3.2.3
+
+### The Modern OCaml Ecosystem
+
+* `opam`
+* `.ocamlinit` - initial loads.  We will include `#use "topfind";; #require "base";; open Base;;`
+ - idea is will always assume we did this.
+* `topfind`, `ocamlfind`
+
+#### Dune
+* Tree nature of dune files
+* Defining libraries
+* Defining executables
+* Test executables with `Ounit2`
+* Poking your code in the top loop: `dune utop`, `dune top`, and `#use_output "dune top";;`
+* Merlin with dune - basics on configuring to parse libraries used properly, etc.  Cornell 3.1.3.4
+* Command line: `dune build`, `dune runtest`, `dune exec`
+* Stack traces - ocamlbuild has via -tag debug, see how dune does.
+
+#### Top level directives
+* `#directory adir` - adds `adir` to the list of directories to search for files.
+* `#trace afun` - calls and returns to `afun` will now be dumped to top level - a simple debugging tool.
+* `#use "afile.ml"` - loads code file as if it was copied and pasted into the top loop.
+* `#mod_use` - like `#use` but loads the file like it was a module (name of file as a module name)
+* `#load "blah.cmo"`,`#load "blahlib.cma"` - load a compiled binary or library file.
+* `#show` - shows the type for an entity (variable or module).
+* `#require` - loads a library (does not `open` it, just loads the module)
+* `#use_output "dune top"` - like the shell `xargs` command - run a command and assume output is top loop input commands.
+
+### Idiomatic Functional Programming
+* A major theme of the course
+* design patterns (OO) = idioms (FP)
+* Refactoring also applies to FP.
+    - pull out duplicate code as its own function parameter, or inline if gratuitous
+    - Divide one function into two if it is doing two different things
+    - Make code more parametric (or less if not needed)
+    - Rename
+    - Lift or hide (demote) functions/variables
+    - Move around reponsibilties, make more modular by putting fewer things in public interface
+    - Type refactoring - remove unneeded things, generalize (make polymorphic or GADT)
+    - Module refactoring - pull out code into a new module, move a function from one module to another.
+    - Combinize: replace recursion with maps and folds
+    - Use more pattern matching
+* Go through some imperative to functional code refactorings
+
+
+### Specification
+
+* Specifying properties of programs
+    - Types as program properties
+    - `assert` for more fine-grained properties
+    - Referential transparency
+    - Abstract interfaces: white box vs gray box vs black box (&lt;abst&gt;).  Black box is bad - like closed-source code.
+
+* Invariants
+    - Data structure Invariants - Cornell Representation Invariants, Ch6
+    - recursive function invariants
+    - representation invariants
+
+### Testing
+
+* Principles of testing
+    - black box and glass box testing.  Cornell Ch7
+* `ocamldoc`comments, Cornell 2.3.7
+* `OUnit` unit testing library Cornell 3.1.3
+* `Bisect` for code coverage. Cornell 7.4
+* Automated test generation aka randomized testing aka fuzz testing, `QCheck`.  Cornell 7.7-7.9
+
+### Metaprogramming: ppx extensions
+* See RWOC ch23 (not written yet unfortunately).
+* Tutorial at http://rgrinberg.com/posts/extension-points-3-years-later/
+* [`ppx_jane`](https://github.com/janestreet/ppx_jane) (comparison, hash, conversion between S-Expr), 
+* [`ppx_let`](https://ocaml.janestreet.com/ocaml-core/latest/doc/ppx_let/index.html).
+
+### Monads
+
+Warming up
+* State passing and exception encoding - PLII notes
+* CPS
+* Lwt or Async library and promises - Cornell 12.2 or RWOC 14.  Leaning to Async.
+
+Monads proper.
+
+* Monads.  PLII notes for all the monad topics.
+* Monad laws.
+* Monad transormers (or, skip?)
+* Monad programming.  Need to decide what libraries/bindings to use.  Jane Street has `Base.Monad` and `ppx_let`, or use `let*` now. unclear.  I don't think Jane street library has transformers?
+* Comprehension.. need to research this.  See `map` in `Base.Monad` stuff.
+
+#### Streams
+(Have above now, decide whether it is its own later topic)
+
+#### Async, Promises and Continuations
+
+#### Under the hood of functional language runtimes
+* Substitution notion of running functions and `let` - informal PLI stuff.
+* Tail recursion Cornell 3.1.1.5.  
+* Garbage collection
+* Efficiency of functional vs mutable data structures.  Some in Ch9 Cornell.
+
+#### FP in other languages
+
+-   JavaScript, [React hooks](https://reactjs.org/docs/hooks-intro.html), and [ReasonReact](https://reasonml.github.io/reason-react/)
+-   Python
+-   Java lambdas
+      
+## Resources
+
+* [Real World OCaml 2nd Edition](https://dev.realworldocaml.org/toc.html)
+* [Cornell book](https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/)
+* [Awesome OCaml](https://github.com/ocaml-community/awesome-ocaml)
+
+Smaller things
+* [OCaml Best practices](https://engineering.issuu.com/2018/11/20/our-current-ocaml-best-practices-part-1)
+* [Imperative to functional refactoring JavaScript example](https://medium.com/software-craftsman/functional-refactoring-in-javascript-c0fe718f4efb); [another](https://jordaneldredge.com/blog/functional-javascript-learn-by-refactoring/)
+* [Try OCaml](https://try.ocamlpro.com) - for early on before people get opam installed.
+* [99 problems](https://github.com/MassD/99) - a bunch of short OCaml coding examples.
+
+## Course Planning Ideas
+
+* Code critique: get several dozen excellent examples and base feature discussions around them.  Code mentoring in general is a key to learning good programming principles.  Cornell course not so good on this point..
+
+* Project focus ideas: porting existing tools to OCaml.  JSON, whatever.. think of libraries popular for OOSE projects for example.
+
+* Opam jam - we all get together to install it.
+
+## On line modality
+
+* give exam but ask them to sign a pledge.
+* Make it open book but in a window reasonably large.
+* Use break-out rooms for code reviews.
+
+## To Do
+
+### Books etc to absorb
+
+* Real World OCaml topics:  need to read through this in more detail for fodder
+* Grossman PL course topics: ditto, files are in icloud.  It is SML though.
+* PLII - go through that again.
+* Many Jane Street libraries.
