@@ -29,8 +29,9 @@
 * `begin`/`end` to replace parens
 
 ##### Advanced data structures
-* Advanced patterns - `p when e`, `'a' .. 'z'`, patterns in let, `{x;y}` is same as `{x=x;y=y}`...  Cornell 3.1.7
+* Advanced patterns - `p when e`, `'a' .. 'z'`, `as x`, or `|` patterns in let, `{x;y}` is same as `{x=x;y=y}`...  Cornell 3.1.7
 * Polymorphic variants aka anonymous variants - Cornell 3.2.4.4
+* See RWOC chapters on variants and records for lots of new conventions and examples.
 * Extensible variants - OCaml manual 8.14
 * Pretty printing data with `ppx_deriving`
 * GADTS - see PLII lecture notes
@@ -45,6 +46,12 @@
 * `==` vs `=` - Cornell 8.6
 * Mutable stack eg - Cornell 8.8; get a Base alternative example, e.g. `Hashtbl` (see next topic)
 * Weakly polymorphic types `‘_a` - Cornell 8.8
+
+#### Exceptions
+
+* `match f x with exception _ -> blah | ...` shorthand syntax
+* lack of exception effects in types is old-fashioned.  Using option types or Ok/Error is often better.
+* See RWOC Error/Exceptions chapter.
 
 ### Libraries:
 
@@ -81,7 +88,7 @@
 * Poking your code in the top loop: `dune utop`, `dune top`, and `#use_output "dune top";;`
 * Merlin with dune - basics on configuring to parse libraries used properly, etc.  Cornell 3.1.3.4
 * Command line: `dune build`, `dune runtest`, `dune exec`
-* Stack traces - ocamlbuild has via -tag debug, see how dune does.
+* Backtracing on error in dune: use `Base`, backtraces turned on by default then.
 
 #### Top level directives
 * `#directory adir` - adds `adir` to the list of directories to search for files.
@@ -142,6 +149,7 @@
 ### Monads
 
 Warming up
+* `Option.bind` in base, also let%bind for that.. RWOC Error Handling chapter
 * State passing and exception encoding - PLII notes
 * CPS
 * Lwt or Async library and promises - Cornell 12.2 or RWOC 14.  Leaning to Async.
