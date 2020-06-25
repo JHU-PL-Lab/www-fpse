@@ -24,7 +24,7 @@
 ### More OCaml
 
 ##### Advanced Functions
-* Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.ll
+* Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.
 * Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.  see RWOC prefix and infix operators.
 * `begin`/`end` to replace parens
 
@@ -34,6 +34,10 @@
 * Extensible variants - OCaml manual 8.14
 * Pretty printing data with `ppx_deriving`
 * GADTS - see PLII lecture notes
+* record field name punning - RWOC Ch5
+* `let r' = { r with x = ..; y = }`  for changing just a few fields - RWOC 5
+* Embedding record declarations in variants - like named args on variant fields:
+`type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly`
 
 * Streams and laziness - Cornell 12.1
 * Memoization - Cornell 12.4
@@ -108,18 +112,21 @@
     - Module refactoring - pull out code into a new module, move a function from one module to another.
     - Combinize: replace recursion with maps and folds
     - Use more pattern matching
+* Type-aided extension: add a type to a variant, then clean up on the type error messages.
+    - Applies to many other contexts as well: make a change, chase type errors.  Type errors gone => code works.
 * Go through some imperative to functional code refactorings
 
 
 ### Specification
 
 * Specifying properties of programs
-    - Types as program properties
+    - Type-directed programming: start out by writing module signatures as a skeleton
     - `assert` for more fine-grained properties
     - Referential transparency
     - Abstract interfaces: white box vs gray box vs black box (&lt;abst&gt;).  Black box is bad - like closed-source code.
 
 * Invariants
+    - Types as (basic) invariants, with an automatic always-running static checker
     - Data structure Invariants - Cornell Representation Invariants, Ch6
     - recursive function invariants
     - representation invariants
