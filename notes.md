@@ -20,17 +20,22 @@
 * `let rec sum = function | [] -> ..` (needs function not fun)
 * Minimal commands for dune, .ocamlinit, top loop.  Basically fixed recipes to start with.
 * let is a special application - needed for monads later
+* = on ints only by default with `Base`.  `String.(=)` etc explicitly for other base types.  Or cheat with `open Poly` (restores original OCaml polymorphic `=` which is dangerous)
+* remove effects except printing perhaps
 
 ### More OCaml
 
 ##### Advanced Functions
+(This stuff currently seems pretty basic, move up I expect.)
 * Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.
 * Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.  see RWOC prefix and infix operators.
 * `begin`/`end` to replace parens
 
 ##### Advanced data structures
+This is mostly covered in RWOC chapters on variants and records.
+
 * Advanced patterns - `p when e`, `'a' .. 'z'`, `as x`, or `|` patterns in let, `{x;y}` is same as `{x=x;y=y}`...  Cornell 3.1.7
-* Polymorphic variants aka anonymous variants - Cornell 3.2.4.4
+* Polymorphic variants aka anonymous variants - Cornell 3.2.4.4, RWOC variants chapter
 * See RWOC chapters on variants and records for lots of new conventions and examples.
 * Extensible variants - OCaml manual 8.14
 * Pretty printing data with `ppx_deriving`
@@ -39,36 +44,39 @@
 * `let r' = { r with x = ..; y = }`  for changing just a few fields - RWOC 5
 * Embedding record declarations in variants - like named args on variant fields:
 `type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly`
+* New Jane street extensions: [higher-kinded types](https://github.com/janestreet/higher_kinded/) and [accessors](https://github.com/janestreet/accessor) which are like Haskell lenses.
 
 * Streams and laziness - Cornell 12.1
-* Memoization - Cornell 12.4
+* Memoization - RWOC Imperative chapter, Cornell 12.4
 
 #### Mutation
 
 * Standard mutation topics: ref, mutable records, arrays.  Printing earlier - ?
 * sequencing; `ignore(3+4); print_string "hi"` to avoid warnings.  Cornell 8.3
 * `==` vs `=` - Cornell 8.6
-* Mutable stack eg - Cornell 8.8; get a Base alternative example, e.g. `Hashtbl` (see next topic)
+* Mutable stack eg - Cornell 8.8; get a Base alternative example, e.g. `Hashtbl` (see libraries)
 * Weakly polymorphic types `‘_a` - Cornell 8.8
 
 #### Exceptions
+See RWOC Error/Exceptions chapter.
 
-* `match f x with exception _ -> blah | ...` shorthand syntax
 * lack of exception effects in types is old-fashioned.  Using option types or Ok/Error is often better.
-* See RWOC Error/Exceptions chapter.
+* `match f x with exception _ -> blah | ...` shorthand syntax
 
-### Libraries:
+### Libraries and More Modules
+
+Do libraries with modules as the `Base` modules need understanding of functors, abstraction, etc
 
 * [`Base`](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/index.html)
     - Lists in Base - RWOC 1 a bit (tour) and RWOC 3.  Worth covering, lots of important functions available.
     - `Map` (and `List.Assoc` a bit).  RWOC 13.
-    - Hashtbl, good example of mutable code.  RWOC 13
+    - `Hashtbl`, good example of mutable code.  RWOC 13
 * `Stdio`
     - Channels, 
 * Command line parsing - RWOC ch14
 * JSON data - RWOC ch15
 
-#### More modules
+##### More modules
 * `include` - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it
 * Nested modules - in RWOC 4.
 * First-class modules - RWOC 10.
@@ -76,6 +84,7 @@
 * Anonymous functors:  `module F = functor (M : S) -> ... -> functor (M : S) -> struct  ... end`
 * more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3
 * passing anonymous structs to functors Cornell 5.3.2.3
+* `comparator_witness` and comparison in modules
 
 ### The Modern OCaml Ecosystem
 
@@ -127,10 +136,11 @@
 ### Specification
 
 * Specifying properties of programs
-    - Type-directed programming: start out by writing module signatures as a skeleton
-    - `assert` for more fine-grained properties
+    - Type-directed programming: start out by writing types & module signatures as a skeleton
+    - `assert` for more fine-grained properties not expressible with types
     - Referential transparency
-    - Abstract interfaces: white box vs gray box vs black box (&lt;abst&gt;).  Black box is bad - like closed-source code.
+    - Abstract interfaces: white box vs gray box vs black box (&lt;abst&gt;).  
+        - Black box can be bad - like closed-source code.  Really need a read-only notion, you can see the structure if needed.  Too hard now to figure out what is under the hood.
 
 * Invariants
     - Types as (basic) invariants, with an automatic always-running static checker
@@ -183,6 +193,7 @@ Monads proper.
 -   JavaScript, [React hooks](https://reactjs.org/docs/hooks-intro.html), and [ReasonReact](https://reasonml.github.io/reason-react/)
 -   Python
 -   Java lambdas
+- Elm
       
 ## Resources
 
