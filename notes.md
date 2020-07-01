@@ -151,11 +151,13 @@ Do libraries with modules as the `Base` modules need understanding of functors, 
     - representation invariants
 
 ### Testing
+See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book/testing)
 
 * Principles of testing
     - black box and glass box testing.  Cornell Ch7
 * `ocamldoc`comments, Cornell 2.3.7
-* `OUnit` unit testing library Cornell 3.1.3
+* `OUnit` unit testing library Cornell 3.1.3\
+* May also want to do `ppx_inline_tests` or whatever it is called.  RWOC using it.. Only problem is it is not working with 4.10 and utop.
 * `Bisect` for code coverage. Cornell 7.4
 * Automated test generation aka randomized testing aka fuzz testing, `QCheck`.  Cornell 7.7-7.9
 
@@ -189,6 +191,7 @@ Monads proper.
 * Tail recursion Cornell 3.1.1.5.  
 * Garbage collection
 * Efficiency of functional vs mutable data structures.  Some in Ch9 Cornell.
+* RWOC has a chapter on this, also on GC, maybe do a peek at that (not much though)
 
 #### FP in other languages
 
