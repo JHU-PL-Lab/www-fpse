@@ -44,6 +44,7 @@ This is mostly covered in RWOC chapters on variants and records.
 * `let r' = { r with x = ..; y = }`  for changing just a few fields - RWOC 5
 * Embedding record declarations in variants - like named args on variant fields:
 `type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly`
+* Covariant types `+'a t = ...` - declares contents are not mutable so can be fully polymorphic not weakly.  RWOC weak polymorphism section.
 * New Jane street extensions: [higher-kinded types](https://github.com/janestreet/higher_kinded/) and [accessors](https://github.com/janestreet/accessor) which are like Haskell lenses.
 
 * Streams and laziness - Cornell 12.1
@@ -84,7 +85,8 @@ Do libraries with modules as the `Base` modules need understanding of functors, 
 * Anonymous functors:  `module F = functor (M : S) -> ... -> functor (M : S) -> struct  ... end`
 * more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3
 * passing anonymous structs to functors Cornell 5.3.2.3
-* `comparator_witness` and comparison in modules
+* `comparator_witness` and comparison in Jane Street modules
+* Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.
 
 ### The Modern OCaml Ecosystem
 
