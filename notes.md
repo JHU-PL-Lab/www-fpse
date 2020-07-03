@@ -210,7 +210,11 @@ Smaller things
 * [OCaml Best practices](https://engineering.issuu.com/2018/11/20/our-current-ocaml-best-practices-part-1)
 * [Imperative to functional refactoring JavaScript example](https://medium.com/software-craftsman/functional-refactoring-in-javascript-c0fe718f4efb); [another](https://jordaneldredge.com/blog/functional-javascript-learn-by-refactoring/)
 * [Try OCaml](https://try.ocamlpro.com) - for early on before people get opam installed.
+
+#### Example programs to study
+
 * [99 problems](https://github.com/MassD/99) - a bunch of short OCaml coding examples.
+* [Exercism](https://github.com/exercism/ocaml/tree/master/exercises) - more examples, more broad than the 99 problems ones. [All answers here](https://exercism.io/tracks/ocaml/exercises)
 
 ## Course Planning Ideas
 
