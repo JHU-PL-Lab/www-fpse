@@ -55,36 +55,105 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <!-- Content -->
 <div id="content" class="container">
 <section>
-<h2 id="syllabus">Syllabus</h2>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h1 id="syllabus">Syllabus</h1>
 
 <p>This is the preliminary list of lecture topics and readings. See the <a href="dateline.html">dateline</a> for what we actually end up doing as the course evolves.</p>
 
-<h4 id="functional-programming-in-ocaml">Functional Programming in OCaml</h4>
+<h2 id="basic-functional-programming-in-ocaml">Basic Functional Programming in OCaml</h2>
 
 <ul>
-  <li>Basics: expressions, functions, lists, pattern matching, higher-order functions, variants.</li>
+  <li>The basics: expressions, functions, lists, pattern matching, higher-order functions, variants.</li>
   <li>Modules</li>
+  <li>Basic build tool usage</li>
+</ul>
+
+<h3 id="advanced-ocaml-data-structures">Advanced OCaml data structures</h3>
+<ul>
+  <li>Advanced patterns, polymorphic variants, extensible variants</li>
+  <li>GADTS</li>
+  <li>Streams and laziness</li>
+  <li>Memoization</li>
+</ul>
+
+<h3 id="side-effects">Side effects</h3>
+<ul>
+  <li>Mutation</li>
+  <li>Exceptions</li>
+  <li>I/O and the <code class="highlighter-rouge">Stdio</code> library</li>
 </ul>
 
 <h4 id="libraries">Libraries:</h4>
 
-<p>The Standard Library and Jane Street’s Base; Functional and mutable data structures</p>
+<ul>
+  <li>Jane Street’s <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/index.html"><code class="highlighter-rouge">Base</code></a>: <code class="highlighter-rouge">List</code>, <code class="highlighter-rouge">Map</code>, <code class="highlighter-rouge">Hashtbl</code>, etc.</li>
+</ul>
 
-<h4 id="testing">Testing</h4>
+<h5 id="advanced-modules">Advanced modules</h5>
+<ul>
+  <li><code class="highlighter-rouge">include</code>, Nested modules, First-class modules</li>
+  <li>More functors</li>
+  <li>Comparision</li>
+  <li>Type sharing constraints and destructive substitution</li>
+</ul>
 
-<p>Testing; Programming to specifications, OUnit and QCheck</p>
+<h3 id="the-modern-ocaml-ecosystem">The Modern OCaml Ecosystem</h3>
+<ul>
+  <li><code class="highlighter-rouge">opam</code>, <code class="highlighter-rouge">.ocamlinit</code>, <code class="highlighter-rouge">topfind</code>, <code class="highlighter-rouge">ocamlfind</code></li>
+  <li><code class="highlighter-rouge">dune</code></li>
+</ul>
 
-<h4 id="tools">Tools</h4>
+<h3 id="idiomatic-functional-programming">Idiomatic Functional Programming</h3>
+<ul>
+  <li>Refactoring: pull out duplicate code, add higher-order function parameters, use combinators, separate concerns, etc</li>
+</ul>
 
-<p>Software engineering tools: dune, ocamlfind, etc</p>
+<h3 id="specification">Specification</h3>
 
-<h4 id="monads">Monads</h4>
+<ul>
+  <li>Specifying properties of programs
+    <ul>
+      <li>Type-directed programming</li>
+      <li>Referential transparency</li>
+      <li>Abstract interfacesod.</li>
+    </ul>
+  </li>
+  <li>Invariants
+    <ul>
+      <li>Data structure Invariants, recursive function invariants, representation invariants</li>
+    </ul>
+  </li>
+</ul>
 
-<h4 id="streams">Streams</h4>
+<h3 id="testing">Testing</h3>
+<ul>
+  <li>Principles of testing</li>
+  <li><code class="highlighter-rouge">OUnit</code></li>
+  <li><code class="highlighter-rouge">Bisect</code> for code coverage.</li>
+  <li>Automated test generation, <code class="highlighter-rouge">QCheck</code></li>
+</ul>
 
-<h4 id="promises-and-continuations">Promises and Continuations</h4>
+<h3 id="monads-and-monad-likes">Monads and monad-likes</h3>
 
-<h4 id="efficiency-analysis-of-functional-code">Efficiency analysis of functional code</h4>
+<h4 id="monad-warm-up">Monad Warm-up</h4>
+<ul>
+  <li>State passing and exception encoding</li>
+  <li>CPS transformation</li>
+  <li><code class="highlighter-rouge">Async</code> library and promises</li>
+</ul>
+
+<h4 id="monads-proper">Monads proper</h4>
+
+<ul>
+  <li>Monads, monad laws</li>
+  <li>Monad programming</li>
+</ul>
+
+<h3 id="metaprogramming-ppx-extensions">Metaprogramming: ppx extensions</h3>
+
+<h3 id="under-the-hood-of-functional-language-runtimes">Under the hood of functional language runtimes</h3>
 
 <h4 id="fp-in-other-languages">FP in other languages</h4>
 
@@ -92,8 +161,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>JavaScript, <a href="https://reactjs.org/docs/hooks-intro.html">React hooks</a>, and <a href="https://reasonml.github.io/reason-react/">ReasonReact</a></li>
   <li>Python</li>
   <li>Java lambdas</li>
+  <li>Elm</li>
 </ul>
 
+<h2 id="primary-resources">Primary Resources</h2>
+
+<ul>
+  <li><a href="https://dev.realworldocaml.org/toc.html">Real World OCaml 2nd Edition</a></li>
+  <li><a href="https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/">Cornell book</a></li>
+  <li><a href="https://github.com/ocaml-community/awesome-ocaml">Awesome OCaml</a></li>
+</ul>
       
           </section>
         </div>

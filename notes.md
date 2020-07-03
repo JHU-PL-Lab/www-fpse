@@ -1,12 +1,13 @@
 
 
-## Syllabus Extended Notes
+## Extended Syllabus Notes
 
 ### Basic Functional Programming in OCaml
 
 * Basic OCaml
     - expressions, functions, lists, pattern matching, higher-order functions, variants
     - elementary `ocaml`, `utop`
+    - `Base` basics -- list libraries etc.
 * Modules
     - structures, functors
     - type abstraction, module signatures
@@ -21,17 +22,13 @@
 * Minimal commands for dune, .ocamlinit, top loop.  Basically fixed recipes to start with.
 * let is a special application - needed for monads later
 * = on ints only by default with `Base`.  `String.(=)` etc explicitly for other base types.  Or cheat with `open Poly` (restores original OCaml polymorphic `=` which is dangerous)
-* remove effects except printing perhaps
-
-### More OCaml
-
-##### Advanced Functions
-(This stuff currently seems pretty basic, move up I expect.)
 * Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.
 * Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.  see RWOC prefix and infix operators.
 * `begin`/`end` to replace parens
+* remove effects except printing perhaps
 
-##### Advanced data structures
+
+### Advanced OCaml data structures
 This is mostly covered in RWOC chapters on variants and records.
 
 * Advanced patterns - `p when e`, `'a' .. 'z'`, `as x`, or `|` patterns in let, `{x;y}` is same as `{x=x;y=y}`...  Cornell 3.1.7
@@ -50,8 +47,9 @@ This is mostly covered in RWOC chapters on variants and records.
 * Streams and laziness - Cornell 12.1
 * Memoization - RWOC Imperative chapter, Cornell 12.4
 
-#### Mutation
+### Side effects
 
+#### Mutation
 * Standard mutation topics: ref, mutable records, arrays.  Printing earlier - ?
 * sequencing; `ignore(3+4); print_string "hi"` to avoid warnings.  Cornell 8.3
 * `==` vs `=` - Cornell 8.6
@@ -60,24 +58,28 @@ This is mostly covered in RWOC chapters on variants and records.
 
 #### Exceptions
 See RWOC Error/Exceptions chapter.
-
 * lack of exception effects in types is old-fashioned.  Using option types or Ok/Error is often better.
 * `match f x with exception _ -> blah | ...` shorthand syntax
 
+#### I/O and Stdio
+* Basic printing
+* `Stdio`
+    - Channels, etc
+
 ### Libraries and More Modules
 
+#### Libraries
 Do libraries with modules as the `Base` modules need understanding of functors, abstraction, etc
 
 * [`Base`](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/index.html)
     - Lists in Base - RWOC 1 a bit (tour) and RWOC 3.  Worth covering, lots of important functions available.
     - `Map` (and `List.Assoc` a bit).  RWOC 13.
     - `Hashtbl`, good example of mutable code.  RWOC 13
-* `Stdio`
-    - Channels, 
+
 * Command line parsing - RWOC ch14
 * JSON data - RWOC ch15
 
-##### More modules
+##### Advanced modules
 * `include` - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it
 * Nested modules - in RWOC 4.
 * First-class modules - RWOC 10.
@@ -105,7 +107,7 @@ Do libraries with modules as the `Base` modules need understanding of functors, 
 * Command line: `dune build`, `dune runtest`, `dune exec`
 * Backtracing on error in dune: use `Base`, backtraces turned on by default then.
 
-#### Top level directives
+#### Top level directives (this is just notes)
 * `#directory adir` - adds `adir` to the list of directories to search for files.
 * `#trace afun` - calls and returns to `afun` will now be dumped to top level - a simple debugging tool.
 * `#use "afile.ml"` - loads code file as if it was copied and pasted into the top loop.
@@ -134,7 +136,6 @@ Do libraries with modules as the `Base` modules need understanding of functors, 
     - Applies to many other contexts as well: make a change, chase type errors.  Type errors gone => code works.
 * Go through some imperative to functional code refactorings
 
-
 ### Specification
 
 * Specifying properties of programs
@@ -161,21 +162,15 @@ See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book
 * `Bisect` for code coverage. Cornell 7.4
 * Automated test generation aka randomized testing aka fuzz testing, `QCheck`.  Cornell 7.7-7.9
 
-### Metaprogramming: ppx extensions
-* See RWOC ch23 (not written yet unfortunately).
-* Tutorial at http://rgrinberg.com/posts/extension-points-3-years-later/
-* [`ppx_jane`](https://github.com/janestreet/ppx_jane) (comparison, hash, conversion between S-Expr), 
-* [`ppx_let`](https://ocaml.janestreet.com/ocaml-core/latest/doc/ppx_let/index.html).
+### Monads and monad-likes
 
-### Monads
-
-Warming up
+#### Monad Warm-up
 * `Option.bind` in base, also let%bind for that.. RWOC Error Handling chapter
 * State passing and exception encoding - PLII notes
 * CPS
-* Lwt or Async library and promises - Cornell 12.2 or RWOC 14.  Leaning to Async.
+* Async library and promises - Cornell 12.2 or RWOC 14.  Leaning to Async.
 
-Monads proper.
+#### Monads proper.
 
 * Monads.  PLII notes for all the monad topics.
 * Monad laws.
@@ -183,24 +178,28 @@ Monads proper.
 * Monad programming.  Need to decide what libraries/bindings to use.  Jane Street has `Base.Monad` and `ppx_let`, or use `let*` now. unclear.  I don't think Jane street library has transformers?
 * Comprehension.. need to research this.  See `map` in `Base.Monad` stuff.
 
-#### Streams
-(Have above now, decide whether it is its own later topic)
 
-#### Under the hood of functional language runtimes
+### Metaprogramming: ppx extensions
+* See RWOC ch23 (not written yet unfortunately).
+* Tutorial at http://rgrinberg.com/posts/extension-points-3-years-later/
+* [`ppx_jane`](https://github.com/janestreet/ppx_jane) (comparison, hash, conversion between S-Expr), 
+* [`ppx_let`](https://ocaml.janestreet.com/ocaml-core/latest/doc/ppx_let/index.html).
+
+### Under the hood of functional language runtimes
 * Substitution notion of running functions and `let` - informal PLI stuff.
 * Tail recursion Cornell 3.1.1.5.  
 * Garbage collection
 * Efficiency of functional vs mutable data structures.  Some in Ch9 Cornell.
 * RWOC has a chapter on this, also on GC, maybe do a peek at that (not much though)
 
-#### FP in other languages
+### FP in other languages
 
 -   JavaScript, [React hooks](https://reactjs.org/docs/hooks-intro.html), and [ReasonReact](https://reasonml.github.io/reason-react/)
 -   Python
 -   Java lambdas
 - Elm
       
-## Resources
+## Primary Resources
 
 * [Real World OCaml 2nd Edition](https://dev.realworldocaml.org/toc.html)
 * [Cornell book](https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/)

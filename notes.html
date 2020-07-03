@@ -56,7 +56,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div id="content" class="container">
 <section>
 
-<h2 id="syllabus-extended-notes">Syllabus Extended Notes</h2>
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    
+<h2 id="extended-syllabus-notes">Extended Syllabus Notes</h2>
 
 <h3 id="basic-functional-programming-in-ocaml">Basic Functional Programming in OCaml</h3>
 
@@ -64,13 +67,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Basic OCaml
     <ul>
       <li>expressions, functions, lists, pattern matching, higher-order functions, variants</li>
-      <li>elementary <code class="highlighter-rouge">ocaml</code>, <code class="highlighter-rouge">utop</code>, <code class="highlighter-rouge">ocamlc</code>, <code class="highlighter-rouge">dune</code></li>
+      <li>elementary <code class="highlighter-rouge">ocaml</code>, <code class="highlighter-rouge">utop</code></li>
+      <li><code class="highlighter-rouge">Base</code> basics – list libraries etc.</li>
     </ul>
   </li>
   <li>Modules
     <ul>
       <li>structures, functors</li>
       <li>type abstraction, module signatures</li>
+      <li>Simple whole programs – see <code class="highlighter-rouge">code/set_example</code>.. might want to change to use <code class="highlighter-rouge">In_Channel</code> to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.</li>
     </ul>
   </li>
 </ul>
@@ -80,63 +85,85 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>@@ application</li>
   <li>_ - all the places it works</li>
   <li>pipelining</li>
-  <li>Pipelining for functional data construction - <code class="highlighter-rouge">List.([] |&gt;  cons 1 |&gt; cons 2 |&gt; cons 3 |&gt; cons 4)</code> (notice it makes it in reverse)</li>
+  <li>Pipelining for functional data construction - <code class="highlighter-rouge">List.([] |&gt;  cons 1 |&gt; cons 2 |&gt; cons 3 |&gt; cons 4)</code> (notice it makes it in reverse).  similar to message chaining of OOP.</li>
   <li><code class="highlighter-rouge">let rec sum = function | [] -&gt; ..</code> (needs function not fun)</li>
   <li>Minimal commands for dune, .ocamlinit, top loop.  Basically fixed recipes to start with.</li>
-</ul>
-
-<h3 id="more-ocaml">More OCaml</h3>
-
-<h5 id="advanced-functions">Advanced Functions</h5>
-<ul>
-  <li>Named and optional function arguments</li>
-  <li>Operators as functions and making your own infix syntax - <code class="highlighter-rouge">let (^^) x y = x * y</code> kind of thing.</li>
+  <li>let is a special application - needed for monads later</li>
+  <li>= on ints only by default with <code class="highlighter-rouge">Base</code>.  <code class="highlighter-rouge">String.(=)</code> etc explicitly for other base types.  Or cheat with <code class="highlighter-rouge">open Poly</code> (restores original OCaml polymorphic <code class="highlighter-rouge">=</code> which is dangerous)</li>
+  <li>Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.</li>
+  <li>Operators as functions and making your own infix syntax - <code class="highlighter-rouge">let (^^) x y = x * y</code> kind of thing.  see RWOC prefix and infix operators.</li>
   <li><code class="highlighter-rouge">begin</code>/<code class="highlighter-rouge">end</code> to replace parens</li>
+  <li>remove effects except printing perhaps</li>
 </ul>
 
-<h5 id="advanced-data-structures">Advanced data structures</h5>
+<h3 id="advanced-ocaml-data-structures">Advanced OCaml data structures</h3>
+<p>This is mostly covered in RWOC chapters on variants and records.</p>
+
 <ul>
-  <li>Advanced patterns - <code class="highlighter-rouge">p when e</code>, <code class="highlighter-rouge">'a' .. 'z'</code>, patterns in let, etc.  Cornell 3.1.7</li>
-  <li>Polymorphic variants aka anonymous variants - Cornell 3.2.4.4</li>
+  <li>Advanced patterns - <code class="highlighter-rouge">p when e</code>, <code class="highlighter-rouge">'a' .. 'z'</code>, <code class="highlighter-rouge">as x</code>, or <code class="highlighter-rouge">|</code> patterns in let, <code class="highlighter-rouge">{x;y}</code> is same as <code class="highlighter-rouge">{x=x;y=y}</code>…  Cornell 3.1.7</li>
+  <li>Polymorphic variants aka anonymous variants - Cornell 3.2.4.4, RWOC variants chapter</li>
+  <li>See RWOC chapters on variants and records for lots of new conventions and examples.</li>
   <li>Extensible variants - OCaml manual 8.14</li>
   <li>Pretty printing data with <code class="highlighter-rouge">ppx_deriving</code></li>
+  <li>GADTS - see PLII lecture notes</li>
+  <li>record field name punning - RWOC Ch5</li>
+  <li><code class="highlighter-rouge">let r' = { r with x = ..; y = }</code>  for changing just a few fields - RWOC 5</li>
+  <li>Embedding record declarations in variants - like named args on variant fields:<br />
+<code class="highlighter-rouge">type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly</code></li>
+  <li>Covariant types <code class="highlighter-rouge">+'a t = ...</code> - declares contents are not mutable so can be fully polymorphic not weakly.  RWOC weak polymorphism section.</li>
   <li>
-    <p>GADTS - see PLII lecture notes</p>
+    <p>New Jane street extensions: <a href="https://github.com/janestreet/higher_kinded/">higher-kinded types</a> and <a href="https://github.com/janestreet/accessor">accessors</a> which are like Haskell lenses.</p>
   </li>
   <li>Streams and laziness - Cornell 12.1</li>
-  <li>Memoization - Cornell 12.4</li>
+  <li>Memoization - RWOC Imperative chapter, Cornell 12.4</li>
 </ul>
 
-<h4 id="mutation">Mutation</h4>
+<h3 id="side-effects">Side effects</h3>
 
+<h4 id="mutation">Mutation</h4>
 <ul>
   <li>Standard mutation topics: ref, mutable records, arrays.  Printing earlier - ?</li>
   <li>sequencing; <code class="highlighter-rouge">ignore(3+4); print_string "hi"</code> to avoid warnings.  Cornell 8.3</li>
   <li><code class="highlighter-rouge">==</code> vs <code class="highlighter-rouge">=</code> - Cornell 8.6</li>
-  <li>Mutable stack eg - Cornell 8.8; get a Base alternative example, e.g. <code class="highlighter-rouge">Hashtbl</code> (see next topic)</li>
+  <li>Mutable stack eg - Cornell 8.8; get a Base alternative example, e.g. <code class="highlighter-rouge">Hashtbl</code> (see libraries)</li>
   <li>Weakly polymorphic types <code class="highlighter-rouge">‘_a</code> - Cornell 8.8</li>
 </ul>
 
-<h3 id="libraries">Libraries:</h3>
+<h4 id="exceptions">Exceptions</h4>
+<p>See RWOC Error/Exceptions chapter.</p>
+<ul>
+  <li>lack of exception effects in types is old-fashioned.  Using option types or Ok/Error is often better.</li>
+  <li><code class="highlighter-rouge">match f x with exception _ -&gt; blah | ...</code> shorthand syntax</li>
+</ul>
+
+<h4 id="io-and-stdio">I/O and Stdio</h4>
+<ul>
+  <li>Basic printing</li>
+  <li><code class="highlighter-rouge">Stdio</code>
+    <ul>
+      <li>Channels, etc</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="libraries-and-more-modules">Libraries and More Modules</h3>
+
+<h4 id="libraries">Libraries</h4>
+<p>Do libraries with modules as the <code class="highlighter-rouge">Base</code> modules need understanding of functors, abstraction, etc</p>
 
 <ul>
   <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/index.html"><code class="highlighter-rouge">Base</code></a>
     <ul>
       <li>Lists in Base - RWOC 1 a bit (tour) and RWOC 3.  Worth covering, lots of important functions available.</li>
       <li><code class="highlighter-rouge">Map</code> (and <code class="highlighter-rouge">List.Assoc</code> a bit).  RWOC 13.</li>
-      <li>Hashtbl, good example of mutable code.  RWOC 13</li>
-    </ul>
-  </li>
-  <li><code class="highlighter-rouge">Stdio</code>
-    <ul>
-      <li>Channels,</li>
+      <li><code class="highlighter-rouge">Hashtbl</code>, good example of mutable code.  RWOC 13</li>
     </ul>
   </li>
   <li>Command line parsing - RWOC ch14</li>
   <li>JSON data - RWOC ch15</li>
 </ul>
 
-<h4 id="more-modules">More modules</h4>
+<h5 id="advanced-modules">Advanced modules</h5>
 <ul>
   <li><code class="highlighter-rouge">include</code> - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it</li>
   <li>Nested modules - in RWOC 4.</li>
@@ -145,6 +172,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Anonymous functors:  <code class="highlighter-rouge">module F = functor (M : S) -&gt; ... -&gt; functor (M : S) -&gt; struct  ... end</code></li>
   <li>more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3</li>
   <li>passing anonymous structs to functors Cornell 5.3.2.3</li>
+  <li><code class="highlighter-rouge">comparator_witness</code> and comparison in Jane Street modules</li>
+  <li>Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.</li>
 </ul>
 
 <h3 id="the-modern-ocaml-ecosystem">The Modern OCaml Ecosystem</h3>
@@ -165,10 +194,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Poking your code in the top loop: <code class="highlighter-rouge">dune utop</code>, <code class="highlighter-rouge">dune top</code>, and <code class="highlighter-rouge">#use_output "dune top";;</code></li>
   <li>Merlin with dune - basics on configuring to parse libraries used properly, etc.  Cornell 3.1.3.4</li>
   <li>Command line: <code class="highlighter-rouge">dune build</code>, <code class="highlighter-rouge">dune runtest</code>, <code class="highlighter-rouge">dune exec</code></li>
-  <li>Stack traces - ocamlbuild has via -tag debug, see how dune does.</li>
+  <li>Backtracing on error in dune: use <code class="highlighter-rouge">Base</code>, backtraces turned on by default then.</li>
 </ul>
 
-<h4 id="top-level-directives">Top level directives</h4>
+<h4 id="top-level-directives-this-is-just-notes">Top level directives (this is just notes)</h4>
 <ul>
   <li><code class="highlighter-rouge">#directory adir</code> - adds <code class="highlighter-rouge">adir</code> to the list of directories to search for files.</li>
   <li><code class="highlighter-rouge">#trace afun</code> - calls and returns to <code class="highlighter-rouge">afun</code> will now be dumped to top level - a simple debugging tool.</li>
@@ -191,11 +220,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Make code more parametric (or less if not needed)</li>
       <li>Rename</li>
       <li>Lift or hide (demote) functions/variables</li>
+      <li>Inline definition or converse - inline let definitions if simple, make more if too complex</li>
       <li>Move around reponsibilties, make more modular by putting fewer things in public interface</li>
       <li>Type refactoring - remove unneeded things, generalize (make polymorphic or GADT)</li>
       <li>Module refactoring - pull out code into a new module, move a function from one module to another.</li>
       <li>Combinize: replace recursion with maps and folds</li>
       <li>Use more pattern matching</li>
+    </ul>
+  </li>
+  <li>Type-aided extension: add a type to a variant, then clean up on the type error messages.
+    <ul>
+      <li>Applies to many other contexts as well: make a change, chase type errors.  Type errors gone =&gt; code works.</li>
     </ul>
   </li>
   <li>Go through some imperative to functional code refactorings</li>
@@ -206,14 +241,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Specifying properties of programs
     <ul>
-      <li>Types as program properties</li>
-      <li><code class="highlighter-rouge">assert</code> for more fine-grained properties</li>
+      <li>Type-directed programming: start out by writing types &amp; module signatures as a skeleton</li>
+      <li><code class="highlighter-rouge">assert</code> for more fine-grained properties not expressible with types</li>
       <li>Referential transparency</li>
-      <li>Abstract interfaces: white box vs gray box vs black box (&lt;abst&gt;).  Black box is bad - like closed-source code.</li>
+      <li>Abstract interfaces: white box vs gray box vs black box (&lt;abst&gt;).
+        <ul>
+          <li>Black box can be bad - like closed-source code.  Really need a read-only notion, you can see the structure if needed.  Too hard now to figure out what is under the hood.</li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li>Invariants
     <ul>
+      <li>Types as (basic) invariants, with an automatic always-running static checker</li>
       <li>Data structure Invariants - Cornell Representation Invariants, Ch6</li>
       <li>recursive function invariants</li>
       <li>representation invariants</li>
@@ -222,6 +262,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h3 id="testing">Testing</h3>
+<p>See <a href="https://github.com/realworldocaml/book/tree/master/book/testing">draft RWOC chapter</a></p>
 
 <ul>
   <li>Principles of testing
@@ -230,9 +271,30 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li><code class="highlighter-rouge">ocamldoc</code>comments, Cornell 2.3.7</li>
-  <li><code class="highlighter-rouge">OUnit</code> unit testing library Cornell 3.1.3</li>
+  <li><code class="highlighter-rouge">OUnit</code> unit testing library Cornell 3.1.3\</li>
+  <li>May also want to do <code class="highlighter-rouge">ppx_inline_tests</code> or whatever it is called.  RWOC using it.. Only problem is it is not working with 4.10 and utop.</li>
   <li><code class="highlighter-rouge">Bisect</code> for code coverage. Cornell 7.4</li>
   <li>Automated test generation aka randomized testing aka fuzz testing, <code class="highlighter-rouge">QCheck</code>.  Cornell 7.7-7.9</li>
+</ul>
+
+<h3 id="monads-and-monad-likes">Monads and monad-likes</h3>
+
+<h4 id="monad-warm-up">Monad Warm-up</h4>
+<ul>
+  <li><code class="highlighter-rouge">Option.bind</code> in base, also let%bind for that.. RWOC Error Handling chapter</li>
+  <li>State passing and exception encoding - PLII notes</li>
+  <li>CPS</li>
+  <li>Async library and promises - Cornell 12.2 or RWOC 14.  Leaning to Async.</li>
+</ul>
+
+<h4 id="monads-proper">Monads proper.</h4>
+
+<ul>
+  <li>Monads.  PLII notes for all the monad topics.</li>
+  <li>Monad laws.</li>
+  <li>Monad transormers (or, skip?)</li>
+  <li>Monad programming.  Need to decide what libraries/bindings to use.  Jane Street has <code class="highlighter-rouge">Base.Monad</code> and <code class="highlighter-rouge">ppx_let</code>, or use <code class="highlighter-rouge">let*</code> now. unclear.  I don’t think Jane street library has transformers?</li>
+  <li>Comprehension.. need to research this.  See <code class="highlighter-rouge">map</code> in <code class="highlighter-rouge">Base.Monad</code> stuff.</li>
 </ul>
 
 <h3 id="metaprogramming-ppx-extensions">Metaprogramming: ppx extensions</h3>
@@ -243,47 +305,25 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/ppx_let/index.html"><code class="highlighter-rouge">ppx_let</code></a>.</li>
 </ul>
 
-<h3 id="monads">Monads</h3>
-
-<p>Warming up</p>
-<ul>
-  <li>State passing and exception encoding - PLII notes</li>
-  <li>CPS</li>
-  <li>Lwt or Async library and promises - Cornell 12.2 or RWOC 14.  Leaning to Async.</li>
-</ul>
-
-<p>Monads proper.</p>
-
-<ul>
-  <li>Monads.  PLII notes for all the monad topics.</li>
-  <li>Monad laws.</li>
-  <li>Monad transormers (or, skip?)</li>
-  <li>Monad programming.  Need to decide what libraries/bindings to use.  Jane Street has <code class="highlighter-rouge">Base.Monad</code> and <code class="highlighter-rouge">ppx_let</code>, or use <code class="highlighter-rouge">let*</code> now. unclear.  I don’t think Jane street library has transformers?</li>
-  <li>Comprehension.. need to research this.  See <code class="highlighter-rouge">map</code> in <code class="highlighter-rouge">Base.Monad</code> stuff.</li>
-</ul>
-
-<h4 id="streams">Streams</h4>
-<p>(Have above now, decide whether it is its own later topic)</p>
-
-<h4 id="async-promises-and-continuations">Async, Promises and Continuations</h4>
-
-<h4 id="under-the-hood-of-functional-language-runtimes">Under the hood of functional language runtimes</h4>
+<h3 id="under-the-hood-of-functional-language-runtimes">Under the hood of functional language runtimes</h3>
 <ul>
   <li>Substitution notion of running functions and <code class="highlighter-rouge">let</code> - informal PLI stuff.</li>
   <li>Tail recursion Cornell 3.1.1.5.</li>
   <li>Garbage collection</li>
   <li>Efficiency of functional vs mutable data structures.  Some in Ch9 Cornell.</li>
+  <li>RWOC has a chapter on this, also on GC, maybe do a peek at that (not much though)</li>
 </ul>
 
-<h4 id="fp-in-other-languages">FP in other languages</h4>
+<h3 id="fp-in-other-languages">FP in other languages</h3>
 
 <ul>
   <li>JavaScript, <a href="https://reactjs.org/docs/hooks-intro.html">React hooks</a>, and <a href="https://reasonml.github.io/reason-react/">ReasonReact</a></li>
   <li>Python</li>
   <li>Java lambdas</li>
+  <li>Elm</li>
 </ul>
 
-<h2 id="resources">Resources</h2>
+<h2 id="primary-resources">Primary Resources</h2>
 
 <ul>
   <li><a href="https://dev.realworldocaml.org/toc.html">Real World OCaml 2nd Edition</a></li>
@@ -327,7 +367,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Real World OCaml topics:  need to read through this in more detail for fodder</li>
-  <li>Grossman PL course topics: ditto, files are in icloud.  It is SML though.</li>
   <li>PLII - go through that again.</li>
   <li>Many Jane Street libraries.</li>
 </ul>
