@@ -218,12 +218,31 @@ Smaller things
 ## Course Planning Ideas
 
 * Code critique: get several dozen excellent examples and base feature discussions around them.  Code mentoring in general is a key to learning good programming principles.  Cornell course not so good on this point..
-
+   - Use exercism for shoreter examples of this.  Pick 3-4 of their problems and find several solutions some good some bad.  Can do this early in course.
+   
 * Project focus ideas: porting existing tools to OCaml.  JSON, whatever.. think of libraries popular for OOSE projects for example.
 
 * Opam jam - we all get together to install it.
 
-## On line modality
+
+### Assignments ideas
+
+These are more concepts to cover one some assignment; can bundle so several hit at once.
+
+* Initial top loop short functions assignment somewhat lioke PL I, but allow Base libraries to be used from the beginning
+* JSON parsing on next assignment?
+* Larger say string processing function with command line library?
+* For some questions make it a "shortest possible answer" - shortest answers get the most points.
+* Testing focused assignment - coverage, quick check, etc.  Could be adding tests to a previous assignment.
+* Map or Hash assignment, also to deal with using functors and compare.
+* Async assignment.
+* State and/or exceptions monad-ish assignment- something needing e.g. state for which OCaml state can't be used.
+* Refactoring assignment - give them a bad code version and ask them to make a good code one.
+   - add more combinators etc stuff, better use of libraries, more modular code, more type-correct, etc
+* Related to refactoring: take existing code and add invariants, both on code and on data structures.  Also maybe some of this representation invariant relating different data structure repns of same thing.
+* Type-aided extension: give them existing code working on a variant type, ask them to add more cases.
+
+### On-line plans
 
 * give exam but ask them to sign a pledge.
 * Make it open book but in a window reasonably large.
@@ -233,6 +252,5 @@ Smaller things
 
 ### Books etc to absorb
 
-* Real World OCaml topics:  need to read through this in more detail for fodder
 * PLII - go through that again.
 * Many Jane Street libraries.
