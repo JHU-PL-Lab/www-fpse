@@ -16,7 +16,7 @@ Supplementary reading materials for individual lectures will be linked from the 
 
 ### Piazza
 
-We will be using Piazza for online discussions. You will need to register for The [FPSE Piazza Page](https://piazza.com/) so you can receive course announcements and discuss the material with other students.
+We will be using Piazza for online discussions. You will need to register for The [FPSE Piazza Page](https://piazza.com/https://piazza.com/class/kd4zpku2vbg1az) so you can receive course announcements and discuss the material with other students.
 
 ### Assignments
 

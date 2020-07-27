@@ -42,7 +42,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
           <li><a href="/fpse/assignments/">Assignments</a>
-          <li><a href="https://piazza.com/class/TBA">Piazza</a></li>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -336,24 +336,52 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><a href="https://engineering.issuu.com/2018/11/20/our-current-ocaml-best-practices-part-1">OCaml Best practices</a></li>
   <li><a href="https://medium.com/software-craftsman/functional-refactoring-in-javascript-c0fe718f4efb">Imperative to functional refactoring JavaScript example</a>; <a href="https://jordaneldredge.com/blog/functional-javascript-learn-by-refactoring/">another</a></li>
   <li><a href="https://try.ocamlpro.com">Try OCaml</a> - for early on before people get opam installed.</li>
+</ul>
+
+<h4 id="example-programs-to-study">Example programs to study</h4>
+
+<ul>
   <li><a href="https://github.com/MassD/99">99 problems</a> - a bunch of short OCaml coding examples.</li>
+  <li><a href="https://github.com/exercism/ocaml/tree/master/exercises">Exercism</a> - more examples, more broad than the 99 problems ones. <a href="https://exercism.io/tracks/ocaml/exercises">All answers here</a></li>
 </ul>
 
 <h2 id="course-planning-ideas">Course Planning Ideas</h2>
 
 <ul>
-  <li>
-    <p>Code critique: get several dozen excellent examples and base feature discussions around them.  Code mentoring in general is a key to learning good programming principles.  Cornell course not so good on this point..</p>
+  <li>Code critique: get several dozen excellent examples and base feature discussions around them.  Code mentoring in general is a key to learning good programming principles.  Cornell course not so good on this point..
+    <ul>
+      <li>Use exercism for shoreter examples of this.  Pick 3-4 of their problems and find several solutions some good some bad.  Can do this early in course.</li>
+    </ul>
   </li>
   <li>
     <p>Project focus ideas: porting existing tools to OCaml.  JSON, whatever.. think of libraries popular for OOSE projects for example.</p>
   </li>
-  <li>
-    <p>Opam jam - we all get together to install it.</p>
-  </li>
+  <li>Opam jam - we all get together to install it.</li>
 </ul>
 
-<h2 id="on-line-modality">On line modality</h2>
+<h3 id="assignments-ideas">Assignments ideas</h3>
+
+<p>These are more concepts to cover one some assignment; can bundle so several hit at once.</p>
+
+<ul>
+  <li>Initial top loop short functions assignment somewhat lioke PL I, but allow Base libraries to be used from the beginning</li>
+  <li>JSON parsing on next assignment?</li>
+  <li>Larger say string processing function with command line library?</li>
+  <li>For some questions make it a “shortest possible answer” - shortest answers get the most points.</li>
+  <li>Testing focused assignment - coverage, quick check, etc.  Could be adding tests to a previous assignment.</li>
+  <li>Map or Hash assignment, also to deal with using functors and compare.</li>
+  <li>Async assignment.</li>
+  <li>State and/or exceptions monad-ish assignment- something needing e.g. state for which OCaml state can’t be used.</li>
+  <li>Refactoring assignment - give them a bad code version and ask them to make a good code one.
+    <ul>
+      <li>add more combinators etc stuff, better use of libraries, more modular code, more type-correct, etc</li>
+    </ul>
+  </li>
+  <li>Related to refactoring: take existing code and add invariants, both on code and on data structures.  Also maybe some of this representation invariant relating different data structure repns of same thing.</li>
+  <li>Type-aided extension: give them existing code working on a variant type, ask them to add more cases.</li>
+</ul>
+
+<h3 id="on-line-plans">On-line plans</h3>
 
 <ul>
   <li>give exam but ask them to sign a pledge.</li>
@@ -366,7 +394,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="books-etc-to-absorb">Books etc to absorb</h3>
 
 <ul>
-  <li>Real World OCaml topics:  need to read through this in more detail for fodder</li>
   <li>PLII - go through that again.</li>
   <li>Many Jane Street libraries.</li>
 </ul>
