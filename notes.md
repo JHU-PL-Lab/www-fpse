@@ -28,7 +28,7 @@
 * remove effects except printing perhaps
 
 
-### Advanced OCaml data structures
+### Advanced OCaml data structures/types
 This is mostly covered in RWOC chapters on variants and records.
 
 * Advanced patterns - `p when e`, `'a' .. 'z'`, `as x`, or `|` patterns in let, `{x;y}` is same as `{x=x;y=y}`...  Cornell 3.1.7
@@ -36,7 +36,9 @@ This is mostly covered in RWOC chapters on variants and records.
 * See RWOC chapters on variants and records for lots of new conventions and examples.
 * Extensible variants - OCaml manual 8.14
 * Pretty printing data with `ppx_deriving`
-* GADTS - see PLII lecture notes
+* GADTS - see PLII lecture notes.  
+* Type-driven development - very important topic to touch on somewhere; fits well with GADTS.
+
 * record field name punning - RWOC Ch5
 * `let r' = { r with x = ..; y = }`  for changing just a few fields - RWOC 5
 * Embedding record declarations in variants - like named args on variant fields:
@@ -120,6 +122,7 @@ Do libraries with modules as the `Base` modules need understanding of functors, 
 ### Idiomatic Functional Programming
 * A major theme of the course
 * design patterns (OO) = idioms (FP)
+* Contrasting OO with functional - state machine vs pipeline of data (data-oriented design). Look into doing this earlier in the class.
 * Refactoring also applies to FP.
     - pull out duplicate code as its own function parameter, or inline if gratuitous
     - Divide one function into two if it is doing two different things
@@ -135,6 +138,7 @@ Do libraries with modules as the `Base` modules need understanding of functors, 
 * Type-aided extension: add a type to a variant, then clean up on the type error messages.
     - Applies to many other contexts as well: make a change, chase type errors.  Type errors gone => code works.
 * Go through some imperative to functional code refactorings
+* The expression problem and functional vs OO trade-off.
 
 ### Specification
 
@@ -238,9 +242,14 @@ These are more concepts to cover one some assignment; can bundle so several hit 
 * Async assignment.
 * State and/or exceptions monad-ish assignment- something needing e.g. state for which OCaml state can't be used.
 * Refactoring assignment - give them a bad code version and ask them to make a good code one.
-   - add more combinators etc stuff, better use of libraries, more modular code, more type-correct, etc
+   - add more combinators etc stuff, better use of libraries, more modular code, more higher-order functions with less code duplication, more type-correct, etc
 * Related to refactoring: take existing code and add invariants, both on code and on data structures.  Also maybe some of this representation invariant relating different data structure repns of same thing.
 * Type-aided extension: give them existing code working on a variant type, ask them to add more cases.
+
+#### Additional ideas in 8-3-20 discussion 
+
+
+The expression problem and functional vs OO. (under idiomatic functional programming)
 
 ### On-line plans
 
@@ -254,3 +263,4 @@ These are more concepts to cover one some assignment; can bundle so several hit 
 
 * PLII - go through that again.
 * Many Jane Street libraries.
+

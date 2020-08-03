@@ -98,7 +98,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>remove effects except printing perhaps</li>
 </ul>
 
-<h3 id="advanced-ocaml-data-structures">Advanced OCaml data structures</h3>
+<h3 id="advanced-ocaml-data-structurestypes">Advanced OCaml data structures/types</h3>
 <p>This is mostly covered in RWOC chapters on variants and records.</p>
 
 <ul>
@@ -107,7 +107,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>See RWOC chapters on variants and records for lots of new conventions and examples.</li>
   <li>Extensible variants - OCaml manual 8.14</li>
   <li>Pretty printing data with <code class="highlighter-rouge">ppx_deriving</code></li>
-  <li>GADTS - see PLII lecture notes</li>
+  <li>GADTS - see PLII lecture notes.</li>
+  <li>
+    <p>Type-driven development - very important topic to touch on somewhere; fits well with GADTS.</p>
+  </li>
   <li>record field name punning - RWOC Ch5</li>
   <li><code class="highlighter-rouge">let r' = { r with x = ..; y = }</code>  for changing just a few fields - RWOC 5</li>
   <li>Embedding record declarations in variants - like named args on variant fields:<br />
@@ -215,6 +218,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>A major theme of the course</li>
   <li>design patterns (OO) = idioms (FP)</li>
+  <li>Contrasting OO with functional - state machine vs pipeline of data (data-oriented design). Look into doing this earlier in the class.</li>
   <li>Refactoring also applies to FP.
     <ul>
       <li>pull out duplicate code as its own function parameter, or inline if gratuitous</li>
@@ -236,6 +240,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>Go through some imperative to functional code refactorings</li>
+  <li>The expression problem and functional vs OO trade-off.</li>
 </ul>
 
 <h3 id="specification">Specification</h3>
@@ -376,12 +381,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>State and/or exceptions monad-ish assignment- something needing e.g. state for which OCaml state can’t be used.</li>
   <li>Refactoring assignment - give them a bad code version and ask them to make a good code one.
     <ul>
-      <li>add more combinators etc stuff, better use of libraries, more modular code, more type-correct, etc</li>
+      <li>add more combinators etc stuff, better use of libraries, more modular code, more higher-order functions with less code duplication, more type-correct, etc</li>
     </ul>
   </li>
   <li>Related to refactoring: take existing code and add invariants, both on code and on data structures.  Also maybe some of this representation invariant relating different data structure repns of same thing.</li>
   <li>Type-aided extension: give them existing code working on a variant type, ask them to add more cases.</li>
 </ul>
+
+<h4 id="additional-ideas-in-8-3-20-discussion">Additional ideas in 8-3-20 discussion</h4>
+
+<p>The expression problem and functional vs OO. (under idiomatic functional programming)</p>
 
 <h3 id="on-line-plans">On-line plans</h3>
 
@@ -399,6 +408,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>PLII - go through that again.</li>
   <li>Many Jane Street libraries.</li>
 </ul>
+
       
           </section>
         </div>
