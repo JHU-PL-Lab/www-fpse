@@ -242,7 +242,10 @@ These are more concepts to cover one some assignment; can bundle so several hit 
 * Async assignment.
 * State and/or exceptions monad-ish assignment- something needing e.g. state for which OCaml state can't be used.
 * Refactoring assignment - give them a bad code version and ask them to make a good code one.
-   - add more combinators etc stuff, better use of libraries, more modular code, more higher-order functions with less code duplication, more type-correct, etc
+   - turning recursion into combinators
+   - better use of libraries, 
+   - more modular code: more higher-order functions with less code duplication, 
+   - more type-correct, etc
 * Related to refactoring: take existing code and add invariants, both on code and on data structures.  Also maybe some of this representation invariant relating different data structure repns of same thing.
 * Type-aided extension: give them existing code working on a variant type, ask them to add more cases.
 
