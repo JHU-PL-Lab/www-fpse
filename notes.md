@@ -2,31 +2,7 @@
 
 ## Extended Syllabus Notes
 
-### Basic Functional Programming in OCaml
-
-* Basic OCaml
-    - expressions, functions, lists, pattern matching, higher-order functions, variants
-    - elementary `ocaml`, `utop`
-    - `Base` basics -- list libraries etc.
-* Modules
-    - structures, functors
-    - type abstraction, module signatures
-    - Simple whole programs -- see `code/set_example`.. might want to change to use `In_Channel` to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.
-
-##### New stuff not in PLI for Basic OCaml now.
-* @@ application
-* _ - all the places it works
-* pipelining
-* Pipelining for functional data construction - `List.([] |>  cons 1 |> cons 2 |> cons 3 |> cons 4)` (notice it makes it in reverse).  similar to message chaining of OOP.
-* `let rec sum = function | [] -> ..` (needs function not fun)
-* Minimal commands for dune, .ocamlinit, top loop.  Basically fixed recipes to start with.
-* let is a special application - needed for monads later
-* = on ints only by default with `Base`.  `String.(=)` etc explicitly for other base types.  Or cheat with `open Poly` (restores original OCaml polymorphic `=` which is dangerous)
-* Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.
-* Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.  see RWOC prefix and infix operators.
-* `begin`/`end` to replace parens
-* remove effects except printing perhaps
-
+### Basic OCaml - moved to lecture outline
 
 ### Advanced OCaml data structures/types
 This is mostly covered in RWOC chapters on variants and records.
@@ -228,29 +204,9 @@ Smaller things
 
 * Opam jam - we all get together to install it.
 
-
-### Assignments ideas
-
-These are more concepts to cover one some assignment; can bundle so several hit at once.
-
-* Initial top loop short functions assignment somewhat lioke PL I, but allow Base libraries to be used from the beginning
-* JSON parsing on next assignment?
-* Larger say string processing function with command line library?
-* For some questions make it a "shortest possible answer" - shortest answers get the most points.
-* Testing focused assignment - coverage, quick check, etc.  Could be adding tests to a previous assignment.
-* Map or Hash assignment, also to deal with using functors and compare.
-* Async assignment.
-* State and/or exceptions monad-ish assignment- something needing e.g. state for which OCaml state can't be used.
-* Refactoring assignment - give them a bad code version and ask them to make a good code one.
-   - turning recursion into combinators
-   - better use of libraries, 
-   - more modular code: more higher-order functions with less code duplication, 
-   - more type-correct, etc
-* Related to refactoring: take existing code and add invariants, both on code and on data structures.  Also maybe some of this representation invariant relating different data structure repns of same thing.
-* Type-aided extension: give them existing code working on a variant type, ask them to add more cases.
+### Assignments ideas: see pl-grading repo for all assignment planning 
 
 #### Additional ideas in 8-3-20 discussion 
-
 
 The expression problem and functional vs OO. (under idiomatic functional programming)
 

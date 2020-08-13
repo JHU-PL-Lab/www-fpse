@@ -58,6 +58,30 @@ Thesis:
  
  
 ## Introduction to OCaml
+High-level outline of how it needs to evolve
+* utop and `Base` from the top.
 
- 
- 
+#### Basic Functional Programming in OCaml
+
+* Basic OCaml
+    - expressions, functions, lists, pattern matching, higher-order functions, variants
+    - elementary `ocaml`, `utop`
+    - `Base` basics -- list libraries etc.  Need to hit on = in `Base`.
+* Modules
+    - structures, functors
+    - type abstraction, module signatures
+    - Simple whole programs -- see `code/set_example`.. might want to change to use `In_Channel` to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.
+
+##### New stuff not in PLI for Basic OCaml now.
+* @@ application
+* _ - all the places it works
+* pipelining
+* Pipelining for functional data construction - `List.([] |>  cons 1 |> cons 2 |> cons 3 |> cons 4)` (notice it makes it in reverse).  similar to message chaining of OOP.
+* `let rec sum = function | [] -> ..` (needs function not fun)
+* Minimal commands for dune, .ocamlinit, top loop.  Basically fixed recipes to start with.
+* let is a special application - needed for monads later
+* = on ints only by default with `Base`.  `String.(=)` etc explicitly for other base types.  Or cheat with `open Poly` (restores original OCaml polymorphic `=` which is dangerous)
+* Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.
+* Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.  see RWOC prefix and infix operators.
+* `begin`/`end` to replace parens
+* remove effects except printing perhaps

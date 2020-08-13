@@ -63,40 +63,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     
 <h2 id="extended-syllabus-notes">Extended Syllabus Notes</h2>
 
-<h3 id="basic-functional-programming-in-ocaml">Basic Functional Programming in OCaml</h3>
-
-<ul>
-  <li>Basic OCaml
-    <ul>
-      <li>expressions, functions, lists, pattern matching, higher-order functions, variants</li>
-      <li>elementary <code class="highlighter-rouge">ocaml</code>, <code class="highlighter-rouge">utop</code></li>
-      <li><code class="highlighter-rouge">Base</code> basics – list libraries etc.</li>
-    </ul>
-  </li>
-  <li>Modules
-    <ul>
-      <li>structures, functors</li>
-      <li>type abstraction, module signatures</li>
-      <li>Simple whole programs – see <code class="highlighter-rouge">code/set_example</code>.. might want to change to use <code class="highlighter-rouge">In_Channel</code> to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.</li>
-    </ul>
-  </li>
-</ul>
-
-<h5 id="new-stuff-not-in-pli-for-basic-ocaml-now">New stuff not in PLI for Basic OCaml now.</h5>
-<ul>
-  <li>@@ application</li>
-  <li>_ - all the places it works</li>
-  <li>pipelining</li>
-  <li>Pipelining for functional data construction - <code class="highlighter-rouge">List.([] |&gt;  cons 1 |&gt; cons 2 |&gt; cons 3 |&gt; cons 4)</code> (notice it makes it in reverse).  similar to message chaining of OOP.</li>
-  <li><code class="highlighter-rouge">let rec sum = function | [] -&gt; ..</code> (needs function not fun)</li>
-  <li>Minimal commands for dune, .ocamlinit, top loop.  Basically fixed recipes to start with.</li>
-  <li>let is a special application - needed for monads later</li>
-  <li>= on ints only by default with <code class="highlighter-rouge">Base</code>.  <code class="highlighter-rouge">String.(=)</code> etc explicitly for other base types.  Or cheat with <code class="highlighter-rouge">open Poly</code> (restores original OCaml polymorphic <code class="highlighter-rouge">=</code> which is dangerous)</li>
-  <li>Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.</li>
-  <li>Operators as functions and making your own infix syntax - <code class="highlighter-rouge">let (^^) x y = x * y</code> kind of thing.  see RWOC prefix and infix operators.</li>
-  <li><code class="highlighter-rouge">begin</code>/<code class="highlighter-rouge">end</code> to replace parens</li>
-  <li>remove effects except printing perhaps</li>
-</ul>
+<h3 id="basic-ocaml---moved-to-lecture-outline">Basic OCaml - moved to lecture outline</h3>
 
 <h3 id="advanced-ocaml-data-structurestypes">Advanced OCaml data structures/types</h3>
 <p>This is mostly covered in RWOC chapters on variants and records.</p>
@@ -366,30 +333,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Opam jam - we all get together to install it.</li>
 </ul>
 
-<h3 id="assignments-ideas">Assignments ideas</h3>
-
-<p>These are more concepts to cover one some assignment; can bundle so several hit at once.</p>
-
-<ul>
-  <li>Initial top loop short functions assignment somewhat lioke PL I, but allow Base libraries to be used from the beginning</li>
-  <li>JSON parsing on next assignment?</li>
-  <li>Larger say string processing function with command line library?</li>
-  <li>For some questions make it a “shortest possible answer” - shortest answers get the most points.</li>
-  <li>Testing focused assignment - coverage, quick check, etc.  Could be adding tests to a previous assignment.</li>
-  <li>Map or Hash assignment, also to deal with using functors and compare.</li>
-  <li>Async assignment.</li>
-  <li>State and/or exceptions monad-ish assignment- something needing e.g. state for which OCaml state can’t be used.</li>
-  <li>Refactoring assignment - give them a bad code version and ask them to make a good code one.
-    <ul>
-      <li>turning recursion into combinators</li>
-      <li>better use of libraries,</li>
-      <li>more modular code: more higher-order functions with less code duplication,</li>
-      <li>more type-correct, etc</li>
-    </ul>
-  </li>
-  <li>Related to refactoring: take existing code and add invariants, both on code and on data structures.  Also maybe some of this representation invariant relating different data structure repns of same thing.</li>
-  <li>Type-aided extension: give them existing code working on a variant type, ask them to add more cases.</li>
-</ul>
+<h3 id="assignments-ideas-see-pl-grading-repo-for-all-assignment-planning">Assignments ideas: see pl-grading repo for all assignment planning</h3>
 
 <h4 id="additional-ideas-in-8-3-20-discussion">Additional ideas in 8-3-20 discussion</h4>
 
