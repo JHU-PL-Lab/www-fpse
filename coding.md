@@ -33,21 +33,29 @@ Lastly, in order for the OCaml top loop to start up with some of these libraries
 #use "topfind";;
 #thread;;
 #require "core.top";;
+open Core;;
 ```
 
-### The OCaml Manual
+### OCaml Documentation
 
-The main manual is [here](http://caml.inria.fr/pub/docs/manual-ocaml/).
-				
-* We will cover most of Part I Chapters 1 and 2.
-* Chapter 7 is the language reference where you can look up details if needed. 
+#### The OCaml Manual
+
+The OCaml manual is [here](http://caml.inria.fr/pub/docs/manual-ocaml/).
+* We will cover most of Part I Chapters 1 and 2 from the manual.
+* Manual Chapter 7 is the language reference where you can look up details if needed. 
 * We will be covering a few topics in the [language extensions](http://caml.inria.fr/pub/docs/manual-ocaml/extn.html) chapter:
   * [locally abstract types](http://caml.inria.fr/pub/docs/manual-ocaml/locallyabstract.html),
   * [First-class modules](http://caml.inria.fr/pub/docs/manual-ocaml/firstclassmodules.html), and
   * [GADT's](http://caml.inria.fr/pub/docs/manual-ocaml/gadts.html).
   
-* Part III documents the tools.  We will use some of the standard tools but third parties have improved on many of them.  See below in the Tools list where we give "our" list of tools.
-* Part IV describes the standard libraries; we will primarily use Jane Street's `Core` which replaces these with more modern versions.  [Core documentation](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core/index.html) is not particularly readable currently, you will need to look into `Core_kernel` which it extends to find most of the libraries.  For example here is the [`List`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/List/index.html) module documentation.
+* Part III of the manual documents the tools.  We will use some of the standard tools but third parties have improved on many of them.  See below in the Tools list where we give "our" list of tools.
+* Part IV describes the standard libraries; we will primarily use Jane Street's `Core` which replaces these with more modern versions so we will generally be ignoring this. 
+
+#### Core and other libraries
+
+* [Core documentation](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core/index.html) is not particularly readable currently, you will need to look into `Core_kernel` which it extends to find most of the libraries.  For example here is the [`List`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/List/index.html) module documentation.
+* The [Real World OCaml](https://dev.realworldocaml.org/index.html) book gives tutorial introductions to many of the libraries and extensions we will be using.
+* Individual tools (see list just below) have their own documentation pages off the links provided below.
 
 ### The FPSE OCaml Toolbox
 
@@ -71,16 +79,15 @@ Here are all the tools we will be using.  You are required to have a build for w
 
 You should use one of Atom or VSCode since they have OCaml-specific features such as syntax highliting, auto-indent, and lint analysis to make the coding process much smoother. If you are using a VM under Windows, you should aim to run one of these editors *within* the VM to take advantage of syntax highlighting and the like for OCaml.
 
-**[Visual Studio Code](https://code.visualstudio.com)**
-:   VSCode has very good OCaml support and is the "officially recommended editor". Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml and this extension will show up; install it. You can also easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
+**[Visual Studio Code](https://code.visualstudio.com)**: 
+VSCode has very good OCaml support and is the "officially recommended editor". Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml and this extension will show up; install it. You can also easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
 
-[**Atom**](https://atom.io)
-
-:   Atom is also very good with OCaml.  Install Atom, read a [tutorial](https://flight-manual.atom.io) if you are not so familiar with it, and then install the `atom` and `apm` shell commands (see the **Atom..Install Shell Commands** menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command `Window: Install Shell Commands`). With those commands installed, type into a terminal
+[**Atom**](https://atom.io): 
+Atom is very good with OCaml, but is unfortunately being phased out after Microsoft bought Github.  So, it is probably a good time to switch from Atom to VSCode if you have not already.  To use Atom with OCaml install the `atom` and `apm` shell commands (see the **Atom..Install Shell Commands** menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command `Window: Install Shell Commands`). With those commands installed, type into a terminal
 
         apm install language-ocaml linter ocaml-indent ocaml-merlin
 
-    to install the relevant OCaml packages. Here are some handy Atom keymaps for common operations these extensions support -- add this to your `.atom/keymap.cson` file:
+to install the relevant OCaml packages. Here are some handy Atom keymaps for common operations these extensions support -- add this to your `.atom/keymap.cson` file:
 
         'atom-text-editor[data-grammar="source ocaml"]':
           'ctrl-shift-t': 'ocaml-merlin:show-type'
@@ -88,13 +95,11 @@ You should use one of Atom or VSCode since they have OCaml-specific features suc
           'ctrl-shift-l': 'linter:lint'
           'ctrl-alt-f': 'ocaml-indent:file'
 
-    `linter:lint` will refresh the lint data based on the latest compiled version of your code. In addition, control-space should auto-complete.
+`linter:lint` will refresh the lint data based on the latest compiled version of your code. In addition, control-space should auto-complete.
 
-**vim**
-:   If you use `vim`, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell command `opam user-setup install` after doing the above  default `opam` install to set up syntax highlighting, tab completion, displaying types, etc. See [here](https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt) for some dense documentation.
+**vim**: If you use `vim`, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell command `opam user-setup install` after doing the above  default `opam` install to set up syntax highlighting, tab completion, displaying types, etc. See [here](https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt) for some dense documentation.
 
-**emacs**
-:   See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.
+**emacs**: See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.
 
 ### Real World OCaml
 
