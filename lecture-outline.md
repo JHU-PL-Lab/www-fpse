@@ -1,3 +1,4 @@
+
 # Outline of Lecture Units
 
 ## Course Outline
@@ -70,7 +71,7 @@ High-level outline of how PLI version needs to evolve
     - expressions, let, functions, lists, pattern matching, higher-order functions
     - Lists lists lists, folds, pipes etc.
 
-##### New stuff not in PLI for Basic OCaml now.
+#### New stuff not in PLI for Basic OCaml now.
 * @@ application
 * _ - all the places it works
 * pipelining
@@ -84,7 +85,7 @@ High-level outline of how PLI version needs to evolve
 * `begin`/`end` to replace parens
 * effects done later, not in earlier HWs anyway.
 
-### Data structures (variants and records)
+## Data structures (variants and records)
 This is mostly covered in RWOC chapters on variants and records.
 
 * Basic records and variants stuff obviously
@@ -96,39 +97,39 @@ This is mostly covered in RWOC chapters on variants and records.
 * Embedding record declarations in variants - like named args on variant fields:
 `type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly`
 
-### Types
+## Types
 * Type inference
 * Extensible variants - OCaml manual 8.14
 * Equality on and Pretty printing declated data types with `ppx_deriving`
 * Type-driven development - very important topic to touch on somewhere; fits well with GADTS.
 
-### Modules
+## Modules
 - elemts of structures, functors; hit on more advanced stuff later
 - type abstraction, module signatures
 - Simple whole programs, basic dune building and testing -- see `code/set_example` .. might want to change to use `In_Channel` to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.
 
 
 
-### Side effects
+## Side effects
 
-#### Mutation
+### Mutation
 * Standard mutation topics: ref, mutable records, arrays.  Printing earlier - ?
 * sequencing; `ignore(3+4); print_string "hi"` to avoid warnings.  Cornell 8.3
 * `==` vs `=` - Cornell 8.6
 * Mutable stack eg - Cornell 8.8; get a Base alternative example, e.g. `Hashtbl` (see libraries)
 * Weakly polymorphic types `‘_a` - Cornell 8.8 (save details on this for advanced types below?)
 
-#### Exceptions
+### Exceptions
 See RWOC Error/Exceptions chapter.
 * lack of exception effects in types is old-fashioned.  Using option types or Ok/Error is often better.
 * `match f x with exception _ -> blah | ...` shorthand syntax
 
-#### I/O and Stdio
+### I/O and Stdio
 * Basic printing
 * `Stdio`
     - Channels, etc
 
-#### Libraries
+### Libraries
 Do libraries with modules as the `Core` modules need understanding of functors, abstraction, etc
 
 * [`Core`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/index.html)
@@ -139,9 +140,9 @@ Do libraries with modules as the `Core` modules need understanding of functors, 
 * Command line parsing - RWOC ch14
 * JSON data - RWOC ch15
 
-### Build/Package/Test in Ocaml
+## Build/Package/Test in Ocaml
 
-#### Dune
+### Dune
 * Tree nature of dune files
 * Defining libraries with `library`
 * Defining executables with `executable`
@@ -153,13 +154,13 @@ Do libraries with modules as the `Core` modules need understanding of functors, 
 * Command line: `dune build`, `dune runtest`, `dune exec`
 * Backtracing on error in dune: use `Base`, backtraces turned on by default then.
 
-#### Basic Documentation and Testing 
+### Basic Documentation and Testing 
 * Principles of testing
     - black box and glass box testing.  Cornell Ch7
 * `ocamldoc`comments, Cornell 2.3.7
 * `OUnit` unit testing library Cornell 3.1.3
 
-### Idiomatic Functional Programming
+## Idiomatic Functional Programming
 * A major theme of the course
 * design patterns (OO) = idioms (FP)
 * Contrasting OO with functional - state machine vs pipeline of data (data-oriented design). Look into doing this earlier in the class.
@@ -181,7 +182,7 @@ Do libraries with modules as the `Core` modules need understanding of functors, 
 * The expression problem and functional vs OO trade-off.
 
 
-### Specification
+## Specification
 
 * Specifying properties of programs
     - Type-directed programming: start out by writing types & module signatures as a skeleton
@@ -196,12 +197,12 @@ Do libraries with modules as the `Core` modules need understanding of functors, 
     - recursive function invariants
     - representation invariants
 
-### Orphan Topics
+## Orphan Topics
 * Streams and laziness - Cornell 12.1
 * Memoization - RWOC Imperative chapter, Cornell 12.4
  
 
-### Advanced modules
+## Advanced modules
 (May need to do some of this earlier)
 
 * `include` - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it
@@ -214,7 +215,7 @@ Do libraries with modules as the `Core` modules need understanding of functors, 
 * `comparator_witness` and comparison in Jane Street modules
 * Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.
 
-### Advanced Types
+## Advanced Types
 
 * Weak polymorphism
 * Covariant types `+'a t = ...` - declares contents are not mutable so can be fully polymorphic not weakly.  RWOC weak polymorphism section.
@@ -222,7 +223,7 @@ Do libraries with modules as the `Core` modules need understanding of functors, 
 * New Jane street extensions: [higher-kinded types](https://github.com/janestreet/higher_kinded/) and [accessors](https://github.com/janestreet/accessor) which are like Haskell lenses.
 
 
-### Advanced Testing
+## Advanced Testing
 See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book/testing)
 
 * Along with `OUnit` may also want to do `ppx_inline_tests` or whatever it is called.  RWOC using it.. Only problem is it is not working with 4.10 and utop.
@@ -230,15 +231,15 @@ See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book
 * Automated test generation aka randomized testing aka fuzz testing, `QCheck`.  Cornell 7.7-7.9
 
  
-### Monads and monad-likes
+## Monads and monad-likes
 
-#### Monad Warm-up
+### Monad Warm-up
 * `Option.bind` in base, also let%bind for that.. RWOC Error Handling chapter
 * State passing and exception encoding - PLII notes
 * CPS
 * Async library and promises - Cornell 12.2 or RWOC 14.  Leaning to Async.
 
-#### Monads proper.
+### Monads proper.
 
 * Monads.  PLII notes for all the monad topics.
 * Monad laws.
@@ -246,20 +247,20 @@ See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book
 * Monad programming.  Need to decide what libraries/bindings to use.  Jane Street has `Base.Monad` and `ppx_let`, or use `let*` now. unclear.  I don't think Jane street library has transformers?
 * Comprehension.. need to research this.  See `map` in `Base.Monad` stuff.
 
-### Metaprogramming: ppx extensions
+## Metaprogramming: ppx extensions
 * See RWOC ch23 (not written yet unfortunately).
 * Tutorial at http://rgrinberg.com/posts/extension-points-3-years-later/
 * [`ppx_jane`](https://github.com/janestreet/ppx_jane) (comparison, hash, conversion between S-Expr), 
 * [`ppx_let`](https://ocaml.janestreet.com/ocaml-core/latest/doc/ppx_let/index.html).
 
-### Under the hood of functional language runtimes
+## Under the hood of functional language runtimes
 * Substitution notion of running functions and `let` - informal PLI stuff.
 * Tail recursion Cornell 3.1.1.5.  
 * Garbage collection
 * Efficiency of functional vs mutable data structures.  Some in Ch9 Cornell.
 * RWOC has a chapter on this, also on GC, maybe do a peek at that (not much though)
 
-### FP in other languages
+## FP in other languages
 
 -   JavaScript, [React hooks](https://reactjs.org/docs/hooks-intro.html), and [ReasonReact](https://reasonml.github.io/reason-react/)
 -   Python
@@ -267,7 +268,7 @@ See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book
 - Elm
   
 
-#### Top level directives (not sure where to put this, just my own reference for now)
+## Top level directives (not sure where to put this, just my own reference for now)
 * `#directory adir` - adds `adir` to the list of directories to search for files.
 * `#trace afun` - calls and returns to `afun` will now be dumped to top level - a simple debugging tool.
 * `#use "afile.ml"` - loads code file as if it was copied and pasted into the top loop.

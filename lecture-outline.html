@@ -60,7 +60,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
-    <h1 id="outline-of-lecture-units">Outline of Lecture Units</h1>
+    
+<h1 id="outline-of-lecture-units">Outline of Lecture Units</h1>
 
 <h2 id="course-outline">Course Outline</h2>
 
@@ -152,7 +153,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h5 id="new-stuff-not-in-pli-for-basic-ocaml-now">New stuff not in PLI for Basic OCaml now.</h5>
+<h4 id="new-stuff-not-in-pli-for-basic-ocaml-now">New stuff not in PLI for Basic OCaml now.</h4>
 <ul>
   <li>@@ application</li>
   <li>_ - all the places it works</li>
@@ -168,7 +169,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>effects done later, not in earlier HWs anyway.</li>
 </ul>
 
-<h3 id="data-structures-variants-and-records">Data structures (variants and records)</h3>
+<h2 id="data-structures-variants-and-records">Data structures (variants and records)</h2>
 <p>This is mostly covered in RWOC chapters on variants and records.</p>
 
 <ul>
@@ -182,7 +183,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <code class="highlighter-rouge">type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly</code></li>
 </ul>
 
-<h3 id="types">Types</h3>
+<h2 id="types">Types</h2>
 <ul>
   <li>Type inference</li>
   <li>Extensible variants - OCaml manual 8.14</li>
@@ -190,16 +191,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Type-driven development - very important topic to touch on somewhere; fits well with GADTS.</li>
 </ul>
 
-<h3 id="modules">Modules</h3>
+<h2 id="modules">Modules</h2>
 <ul>
   <li>elemts of structures, functors; hit on more advanced stuff later</li>
   <li>type abstraction, module signatures</li>
   <li>Simple whole programs, basic dune building and testing – see <code class="highlighter-rouge">code/set_example</code> .. might want to change to use <code class="highlighter-rouge">In_Channel</code> to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.</li>
 </ul>
 
-<h3 id="side-effects">Side effects</h3>
+<h2 id="side-effects">Side effects</h2>
 
-<h4 id="mutation">Mutation</h4>
+<h3 id="mutation">Mutation</h3>
 <ul>
   <li>Standard mutation topics: ref, mutable records, arrays.  Printing earlier - ?</li>
   <li>sequencing; <code class="highlighter-rouge">ignore(3+4); print_string "hi"</code> to avoid warnings.  Cornell 8.3</li>
@@ -208,14 +209,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Weakly polymorphic types <code class="highlighter-rouge">‘_a</code> - Cornell 8.8 (save details on this for advanced types below?)</li>
 </ul>
 
-<h4 id="exceptions">Exceptions</h4>
+<h3 id="exceptions">Exceptions</h3>
 <p>See RWOC Error/Exceptions chapter.</p>
 <ul>
   <li>lack of exception effects in types is old-fashioned.  Using option types or Ok/Error is often better.</li>
   <li><code class="highlighter-rouge">match f x with exception _ -&gt; blah | ...</code> shorthand syntax</li>
 </ul>
 
-<h4 id="io-and-stdio">I/O and Stdio</h4>
+<h3 id="io-and-stdio">I/O and Stdio</h3>
 <ul>
   <li>Basic printing</li>
   <li><code class="highlighter-rouge">Stdio</code>
@@ -225,7 +226,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h4 id="libraries">Libraries</h4>
+<h3 id="libraries">Libraries</h3>
 <p>Do libraries with modules as the <code class="highlighter-rouge">Core</code> modules need understanding of functors, abstraction, etc</p>
 
 <ul>
@@ -240,9 +241,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>JSON data - RWOC ch15</li>
 </ul>
 
-<h3 id="buildpackagetest-in-ocaml">Build/Package/Test in Ocaml</h3>
+<h2 id="buildpackagetest-in-ocaml">Build/Package/Test in Ocaml</h2>
 
-<h4 id="dune">Dune</h4>
+<h3 id="dune">Dune</h3>
 <ul>
   <li>Tree nature of dune files</li>
   <li>Defining libraries with <code class="highlighter-rouge">library</code></li>
@@ -256,7 +257,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Backtracing on error in dune: use <code class="highlighter-rouge">Base</code>, backtraces turned on by default then.</li>
 </ul>
 
-<h4 id="basic-documentation-and-testing">Basic Documentation and Testing</h4>
+<h3 id="basic-documentation-and-testing">Basic Documentation and Testing</h3>
 <ul>
   <li>Principles of testing
     <ul>
@@ -267,7 +268,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><code class="highlighter-rouge">OUnit</code> unit testing library Cornell 3.1.3</li>
 </ul>
 
-<h3 id="idiomatic-functional-programming">Idiomatic Functional Programming</h3>
+<h2 id="idiomatic-functional-programming">Idiomatic Functional Programming</h2>
 <ul>
   <li>A major theme of the course</li>
   <li>design patterns (OO) = idioms (FP)</li>
@@ -296,7 +297,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The expression problem and functional vs OO trade-off.</li>
 </ul>
 
-<h3 id="specification">Specification</h3>
+<h2 id="specification">Specification</h2>
 
 <ul>
   <li>Specifying properties of programs
@@ -321,13 +322,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h3 id="orphan-topics">Orphan Topics</h3>
+<h2 id="orphan-topics">Orphan Topics</h2>
 <ul>
   <li>Streams and laziness - Cornell 12.1</li>
   <li>Memoization - RWOC Imperative chapter, Cornell 12.4</li>
 </ul>
 
-<h3 id="advanced-modules">Advanced modules</h3>
+<h2 id="advanced-modules">Advanced modules</h2>
 <p>(May need to do some of this earlier)</p>
 
 <ul>
@@ -342,7 +343,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.</li>
 </ul>
 
-<h3 id="advanced-types">Advanced Types</h3>
+<h2 id="advanced-types">Advanced Types</h2>
 
 <ul>
   <li>Weak polymorphism</li>
@@ -351,7 +352,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>New Jane street extensions: <a href="https://github.com/janestreet/higher_kinded/">higher-kinded types</a> and <a href="https://github.com/janestreet/accessor">accessors</a> which are like Haskell lenses.</li>
 </ul>
 
-<h3 id="advanced-testing">Advanced Testing</h3>
+<h2 id="advanced-testing">Advanced Testing</h2>
 <p>See <a href="https://github.com/realworldocaml/book/tree/master/book/testing">draft RWOC chapter</a></p>
 
 <ul>
@@ -360,9 +361,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Automated test generation aka randomized testing aka fuzz testing, <code class="highlighter-rouge">QCheck</code>.  Cornell 7.7-7.9</li>
 </ul>
 
-<h3 id="monads-and-monad-likes">Monads and monad-likes</h3>
+<h2 id="monads-and-monad-likes">Monads and monad-likes</h2>
 
-<h4 id="monad-warm-up">Monad Warm-up</h4>
+<h3 id="monad-warm-up">Monad Warm-up</h3>
 <ul>
   <li><code class="highlighter-rouge">Option.bind</code> in base, also let%bind for that.. RWOC Error Handling chapter</li>
   <li>State passing and exception encoding - PLII notes</li>
@@ -370,7 +371,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Async library and promises - Cornell 12.2 or RWOC 14.  Leaning to Async.</li>
 </ul>
 
-<h4 id="monads-proper">Monads proper.</h4>
+<h3 id="monads-proper">Monads proper.</h3>
 
 <ul>
   <li>Monads.  PLII notes for all the monad topics.</li>
@@ -380,7 +381,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Comprehension.. need to research this.  See <code class="highlighter-rouge">map</code> in <code class="highlighter-rouge">Base.Monad</code> stuff.</li>
 </ul>
 
-<h3 id="metaprogramming-ppx-extensions">Metaprogramming: ppx extensions</h3>
+<h2 id="metaprogramming-ppx-extensions">Metaprogramming: ppx extensions</h2>
 <ul>
   <li>See RWOC ch23 (not written yet unfortunately).</li>
   <li>Tutorial at http://rgrinberg.com/posts/extension-points-3-years-later/</li>
@@ -388,7 +389,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/ppx_let/index.html"><code class="highlighter-rouge">ppx_let</code></a>.</li>
 </ul>
 
-<h3 id="under-the-hood-of-functional-language-runtimes">Under the hood of functional language runtimes</h3>
+<h2 id="under-the-hood-of-functional-language-runtimes">Under the hood of functional language runtimes</h2>
 <ul>
   <li>Substitution notion of running functions and <code class="highlighter-rouge">let</code> - informal PLI stuff.</li>
   <li>Tail recursion Cornell 3.1.1.5.</li>
@@ -397,7 +398,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>RWOC has a chapter on this, also on GC, maybe do a peek at that (not much though)</li>
 </ul>
 
-<h3 id="fp-in-other-languages">FP in other languages</h3>
+<h2 id="fp-in-other-languages">FP in other languages</h2>
 
 <ul>
   <li>JavaScript, <a href="https://reactjs.org/docs/hooks-intro.html">React hooks</a>, and <a href="https://reasonml.github.io/reason-react/">ReasonReact</a></li>
@@ -406,7 +407,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Elm</li>
 </ul>
 
-<h4 id="top-level-directives-not-sure-where-to-put-this-just-my-own-reference-for-now">Top level directives (not sure where to put this, just my own reference for now)</h4>
+<h2 id="top-level-directives-not-sure-where-to-put-this-just-my-own-reference-for-now">Top level directives (not sure where to put this, just my own reference for now)</h2>
 <ul>
   <li><code class="highlighter-rouge">#directory adir</code> - adds <code class="highlighter-rouge">adir</code> to the list of directories to search for files.</li>
   <li><code class="highlighter-rouge">#trace afun</code> - calls and returns to <code class="highlighter-rouge">afun</code> will now be dumped to top level - a simple debugging tool.</li>
