@@ -136,10 +136,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h2 id="introduction-to-ocaml">Introduction to OCaml</h2>
 <p>High-level outline of how PLI version needs to evolve</p>
 <ul>
-  <li>utop and <code class="highlighter-rouge">Core</code> from the get-go: = on ints only but pop into <code class="highlighter-rouge">Poly</code> when convenient.</li>
+  <li>utop and <code class="highlighter-rouge">Core</code>/<code class="highlighter-rouge">Base</code> from the get-go: = on ints only but pop into <code class="highlighter-rouge">Poly</code> when convenient.</li>
   <li>Lots of List.blah early on, including folds, pipes, etc.</li>
   <li>add in all of the syntax stuff below that I skipped in PLI</li>
   <li>Many more real examples of programs, get further away from the toy stuff.</li>
+  <li>Type-directed programming basics early</li>
+  <li>Need to decide on modality, either feeding into top loop or dune.  Problem is VSCode needs a dune build to get merlin file set up properly, it is hard to have files loaded that give errors.</li>
 </ul>
 
 <h4 id="basic-functional-programming-in-ocaml">Basic Functional Programming in OCaml</h4>
@@ -153,7 +155,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h4 id="new-stuff-not-in-pli-for-basic-ocaml-now">New stuff not in PLI for Basic OCaml now.</h4>
+<h4 id="foundational-libraries-i">Foundational Libraries I</h4>
+<ul>
+  <li>Lists in Base - RWOC 1 a bit (tour) and RWOC 3.  Lots of important functions available.</li>
+  <li>Fn, Option, Result, etc etc etc Base versions</li>
+</ul>
+
+<h4 id="notes-new-stuff-not-in-pli-for-basic-ocaml-now">NOTES: New stuff not in PLI for Basic OCaml now.</h4>
 <ul>
   <li>@@ application</li>
   <li>_ - all the places it works</li>
@@ -174,10 +182,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Basic records and variants stuff obviously</li>
+  <li><code class="highlighter-rouge">result</code> type - <code class="highlighter-rouge">Ok</code> or <code class="highlighter-rouge">Error</code>.</li>
   <li>Advanced patterns - <code class="highlighter-rouge">p when e</code>, <code class="highlighter-rouge">'a' .. 'z'</code>, <code class="highlighter-rouge">as x</code>, or <code class="highlighter-rouge">|</code> patterns in let, <code class="highlighter-rouge">{x;y}</code> is same as <code class="highlighter-rouge">{x=x;y=y}</code>…  Cornell 3.1.7</li>
   <li>Polymorphic variants aka anonymous variants - Cornell 3.2.4.4, RWOC variants chapter</li>
   <li>See RWOC chapters on variants and records for lots of new conventions and examples.</li>
-  <li>record field name punning - RWOC Ch5</li>
+  <li>record field name punning: <code class="highlighter-rouge">let r = {x;y}</code> abbreviation - RWOC Ch5</li>
   <li><code class="highlighter-rouge">let r' = { r with x = ..; y = }</code>  for changing just a few fields - RWOC 5</li>
   <li>Embedding record declarations in variants - like named args on variant fields:<br />
 <code class="highlighter-rouge">type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly</code></li>
@@ -193,9 +202,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h2 id="modules">Modules</h2>
 <ul>
-  <li>elemts of structures, functors; hit on more advanced stuff later</li>
+  <li>Structures and functors; look at the <code class="highlighter-rouge">Core</code> libraries to see what we need to cover, need to at least be users of things like <code class="highlighter-rouge">include</code>, nested modules, first-class modules, etc (whatever Core uses in particular).  Idea is to start out as writers of basic modules and users of the fancier stuff, and learn how to write the fancier stuff later.</li>
   <li>type abstraction, module signatures</li>
+</ul>
+
+<h2 id="basic-development">Basic Development</h2>
+<p>(Could do this a bit earlier, it is making modules but could skip on that for a bit)</p>
+
+<ul>
   <li>Simple whole programs, basic dune building and testing – see <code class="highlighter-rouge">code/set_example</code> .. might want to change to use <code class="highlighter-rouge">In_Channel</code> to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.</li>
+  <li>Merlin super basics (can pretty much ignore as dune should build a correct <code class="highlighter-rouge">.merlin</code> file)</li>
 </ul>
 
 <h2 id="side-effects">Side effects</h2>
@@ -226,13 +242,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h3 id="libraries">Libraries</h3>
+<h2 id="libraries">Libraries</h2>
 <p>Do libraries with modules as the <code class="highlighter-rouge">Core</code> modules need understanding of functors, abstraction, etc</p>
 
 <ul>
   <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/index.html"><code class="highlighter-rouge">Core</code></a>
     <ul>
-      <li>Lists in Base - RWOC 1 a bit (tour) and RWOC 3.  Worth covering, lots of important functions available.</li>
       <li><code class="highlighter-rouge">Map</code> (and <code class="highlighter-rouge">List.Assoc</code> a bit).  RWOC 13.</li>
       <li><code class="highlighter-rouge">Hashtbl</code>, good example of mutable code.  RWOC 13</li>
     </ul>
@@ -410,6 +425,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h2 id="top-level-directives-not-sure-where-to-put-this-just-my-own-reference-for-now">Top level directives (not sure where to put this, just my own reference for now)</h2>
 <ul>
   <li><code class="highlighter-rouge">#directory adir</code> - adds <code class="highlighter-rouge">adir</code> to the list of directories to search for files.</li>
+  <li><code class="highlighter-rouge">#pwd</code> - shows current working directory.</li>
   <li><code class="highlighter-rouge">#trace afun</code> - calls and returns to <code class="highlighter-rouge">afun</code> will now be dumped to top level - a simple debugging tool.</li>
   <li><code class="highlighter-rouge">#use "afile.ml"</code> - loads code file as if it was copied and pasted into the top loop.</li>
   <li><code class="highlighter-rouge">#mod_use</code> - like <code class="highlighter-rouge">#use</code> but loads the file like it was a module (name of file as a module name)</li>

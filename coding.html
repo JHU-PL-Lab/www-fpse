@@ -73,13 +73,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>For Mac users, the above requires Homebrew (a package manager for Linux-ish libraries) so here is a more detailed suggestion of some copy/paste that should work.
     <ul>
       <li>Mac without homebrew installed:<code class="highlighter-rouge">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"</code> will install Homebrew</li>
-      <li>Mac with Homebrew (make sure you do a <code class="highlighter-rouge">brew update</code> if you already had Homebrew): <code class="highlighter-rouge">brew install gpatch; brew install opam</code></li>
+      <li>Mac with Homebrew (make sure you first do a <code class="highlighter-rouge">brew update</code> before this): <code class="highlighter-rouge">brew install gpatch; brew install opam</code></li>
     </ul>
   </li>
   <li>You will then need to run some terminal commands to set up the basics:
     <ol>
       <li><code class="highlighter-rouge">opam init</code> to initialize OPAM;</li>
-      <li><code class="highlighter-rouge">opam switch create 4.10.0</code> (this will take awhile) to build OCaml version 4.10.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to <code class="highlighter-rouge">opam update</code> before this to make sure OPAM is aware of the latest version);</li>
+      <li><code class="highlighter-rouge">opam switch create 4.10.0</code> (this will take awhile) to build OCaml version 4.10.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to <code class="highlighter-rouge">opam update</code> before this <code class="highlighter-rouge">switch</code> to make sure OPAM is aware of the latest version);</li>
       <li><code class="highlighter-rouge">eval (opam env)</code> to let your shell know where the OPAM files are; and</li>
       <li>Also add the very same line, <code class="highlighter-rouge">eval (opam env)</code>, to your<code class="highlighter-rouge">.profile</code>/<code class="highlighter-rouge">.bashrc</code>/<code class="highlighter-rouge">.zshrc</code> shell init file as you would need to do that in every new terminal window otherwise.</li>
     </ol>
@@ -99,7 +99,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam install merlin ocp-indent user-setup tuareg menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async
 </code></pre></div></div>
 
-<p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file <code class="highlighter-rouge">~/.ocamlinit</code> to add the lines below (note <code class="highlighter-rouge">opam</code> may have already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  <code class="highlighter-rouge">topfind</code> really should be built-in, it allows you to load libraries.  The <code class="highlighter-rouge">require</code> command is one thing <code class="highlighter-rouge">topfind</code> adds, here it is loading the <code class="highlighter-rouge">Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code class="highlighter-rouge">Core</code> as they are improved versions.</p>
+<p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file <code class="highlighter-rouge">~/.ocamlinit</code> to add the lines below (note <code class="highlighter-rouge">opam</code> probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  <code class="highlighter-rouge">topfind</code> really should be built-in, it allows you to load libraries.  The <code class="highlighter-rouge">require</code> command is one thing <code class="highlighter-rouge">topfind</code> adds, here it is loading the <code class="highlighter-rouge">Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code class="highlighter-rouge">Core</code> as they are improved versions.</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">use</span> <span class="s2">"topfind"</span><span class="p">;;</span>
 <span class="o">#</span><span class="n">thread</span><span class="p">;;</span>
 <span class="o">#</span><span class="n">require</span> <span class="s2">"core.top"</span><span class="p">;;</span>
@@ -112,7 +112,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>The OCaml manual is <a href="http://caml.inria.fr/pub/docs/manual-ocaml/">here</a>.</p>
 <ul>
-  <li>We will cover most of Part I Chapters 1 and 2 from the manual.</li>
+  <li>We will cover most of the topics in Part I Chapters 1 and 2 from the manual.</li>
   <li>Manual Chapter 7 is the language reference where you can look up details if needed.</li>
   <li>We will be covering a few topics in the <a href="http://caml.inria.fr/pub/docs/manual-ocaml/extn.html">language extensions</a> chapter:
     <ul>
@@ -121,16 +121,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/gadts.html">GADT’s</a>.</li>
     </ul>
   </li>
-  <li>Part III of the manual documents the tools.  We will use some of the standard tools but third parties have improved on many of them.  See below in the Tools list where we give “our” list of tools.</li>
-  <li>Part IV describes the standard libraries; we will primarily use Jane Street’s <code class="highlighter-rouge">Core</code> which replaces these with more modern versions so we will generally be ignoring this.</li>
+  <li>Part III of the manual documents the tools, we will not be using much of this because third parties have improved on many of the tools and we will instead use those versions.  See below in the Tools list where we give “our” list of tools.</li>
+  <li>Part IV describes the standard libraries; as with the tool we will primarily use Jane Street’s <code class="highlighter-rouge">Base</code>/<code class="highlighter-rouge">Core</code> which replaces these with more modern versions so we will generally be ignoring this Part.</li>
 </ul>
 
-<h4 id="core-and-other-libraries">Core and other libraries</h4>
+<h4 id="base-and-core">Base and Core</h4>
+<p><code class="highlighter-rouge">Core</code> is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a “more modern” version of lists, sets, hash tables, etc, with lots of little improvements in many places.  It is an extension of <code class="highlighter-rouge">Base</code> which is in fact what we will mainly be using.</p>
 
 <ul>
-  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core/index.html">Core documentation</a> is not particularly readable currently, you will need to look into <code class="highlighter-rouge">Core_kernel</code> which it extends to find most of the libraries.  For example here is the <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/List/index.html"><code class="highlighter-rouge">List</code></a> module documentation.</li>
-  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book gives tutorial introductions to many of the libraries and extensions we will be using.</li>
-  <li>Individual tools (see list just below) have their own documentation pages off the links provided below.</li>
+  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core/index.html">Core documentation</a> is not particularly readable as <code class="highlighter-rouge">Core</code> extends <code class="highlighter-rouge">Core_kernel</code> which extends <code class="highlighter-rouge">Base</code> and most times you probably just want the <code class="highlighter-rouge">Base</code> version so I would suggest starting there: <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/index.html">Base Documentation</a>.</li>
+  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book gives tutorial introductions to many of the <code class="highlighter-rouge">Core</code>/<code class="highlighter-rouge">Base</code>.</li>
 </ul>
 
 <h3 id="the-fpse-ocaml-toolbox">The FPSE OCaml Toolbox</h3>
@@ -138,19 +138,23 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Here are all the tools we will be using.  You are required to have a build for which all these tools work, and the above <code class="highlighter-rouge">opam</code> one-liner should install them all.</p>
 
 <ul>
-  <li><a href="https://opam.ocaml.org"><code class="highlighter-rouge">opam</code></a> is the package management system which is required.  See above for install instructions.</li>
-  <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/comp.html"><code class="highlighter-rouge">ocamlc</code></a> is the standalone compiler which we will generally be invoking via the <code class="highlighter-rouge">dune</code> build tool.</li>
-  <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/toplevel.html"><code class="highlighter-rouge">ocaml</code></a> is the interactive REPL (read-eval-print loop) which we will generally be using via the more feature-laden <code class="highlighter-rouge">utop</code> extension.</li>
-  <li><a href="https://opam.ocaml.org/blog/about-utop/"><code class="highlighter-rouge">utop</code></a> is a replacement for <code class="highlighter-rouge">ocaml</code> which has a lot more features.</li>
+  <li><a href="https://opam.ocaml.org"><code class="highlighter-rouge">opam</code></a> is the package management system.  See above for install and setup instructions.</li>
+  <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/comp.html"><code class="highlighter-rouge">ocamlc</code></a> is the standalone compiler which we will be invoking via the <code class="highlighter-rouge">dune</code> build tool.</li>
+  <li><a href="https://opam.ocaml.org/blog/about-utop/"><code class="highlighter-rouge">utop</code></a> is the read/eval/print loop.  It is a replacement for the original <a href="http://caml.inria.fr/pub/docs/manual-ocaml/toplevel.html"><code class="highlighter-rouge">ocaml</code></a> command, with many more features such as command history, replay, etc.</li>
+  <li><a href="https://opensource.janestreet.com/core/"><code class="highlighter-rouge">Base</code>/<code class="highlighter-rouge">Core</code></a> was described above</li>
   <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/ocamldoc.html"><code class="highlighter-rouge">ocamldoc</code></a> is the documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.</li>
-  <li><a href="https://dune.build"><code class="highlighter-rouge">dune</code></a> is the build tool (think <code class="highlighter-rouge">make</code>) that we will be using.  <code class="highlighter-rouge">ocamlbuild</code> is the standard build tool but it is not very flexible.</li>
+  <li><a href="https://dune.build"><code class="highlighter-rouge">dune</code></a> is the build tool (think <code class="highlighter-rouge">make</code>) that we will be using.  <code class="highlighter-rouge">ocamlbuild</code> is the standard build tool but it is not very flexible so we will not be using it.</li>
   <li><a href="https://github.com/gildor478/ounit">OUnit</a> is the unit tester for OCaml.  The opam package is called <code class="highlighter-rouge">ounit2</code> for obscure reasons.</li>
+  <li><a href="https://github.com/ocaml-ppx/ppx_deriving"><code class="highlighter-rouge">ppx_deriving</code></a> adds boilerplate copde to type declarations including pretty printing (<code class="highlighter-rouge">ppx_deriving.show</code>) and comparison (<code class="highlighter-rouge">ppx_deriving.eq</code>,<code class="highlighter-rouge">ppx_deriving.ord</code>).</li>
+</ul>
+
+<p>The above tools will be our “bread and butter”, we will be using most of them on most assignments.  There are also a few specialized tools used on some specific assignments.</p>
+
+<ul>
   <li><a href="https://github.com/c-cube/qcheck">QCheck</a> is a fuzz tester / automated test generator for OCaml.</li>
   <li><a href="https://github.com/aantron/bisect_ppx"><code class="highlighter-rouge">bisect_ppx</code></a> will be used for code coverage.</li>
-  <li><a href="https://opensource.janestreet.com/core/">Core</a> is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a “more modern” version of lists, sets, hash tables, etc, with lots of little improvements in many places.  We are going to use Core as it is what many real OCaml software engineers today are using.</li>
   <li><a href="https://opensource.janestreet.com/async/">Async</a> is a non-preempting asychronous threads library.</li>
-  <li><a href="https://github.com/ocaml-ppx/ppx_deriving"><code class="highlighter-rouge">ppx_deriving</code></a> adds boilerplate copde to type declarations such as the all-important pretty printing.</li>
-  <li>Other ppx extensions, details forthcoming.  <code class="highlighter-rouge">ppx_let</code> and <code class="highlighter-rouge">ppx_jane</code> (s-expression) (https://github.com/janestreet/ppx_sexp_conv) for example; former comes with async)</li>
+  <li>We may also use <code class="highlighter-rouge">ppx_jane</code> which has functionality related to <code class="highlighter-rouge">ppx_deriving</code> and more.</li>
 </ul>
 
 <h3 id="development-environments-for-ocaml">Development Environments for OCaml</h3>
@@ -161,7 +165,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 VSCode has very good OCaml support and is the “officially recommended editor”. Install the <strong>OCaml and Reason IDE</strong> extension to get syntax highlighting, type information, etc: from the <code class="highlighter-rouge">View</code> menu select <code class="highlighter-rouge">Extensions</code>, then type in OCaml and this extension will show up; install it. You can also easily run a <code class="highlighter-rouge">utop</code> shell from within VSCode, just open up a shell from the <code class="highlighter-rouge">Terminal</code> menu and type <code class="highlighter-rouge">utop</code>.</p>
 
 <p><a href="https://atom.io"><strong>Atom</strong></a>: <br />
-Atom is very good with OCaml, but is unfortunately being phased out after Microsoft bought Github.  So, it is probably a good time to switch from Atom to VSCode if you have not already.  To use Atom with OCaml install the <code class="highlighter-rouge">atom</code> and <code class="highlighter-rouge">apm</code> shell commands (see the <strong>Atom..Install Shell Commands</strong> menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command <code class="highlighter-rouge">Window: Install Shell Commands</code>). With those commands installed, type into a terminal</p>
+Atom is very good with OCaml, but is unfortunately being slowly phased out after Microsoft bought Github.  So, it is probably a good time to switch from Atom to VSCode if you have not already.  To use Atom with OCaml install the <code class="highlighter-rouge">atom</code> and <code class="highlighter-rouge">apm</code> shell commands (see the <strong>Atom..Install Shell Commands</strong> menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command <code class="highlighter-rouge">Window: Install Shell Commands</code>). With those commands installed, type into a terminal</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    apm install language-ocaml linter ocaml-indent ocaml-merlin
 </code></pre></div></div>

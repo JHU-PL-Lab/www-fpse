@@ -9,10 +9,10 @@ We require that you use the [OPAM packaging system](https://opam.ocaml.org) for 
 -   For Linux or Mac see [The OPAM install page](https://opam.ocaml.org/doc/Install.html) for install instructions. 
 -  For Mac users, the above requires Homebrew (a package manager for Linux-ish libraries) so here is a more detailed suggestion of some copy/paste that should work.
 	- Mac without homebrew installed:`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"` will install Homebrew 
-	- Mac with Homebrew (make sure you do a `brew update` if you already had Homebrew): `brew install gpatch; brew install opam`
+	- Mac with Homebrew (make sure you first do a `brew update` before this): `brew install gpatch; brew install opam`
 - You will then need to run some terminal commands to set up the basics:
     1.  `opam init` to initialize OPAM;
-    2.  `opam switch create 4.10.0` (this will take awhile) to build OCaml version 4.10.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this to make sure OPAM is aware of the latest version);
+    2.  `opam switch create 4.10.0` (this will take awhile) to build OCaml version 4.10.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this `switch` to make sure OPAM is aware of the latest version);
 	3.  `eval (opam env)` to let your shell know where the OPAM files are; and
     4.  Also add the very same line, `eval (opam env)`, to your`.profile`/`.bashrc`/`.zshrc` shell init file as you would need to do that in every new terminal window otherwise.
     
@@ -28,7 +28,7 @@ Once you have `opam` and `ocaml` 4.10.0 installed, run the following `opam` comm
 
     opam install merlin ocp-indent user-setup tuareg menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async
 
-Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file `~/.ocamlinit` to add the lines below (note `opam` may have already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
+Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file `~/.ocamlinit` to add the lines below (note `opam` probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
 ```ocaml
 #use "topfind";;
 #thread;;
@@ -41,39 +41,41 @@ open Core;;
 #### The OCaml Manual
 
 The OCaml manual is [here](http://caml.inria.fr/pub/docs/manual-ocaml/).
-* We will cover most of Part I Chapters 1 and 2 from the manual.
+* We will cover most of the topics in Part I Chapters 1 and 2 from the manual.
 * Manual Chapter 7 is the language reference where you can look up details if needed. 
 * We will be covering a few topics in the [language extensions](http://caml.inria.fr/pub/docs/manual-ocaml/extn.html) chapter:
   * [locally abstract types](http://caml.inria.fr/pub/docs/manual-ocaml/locallyabstract.html),
   * [First-class modules](http://caml.inria.fr/pub/docs/manual-ocaml/firstclassmodules.html), and
   * [GADT's](http://caml.inria.fr/pub/docs/manual-ocaml/gadts.html).
-  
-* Part III of the manual documents the tools.  We will use some of the standard tools but third parties have improved on many of them.  See below in the Tools list where we give "our" list of tools.
-* Part IV describes the standard libraries; we will primarily use Jane Street's `Core` which replaces these with more modern versions so we will generally be ignoring this. 
+* Part III of the manual documents the tools, we will not be using much of this because third parties have improved on many of the tools and we will instead use those versions.  See below in the Tools list where we give "our" list of tools.
+* Part IV describes the standard libraries; as with the tool we will primarily use Jane Street's `Base`/`Core` which replaces these with more modern versions so we will generally be ignoring this Part. 
 
-#### Core and other libraries
+#### Base and Core
+`Core` is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a "more modern" version of lists, sets, hash tables, etc, with lots of little improvements in many places.  It is an extension of `Base` which is in fact what we will mainly be using.
 
-* [Core documentation](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core/index.html) is not particularly readable currently, you will need to look into `Core_kernel` which it extends to find most of the libraries.  For example here is the [`List`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/List/index.html) module documentation.
-* The [Real World OCaml](https://dev.realworldocaml.org/index.html) book gives tutorial introductions to many of the libraries and extensions we will be using.
-* Individual tools (see list just below) have their own documentation pages off the links provided below.
+* [Core documentation](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core/index.html) is not particularly readable as `Core` extends `Core_kernel` which extends `Base` and most times you probably just want the `Base` version so I would suggest starting there: [Base Documentation](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/index.html).
+* The [Real World OCaml](https://dev.realworldocaml.org/index.html) book gives tutorial introductions to many of the `Core`/`Base`.
 
 ### The FPSE OCaml Toolbox
 
 Here are all the tools we will be using.  You are required to have a build for which all these tools work, and the above `opam` one-liner should install them all.
 
-* [`opam`](https://opam.ocaml.org) is the package management system which is required.  See above for install instructions.
-* [`ocamlc`](http://caml.inria.fr/pub/docs/manual-ocaml/comp.html) is the standalone compiler which we will generally be invoking via the `dune` build tool.
-* [`ocaml`](http://caml.inria.fr/pub/docs/manual-ocaml/toplevel.html) is the interactive REPL (read-eval-print loop) which we will generally be using via the more feature-laden `utop` extension.
-* [`utop`](https://opam.ocaml.org/blog/about-utop/) is a replacement for `ocaml` which has a lot more features.
+* [`opam`](https://opam.ocaml.org) is the package management system.  See above for install and setup instructions.
+* [`ocamlc`](http://caml.inria.fr/pub/docs/manual-ocaml/comp.html) is the standalone compiler which we will be invoking via the `dune` build tool.
+* [`utop`](https://opam.ocaml.org/blog/about-utop/) is the read/eval/print loop.  It is a replacement for the original [`ocaml`](http://caml.inria.fr/pub/docs/manual-ocaml/toplevel.html) command, with many more features such as command history, replay, etc.
+* [`Base`/`Core`](https://opensource.janestreet.com/core/) was described above
 * [`ocamldoc`](http://caml.inria.fr/pub/docs/manual-ocaml/ocamldoc.html) is the documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.
-* [`dune`](https://dune.build) is the build tool (think `make`) that we will be using.  `ocamlbuild` is the standard build tool but it is not very flexible.
+* [`dune`](https://dune.build) is the build tool (think `make`) that we will be using.  `ocamlbuild` is the standard build tool but it is not very flexible so we will not be using it.
 * [OUnit](https://github.com/gildor478/ounit) is the unit tester for OCaml.  The opam package is called `ounit2` for obscure reasons.
+* [`ppx_deriving`](https://github.com/ocaml-ppx/ppx_deriving) adds boilerplate copde to type declarations including pretty printing (`ppx_deriving.show`) and comparison (`ppx_deriving.eq`,`ppx_deriving.ord`).
+
+The above tools will be our "bread and butter", we will be using most of them on most assignments.  There are also a few specialized tools used on some specific assignments.
+
 * [QCheck](https://github.com/c-cube/qcheck) is a fuzz tester / automated test generator for OCaml.
 * [`bisect_ppx`](https://github.com/aantron/bisect_ppx) will be used for code coverage.
-* [Core](https://opensource.janestreet.com/core/) is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a "more modern" version of lists, sets, hash tables, etc, with lots of little improvements in many places.  We are going to use Core as it is what many real OCaml software engineers today are using. 
 * [Async](https://opensource.janestreet.com/async/) is a non-preempting asychronous threads library.
-* [`ppx_deriving`](https://github.com/ocaml-ppx/ppx_deriving) adds boilerplate copde to type declarations such as the all-important pretty printing.
-* Other ppx extensions, details forthcoming.  `ppx_let` and `ppx_jane` (s-expression) (https://github.com/janestreet/ppx_sexp_conv) for example; former comes with async)
+* We may also use `ppx_jane` which has functionality related to `ppx_deriving` and more.
+
 
 ### Development Environments for OCaml
 
@@ -83,7 +85,7 @@ You should use one of Atom or VSCode since they have OCaml-specific features suc
 VSCode has very good OCaml support and is the "officially recommended editor". Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml and this extension will show up; install it. You can also easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
 
 [**Atom**](https://atom.io): 
-Atom is very good with OCaml, but is unfortunately being phased out after Microsoft bought Github.  So, it is probably a good time to switch from Atom to VSCode if you have not already.  To use Atom with OCaml install the `atom` and `apm` shell commands (see the **Atom..Install Shell Commands** menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command `Window: Install Shell Commands`). With those commands installed, type into a terminal
+Atom is very good with OCaml, but is unfortunately being slowly phased out after Microsoft bought Github.  So, it is probably a good time to switch from Atom to VSCode if you have not already.  To use Atom with OCaml install the `atom` and `apm` shell commands (see the **Atom..Install Shell Commands** menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command `Window: Install Shell Commands`). With those commands installed, type into a terminal
 
         apm install language-ocaml linter ocaml-indent ocaml-merlin
 

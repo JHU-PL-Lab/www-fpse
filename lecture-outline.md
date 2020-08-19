@@ -60,10 +60,12 @@ Thesis:
  
 ## Introduction to OCaml
 High-level outline of how PLI version needs to evolve
-* utop and `Core` from the get-go: = on ints only but pop into `Poly` when convenient.
+* utop and `Core`/`Base` from the get-go: = on ints only but pop into `Poly` when convenient.
 * Lots of List.blah early on, including folds, pipes, etc.
 * add in all of the syntax stuff below that I skipped in PLI
 * Many more real examples of programs, get further away from the toy stuff.
+* Type-directed programming basics early
+* Need to decide on modality, either feeding into top loop or dune.  Problem is VSCode needs a dune build to get merlin file set up properly, it is hard to have files loaded that give errors.
 
 #### Basic Functional Programming in OCaml
 * Basic OCaml
@@ -71,7 +73,11 @@ High-level outline of how PLI version needs to evolve
     - expressions, let, functions, lists, pattern matching, higher-order functions
     - Lists lists lists, folds, pipes etc.
 
-#### New stuff not in PLI for Basic OCaml now.
+#### Foundational Libraries I
+* Lists in Base - RWOC 1 a bit (tour) and RWOC 3.  Lots of important functions available.
+* Fn, Option, Result, etc etc etc Base versions
+
+#### NOTES: New stuff not in PLI for Basic OCaml now.
 * @@ application
 * _ - all the places it works
 * pipelining
@@ -89,10 +95,11 @@ High-level outline of how PLI version needs to evolve
 This is mostly covered in RWOC chapters on variants and records.
 
 * Basic records and variants stuff obviously
+* `result` type - `Ok` or `Error`.
 * Advanced patterns - `p when e`, `'a' .. 'z'`, `as x`, or `|` patterns in let, `{x;y}` is same as `{x=x;y=y}`...  Cornell 3.1.7
 * Polymorphic variants aka anonymous variants - Cornell 3.2.4.4, RWOC variants chapter
 * See RWOC chapters on variants and records for lots of new conventions and examples.
-* record field name punning - RWOC Ch5
+* record field name punning: `let r = {x;y}` abbreviation - RWOC Ch5
 * `let r' = { r with x = ..; y = }`  for changing just a few fields - RWOC 5
 * Embedding record declarations in variants - like named args on variant fields:
 `type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly`
@@ -104,11 +111,14 @@ This is mostly covered in RWOC chapters on variants and records.
 * Type-driven development - very important topic to touch on somewhere; fits well with GADTS.
 
 ## Modules
-- elemts of structures, functors; hit on more advanced stuff later
+- Structures and functors; look at the `Core` libraries to see what we need to cover, need to at least be users of things like `include`, nested modules, first-class modules, etc (whatever Core uses in particular).  Idea is to start out as writers of basic modules and users of the fancier stuff, and learn how to write the fancier stuff later.
 - type abstraction, module signatures
-- Simple whole programs, basic dune building and testing -- see `code/set_example` .. might want to change to use `In_Channel` to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.
 
+## Basic Development
+(Could do this a bit earlier, it is making modules but could skip on that for a bit)
 
+* Simple whole programs, basic dune building and testing -- see `code/set_example` .. might want to change to use `In_Channel` to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.
+* Merlin super basics (can pretty much ignore as dune should build a correct `.merlin` file)
 
 ## Side effects
 
@@ -129,11 +139,10 @@ See RWOC Error/Exceptions chapter.
 * `Stdio`
     - Channels, etc
 
-### Libraries
+## Libraries
 Do libraries with modules as the `Core` modules need understanding of functors, abstraction, etc
 
 * [`Core`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/index.html)
-    - Lists in Base - RWOC 1 a bit (tour) and RWOC 3.  Worth covering, lots of important functions available.
     - `Map` (and `List.Assoc` a bit).  RWOC 13.
     - `Hashtbl`, good example of mutable code.  RWOC 13
 
@@ -270,6 +279,7 @@ See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book
 
 ## Top level directives (not sure where to put this, just my own reference for now)
 * `#directory adir` - adds `adir` to the list of directories to search for files.
+* `#pwd` - shows current working directory.
 * `#trace afun` - calls and returns to `afun` will now be dumped to top level - a simple debugging tool.
 * `#use "afile.ml"` - loads code file as if it was copied and pasted into the top loop.
 * `#mod_use` - like `#use` but loads the file like it was a module (name of file as a module name)
