@@ -145,13 +145,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><a href="http://caml.inria.fr/pub/docs/manual-ocaml/ocamldoc.html"><code class="highlighter-rouge">ocamldoc</code></a> is the documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.</li>
   <li><a href="https://dune.build"><code class="highlighter-rouge">dune</code></a> is the build tool (think <code class="highlighter-rouge">make</code>) that we will be using.  <code class="highlighter-rouge">ocamlbuild</code> is the standard build tool but it is not very flexible so we will not be using it.</li>
   <li><a href="https://github.com/gildor478/ounit">OUnit</a> is the unit tester for OCaml.  The opam package is called <code class="highlighter-rouge">ounit2</code> for obscure reasons.</li>
-  <li><a href="https://github.com/ocaml-ppx/ppx_deriving"><code class="highlighter-rouge">ppx_deriving</code></a> adds boilerplate copde to type declarations including pretty printing (<code class="highlighter-rouge">ppx_deriving.show</code>) and comparison (<code class="highlighter-rouge">ppx_deriving.eq</code>,<code class="highlighter-rouge">ppx_deriving.ord</code>).</li>
+  <li><a href="https://github.com/ocaml-ppx/ppx_deriving"><code class="highlighter-rouge">ppx_deriving</code></a> adds boilerplate code to type declarations including pretty printing (<code class="highlighter-rouge">ppx_deriving.show</code>) and comparison (<code class="highlighter-rouge">ppx_deriving.eq</code>,<code class="highlighter-rouge">ppx_deriving.ord</code>).</li>
 </ul>
 
-<p>The above tools will be our “bread and butter”, we will be using most of them on most assignments.  There are also a few specialized tools used on some specific assignments.</p>
+<p>The above tools will be our “bread and butter”, we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.</p>
 
 <ul>
-  <li><a href="https://github.com/c-cube/qcheck">QCheck</a> is a fuzz tester / automated test generator for OCaml.</li>
+  <li><a href="https://opensource.janestreet.com/base_quickcheck/">Base_quickcheck</a> is a fuzz tester / automated test generator for OCaml, designed to work well with the <code class="highlighter-rouge">Base</code> library.</li>
   <li><a href="https://github.com/aantron/bisect_ppx"><code class="highlighter-rouge">bisect_ppx</code></a> will be used for code coverage.</li>
   <li><a href="https://opensource.janestreet.com/async/">Async</a> is a non-preempting asychronous threads library.</li>
   <li>We may also use <code class="highlighter-rouge">ppx_jane</code> which has functionality related to <code class="highlighter-rouge">ppx_deriving</code> and more.</li>
@@ -189,7 +189,7 @@ Atom is very good with OCaml, but is unfortunately being slowly phased out after
 
 <ul>
   <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book has recently been updated to a new edition.</li>
-  <li>It documents many of the extensions we will be using, <code class="highlighter-rouge">Core</code> for example, and we will be referencing several of the chapters for various lecture topics.</li>
+  <li>It documents many of the extensions we will be using, <code class="highlighter-rouge">Base</code>/<code class="highlighter-rouge">Core</code> libraries in particular, and we will be referencing several of the chapters for various lecture topics.</li>
 </ul>
       
           </section>
