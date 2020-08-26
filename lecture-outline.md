@@ -53,7 +53,7 @@
 Thesis:
 * Imperative wins for low-level code: underlying machine instructions are in the imperative domain, will run faster.
 * O-O wins for super large apps with fairly shallow logic: UI's, many apps, etc.
-* Functional wins for complex algorithms with deep inner logic
+* Functional wins for complex algorithms with deep inner logic, and also for data manipulation focus
  - Gets too confusing with mutation, and better composition of functions makes code easier to understand.
 * Of course this choice is never made in a vacuum: existing codebases and libraries, programmer experience, etc. 
  
@@ -116,32 +116,7 @@ true || false;;
 1 = 2;; (* = not == for equality comparison *)
 1 <> 2;;  (* <> not != for not equal *)
 ```
-
-### Lists
-
-Lists are pervasive in OCaml; easy to create and manipulate
-
-```ocaml
-let l1 = [1; 2; 3];;
-let l2 = [1; 1+1; 1+1+1];;
-let l3 = ["a"; "b"; "c"];;
-let l4 = [1; "a"];; (* errors - All elements must have same type - HOMOGENEOUS *)
-let l5 = [];; (* empty list *)
-```
-
-#### Building lists 
-
-Lists are represented internally as BINARY TREES with left child a leaf.
-```ocaml
-0 :: l1;; (* "::" is 'consing' an element to the front - fast *)
-0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to the above *)
-[1; 2; 3] @ [4; 5];; (* appending lists - slower *)
-let z = [2; 4; 6];;
-let y = 0 :: z;;
-z;; (* Observe z itself did not change -- lists are immutable in OCaml *)
-```
-
-#### Simple functions
+#### Simple functions on integers
 
 To declare a function `squared` with `x` its one parameter.  `return` is  implicit.
 ```ocaml
@@ -150,17 +125,16 @@ squared 4;; (* to call a function -- separate arguments with S P A C E S *)
 ```
  *  OCaml has no return statement; value of the whole body-expression is what gets returned
  *  type is printed as domain -> range
- *  "officially", OCaml functions take only one argument - !  multiple arguments can be encoded by some tricks (later)
+ *  OCaml functions in fact take only one argument - !  multiple arguments can be encoded by some tricks (later)
 
 Fibonacci series - `0 1 1 2 3 5 8 13 ...` 
-[ replace with a pattern?? ]
+
 
 ```ocaml
 let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
   if n <= 0 then 0
   else if n = 1 then 1
-  else
-    fib (n - 1) + fib (n - 2);; (* notice again everything is an expression, no "return" *)
+  else fib (n - 1) + fib (n - 2);; (* notice again everything is an expression, no "return" *)
 
 fib 10;;
 ```
@@ -203,8 +177,36 @@ add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - applicatio
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)
 ```
 
+
+### Lists
+
+Lists are pervasive in OCaml; easy to create and manipulate
+
+```ocaml
+let l1 = [1; 2; 3];;
+let l2 = [1; 1+1; 1+1+1];;
+let l3 = ["a"; "b"; "c"];;
+let l4 = [1; "a"];; (* errors - All elements must have same type - HOMOGENEOUS *)
+let l5 = [];; (* empty list *)
+```
+
+#### Building lists 
+
+Lists are represented internally as BINARY TREES with left child a leaf.
+```ocaml
+0 :: l1;; (* "::" is 'consing' an element to the front - fast *)
+0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to the above *)
+[1; 2; 3] @ [4; 5];; (* appending lists - slower *)
+let z = [2; 4; 6];;
+let y = 0 :: z;;
+z;; (* Observe z itself did not change -- lists are immutable in OCaml *)
+```
+
+
+### Pattern Matching
+[INSERT option and result types here as the initial pattern match code]
+
 #### Destructing Lists with pattern matching
-[or perhaps do some number patter matching?]
 
 ```ocaml
 let rec rev l =
@@ -214,7 +216,7 @@ let rec rev l =
 ;;
 rev [1;2;3];; (* = 1 :: ( 2 :: ( 3 :: [])) *)
 ```
-
+"Data structure corresponds to control flow" here and in other examples.
 
 
 #### Introduction to OCaml notes
@@ -344,6 +346,7 @@ Do libraries with modules as the `Core` modules need understanding of functors, 
     - Module refactoring - pull out code into a new module, move a function from one module to another.
     - Combinize: replace recursion with maps and folds
     - Use more pattern matching
+    - [A list of smells and principles also would be good, many of the above are DRY or "compression-driven development" issues.]
 * Type-aided extension: add a type to a variant, then clean up on the type error messages.
     - Applies to many other contexts as well: make a change, chase type errors.  Type errors gone => code works.
 * Go through some imperative to functional code refactorings
