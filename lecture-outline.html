@@ -128,7 +128,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Imperative wins for low-level code: underlying machine instructions are in the imperative domain, will run faster.</li>
   <li>O-O wins for super large apps with fairly shallow logic: UI’s, many apps, etc.</li>
-  <li>Functional wins for complex algorithms with deep inner logic</li>
+  <li>Functional wins for complex algorithms with deep inner logic, and also for data manipulation focus</li>
   <li>Gets too confusing with mutation, and better composition of functions makes code easier to understand.</li>
   <li>Of course this choice is never made in a vacuum: existing codebases and libraries, programmer experience, etc.</li>
 </ul>
@@ -198,30 +198,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* = not == for equality comparison *)</span>
 <span class="mi">1</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">;;</span>  <span class="c">(* &lt;&gt; not != for not equal *)</span>
 </code></pre></div></div>
-
-<h3 id="lists">Lists</h3>
-
-<p>Lists are pervasive in OCaml; easy to create and manipulate</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
-<span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">];;</span>
-<span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">;</span> <span class="s2">"b"</span><span class="p">;</span> <span class="s2">"c"</span><span class="p">];;</span>
-<span class="k">let</span> <span class="n">l4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="s2">"a"</span><span class="p">];;</span> <span class="c">(* errors - All elements must have same type - HOMOGENEOUS *)</span>
-<span class="k">let</span> <span class="n">l5</span> <span class="o">=</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* empty list *)</span>
-</code></pre></div></div>
-
-<h4 id="building-lists">Building lists</h4>
-
-<p>Lists are represented internally as BINARY TREES with left child a leaf.</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">0</span> <span class="o">::</span> <span class="n">l1</span><span class="p">;;</span> <span class="c">(* "::" is 'consing' an element to the front - fast *)</span>
-<span class="mi">0</span> <span class="o">::</span> <span class="p">(</span><span class="mi">1</span> <span class="o">::</span> <span class="p">(</span><span class="mi">2</span> <span class="o">::</span> <span class="p">(</span><span class="mi">3</span> <span class="o">::</span> <span class="bp">[]</span><span class="p">)));;</span> <span class="c">(* equivalent to the above *)</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">]</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span> <span class="mi">5</span><span class="p">];;</span> <span class="c">(* appending lists - slower *)</span>
-<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">;</span> <span class="mi">4</span><span class="p">;</span> <span class="mi">6</span><span class="p">];;</span>
-<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">::</span> <span class="n">z</span><span class="p">;;</span>
-<span class="n">z</span><span class="p">;;</span> <span class="c">(* Observe z itself did not change -- lists are immutable in OCaml *)</span>
-</code></pre></div></div>
-
-<h4 id="simple-functions">Simple functions</h4>
+<h4 id="simple-functions-on-integers">Simple functions on integers</h4>
 
 <p>To declare a function <code class="highlighter-rouge">squared</code> with <code class="highlighter-rouge">x</code> its one parameter.  <code class="highlighter-rouge">return</code> is  implicit.</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">squared</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;;</span> 
@@ -230,17 +207,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>OCaml has no return statement; value of the whole body-expression is what gets returned</li>
   <li>type is printed as domain -&gt; range</li>
-  <li>“officially”, OCaml functions take only one argument - !  multiple arguments can be encoded by some tricks (later)</li>
+  <li>OCaml functions in fact take only one argument - !  multiple arguments can be encoded by some tricks (later)</li>
 </ul>
 
-<p>Fibonacci series - <code class="highlighter-rouge">0 1 1 2 3 5 8 13 ...</code> <br />
-[ replace with a pattern?? ]</p>
+<p>Fibonacci series - <code class="highlighter-rouge">0 1 1 2 3 5 8 13 ...</code></p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="n">n</span> <span class="o">=</span>     <span class="c">(* the "rec" keyword needs to be added to allow recursion *)</span>
   <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span>
   <span class="k">else</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">then</span> <span class="mi">1</span>
-  <span class="k">else</span>
-    <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);;</span> <span class="c">(* notice again everything is an expression, no "return" *)</span>
+  <span class="k">else</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);;</span> <span class="c">(* notice again everything is an expression, no "return" *)</span>
 
 <span class="n">fib</span> <span class="mi">10</span><span class="p">;;</span>
 </code></pre></div></div>
@@ -281,8 +256,32 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <span class="n">add3</span> <span class="o">@@</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)</span>
 </code></pre></div></div>
 
+<h3 id="lists">Lists</h3>
+
+<p>Lists are pervasive in OCaml; easy to create and manipulate</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
+<span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">];;</span>
+<span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">;</span> <span class="s2">"b"</span><span class="p">;</span> <span class="s2">"c"</span><span class="p">];;</span>
+<span class="k">let</span> <span class="n">l4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="s2">"a"</span><span class="p">];;</span> <span class="c">(* errors - All elements must have same type - HOMOGENEOUS *)</span>
+<span class="k">let</span> <span class="n">l5</span> <span class="o">=</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* empty list *)</span>
+</code></pre></div></div>
+
+<h4 id="building-lists">Building lists</h4>
+
+<p>Lists are represented internally as BINARY TREES with left child a leaf.</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">0</span> <span class="o">::</span> <span class="n">l1</span><span class="p">;;</span> <span class="c">(* "::" is 'consing' an element to the front - fast *)</span>
+<span class="mi">0</span> <span class="o">::</span> <span class="p">(</span><span class="mi">1</span> <span class="o">::</span> <span class="p">(</span><span class="mi">2</span> <span class="o">::</span> <span class="p">(</span><span class="mi">3</span> <span class="o">::</span> <span class="bp">[]</span><span class="p">)));;</span> <span class="c">(* equivalent to the above *)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">]</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span> <span class="mi">5</span><span class="p">];;</span> <span class="c">(* appending lists - slower *)</span>
+<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">;</span> <span class="mi">4</span><span class="p">;</span> <span class="mi">6</span><span class="p">];;</span>
+<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">::</span> <span class="n">z</span><span class="p">;;</span>
+<span class="n">z</span><span class="p">;;</span> <span class="c">(* Observe z itself did not change -- lists are immutable in OCaml *)</span>
+</code></pre></div></div>
+
+<h3 id="pattern-matching">Pattern Matching</h3>
+<p>[INSERT option and result types here as the initial pattern match code]</p>
+
 <h4 id="destructing-lists-with-pattern-matching">Destructing Lists with pattern matching</h4>
-<p>[or perhaps do some number patter matching?]</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
@@ -291,6 +290,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <span class="p">;;</span>
 <span class="n">rev</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> <span class="c">(* = 1 :: ( 2 :: ( 3 :: [])) *)</span>
 </code></pre></div></div>
+<p>“Data structure corresponds to control flow” here and in other examples.</p>
 
 <h4 id="introduction-to-ocaml-notes">Introduction to OCaml notes</h4>
 <p>High-level outline of how PLI version needs to evolve</p>
@@ -460,6 +460,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
       <li>Module refactoring - pull out code into a new module, move a function from one module to another.</li>
       <li>Combinize: replace recursion with maps and folds</li>
       <li>Use more pattern matching</li>
+      <li>[A list of smells and principles also would be good, many of the above are DRY or “compression-driven development” issues.]</li>
     </ul>
   </li>
   <li>Type-aided extension: add a type to a variant, then clean up on the type error messages.
