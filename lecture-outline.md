@@ -123,12 +123,11 @@ To declare a function `squared` with `x` its one parameter.  `return` is  implic
 let squared x = x * x;; 
 squared 4;; (* to call a function -- separate arguments with S P A C E S *)
 ```
- *  OCaml has no return statement; value of the whole body-expression is what gets returned
- *  type is printed as domain -> range
+ *  OCaml has no `return` statement; value of the whole body-expression is what gets returned
+ *  Type is inferred and printed as domain `->` range
  *  OCaml functions in fact take only one argument - !  multiple arguments can be encoded by some tricks (later)
 
-Fibonacci series - `0 1 1 2 3 5 8 13 ...` 
-
+Fibonacci series example - `0 1 1 2 3 5 8 13 ...` 
 
 ```ocaml
 let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
@@ -136,7 +135,7 @@ let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
   else if n = 1 then 1
   else fib (n - 1) + fib (n - 2);; (* notice again everything is an expression, no "return" *)
 
-fib 10;;
+fib 10;; (* get the 10th Fibonacci number *)
 ```
 
 #### Anonymous functions
@@ -153,7 +152,7 @@ funny_add1 3;;
 ((fun x -> x + 1) 4) + 7;; (*  shorthand notation -- cut off the "ction" *)
 ```
 
-Multiple arguments - just leave spaces between multiple arguments in definition and use
+Multiple arguments - just leave spaces between multiple arguments
 
 ```ocaml
 let add x y = x + y;;
@@ -177,6 +176,95 @@ add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - applicatio
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)
 ```
 
+### Super Simple Data Types: Option and Result
+
+* Before getting into "bigger" data types and how to declare our own, let's use one of the simplest structured data types, the built-in `option` type.
+
+```ocaml
+Some 5;;
+- : int option = Some 5
+```
+
+* all this does is "wrap" the 5 in the `Some` tag
+
+```ocaml
+None;;
+- : 'a option = None
+```
+
+ * Notice these are both in the `option` type .. either you have `Some` data or you have `None`.
+ * This type is very useful; here is a simple example.
+
+ ```ocaml
+# let nice_div m n = if n = 0 then None else Some (m / n);;
+val nice_div : int -> int -> int option = <fun>
+# nice_div 10 0;;
+- : int option = None
+# nice_div 10 2;;
+- : int option = Some 5
+```
+
+There is a downside with this though, you can't just use `nice_div` like `/`:
+
+```ocaml
+# (nice_div 5 2) + 7;;
+Line 1, characters 0-14:
+Error: This expression has type int option
+       but an expression was expected of type int
+```
+
+This type error means the `+` lhs should be type `int` but is a `Some` value so is not an `int`.
+
+Here is a non-solution to that:
+ ```ocaml
+# let not_nice_div m n = if n = 0 then None else m / n;;
+Line 1, characters 47-52:
+Error: This expression has type int but an expression was expected of type
+         'a option
+```
+- The `then` and `else` branches must return the same type, here they do not.
+
+#### Pattern matching first example
+
+Here is a real solution to the above issue:
+```ocaml
+# match (nice_div 5 2) with 
+   | Some i -> i + 7
+   | None -> failwith "This should never happen, we divided by 2";;
+- : int = 9
+```
+
+* This shows how OCaml lets us *destruct* option types, via the `match` syntax.
+* `match` is similar to `switch` in C/Java/.. but is much more flexible in OCaml
+* LHS in OCaml can be a general pattern
+* Note that we turned `None` into an exception via `failwith`.
+
+#### Result
+
+An "even nicer" version of the above would be to use the `result` type, which is very similar to option.
+```ocaml
+# let nicer_div m n = if n = 0 then Error "Divide by zero" else Ok (m / n);;
+val nicer_div : int -> int -> (int, string) result = <fun>
+```
+* The `result` type is explicitly intended for this case of failure-result
+    - `Ok` means the normal result
+    - `Error` is the error case, which unlike none can include failure data.
+* Again we can do the same kind of pattern match on `Ok/Error` as above.
+
+```ocaml
+# match (nicer_div 5 2) with 
+   | Ok i -> i + 7
+   | Error s -> failwith s;;
+- : int = 9
+```
+
+Lastly, the function could itself raise an exception
+
+```ocaml
+let div_exn m n = if n = 0 then failwith "divide by zero is bad!" else m / n;;
+div_exn 3 4;;```
+
+Which has the property of not needing a match on the result.
 
 ### Lists
 

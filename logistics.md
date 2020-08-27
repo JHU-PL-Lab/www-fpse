@@ -2,7 +2,9 @@
 
 ### Class Times
 
-Lectures will be 1:30-2:45 on Mondays and Wednesdays in (TBA). See the [Dateline](dateline.html) for the schedule.
+Lectures will be 1:30-2:45 on Mondays and Wednesdays in Zoom. The Zoom room will be posted on Piazza (see below for how to get on that).  Lectures will be recorded and the Panopto page for those recordings will also be posted in Piazza.
+
+See the [Dateline](dateline.html) for the schedule. Since this is the first time the class is offered we will be filling in the dateline as we go.
 
 ### Course Materials
 
@@ -25,6 +27,8 @@ All assignments are linked from the [dateline](dateline.html). They will all be 
 ### Project
 
 There will be an independent project at the end of the course.
+
+### Collaboration
 
 The collaboration policy for assignments is you are welcome to discuss assignments with other students, but everyone must submit their own writeup of the answers (no emailing solutions to each other for example).
 

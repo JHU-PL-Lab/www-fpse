@@ -205,19 +205,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">squared</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* to call a function -- separate arguments with S P A C E S *)</span>
 </code></pre></div></div>
 <ul>
-  <li>OCaml has no return statement; value of the whole body-expression is what gets returned</li>
-  <li>type is printed as domain -&gt; range</li>
+  <li>OCaml has no <code class="highlighter-rouge">return</code> statement; value of the whole body-expression is what gets returned</li>
+  <li>Type is inferred and printed as domain <code class="highlighter-rouge">-&gt;</code> range</li>
   <li>OCaml functions in fact take only one argument - !  multiple arguments can be encoded by some tricks (later)</li>
 </ul>
 
-<p>Fibonacci series - <code class="highlighter-rouge">0 1 1 2 3 5 8 13 ...</code></p>
+<p>Fibonacci series example - <code class="highlighter-rouge">0 1 1 2 3 5 8 13 ...</code></p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="n">n</span> <span class="o">=</span>     <span class="c">(* the "rec" keyword needs to be added to allow recursion *)</span>
   <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span>
   <span class="k">else</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">then</span> <span class="mi">1</span>
   <span class="k">else</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);;</span> <span class="c">(* notice again everything is an expression, no "return" *)</span>
 
-<span class="n">fib</span> <span class="mi">10</span><span class="p">;;</span>
+<span class="n">fib</span> <span class="mi">10</span><span class="p">;;</span> <span class="c">(* get the 10th Fibonacci number *)</span>
 </code></pre></div></div>
 
 <h4 id="anonymous-functions">Anonymous functions</h4>
@@ -235,7 +235,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="p">((</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(*  shorthand notation -- cut off the "ction" *)</span>
 </code></pre></div></div>
 
-<p>Multiple arguments - just leave spaces between multiple arguments in definition and use</p>
+<p>Multiple arguments - just leave spaces between multiple arguments</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;;</span>
 <span class="n">add</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span>
@@ -256,11 +256,108 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <span class="n">add3</span> <span class="o">@@</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)</span>
 </code></pre></div></div>
 
-<h3 id="lists">Lists</h3>
+<h3 id="super-simple-data-types-option-and-result">Super Simple Data Types: Option and Result</h3>
 
-<p>Lists are pervasive in OCaml; easy to create and manipulate</p>
+<ul>
+  <li>Before getting into “bigger” data types and how to declare our own, let’s use one of the simplest structured data types, the built-in <code class="highlighter-rouge">option</code> type.</li>
+</ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Some</span> <span class="mi">5</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">5</span>
+</code></pre></div></div>
+
+<ul>
+  <li>all this does is “wrap” the 5 in the <code class="highlighter-rouge">Some</code> tag</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">None</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Notice these are both in the <code class="highlighter-rouge">option</code> type .. either you have <code class="highlighter-rouge">Some</code> data or you have <code class="highlighter-rouge">None</code>.</li>
+  <li>This type is very useful; here is a simple example.</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">nice_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">None</span> <span class="k">else</span> <span class="nc">Some</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">);;</span>
+<span class="k">val</span> <span class="n">nice_div</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="n">nice_div</span> <span class="mi">10</span> <span class="mi">0</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span>
+<span class="o">#</span> <span class="n">nice_div</span> <span class="mi">10</span> <span class="mi">2</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">5</span>
+</code></pre></div></div>
+
+<p>There is a downside with this though, you can’t just use <code class="highlighter-rouge">nice_div</code> like <code class="highlighter-rouge">/</code>:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="p">(</span><span class="n">nice_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span>
+<span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">0</span><span class="o">-</span><span class="mi">14</span><span class="o">:</span>
+<span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="kt">int</span> <span class="n">option</span>
+       <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span> <span class="kt">int</span>
+</code></pre></div></div>
+
+<p>This type error means the <code class="highlighter-rouge">+</code> lhs should be type <code class="highlighter-rouge">int</code> but is a <code class="highlighter-rouge">Some</code> value so is not an <code class="highlighter-rouge">int</code>.</p>
+
+<p>Here is a non-solution to that:</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">not_nice_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">None</span> <span class="k">else</span> <span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">;;</span>
+<span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">47</span><span class="o">-</span><span class="mi">52</span><span class="o">:</span>
+<span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="kt">int</span> <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span>
+         <span class="k">'</span><span class="n">a</span> <span class="n">option</span>
+</code></pre></div></div>
+<ul>
+  <li>The <code class="highlighter-rouge">then</code> and <code class="highlighter-rouge">else</code> branches must return the same type, here they do not.</li>
+</ul>
+
+<h4 id="pattern-matching-first-example">Pattern matching first example</h4>
+
+<p>Here is a real solution to the above issue:</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">match</span> <span class="p">(</span><span class="n">nice_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="k">with</span> 
+   <span class="o">|</span> <span class="nc">Some</span> <span class="n">i</span> <span class="o">-&gt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">7</span>
+   <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"This should never happen, we divided by 2"</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">9</span>
+</code></pre></div></div>
+
+<ul>
+  <li>This shows how OCaml lets us <em>destruct</em> option types, via the <code class="highlighter-rouge">match</code> syntax.</li>
+  <li><code class="highlighter-rouge">match</code> is similar to <code class="highlighter-rouge">switch</code> in C/Java/.. but is much more flexible in OCaml</li>
+  <li>LHS in OCaml can be a general pattern</li>
+  <li>Note that we turned <code class="highlighter-rouge">None</code> into an exception via <code class="highlighter-rouge">failwith</code>.</li>
+</ul>
+
+<h4 id="result">Result</h4>
+
+<p>An “even nicer” version of the above would be to use the <code class="highlighter-rouge">result</code> type, which is very similar to option.</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">nicer_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">Error</span> <span class="s2">"Divide by zero"</span> <span class="k">else</span> <span class="nc">Ok</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">);;</span>
+<span class="k">val</span> <span class="n">nicer_div</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">int</span><span class="o">,</span> <span class="kt">string</span><span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
+<ul>
+  <li>The <code class="highlighter-rouge">result</code> type is explicitly intended for this case of failure-result
+    <ul>
+      <li><code class="highlighter-rouge">Ok</code> means the normal result</li>
+      <li><code class="highlighter-rouge">Error</code> is the error case, which unlike none can include failure data.</li>
+    </ul>
+  </li>
+  <li>Again we can do the same kind of pattern match on <code class="highlighter-rouge">Ok/Error</code> as above.</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">match</span> <span class="p">(</span><span class="n">nicer_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="k">with</span> 
+   <span class="o">|</span> <span class="nc">Ok</span> <span class="n">i</span> <span class="o">-&gt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">7</span>
+   <span class="o">|</span> <span class="nc">Error</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="n">s</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">9</span>
+</code></pre></div></div>
+
+<p>Lastly, the function could itself raise an exception</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">div_exn</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="n">failwith</span> <span class="s2">"divide by zero is bad!"</span> <span class="k">else</span> <span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">;;</span>
+<span class="n">div_exn</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span><span class="err">```</span>
+
+<span class="nc">Which</span> <span class="n">has</span> <span class="n">the</span> <span class="n">property</span> <span class="k">of</span> <span class="n">not</span> <span class="n">needing</span> <span class="n">a</span> <span class="k">match</span> <span class="n">on</span> <span class="n">the</span> <span class="n">result</span><span class="o">.</span>
+
+<span class="o">###</span> <span class="nc">Lists</span>
+
+<span class="nc">Lists</span> <span class="n">are</span> <span class="n">pervasive</span> <span class="k">in</span> <span class="nc">OCaml</span><span class="p">;</span> <span class="n">easy</span> <span class="k">to</span> <span class="n">create</span> <span class="ow">and</span> <span class="n">manipulate</span>
+
+<span class="err">``</span><span class="nt">`ocaml</span>
+<span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
 <span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">];;</span>
 <span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">;</span> <span class="s2">"b"</span><span class="p">;</span> <span class="s2">"c"</span><span class="p">];;</span>
 <span class="k">let</span> <span class="n">l4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="s2">"a"</span><span class="p">];;</span> <span class="c">(* errors - All elements must have same type - HOMOGENEOUS *)</span>
