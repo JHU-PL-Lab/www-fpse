@@ -5,13 +5,18 @@
 
 - Just repeat the Syllabus here.
 
-## What is FP?
+## What is Functional Programming (FP)?
+
+* It is a style of programming where functions are the centerpiece
+* A key dimension is functions-as-data: functions can be passed and returned
+* It emphasizes immutability: data structures that cannot be changed after being created
+* Mathematical functions are all immutable so FP aligns much more closely with math
 
 ### History in brief
 
 * Lambda calculus, 1930's - logicians (Church, Turing, Kleene, Curry, etc)
  - Logic proofs are formal constructions
- - Core ideas of functional programming already present
+ - Core ideas of functional programming present here
  - But no computers so no running, only hand-calculation
 * Lisp, 1960's (McCarthy)
  - Implement the ideas of the mathematicians
@@ -20,20 +25,21 @@
 * Typed functional languages, 70's & 80's: ML and its descendents Haskell and OCaml
  - Will see what this is in detail as we use OCaml
 * Modern era: add FP as possibility in mainstream: Python, JavaScript, Java, C++, etc.
-* FP now edging out OO school in some domains.
+* FP now edging out Object-Oriented school in some domains.
 
-### Imperative vs OO vs FP
+### Imperative vs Object-Oriented vs Higher-Order Functional
 
 * Oversimplifying but these are the three modern schools
 * More oversimplifying: "Imperative = C, OO = Java, FP = OCaml"
- - other languages can also be put in schools, but these are leading representatives today
- 
+* (Many O-O languages now have functions)
+
+
 ### Imperative
 
 * Imperative also has functions, but functions often have side effects (e.g. mutate some shared data structures)
 * C has function pointers but they are not widely used and lack needed expressiveness (which we will cover).
 
-### O-O
+### Object-Oriented (OO)
 
 * Objects tend to have "their" state encpsulated within their boundary
 * Still it is usually a mutable state - change over time
@@ -42,12 +48,13 @@
 
 ### Functional
 
-* Key aspect is lack of mutation: more like a mathematical function, the output only depends on the input and it's only output is the codomain value, not any side effects like printing, mutating, raising exceptions, etc.
+* As mentioned above, key aspect is lack of mutation: more like a mathematical function, the output only depends on the input and it's only output is the codomain value, not any side effects like printing, mutating, raising exceptions, etc.
 * Lack of side effects is called "referential transparency" - variable values don't change out from under you (like in math textbook).
-* Standard data structures not too different from imperative case: dictionaries, lists, etc, but often will themselves be non-mutable
+* Standard data structures not too different from imperative case: dictionaries, lists, etc, but often will themselves be *immutable*
 * Key advantage is higher-order-ness: code is data, make new functions, accept functions as parameters.
-* Allows for powerful new programming paradigms.  give examples like compose, map, etc.
-* Less good at supporting extension, no notion of subclass in common functional paradigms (not impossible to add though).
+* Allows for powerful new programming paradigms.
+  - Simple example is function composition operation
+* Less good at supporting extension, no notion of subclass in common functional paradigms
 
 ### Who wins?
 Thesis:
@@ -57,7 +64,21 @@ Thesis:
  - Gets too confusing with mutation, and better composition of functions makes code easier to understand.
 * Of course this choice is never made in a vacuum: existing codebases and libraries, programmer experience, etc. 
  
+### Typed Functional vs Untyped Functional
+
+* OK we arm-wrestled over OO vs FP, now we get to arm-wrestle in FP over whether types are good (OCaml, Haskell, etc) or bad (Scheme, Clojure, (Python, JavaScript)).
+* We are clearly in the "types are good" camp here but there are trade offs
+  - With types we have *type-directed programming*: often once all the type errors are fixed the code just works.
+    - this is because types are lightweight invariants on program behavior
+  - The downside is types can get in the way both in terms of code maintenance and in terms of expressiveness.
+
+### ML vs Haskell
+* The final wrestling match in the typed FP world is which typed FP is your favorite. 
+* I was "born and raised" in the ML camp so we are in ML.
+
 ## Intro to OCaml
+
+Installing: see [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) for install instructions and lots of other information
 
 ### The Ecosystem via Hello World in OCaml
 
@@ -66,7 +87,6 @@ In a file `helloworld.ml` type
 ```ocaml
 let hw = "hello"^" world"
 ```
-
 * Paste into `ocaml` then in `utop`
 * Save file in new directory, `ocamlc helloworld.ml`
 * `./a.out` to run
@@ -95,16 +115,22 @@ print_string hw
 * Lets make printing less primitive: use a `Core` library function, `printf`
 * Replace printing with line `Core.printf "the string is %s\n" hw`
 * Try building - gives an error
-* Add line `  (libraries core)` to dune file to fix
+* Add line `(libraries core)` to dune file to fix
 * Compile and run
 
 #### Exploring Basic Data in the top loop
+
+* We will use the `utop` top loop; the classic version is `ocaml` which has fewer bells and whistles
+* See [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) to install `utop`.  Note you need to also set up an `.ocamlinit` file as per that page
+* All the following are typed as input into `utop` with `;;` ending input.
+
+ 
 * Integers
 ```ocaml
-3 + 4;; (* ;; ends input, top loop will patiently do nothing until a ;; *)
+3 + 4;;
 let x = 3 + 4;; (* give the value a name via let keyword. *)
 let y = x + 5;; (* can use x now *)
-let z = x + 5 in z - 1;; (*  *)
+let z = x + 5 in z - 1;;
 ```
 
 #### Boolean operations
@@ -116,6 +142,16 @@ true || false;;
 1 = 2;; (* = not == for equality comparison *)
 1 <> 2;;  (* <> not != for not equal *)
 ```
+
+#### Other basic data -- see documentation for details
+```ocaml
+4.5;; (* floats *)
+4.5 +. 4.3 (* operations are +. etc not just + which is for ints only *)
+30980314323422L;; (* 64-bit integers *)
+'c';; (* characters *)
+"and of course strings";;
+
+```
 #### Simple functions on integers
 
 To declare a function `squared` with `x` its one parameter.  `return` is  implicit.
@@ -124,10 +160,12 @@ let squared x = x * x;;
 squared 4;; (* to call a function -- separate arguments with S P A C E S *)
 ```
  *  OCaml has no `return` statement; value of the whole body-expression is what gets returned
- *  Type is inferred and printed as domain `->` range
- *  OCaml functions in fact take only one argument - !  multiple arguments can be encoded by some tricks (later)
+ *  Type is automatically **inferred** and printed as domain `->` range
+ *  OCaml functions in fact take only one argument - !  multiple arguments can be encoded by a trick (later)
 
-Fibonacci series example - `0 1 1 2 3 5 8 13 ...` 
+#### Fibonacci series example - `0 1 1 2 3 5 8 13 ...` 
+
+Let's write a well-known function with recursion
 
 ```ocaml
 let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
@@ -140,19 +178,19 @@ fib 10;; (* get the 10th Fibonacci number *)
 
 #### Anonymous functions
 
-* Lets users define a function as an expression
+* Key to FP: functions are just expressions; put them in variables, pass and return from other functions, etc.
 * Similar to lambdas in Python, Java, C++, etc - all are based on the lambda calculus *)
 
 ```ocaml
 let add1 x = x + 1;; (* normal add1 definition *)
-let funny_add1 = (function x -> x + 1);; (* "x" is (sole) argument here *)
+let funny_add1 = (function x -> x + 1);; (* "x" is argument here *)
 funny_add1 3;;
 (funny_add1 4) + 7;; 
 ((function x -> x + 1) 4) + 7;; (*  a "->" function is an expression and can be used anywhere *)
 ((fun x -> x + 1) 4) + 7;; (*  shorthand notation -- cut off the "ction" *)
 ```
 
-Multiple arguments - just leave spaces between multiple arguments
+* Multiple arguments - just leave spaces between multiple arguments
 
 ```ocaml
 let add x y = x + y;;
@@ -168,7 +206,6 @@ So, add is a **higher-order function**: it either takes a function as an argumen
 
 Observe `int -> int -> int` is parenthesized as `int -> (int -> int)` -- unusual **right** associativity
 
-
 Be careful on operator precedence with this goofy way that function application doesn't need parens!
 ```ocaml
 add3 (3 * 2);;
@@ -176,7 +213,7 @@ add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - applicatio
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)
 ```
 
-### Super Simple Data Types: Option and Result
+### Simple Structured Data Types: Option and Result
 
 * Before getting into "bigger" data types and how to declare our own, let's use one of the simplest structured data types, the built-in `option` type.
 
@@ -229,11 +266,10 @@ Error: This expression has type int but an expression was expected of type
 Here is a real solution to the above issue:
 ```ocaml
 # match (nice_div 5 2) with 
-   | Some i -> i + 7
+   | Some i -> i + 7 (* i is bound to the result, 2 here *)
    | None -> failwith "This should never happen, we divided by 2";;
 - : int = 9
 ```
-
 * This shows how OCaml lets us *destruct* option types, via the `match` syntax.
 * `match` is similar to `switch` in C/Java/.. but is much more flexible in OCaml
 * LHS in OCaml can be a general pattern
@@ -250,6 +286,7 @@ val nicer_div : int -> int -> (int, string) result = <fun>
     - `Ok` means the normal result
     - `Error` is the error case, which unlike none can include failure data.
 * Again we can do the same kind of pattern match on `Ok/Error` as above.
+* This is a "more well-typed" version of the C approach of returning `-1` or `NULL` to indicate failure.
 
 ```ocaml
 # match (nicer_div 5 2) with 
@@ -262,7 +299,8 @@ Lastly, the function could itself raise an exception
 
 ```ocaml
 let div_exn m n = if n = 0 then failwith "divide by zero is bad!" else m / n;;
-div_exn 3 4;;```
+div_exn 3 4;;
+```
 
 Which has the property of not needing a match on the result.
 
@@ -290,21 +328,29 @@ let y = 0 :: z;;
 z;; (* Observe z itself did not change -- lists are immutable in OCaml *)
 ```
 
-
-### Pattern Matching
-[INSERT option and result types here as the initial pattern match code]
-
 #### Destructing Lists with pattern matching
 
 ```ocaml
 let rec rev l =
   match l with
   |  [] -> []
-  | x :: xs -> rev xs @ [x]
+  |  x :: xs -> rev xs @ [x]
 ;;
 rev [1;2;3];; (* = 1 :: ( 2 :: ( 3 :: [])) *)
 ```
-"Data structure corresponds to control flow" here and in other examples.
+
+* Correctness of a recursive function by induction: assume recursive call does what you expect in arguing it is overall correct.
+* For this example, can assume `rev xs` always reverses the tail of the list.
+* Given that fact, `rev xs @ [x]` should clearly reverse the whole list.
+* QED, the function is proved correct! (actually partially correct, it could also loop forever)
+
+#### Immutable Data Structures in Functional Programming
+
+* By default, data structures are immutable
+* A change is instead implemented as rebuilding the whole list from scratch
+* This style of programming: "Data structure corresponds to control flow"
+
+Example: zero out all the negative elements in a list of numbers.
 
 
 #### Introduction to OCaml notes
@@ -487,7 +533,7 @@ See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book
 
 * Along with `OUnit` may also want to do `ppx_inline_tests` or whatever it is called.  RWOC using it.. Only problem is it is not working with 4.10 and utop.
 * `Bisect` for code coverage. Cornell 7.4
-* Automated test generation aka randomized testing aka fuzz testing, `QCheck`.  Cornell 7.7-7.9
+* Property-based testing aka randomized testing aka fuzz testing, `QCheck`.  Cornell 7.7-7.9
 
  
 ## Monads and monad-likes
@@ -535,5 +581,6 @@ See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book
 * `#mod_use` - like `#use` but loads the file like it was a module (name of file as a module name)
 * `#load "blah.cmo"`,`#load "blahlib.cma"` - load a compiled binary or library file.
 * `#show` - shows the type for an entity (variable or module).
+* `#show_type` - expands a type definition (if it has an expansion)
 * `#require` - loads a library (does not `open` it, just loads the module)
 * `#use_output "dune top"` - like the shell `xargs` command - run a command and assume output is top loop input commands.  The particular command `dune top` generates top loop commands to set up libraries and load the current project.

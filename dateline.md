@@ -16,7 +16,7 @@ Lecture material and assigments are under the indicated links.
             <div align="left" class="heading">&nbsp;<strong>Lecture</strong></div>
           </td>
             <td width="30%"> 
-            <div align="center" class="heading"><strong>Readings</strong></div>
+            <div align="center" class="heading"><strong>Assignment out</strong></div>
           </td>
           <td width="15%"> 
             <div align="center" class="heading"><strong>Assignment due</strong></div>
@@ -30,11 +30,11 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;
+            <div align="left" class="body">Course Overview; Elementary OCaml
 	    </div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;
+            <div align="center" class="body"><a href="../coding.html">Install OCaml</a>
 	    </div>
           </td>
           <td width="15%"> 

@@ -69,14 +69,21 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Just repeat the Syllabus here.</li>
 </ul>
 
-<h2 id="what-is-fp">What is FP?</h2>
+<h2 id="what-is-functional-programming-fp">What is Functional Programming (FP)?</h2>
+
+<ul>
+  <li>It is a style of programming where functions are the centerpiece</li>
+  <li>A key dimension is functions-as-data: functions can be passed and returned</li>
+  <li>It emphasizes immutability: data structures that cannot be changed after being created</li>
+  <li>Mathematical functions are all immutable so FP aligns much more closely with math</li>
+</ul>
 
 <h3 id="history-in-brief">History in brief</h3>
 
 <ul>
   <li>Lambda calculus, 1930’s - logicians (Church, Turing, Kleene, Curry, etc)</li>
   <li>Logic proofs are formal constructions</li>
-  <li>Core ideas of functional programming already present</li>
+  <li>Core ideas of functional programming present here</li>
   <li>But no computers so no running, only hand-calculation</li>
   <li>Lisp, 1960’s (McCarthy)</li>
   <li>Implement the ideas of the mathematicians</li>
@@ -85,15 +92,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Typed functional languages, 70’s &amp; 80’s: ML and its descendents Haskell and OCaml</li>
   <li>Will see what this is in detail as we use OCaml</li>
   <li>Modern era: add FP as possibility in mainstream: Python, JavaScript, Java, C++, etc.</li>
-  <li>FP now edging out OO school in some domains.</li>
+  <li>FP now edging out Object-Oriented school in some domains.</li>
 </ul>
 
-<h3 id="imperative-vs-oo-vs-fp">Imperative vs OO vs FP</h3>
+<h3 id="imperative-vs-object-oriented-vs-higher-order-functional">Imperative vs Object-Oriented vs Higher-Order Functional</h3>
 
 <ul>
   <li>Oversimplifying but these are the three modern schools</li>
   <li>More oversimplifying: “Imperative = C, OO = Java, FP = OCaml”</li>
-  <li>other languages can also be put in schools, but these are leading representatives today</li>
+  <li>(Many O-O languages now have functions)</li>
 </ul>
 
 <h3 id="imperative">Imperative</h3>
@@ -103,7 +110,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>C has function pointers but they are not widely used and lack needed expressiveness (which we will cover).</li>
 </ul>
 
-<h3 id="o-o">O-O</h3>
+<h3 id="object-oriented-oo">Object-Oriented (OO)</h3>
 
 <ul>
   <li>Objects tend to have “their” state encpsulated within their boundary</li>
@@ -115,12 +122,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="functional">Functional</h3>
 
 <ul>
-  <li>Key aspect is lack of mutation: more like a mathematical function, the output only depends on the input and it’s only output is the codomain value, not any side effects like printing, mutating, raising exceptions, etc.</li>
+  <li>As mentioned above, key aspect is lack of mutation: more like a mathematical function, the output only depends on the input and it’s only output is the codomain value, not any side effects like printing, mutating, raising exceptions, etc.</li>
   <li>Lack of side effects is called “referential transparency” - variable values don’t change out from under you (like in math textbook).</li>
-  <li>Standard data structures not too different from imperative case: dictionaries, lists, etc, but often will themselves be non-mutable</li>
+  <li>Standard data structures not too different from imperative case: dictionaries, lists, etc, but often will themselves be <em>immutable</em></li>
   <li>Key advantage is higher-order-ness: code is data, make new functions, accept functions as parameters.</li>
-  <li>Allows for powerful new programming paradigms.  give examples like compose, map, etc.</li>
-  <li>Less good at supporting extension, no notion of subclass in common functional paradigms (not impossible to add though).</li>
+  <li>Allows for powerful new programming paradigms.
+    <ul>
+      <li>Simple example is function composition operation</li>
+    </ul>
+  </li>
+  <li>Less good at supporting extension, no notion of subclass in common functional paradigms</li>
 </ul>
 
 <h3 id="who-wins">Who wins?</h3>
@@ -133,7 +144,31 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Of course this choice is never made in a vacuum: existing codebases and libraries, programmer experience, etc.</li>
 </ul>
 
+<h3 id="typed-functional-vs-untyped-functional">Typed Functional vs Untyped Functional</h3>
+
+<ul>
+  <li>OK we arm-wrestled over OO vs FP, now we get to arm-wrestle in FP over whether types are good (OCaml, Haskell, etc) or bad (Scheme, Clojure, (Python, JavaScript)).</li>
+  <li>We are clearly in the “types are good” camp here but there are trade offs
+    <ul>
+      <li>With types we have <em>type-directed programming</em>: often once all the type errors are fixed the code just works.
+        <ul>
+          <li>this is because types are lightweight invariants on program behavior</li>
+        </ul>
+      </li>
+      <li>The downside is types can get in the way both in terms of code maintenance and in terms of expressiveness.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="ml-vs-haskell">ML vs Haskell</h3>
+<ul>
+  <li>The final wrestling match in the typed FP world is which typed FP is your favorite.</li>
+  <li>I was “born and raised” in the ML camp so we are in ML.</li>
+</ul>
+
 <h2 id="intro-to-ocaml">Intro to OCaml</h2>
+
+<p>Installing: see <a href="https://pl.cs.jhu.edu/fpse/coding.html">the Coding page</a> for install instructions and lots of other information</p>
 
 <h3 id="the-ecosystem-via-hello-world-in-ocaml">The Ecosystem via Hello World in OCaml</h3>
 
@@ -141,7 +176,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">hw</span> <span class="o">=</span> <span class="s2">"hello"</span><span class="o">^</span><span class="s2">" world"</span>
 </code></pre></div></div>
-
 <ul>
   <li>Paste into <code class="highlighter-rouge">ocaml</code> then in <code class="highlighter-rouge">utop</code></li>
   <li>Save file in new directory, <code class="highlighter-rouge">ocamlc helloworld.ml</code></li>
@@ -175,17 +209,23 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Lets make printing less primitive: use a <code class="highlighter-rouge">Core</code> library function, <code class="highlighter-rouge">printf</code></li>
   <li>Replace printing with line <code class="highlighter-rouge">Core.printf "the string is %s\n" hw</code></li>
   <li>Try building - gives an error</li>
-  <li>Add line `  (libraries core)` to dune file to fix</li>
+  <li>Add line <code class="highlighter-rouge">(libraries core)</code> to dune file to fix</li>
   <li>Compile and run</li>
 </ul>
 
 <h4 id="exploring-basic-data-in-the-top-loop">Exploring Basic Data in the top loop</h4>
+
 <ul>
+  <li>We will use the <code class="highlighter-rouge">utop</code> top loop; the classic version is <code class="highlighter-rouge">ocaml</code> which has fewer bells and whistles</li>
+  <li>See <a href="https://pl.cs.jhu.edu/fpse/coding.html">the Coding page</a> to install <code class="highlighter-rouge">utop</code>.  Note you need to also set up an <code class="highlighter-rouge">.ocamlinit</code> file as per that page</li>
+  <li>
+    <p>All the following are typed as input into <code class="highlighter-rouge">utop</code> with <code class="highlighter-rouge">;;</code> ending input.</p>
+  </li>
   <li>Integers
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* ;; ends input, top loop will patiently do nothing until a ;; *)</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span>
 <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* give the value a name via let keyword. *)</span>
 <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* can use x now *)</span>
-<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span> <span class="k">in</span> <span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(*  *)</span>
+<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span> <span class="k">in</span> <span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;;</span>
 </code></pre></div>    </div>
   </li>
 </ul>
@@ -198,6 +238,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* = not == for equality comparison *)</span>
 <span class="mi">1</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">;;</span>  <span class="c">(* &lt;&gt; not != for not equal *)</span>
 </code></pre></div></div>
+
+<h4 id="other-basic-data--see-documentation-for-details">Other basic data – see documentation for details</h4>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">4</span><span class="o">.</span><span class="mi">5</span><span class="p">;;</span> <span class="c">(* floats *)</span>
+<span class="mi">4</span><span class="o">.</span><span class="mi">5</span> <span class="o">+.</span> <span class="mi">4</span><span class="o">.</span><span class="mi">3</span> <span class="c">(* operations are +. etc not just + which is for ints only *)</span>
+<span class="mi">30980314323422</span><span class="nc">L</span><span class="p">;;</span> <span class="c">(* 64-bit integers *)</span>
+<span class="k">'</span><span class="n">c'</span><span class="p">;;</span> <span class="c">(* characters *)</span>
+<span class="s2">"and of course strings"</span><span class="p">;;</span>
+
+</code></pre></div></div>
 <h4 id="simple-functions-on-integers">Simple functions on integers</h4>
 
 <p>To declare a function <code class="highlighter-rouge">squared</code> with <code class="highlighter-rouge">x</code> its one parameter.  <code class="highlighter-rouge">return</code> is  implicit.</p>
@@ -206,11 +255,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 <ul>
   <li>OCaml has no <code class="highlighter-rouge">return</code> statement; value of the whole body-expression is what gets returned</li>
-  <li>Type is inferred and printed as domain <code class="highlighter-rouge">-&gt;</code> range</li>
-  <li>OCaml functions in fact take only one argument - !  multiple arguments can be encoded by some tricks (later)</li>
+  <li>Type is automatically <strong>inferred</strong> and printed as domain <code class="highlighter-rouge">-&gt;</code> range</li>
+  <li>OCaml functions in fact take only one argument - !  multiple arguments can be encoded by a trick (later)</li>
 </ul>
 
-<p>Fibonacci series example - <code class="highlighter-rouge">0 1 1 2 3 5 8 13 ...</code></p>
+<h4 id="fibonacci-series-example---0-1-1-2-3-5-8-13-">Fibonacci series example - <code class="highlighter-rouge">0 1 1 2 3 5 8 13 ...</code></h4>
+
+<p>Let’s write a well-known function with recursion</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="n">n</span> <span class="o">=</span>     <span class="c">(* the "rec" keyword needs to be added to allow recursion *)</span>
   <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span>
@@ -223,19 +274,21 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="anonymous-functions">Anonymous functions</h4>
 
 <ul>
-  <li>Lets users define a function as an expression</li>
+  <li>Key to FP: functions are just expressions; put them in variables, pass and return from other functions, etc.</li>
   <li>Similar to lambdas in Python, Java, C++, etc - all are based on the lambda calculus *)</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add1</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* normal add1 definition *)</span>
-<span class="k">let</span> <span class="n">funny_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* "x" is (sole) argument here *)</span>
+<span class="k">let</span> <span class="n">funny_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* "x" is argument here *)</span>
 <span class="n">funny_add1</span> <span class="mi">3</span><span class="p">;;</span>
 <span class="p">(</span><span class="n">funny_add1</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> 
 <span class="p">((</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(*  a "-&gt;" function is an expression and can be used anywhere *)</span>
 <span class="p">((</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(*  shorthand notation -- cut off the "ction" *)</span>
 </code></pre></div></div>
 
-<p>Multiple arguments - just leave spaces between multiple arguments</p>
+<ul>
+  <li>Multiple arguments - just leave spaces between multiple arguments</li>
+</ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;;</span>
 <span class="n">add</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span>
@@ -256,7 +309,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <span class="n">add3</span> <span class="o">@@</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)</span>
 </code></pre></div></div>
 
-<h3 id="super-simple-data-types-option-and-result">Super Simple Data Types: Option and Result</h3>
+<h3 id="simple-structured-data-types-option-and-result">Simple Structured Data Types: Option and Result</h3>
 
 <ul>
   <li>Before getting into “bigger” data types and how to declare our own, let’s use one of the simplest structured data types, the built-in <code class="highlighter-rouge">option</code> type.</li>
@@ -311,11 +364,10 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 
 <p>Here is a real solution to the above issue:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">match</span> <span class="p">(</span><span class="n">nice_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="k">with</span> 
-   <span class="o">|</span> <span class="nc">Some</span> <span class="n">i</span> <span class="o">-&gt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">7</span>
+   <span class="o">|</span> <span class="nc">Some</span> <span class="n">i</span> <span class="o">-&gt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">7</span> <span class="c">(* i is bound to the result, 2 here *)</span>
    <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"This should never happen, we divided by 2"</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">9</span>
 </code></pre></div></div>
-
 <ul>
   <li>This shows how OCaml lets us <em>destruct</em> option types, via the <code class="highlighter-rouge">match</code> syntax.</li>
   <li><code class="highlighter-rouge">match</code> is similar to <code class="highlighter-rouge">switch</code> in C/Java/.. but is much more flexible in OCaml</li>
@@ -337,6 +389,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
     </ul>
   </li>
   <li>Again we can do the same kind of pattern match on <code class="highlighter-rouge">Ok/Error</code> as above.</li>
+  <li>This is a “more well-typed” version of the C approach of returning <code class="highlighter-rouge">-1</code> or <code class="highlighter-rouge">NULL</code> to indicate failure.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">match</span> <span class="p">(</span><span class="n">nicer_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="k">with</span> 
@@ -348,16 +401,16 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <p>Lastly, the function could itself raise an exception</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">div_exn</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="n">failwith</span> <span class="s2">"divide by zero is bad!"</span> <span class="k">else</span> <span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">;;</span>
-<span class="n">div_exn</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span><span class="err">```</span>
+<span class="n">div_exn</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span>
+</code></pre></div></div>
 
-<span class="nc">Which</span> <span class="n">has</span> <span class="n">the</span> <span class="n">property</span> <span class="k">of</span> <span class="n">not</span> <span class="n">needing</span> <span class="n">a</span> <span class="k">match</span> <span class="n">on</span> <span class="n">the</span> <span class="n">result</span><span class="o">.</span>
+<p>Which has the property of not needing a match on the result.</p>
 
-<span class="o">###</span> <span class="nc">Lists</span>
+<h3 id="lists">Lists</h3>
 
-<span class="nc">Lists</span> <span class="n">are</span> <span class="n">pervasive</span> <span class="k">in</span> <span class="nc">OCaml</span><span class="p">;</span> <span class="n">easy</span> <span class="k">to</span> <span class="n">create</span> <span class="ow">and</span> <span class="n">manipulate</span>
+<p>Lists are pervasive in OCaml; easy to create and manipulate</p>
 
-<span class="err">``</span><span class="nt">`ocaml</span>
-<span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
 <span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">];;</span>
 <span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">;</span> <span class="s2">"b"</span><span class="p">;</span> <span class="s2">"c"</span><span class="p">];;</span>
 <span class="k">let</span> <span class="n">l4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="s2">"a"</span><span class="p">];;</span> <span class="c">(* errors - All elements must have same type - HOMOGENEOUS *)</span>
@@ -375,19 +428,32 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <span class="n">z</span><span class="p">;;</span> <span class="c">(* Observe z itself did not change -- lists are immutable in OCaml *)</span>
 </code></pre></div></div>
 
-<h3 id="pattern-matching">Pattern Matching</h3>
-<p>[INSERT option and result types here as the initial pattern match code]</p>
-
 <h4 id="destructing-lists-with-pattern-matching">Destructing Lists with pattern matching</h4>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
-  <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="n">rev</span> <span class="n">xs</span> <span class="o">@</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="n">rev</span> <span class="n">xs</span> <span class="o">@</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
 <span class="p">;;</span>
 <span class="n">rev</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> <span class="c">(* = 1 :: ( 2 :: ( 3 :: [])) *)</span>
 </code></pre></div></div>
-<p>“Data structure corresponds to control flow” here and in other examples.</p>
+
+<ul>
+  <li>Correctness of a recursive function by induction: assume recursive call does what you expect in arguing it is overall correct.</li>
+  <li>For this example, can assume <code class="highlighter-rouge">rev xs</code> always reverses the tail of the list.</li>
+  <li>Given that fact, <code class="highlighter-rouge">rev xs @ [x]</code> should clearly reverse the whole list.</li>
+  <li>QED, the function is proved correct! (actually partially correct, it could also loop forever)</li>
+</ul>
+
+<h4 id="immutable-data-structures-in-functional-programming">Immutable Data Structures in Functional Programming</h4>
+
+<ul>
+  <li>By default, data structures are immutable</li>
+  <li>A change is instead implemented as rebuilding the whole list from scratch</li>
+  <li>This style of programming: “Data structure corresponds to control flow”</li>
+</ul>
+
+<p>Example: zero out all the negative elements in a list of numbers.</p>
 
 <h4 id="introduction-to-ocaml-notes">Introduction to OCaml notes</h4>
 <p>High-level outline of how PLI version needs to evolve</p>
@@ -630,7 +696,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <ul>
   <li>Along with <code class="highlighter-rouge">OUnit</code> may also want to do <code class="highlighter-rouge">ppx_inline_tests</code> or whatever it is called.  RWOC using it.. Only problem is it is not working with 4.10 and utop.</li>
   <li><code class="highlighter-rouge">Bisect</code> for code coverage. Cornell 7.4</li>
-  <li>Automated test generation aka randomized testing aka fuzz testing, <code class="highlighter-rouge">QCheck</code>.  Cornell 7.7-7.9</li>
+  <li>Property-based testing aka randomized testing aka fuzz testing, <code class="highlighter-rouge">QCheck</code>.  Cornell 7.7-7.9</li>
 </ul>
 
 <h2 id="monads-and-monad-likes">Monads and monad-likes</h2>
@@ -688,6 +754,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
   <li><code class="highlighter-rouge">#mod_use</code> - like <code class="highlighter-rouge">#use</code> but loads the file like it was a module (name of file as a module name)</li>
   <li><code class="highlighter-rouge">#load "blah.cmo"</code>,<code class="highlighter-rouge">#load "blahlib.cma"</code> - load a compiled binary or library file.</li>
   <li><code class="highlighter-rouge">#show</code> - shows the type for an entity (variable or module).</li>
+  <li><code class="highlighter-rouge">#show_type</code> - expands a type definition (if it has an expansion)</li>
   <li><code class="highlighter-rouge">#require</code> - loads a library (does not <code class="highlighter-rouge">open</code> it, just loads the module)</li>
   <li><code class="highlighter-rouge">#use_output "dune top"</code> - like the shell <code class="highlighter-rouge">xargs</code> command - run a command and assume output is top loop input commands.  The particular command <code class="highlighter-rouge">dune top</code> generates top loop commands to set up libraries and load the current project.</li>
 </ul>
