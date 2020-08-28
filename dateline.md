@@ -34,7 +34,7 @@ Lecture material and assigments are under the indicated links.
 	    </div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body"><a href="../coding.html">Install OCaml</a>
+            <div align="center" class="body"><a href="coding.html">Install OCaml</a>
 	    </div>
           </td>
           <td width="15%"> 
