@@ -1,67 +1,54 @@
-# Syllabus
+## Syllabus
 
-This is the preliminary list of lecture topics and readings. See the [dateline](dateline.html) for what we actually end up doing as the course evolves.
+This is the preliminary list of proposed lecture topics and readings. See the [dateline](dateline.html) for what we actually end up doing as the course evolves.
 
-## Basic Functional Programming in OCaml
+### Intro to Functional Programming in OCaml
 
-* The basics: expressions, functions, lists, pattern matching, higher-order functions, variants. 
-* Modules
+* Basic OCaml coding with simple data, lists, and functions
+* Basic OCaml library usage
 * Basic build tool usage
+* Using OCaml modules
 
-### Advanced OCaml data structures
-* Advanced patterns, polymorphic variants, extensible variants
-* GADTS
-* Streams and laziness
-* Memoization
-
-### Side effects
- * Mutation
- * Exceptions
- * I/O and the `Stdio` library
-
-#### Libraries:
-
-* Jane Street's [`Base`](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/index.html): `List`, `Map`, `Hashtbl`, etc.
-
-##### Advanced modules
-* `include`, Nested modules, First-class modules
-* More functors
-* Comparision
-* Type sharing constraints and destructive substitution
+### The Full OCaml Feature Set
+* Data structures
+* Types and type inference
+* Modules and Functors
+* Side effects: Mutation, Exceptions, I/O and the `Stdio` library
+* More Libraries from Jane Street's [`Base`](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/index.html): `Map`, `Hashtbl`, etc.
+* Defining Comparisions
 
 ### The Modern OCaml Ecosystem
-* `opam`, `.ocamlinit`, `topfind`, `ocamlfind`
-* `dune`
+* Building projects with `dune`
+* Documenting projects with `ocamldoc`
+* Principles of testing;  `ounit` testing
 
 ### Idiomatic Functional Programming
-* Refactoring: pull out duplicate code, add higher-order function parameters, use combinators, separate concerns, etc
+* Refactoring functional programs to be more idiomatic (modular / separation of concerns)
+* Type-directed programming, type-aided extension and debugging
+* Comparing different programming models: OO vs Imperative vs FP; the expression problem
 
-### Specification
-
+### Specifying Programs
 * Specifying properties of programs
-    - Type-directed programming
     - Referential transparency
-    - Abstract interfacesod.
-
+    - Abstract interfaces
 * Invariants
-    - Data structure Invariants, recursive function invariants, representation invariants
+    - Data structure Invariants, recursive function invariants
+###  Advanced OCaml Features
+* Advanced modules: nested modules, first-class modules, writing functors
+* Advanced types: weak polymorphism, covariant types, GADTs, etc.
 
-### Testing
-* Principles of testing
-* `OUnit`
-* `Bisect` for code coverage.
-* Automated test generation, `QCheck`
+### Advanced Testing
+* Code coverage, `Bisect`
+* Automated test generation aka property-based testing, `QCheck`
 
+### Monads
 
-### Monads and monad-likes
-
-#### Monad Warm-up
+#### Monads Warm-up
 * State passing and exception encoding
-* CPS transformation
-* `Async` library and promises
+* The continuation-passing style (CPS) transformation
+* The `Async` library and promises
 
 #### Monads proper
-
 * Monads, monad laws
 * Monad programming 
 
@@ -76,7 +63,7 @@ This is the preliminary list of lecture topics and readings. See the [dateline](
 -   Java lambdas
 - Elm
 
-## Primary Resources
+##  Resources
 
 * [Real World OCaml 2nd Edition](https://dev.realworldocaml.org/toc.html)
 * [Cornell book](https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/)
