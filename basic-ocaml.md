@@ -1,26 +1,43 @@
 ## Introduction to OCaml
 
-Installing: see [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) for install instructions and lots of other information
+### Installing
+
+ * See [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) for install instructions and lots of other information.  
+ * Make sure to use the required 4.10.0 version of OCaml, install the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on this page.
+    - This will let us all "play in the same sandbox" and avoid confusions
 
 ### The Ecosystem via Hello World in OCaml
 
-In a file `helloworld.ml` type
+* Before getting into the details of the language we will cover the ecosystem at a high level
+
+#### The top loop
+
+* Let's type the following in a file `helloworld.ml`:
 
 ```ocaml
 let hw = "hello"^" world"
 ```
-* Paste into `ocaml` then in `utop`
-* Save file in new directory, `ocamlc helloworld.ml`
-* `./a.out` to run
+* Now, run the shell command `ocaml`, copy/paste this code in, add a `;;` and hit return - it runs!
+* Control-D to quit `ocaml`, let us switch to its improved version, `utop`, and do the same thing.
+
+#### The compile/run system
+
+* The above is the **top loop** aka **read-eval-print** view of OCaml.  You probably know this from Python/Javascript/shell/etc.
+* Let us now do the compile/run view of C/C++/Java/etc.
+* In OCaml we really want to live in **both worlds**
+
+* From the shell type `ocamlc helloworld.ml` to compile and then `./a.out` to run
 * Nothing happens?  Because executables only interact by I/O (think Java, C, etc)
-* Re-write to add 
+* Re-write to add line
 ```ocaml
 print_string hw
 ```
 * recompile and run: we get some output!
 
+
 #### Building and running with Dune
 
+* `dune` is the modern `Makefile` equivalent for OCaml.
 * In same directory, add a file `dune`:
 ```scheme
 (executable
@@ -28,22 +45,22 @@ print_string hw
   (modules helloworld)
 )
 ```
-* This is the build file, like a `Makefile`.
-* Now, type `dune build` to compile a standalone program like we did above.
+* This is the **build file**, specifying how to compile/test/run the program.
+* Now, type `dune build` to compile a standalone program like we did above but letting `dune` invoke the compiler.
 * Then, run with `dune exec ./helloworld`
 
 #### Adding a Library
 
-* Lets make printing less primitive: use a `Core` library function, `printf`
+* Let's make printing less primitive: use a `Core` library function, `printf`
 * Replace printing with line `Core.printf "the string is %s\n" hw`
 * Try building - gives an error
-* Add line `(libraries core)` to dune file to fix
+* Add line `(libraries core)` to dune file to fix -- all library dependencies must be listed in the dune file
 * Compile and run
 
-#### Exploring Basic Data in the top loop
+### Exploring Basic Data in the top loop
 
-* We will use the `utop` top loop; the classic version is `ocaml` which has fewer bells and whistles
-* See [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) to install `utop`.  Note you need to also set up an `.ocamlinit` file as per that page
+* We will be running many small incremental programs - best done in the top loop.
+* We will always use the `utop` top loop
 * All the following are typed as input into `utop` with `;;` ending input.
 
  
@@ -52,7 +69,7 @@ print_string hw
 3 + 4;;
 let x = 3 + 4;; (* give the value a name via let keyword. *)
 let y = x + 5;; (* can use x now *)
-let z = x + 5 in z - 1;;
+let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
 ```
 
 #### Boolean operations
@@ -68,7 +85,7 @@ true || false;;
 #### Other basic data -- see documentation for details
 ```ocaml
 4.5;; (* floats *)
-4.5 +. 4.3 (* operations are +. etc not just + which is for ints only *)
+4.5 +. 4.3;; (* operations are +. etc not just + which is for ints only *)
 30980314323422L;; (* 64-bit integers *)
 'c';; (* characters *)
 "and of course strings";;
@@ -87,7 +104,7 @@ squared 4;; (* to call a function -- separate arguments with S P A C E S *)
 
 #### Fibonacci series example - `0 1 1 2 3 5 8 13 ...` 
 
-Let's write a well-known function with recursion
+Let's write a well-known function with recursion and if-then-else syntax
 
 ```ocaml
 let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
@@ -100,16 +117,16 @@ fib 10;; (* get the 10th Fibonacci number *)
 
 #### Anonymous functions
 
-* Key to FP: functions are just expressions; put them in variables, pass and return from other functions, etc.
-* Similar to lambdas in Python, Java, C++, etc - all are based on the lambda calculus *)
+* Key purpose of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.
+* Much of this course will be showing how this is useful, we are just getting started now
 
 ```ocaml
-let add1 x = x + 1;; (* normal add1 definition *)
-let funny_add1 = (function x -> x + 1);; (* "x" is argument here *)
-funny_add1 3;;
-(funny_add1 4) + 7;; 
-((function x -> x + 1) 4) + 7;; (*  a "->" function is an expression and can be used anywhere *)
-((fun x -> x + 1) 4) + 7;; (*  shorthand notation -- cut off the "ction" *)
+let add1 x = x + 1;; (* a normal add1 definition *)
+let anon_add1 = (function x -> x + 1);; (* anonymous version; "x" is argument here *)
+anon_add1 3;;
+(anon_add1 4) + 7;; 
+((function x -> x + 1) 4) + 7;; (* can inline any anonymous function as well *)
+((fun x -> x + 1) 4) + 7;; (*  shorthand notation usually works -- cut off the "ction" *)
 ```
 
 * Multiple arguments - just leave spaces between multiple arguments
@@ -228,13 +245,14 @@ Which has the property of not needing a match on the result.
 
 ### Lists
 
-Lists are pervasive in OCaml; easy to create and manipulate
+* Lists are pervasive in OCaml; easy to create and manipulate
+* They are always immutable so while they look something like arrays or vectors they are different
 
 ```ocaml
 let l1 = [1; 2; 3];;
 let l2 = [1; 1+1; 1+1+1];;
 let l3 = ["a"; "b"; "c"];;
-let l4 = [1; "a"];; (* errors - All elements must have same type - HOMOGENEOUS *)
+let l4 = [1; "a"];; (* error - All elements must have same type - HOMOGENEOUS *)
 let l5 = [];; (* empty list *)
 ```
 
@@ -264,7 +282,7 @@ rev [1;2;3];; (* = 1 :: ( 2 :: ( 3 :: [])) *)
 * Correctness of a recursive function by induction: assume recursive call does what you expect in arguing it is overall correct.
 * For this example, can assume `rev xs` always reverses the tail of the list.
 * Given that fact, `rev xs @ [x]` should clearly reverse the whole list.
-* QED, the function is proved correct! (actually partially correct, it could also loop forever)
+* QED, the function is proved correct! (actually partially correct, this induction argument does not rule out infinite loops)
 
 #### Immutable Data Structures in Functional Programming
 

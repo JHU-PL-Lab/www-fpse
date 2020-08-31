@@ -62,20 +62,47 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h2 id="introduction-to-ocaml">Introduction to OCaml</h2>
 
-<p>Installing: see <a href="https://pl.cs.jhu.edu/fpse/coding.html">the Coding page</a> for install instructions and lots of other information</p>
+<h3 id="installing">Installing</h3>
+
+<ul>
+  <li>See <a href="https://pl.cs.jhu.edu/fpse/coding.html">the Coding page</a> for install instructions and lots of other information.</li>
+  <li>Make sure to use the required 4.10.0 version of OCaml, install the libraries listed via <code class="highlighter-rouge">opam</code>, and change your <code class="highlighter-rouge">.ocamlinit</code> file as mentioned on this page.
+    <ul>
+      <li>This will let us all “play in the same sandbox” and avoid confusions</li>
+    </ul>
+  </li>
+</ul>
 
 <h3 id="the-ecosystem-via-hello-world-in-ocaml">The Ecosystem via Hello World in OCaml</h3>
 
-<p>In a file <code class="highlighter-rouge">helloworld.ml</code> type</p>
+<ul>
+  <li>Before getting into the details of the language we will cover the ecosystem at a high level</li>
+</ul>
+
+<h4 id="the-top-loop">The top loop</h4>
+
+<ul>
+  <li>Let’s type the following in a file <code class="highlighter-rouge">helloworld.ml</code>:</li>
+</ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">hw</span> <span class="o">=</span> <span class="s2">"hello"</span><span class="o">^</span><span class="s2">" world"</span>
 </code></pre></div></div>
 <ul>
-  <li>Paste into <code class="highlighter-rouge">ocaml</code> then in <code class="highlighter-rouge">utop</code></li>
-  <li>Save file in new directory, <code class="highlighter-rouge">ocamlc helloworld.ml</code></li>
-  <li><code class="highlighter-rouge">./a.out</code> to run</li>
+  <li>Now, run the shell command <code class="highlighter-rouge">ocaml</code>, copy/paste this code in, add a <code class="highlighter-rouge">;;</code> and hit return - it runs!</li>
+  <li>Control-D to quit <code class="highlighter-rouge">ocaml</code>, let us switch to its improved version, <code class="highlighter-rouge">utop</code>, and do the same thing.</li>
+</ul>
+
+<h4 id="the-compilerun-system">The compile/run system</h4>
+
+<ul>
+  <li>The above is the <strong>top loop</strong> aka <strong>read-eval-print</strong> view of OCaml.  You probably know this from Python/Javascript/shell/etc.</li>
+  <li>Let us now do the compile/run view of C/C++/Java/etc.</li>
+  <li>
+    <p>In OCaml we really want to live in <strong>both worlds</strong></p>
+  </li>
+  <li>From the shell type <code class="highlighter-rouge">ocamlc helloworld.ml</code> to compile and then <code class="highlighter-rouge">./a.out</code> to run</li>
   <li>Nothing happens?  Because executables only interact by I/O (think Java, C, etc)</li>
-  <li>Re-write to add
+  <li>Re-write to add line
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print_string</span> <span class="n">hw</span>
 </code></pre></div>    </div>
   </li>
@@ -85,6 +112,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="building-and-running-with-dune">Building and running with Dune</h4>
 
 <ul>
+  <li><code class="highlighter-rouge">dune</code> is the modern <code class="highlighter-rouge">Makefile</code> equivalent for OCaml.</li>
   <li>In same directory, add a file <code class="highlighter-rouge">dune</code>:
     <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>
 <span class="p">(</span><span class="nf">name</span> <span class="nv">helloworld</span><span class="p">)</span>
@@ -92,26 +120,26 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="p">)</span>
 </code></pre></div>    </div>
   </li>
-  <li>This is the build file, like a <code class="highlighter-rouge">Makefile</code>.</li>
-  <li>Now, type <code class="highlighter-rouge">dune build</code> to compile a standalone program like we did above.</li>
+  <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.</li>
+  <li>Now, type <code class="highlighter-rouge">dune build</code> to compile a standalone program like we did above but letting <code class="highlighter-rouge">dune</code> invoke the compiler.</li>
   <li>Then, run with <code class="highlighter-rouge">dune exec ./helloworld</code></li>
 </ul>
 
 <h4 id="adding-a-library">Adding a Library</h4>
 
 <ul>
-  <li>Lets make printing less primitive: use a <code class="highlighter-rouge">Core</code> library function, <code class="highlighter-rouge">printf</code></li>
+  <li>Let’s make printing less primitive: use a <code class="highlighter-rouge">Core</code> library function, <code class="highlighter-rouge">printf</code></li>
   <li>Replace printing with line <code class="highlighter-rouge">Core.printf "the string is %s\n" hw</code></li>
   <li>Try building - gives an error</li>
-  <li>Add line <code class="highlighter-rouge">(libraries core)</code> to dune file to fix</li>
+  <li>Add line <code class="highlighter-rouge">(libraries core)</code> to dune file to fix – all library dependencies must be listed in the dune file</li>
   <li>Compile and run</li>
 </ul>
 
-<h4 id="exploring-basic-data-in-the-top-loop">Exploring Basic Data in the top loop</h4>
+<h3 id="exploring-basic-data-in-the-top-loop">Exploring Basic Data in the top loop</h3>
 
 <ul>
-  <li>We will use the <code class="highlighter-rouge">utop</code> top loop; the classic version is <code class="highlighter-rouge">ocaml</code> which has fewer bells and whistles</li>
-  <li>See <a href="https://pl.cs.jhu.edu/fpse/coding.html">the Coding page</a> to install <code class="highlighter-rouge">utop</code>.  Note you need to also set up an <code class="highlighter-rouge">.ocamlinit</code> file as per that page</li>
+  <li>We will be running many small incremental programs - best done in the top loop.</li>
+  <li>We will always use the <code class="highlighter-rouge">utop</code> top loop</li>
   <li>
     <p>All the following are typed as input into <code class="highlighter-rouge">utop</code> with <code class="highlighter-rouge">;;</code> ending input.</p>
   </li>
@@ -119,7 +147,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span>
 <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* give the value a name via let keyword. *)</span>
 <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* can use x now *)</span>
-<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span> <span class="k">in</span> <span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span> <span class="k">in</span> <span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* let .. in defines a local variable z *)</span>
 </code></pre></div>    </div>
   </li>
 </ul>
@@ -135,7 +163,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="other-basic-data--see-documentation-for-details">Other basic data – see documentation for details</h4>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">4</span><span class="o">.</span><span class="mi">5</span><span class="p">;;</span> <span class="c">(* floats *)</span>
-<span class="mi">4</span><span class="o">.</span><span class="mi">5</span> <span class="o">+.</span> <span class="mi">4</span><span class="o">.</span><span class="mi">3</span> <span class="c">(* operations are +. etc not just + which is for ints only *)</span>
+<span class="mi">4</span><span class="o">.</span><span class="mi">5</span> <span class="o">+.</span> <span class="mi">4</span><span class="o">.</span><span class="mi">3</span><span class="p">;;</span> <span class="c">(* operations are +. etc not just + which is for ints only *)</span>
 <span class="mi">30980314323422</span><span class="nc">L</span><span class="p">;;</span> <span class="c">(* 64-bit integers *)</span>
 <span class="k">'</span><span class="n">c'</span><span class="p">;;</span> <span class="c">(* characters *)</span>
 <span class="s2">"and of course strings"</span><span class="p">;;</span>
@@ -155,7 +183,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="fibonacci-series-example---0-1-1-2-3-5-8-13-">Fibonacci series example - <code class="highlighter-rouge">0 1 1 2 3 5 8 13 ...</code></h4>
 
-<p>Let’s write a well-known function with recursion</p>
+<p>Let’s write a well-known function with recursion and if-then-else syntax</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="n">n</span> <span class="o">=</span>     <span class="c">(* the "rec" keyword needs to be added to allow recursion *)</span>
   <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span>
@@ -168,16 +196,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="anonymous-functions">Anonymous functions</h4>
 
 <ul>
-  <li>Key to FP: functions are just expressions; put them in variables, pass and return from other functions, etc.</li>
-  <li>Similar to lambdas in Python, Java, C++, etc - all are based on the lambda calculus *)</li>
+  <li>Key purpose of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.</li>
+  <li>Much of this course will be showing how this is useful, we are just getting started now</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add1</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* normal add1 definition *)</span>
-<span class="k">let</span> <span class="n">funny_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* "x" is argument here *)</span>
-<span class="n">funny_add1</span> <span class="mi">3</span><span class="p">;;</span>
-<span class="p">(</span><span class="n">funny_add1</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> 
-<span class="p">((</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(*  a "-&gt;" function is an expression and can be used anywhere *)</span>
-<span class="p">((</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(*  shorthand notation -- cut off the "ction" *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add1</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* a normal add1 definition *)</span>
+<span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* anonymous version; "x" is argument here *)</span>
+<span class="n">anon_add1</span> <span class="mi">3</span><span class="p">;;</span>
+<span class="p">(</span><span class="n">anon_add1</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> 
+<span class="p">((</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(* can inline any anonymous function as well *)</span>
+<span class="p">((</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(*  shorthand notation usually works -- cut off the "ction" *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -302,12 +330,15 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 
 <h3 id="lists">Lists</h3>
 
-<p>Lists are pervasive in OCaml; easy to create and manipulate</p>
+<ul>
+  <li>Lists are pervasive in OCaml; easy to create and manipulate</li>
+  <li>They are always immutable so while they look something like arrays or vectors they are different</li>
+</ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
 <span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">];;</span>
 <span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">;</span> <span class="s2">"b"</span><span class="p">;</span> <span class="s2">"c"</span><span class="p">];;</span>
-<span class="k">let</span> <span class="n">l4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="s2">"a"</span><span class="p">];;</span> <span class="c">(* errors - All elements must have same type - HOMOGENEOUS *)</span>
+<span class="k">let</span> <span class="n">l4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="s2">"a"</span><span class="p">];;</span> <span class="c">(* error - All elements must have same type - HOMOGENEOUS *)</span>
 <span class="k">let</span> <span class="n">l5</span> <span class="o">=</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* empty list *)</span>
 </code></pre></div></div>
 
@@ -336,7 +367,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
   <li>Correctness of a recursive function by induction: assume recursive call does what you expect in arguing it is overall correct.</li>
   <li>For this example, can assume <code class="highlighter-rouge">rev xs</code> always reverses the tail of the list.</li>
   <li>Given that fact, <code class="highlighter-rouge">rev xs @ [x]</code> should clearly reverse the whole list.</li>
-  <li>QED, the function is proved correct! (actually partially correct, it could also loop forever)</li>
+  <li>QED, the function is proved correct! (actually partially correct, this induction argument does not rule out infinite loops)</li>
 </ul>
 
 <h4 id="immutable-data-structures-in-functional-programming">Immutable Data Structures in Functional Programming</h4>
