@@ -14,34 +14,33 @@ See the [Syllabus](syllabus.html)
 
 ### History in brief
 
-* &lambda;-calculus, 1930's - logicians (Church, Turing, Kleene, Curry, etc)
- - Logic proofs are formal constructions, expressed as programs in the &lambda;-calculus
- - The 1930's &lambda;-calculus has the core of a modern functional programming language
- - But before computers existed so no running, only hand-calculation - !
+* &lambda;-calculus, 1930's - developed by logicians (Church, Turing, Kleene, Curry, etc)
+  - Logic proofs are formal constructions, expressed as programs in the &lambda;-calculus
+  - The 1930's &lambda;-calculus is the core of a modern functional programming language
+  - But before computers existed so no running, only hand-calculation - !
 * Lisp, 1960's (McCarthy)
- - &lambda;-calculus is elegant, build a PL around it
- - Goal application space: artificial intelligence programming
- - Added list data to functions: **Lis**t **P**rocessing
+  - &lambda;-calculus is elegant, build a PL around it
+  - Goal application space: artificial intelligence programming
+  - Added list data to &lambda; functions: **Lis**t **P**rocessing
 * Typed functional languages, 70's & 80's: Milner's ML and its descendents Haskell and OCaml
- - Will see what this is in detail as we use OCaml
-* Modern era: add FP as possibility in mainstream: Python, JavaScript, Java, C++, etc.
-* FP now edging out Object-Oriented school in some domains.
+  - We will be using OCaml
+* Modern era: add FP as possibility in mainstream PLs: Python, JavaScript, Java, C++, etc.
 
 ### Imperative vs Object-Oriented vs Higher-Order Functional
 
 * Oversimplifying but these are the three modern schools
 * More oversimplifying: "Imperative = C, OO = Java, FP = OCaml"
 * Note many O-O languages now have functions, often called lambdas for the historical reference
-* Goal of this course is to get deeply into the FP mode of programming, which can then be used in your favorite PL - Java, Python, C++, JavaScript, etc.
+* Goal of this course is to get deeply into the FP mode of programming, which can then be used in your favorite PL - Java, Python, C++, JavaScript, OCaml, etc.
 
 ### Imperative
 
-* Imperative also has functions, but functions often have side effects (e.g. mutate some shared data structures)
+* Imperative also has functions, but there functions often have side effects (e.g. mutate some shared data structures)
 * C has function pointers to pass around functions as data but they are not widely used and lack needed expressiveness (which we will cover later).
 
 ### Object-Oriented (OO)
 
-* Objects tend to have "their" state encpsulated within their boundary
+* Objects tend to have "their" state encapsulated within their boundary
 * It is usually a mutable state - changes over time
 * A function is similar to an object with one method, `call`, and with no fields
 * That doesn't fully capture higher-order functions which is why `lambda` added to Java.

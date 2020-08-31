@@ -82,18 +82,26 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="history-in-brief">History in brief</h3>
 
 <ul>
-  <li>λ-calculus, 1930’s - logicians (Church, Turing, Kleene, Curry, etc)</li>
-  <li>Logic proofs are formal constructions, expressed as programs in the λ-calculus</li>
-  <li>The 1930’s λ-calculus has the core of a modern functional programming language</li>
-  <li>But before computers existed so no running, only hand-calculation - !</li>
-  <li>Lisp, 1960’s (McCarthy)</li>
-  <li>λ-calculus is elegant, build a PL around it</li>
-  <li>Goal application space: artificial intelligence programming</li>
-  <li>Added list data to functions: <strong>Lis</strong>t <strong>P</strong>rocessing</li>
-  <li>Typed functional languages, 70’s &amp; 80’s: Milner’s ML and its descendents Haskell and OCaml</li>
-  <li>Will see what this is in detail as we use OCaml</li>
-  <li>Modern era: add FP as possibility in mainstream: Python, JavaScript, Java, C++, etc.</li>
-  <li>FP now edging out Object-Oriented school in some domains.</li>
+  <li>λ-calculus, 1930’s - developed by logicians (Church, Turing, Kleene, Curry, etc)
+    <ul>
+      <li>Logic proofs are formal constructions, expressed as programs in the λ-calculus</li>
+      <li>The 1930’s λ-calculus is the core of a modern functional programming language</li>
+      <li>But before computers existed so no running, only hand-calculation - !</li>
+    </ul>
+  </li>
+  <li>Lisp, 1960’s (McCarthy)
+    <ul>
+      <li>λ-calculus is elegant, build a PL around it</li>
+      <li>Goal application space: artificial intelligence programming</li>
+      <li>Added list data to λ functions: <strong>Lis</strong>t <strong>P</strong>rocessing</li>
+    </ul>
+  </li>
+  <li>Typed functional languages, 70’s &amp; 80’s: Milner’s ML and its descendents Haskell and OCaml
+    <ul>
+      <li>We will be using OCaml</li>
+    </ul>
+  </li>
+  <li>Modern era: add FP as possibility in mainstream PLs: Python, JavaScript, Java, C++, etc.</li>
 </ul>
 
 <h3 id="imperative-vs-object-oriented-vs-higher-order-functional">Imperative vs Object-Oriented vs Higher-Order Functional</h3>
@@ -102,20 +110,20 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Oversimplifying but these are the three modern schools</li>
   <li>More oversimplifying: “Imperative = C, OO = Java, FP = OCaml”</li>
   <li>Note many O-O languages now have functions, often called lambdas for the historical reference</li>
-  <li>Goal of this course is to get deeply into the FP mode of programming, which can then be used in your favorite PL - Java, Python, C++, JavaScript, etc.</li>
+  <li>Goal of this course is to get deeply into the FP mode of programming, which can then be used in your favorite PL - Java, Python, C++, JavaScript, OCaml, etc.</li>
 </ul>
 
 <h3 id="imperative">Imperative</h3>
 
 <ul>
-  <li>Imperative also has functions, but functions often have side effects (e.g. mutate some shared data structures)</li>
+  <li>Imperative also has functions, but there functions often have side effects (e.g. mutate some shared data structures)</li>
   <li>C has function pointers to pass around functions as data but they are not widely used and lack needed expressiveness (which we will cover later).</li>
 </ul>
 
 <h3 id="object-oriented-oo">Object-Oriented (OO)</h3>
 
 <ul>
-  <li>Objects tend to have “their” state encpsulated within their boundary</li>
+  <li>Objects tend to have “their” state encapsulated within their boundary</li>
   <li>It is usually a mutable state - changes over time</li>
   <li>A function is similar to an object with one method, <code class="highlighter-rouge">call</code>, and with no fields</li>
   <li>That doesn’t fully capture higher-order functions which is why <code class="highlighter-rouge">lambda</code> added to Java.</li>
