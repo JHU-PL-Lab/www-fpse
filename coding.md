@@ -26,7 +26,14 @@ We require that you use the [OPAM packaging system](https://opam.ocaml.org) for 
 
 Once you have `opam` and `ocaml` 4.10.0 installed, run the following `opam` command to install additional necessary packages for the class:
 
-    opam install merlin ocp-indent user-setup tuareg menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async
+    opam install merlin ocp-indent user-setup menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async
+
+And there is currently a glitch with a library so if the above fails with an error about `ppx_string`, run the command
+
+    opam pin add ppx_string --dev
+
+and then try the previous command again.
+
 
 Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file `~/.ocamlinit` to add the lines below (note `opam` probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
 ```ocaml
@@ -101,7 +108,7 @@ to install the relevant OCaml packages. Here are some handy Atom keymaps for com
 
 **vim**: If you use `vim`, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell command `opam user-setup install` after doing the above  default `opam` install to set up syntax highlighting, tab completion, displaying types, etc. See [here](https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt) for some dense documentation.
 
-**emacs**: See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.
+**emacs**: See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.  Note you will need to also `opam install tuareg` to get emacs to work, and follow the instructions the install generates.
 
 ### Real World OCaml
 

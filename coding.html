@@ -96,8 +96,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Once you have <code class="highlighter-rouge">opam</code> and <code class="highlighter-rouge">ocaml</code> 4.10.0 installed, run the following <code class="highlighter-rouge">opam</code> command to install additional necessary packages for the class:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam install merlin ocp-indent user-setup tuareg menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam install merlin ocp-indent user-setup menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async
 </code></pre></div></div>
+
+<p>And there is currently a glitch with a library so if the above fails with an error about <code class="highlighter-rouge">ppx_string</code>, run the command</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam pin add ppx_string --dev
+</code></pre></div></div>
+
+<p>and then try the previous command again.</p>
 
 <p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file <code class="highlighter-rouge">~/.ocamlinit</code> to add the lines below (note <code class="highlighter-rouge">opam</code> probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  <code class="highlighter-rouge">topfind</code> really should be built-in, it allows you to load libraries.  The <code class="highlighter-rouge">require</code> command is one thing <code class="highlighter-rouge">topfind</code> adds, here it is loading the <code class="highlighter-rouge">Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code class="highlighter-rouge">Core</code> as they are improved versions.</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">use</span> <span class="s2">"topfind"</span><span class="p">;;</span>
@@ -183,7 +190,7 @@ Atom is very good with OCaml, but is unfortunately being slowly phased out after
 
 <p><strong>vim</strong>: If you use <code class="highlighter-rouge">vim</code>, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell command <code class="highlighter-rouge">opam user-setup install</code> after doing the above  default <code class="highlighter-rouge">opam</code> install to set up syntax highlighting, tab completion, displaying types, etc. See <a href="https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt">here</a> for some dense documentation.</p>
 
-<p><strong>emacs</strong>: See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.</p>
+<p><strong>emacs</strong>: See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.  Note you will need to also <code class="highlighter-rouge">opam install tuareg</code> to get emacs to work, and follow the instructions the install generates.</p>
 
 <h3 id="real-world-ocaml">Real World OCaml</h3>
 

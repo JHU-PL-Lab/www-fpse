@@ -3,18 +3,17 @@
 This is the preliminary list of proposed lecture topics and readings. See the [dateline](dateline.html) for what we actually end up doing as the course evolves.
 
 ### Intro to Functional Programming in OCaml
-
+* History and background
 * Basic OCaml coding with simple data, lists, and functions
 * Basic OCaml library usage
 * Basic build tool usage
-* Using OCaml modules
 
 ### The Full OCaml Feature Set
 * Data structures
 * Types and type inference
 * Modules and Functors
 * Side effects: Mutation, Exceptions, I/O and the `Stdio` library
-* More Libraries from Jane Street's [`Base`](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/index.html): `Map`, `Hashtbl`, etc.
+* Libraries from Jane Street's [`Base`](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/index.html): `Map`, `Hashtbl`, etc.
 * Defining Comparisions
 
 ### The Modern OCaml Ecosystem
@@ -33,6 +32,7 @@ This is the preliminary list of proposed lecture topics and readings. See the [d
     - Abstract interfaces
 * Invariants
     - Data structure Invariants, recursive function invariants
+
 ###  Advanced OCaml Features
 * Advanced modules: nested modules, first-class modules, writing functors
 * Advanced types: weak polymorphism, covariant types, GADTs, etc.
