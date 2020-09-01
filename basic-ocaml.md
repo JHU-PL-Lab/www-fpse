@@ -89,7 +89,6 @@ true || false;;
 30980314323422L;; (* 64-bit integers *)
 'c';; (* characters *)
 "and of course strings";;
-
 ```
 #### Simple functions on integers
 
@@ -189,7 +188,7 @@ Error: This expression has type int option
        but an expression was expected of type int
 ```
 
-This type error means the `+` lhs should be type `int` but is a `Some` value so is not an `int`.
+This type error means the `+` lhs should be type `int` but is a `Some` value which is not an `int`.
 
 Here is a non-solution to that:
  ```ocaml
@@ -211,12 +210,13 @@ Here is a real solution to the above issue:
 ```
 * This shows how OCaml lets us *destruct* option types, via the `match` syntax.
 * `match` is similar to `switch` in C/Java/.. but is much more flexible in OCaml
-* LHS in OCaml can be a general pattern
-* Note that we turned `None` into an exception via `failwith`.
+* The LHS in OCaml can be a general pattern which binds variables (the `i` here), etc
+* Note that we turned `None` into a runtime exception via `failwith`.
 
 #### Result
 
-An "even nicer" version of the above would be to use the `result` type, which is very similar to option.
+An "even nicer" version of the above would be to use the `result` type, which is very similar to option but is specialized just for this purpose.
+
 ```ocaml
 # let nicer_div m n = if n = 0 then Error "Divide by zero" else Ok (m / n);;
 val nicer_div : int -> int -> (int, string) result = <fun>
@@ -241,7 +241,8 @@ let div_exn m n = if n = 0 then failwith "divide by zero is bad!" else m / n;;
 div_exn 3 4;;
 ```
 
-Which has the property of not needing a match on the result.
+Which has the property of not needing a match on the result.  
+Note that the built-in `/` in fact does this as well.
 
 ### Lists
 
@@ -258,17 +259,29 @@ let l5 = [];; (* empty list *)
 
 #### Building lists 
 
-Lists are represented internally as BINARY TREES with left child a leaf.
+Lists are represented internally as **binary trees** with left child a leaf.
 ```ocaml
 0 :: l1;; (* "::" is 'consing' an element to the front - fast *)
-0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to the above *)
-[1; 2; 3] @ [4; 5];; (* appending lists - slower *)
+0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to [1;2;3] *)
+[1; 2; 3] @ [4; 5];; (* appending lists - slower, a new list needs to be built *)
 let z = [2; 4; 6];;
 let y = 0 :: z;;
-z;; (* Observe z itself did not change -- lists are immutable in OCaml *)
+z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
 ```
 
 #### Destructing Lists with pattern matching
+
+Before writing real programs here is a simple example of pattern matching on a list.
+
+```ocaml
+let head l =
+  match l with
+  |  [] -> Error "empty list has no head"
+  |  x :: xs -> Ok x (* the pattern x :: xs  means x is the first elt, xs are ALL the others *)
+;;
+head [1;2;3];;
+head [];;
+```
 
 ```ocaml
 let rec rev l =
@@ -292,3 +305,14 @@ rev [1;2;3];; (* = 1 :: ( 2 :: ( 3 :: [])) *)
 
 Example: zero out all the negative elements in a list of numbers.
 
+Non-solution: `for`-loop over it and mutate all negatives to 0
+Solution: recurse on list-tree structure, building the new list as we go
+
+```ocaml
+let rec zero_negs l =
+  match l with
+  |  [] -> []
+  |  x :: xs -> (if x < 0 then 0 else x) :: zero_negs xs
+;;
+zero_negs [1;-2;3];;
+```
