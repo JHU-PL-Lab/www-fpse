@@ -7,7 +7,7 @@ You are to write several small programs in OCaml.
 
 * [Use the this zip file](assignment1.zip) as the starting point for your assignment.  Download and unzip it in a fresh directory/folder that you made (we will suppose you are putting it in a directory `a1` in the below).  
 * We are starting right off with the standard file structure recommended for projects built with the `dune` build tool, and you will be using `dune` to test your program.  Please keep this file structure in your coding and submission.
-* The file `.../a1/src/assignment1.ml` is where you will put your answer code.  Currently it has `unimplemented ()` for all the functions, replace that with your code.
+* The file `.../a1/src/submission.ml` is where you will put your answer code.  Currently it has `unimplemented ()` for all the functions, replace that with your code.
 * The only other file you will want to edit is `.../a1/tests/tests.ml` which contains some initial tests; these tests are not complete and you should add a few more.
 * There is a `.../a1/src/dune` and `.../a1/tests/dune` file we set up for you, they should allow you to run commands `dune build` and `dune test` respectively from the top level directory `.../a1/` to build and/or test your code.  Note you want to stay in the top level to run these commands, unlike `make`, `dune` automatically runs builds in subdirectories.
 * When you are all done the homework, from directory `.../a1` run the command `zip -r . submission.zip` or similar to zip up all the files. Please do a `dune clean` before this so you are submitting only the code, not the binaries.
