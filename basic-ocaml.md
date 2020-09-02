@@ -78,7 +78,7 @@ let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
 let b = true;;
 b && false;;
 true || false;;
-1 = 2;; (* = not == for equality comparison *)
+1 = 2;; (* = not == for equality comparison; note = works on ints only in our OCaml setup *)
 1 <> 2;;  (* <> not != for not equal *)
 ```
 
@@ -125,7 +125,7 @@ let anon_add1 = (function x -> x + 1);; (* anonymous version; "x" is argument he
 anon_add1 3;;
 (anon_add1 4) + 7;; 
 ((function x -> x + 1) 4) + 7;; (* can inline any anonymous function as well *)
-((fun x -> x + 1) 4) + 7;; (*  shorthand notation usually works -- cut off the "ction" *)
+((fun x -> x + 1) 4) + 7;; (*  shorthand notation -- cut off the "ction" *)
 ```
 
 * Multiple arguments - just leave spaces between multiple arguments
@@ -137,6 +137,7 @@ add 3 4;;
 let add3 = add 3;; (* No need to give all arguments at once!  Type of add is int -> (int -> int) - "CURRIED" *)
 add3 4;;
 add3 20;;
+(+) 3 4;; (* Putting () around any infix operator turns it into a 2-argument function *)
 ```
 
 Conclusion: add is a function taking an integer, and returning a **function** which takes ints to ints.
@@ -149,6 +150,11 @@ Be careful on operator precedence with this goofy way that function application 
 add3 (3 * 2);;
 add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - application binds tighter than * *)
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)
+```
+* `=` is also a 2-argument function; it is somewhat strange in our `Core` OCaml on non-ints:
+```ocaml
+3.4 = 4.2;; (* errors, = only works on ints with the Core library in use *)
+Float.(=) 3.3 4.4;; (* Solution: use the Float module's = function for floats *)
 ```
 
 ### Simple Structured Data Types: Option and Result
@@ -168,7 +174,8 @@ None;;
 ```
 
  * Notice these are both in the `option` type .. either you have `Some` data or you have `None`.
- * This type is very useful; here is a simple example.
+ * These kinds of types with the capital-letter-named tags are called **variants** in OCaml; each tag wraps a different variant.
+ * The `option` type is very useful; here is a super simple example.
 
  ```ocaml
 # let nice_div m n = if n = 0 then None else Some (m / n);;
@@ -215,7 +222,7 @@ Here is a real solution to the above issue:
 
 #### Result
 
-An "even nicer" version of the above would be to use the `result` type, which is very similar to option but is specialized just for this purpose.
+An "even nicer" version of the above would be to use the `result` type, which is very similar to option but is specialized just for error handling.
 
 ```ocaml
 # let nicer_div m n = if n = 0 then Error "Divide by zero" else Ok (m / n);;
@@ -223,7 +230,7 @@ val nicer_div : int -> int -> (int, string) result = <fun>
 ```
 * The `result` type is explicitly intended for this case of failure-result
     - `Ok` means the normal result
-    - `Error` is the error case, which unlike none can include failure data.
+    - `Error` is the error case, which unlike none can include failure data, usually a string.
 * Again we can do the same kind of pattern match on `Ok/Error` as above.
 * This is a "more well-typed" version of the C approach of returning `-1` or `NULL` to indicate failure.
 
@@ -241,19 +248,20 @@ let div_exn m n = if n = 0 then failwith "divide by zero is bad!" else m / n;;
 div_exn 3 4;;
 ```
 
-Which has the property of not needing a match on the result.  
-Note that the built-in `/` in fact does this as well.
+* This has the property of not needing a match on the result.  
+* Note that the built-in `/` in fact does this as well.
+* Exceptions are side effects though, we want to minimize their usage to avoid error-at-a-distance.
 
 ### Lists
 
-* Lists are pervasive in OCaml; easy to create and manipulate
-* They are always immutable so while they look something like arrays or vectors they are different
+* Lists are pervasive in OCaml
+* They are **immutable** so while they look something like arrays or vectors they are different
 
 ```ocaml
 let l1 = [1; 2; 3];;
 let l2 = [1; 1+1; 1+1+1];;
 let l3 = ["a"; "b"; "c"];;
-let l4 = [1; "a"];; (* error - All elements must have same type - HOMOGENEOUS *)
+let l4 = [1; "a"];; (* error - All elements must have same type *)
 let l5 = [];; (* empty list *)
 ```
 
@@ -271,17 +279,43 @@ z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
 
 #### Destructing Lists with pattern matching
 
-Before writing real programs here is a simple example of pattern matching on a list.
+* Before writing real programs here is a simple example of pattern matching on a list.
+* This function gets the head, the first element.
 
 ```ocaml
-let head l =
+let hd l =
   match l with
   |  [] -> Error "empty list has no head"
   |  x :: xs -> Ok x (* the pattern x :: xs  means x is the first elt, xs are ALL the others *)
 ;;
-head [1;2;3];;
-head [];;
+hd [1;2;3];;
+hd [];;
 ```
+
+Lists are not random access like arrays; if you want to get the nth element, you need to work for it.
+```ocaml
+let rec nth l n =
+  match l with
+  |  [] -> failwith "no nth element in this list"
+  |  x :: xs -> if n = 0 then x else nth xs (n-1)
+;;
+nth [33;22;11] 1;;
+nth [33;22;11] 3;;
+```
+
+Fortunately many common operations are in the `List` module in the `Core` library:
+
+```ocaml
+# List.nth [1;2;3] 2;;
+- : int option = Some 3
+```
+(This library uses the `option` type instead of raising an exception like we did)
+
+#### Recursive functions on lists
+
+* Let us now write a somewhat more interesting function, reversing a list.
+* Lists are immutable so it is going to create a completely new list, not change the original.
+* This style of programming is called "Data structure corresponds to control flow" - the program needs to touch the whole data structure as it runs.
 
 ```ocaml
 let rec rev l =
@@ -289,7 +323,7 @@ let rec rev l =
   |  [] -> []
   |  x :: xs -> rev xs @ [x]
 ;;
-rev [1;2;3];; (* = 1 :: ( 2 :: ( 3 :: [])) *)
+rev [1;2;3];; (* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)
 ```
 
 * Correctness of a recursive function by induction: assume recursive call does what you expect in arguing it is overall correct.
@@ -297,16 +331,17 @@ rev [1;2;3];; (* = 1 :: ( 2 :: ( 3 :: [])) *)
 * Given that fact, `rev xs @ [x]` should clearly reverse the whole list.
 * QED, the function is proved correct! (actually partially correct, this induction argument does not rule out infinite loops)
 
-#### Immutable Data Structures in Functional Programming
+Of course this is also in `List` since it is a common operation:
 
-* By default, data structures are immutable
-* A change is instead implemented as rebuilding the whole list from scratch
-* This style of programming: "Data structure corresponds to control flow"
+```ocaml
+# List.rev [1;2;3];;
+- : int list = [3; 2; 1]
+```
 
-Example: zero out all the negative elements in a list of numbers.
+**Example: zero out all the negative elements in a list of numbers**
 
-Non-solution: `for`-loop over it and mutate all negatives to 0
-Solution: recurse on list-tree structure, building the new list as we go
+* Non-solution: `for`-loop over it and mutate all negatives to 0
+* Immutable list solution: recurse on list structure, building the new list as we go
 
 ```ocaml
 let rec zero_negs l =
@@ -316,3 +351,9 @@ let rec zero_negs l =
 ;;
 zero_negs [1;-2;3];;
 ```
+
+### Base/Core List library functions
+
+* We already saw a few of these above, `List.rev` and `List.nth`.
+* Note that `List.hd` is also available, but you should nearly always be pattern matching to take apart lists; don't use `List.hd` on the homework.
+* Let us [look at the documentation for `List`](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html) to see what is available.
