@@ -138,8 +138,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="exploring-basic-data-in-the-top-loop">Exploring Basic Data in the top loop</h3>
 
 <ul>
-  <li>We will be running many small incremental programs - best done in the top loop.</li>
-  <li>We will always use the <code class="highlighter-rouge">utop</code> top loop</li>
+  <li>We will be running many small incremental programs in lecture - best done in the top loop.</li>
+  <li>We will always use the <code class="highlighter-rouge">utop</code> top loop, not the older <code class="highlighter-rouge">ocaml</code></li>
   <li>
     <p>All the following are typed as input into <code class="highlighter-rouge">utop</code> with <code class="highlighter-rouge">;;</code> ending input.</p>
   </li>
@@ -168,6 +168,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">'</span><span class="n">c'</span><span class="p">;;</span> <span class="c">(* characters *)</span>
 <span class="s2">"and of course strings"</span><span class="p">;;</span>
 </code></pre></div></div>
+
 <h4 id="simple-functions-on-integers">Simple functions on integers</h4>
 
 <p>To declare a function <code class="highlighter-rouge">squared</code> with <code class="highlighter-rouge">x</code> its one parameter.  <code class="highlighter-rouge">return</code> is  implicit.</p>
@@ -177,7 +178,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>OCaml has no <code class="highlighter-rouge">return</code> statement; value of the whole body-expression is what gets returned</li>
   <li>Type is automatically <strong>inferred</strong> and printed as domain <code class="highlighter-rouge">-&gt;</code> range</li>
-  <li>OCaml functions in fact take only one argument - !  multiple arguments can be encoded by a trick (later)</li>
+  <li>OCaml functions in fact always take only one argument - !  multiple arguments can be encoded by a trick (later)</li>
 </ul>
 
 <h4 id="fibonacci-series-example---0-1-1-2-3-5-8-13-">Fibonacci series example - <code class="highlighter-rouge">0 1 1 2 3 5 8 13 ...</code></h4>
@@ -192,23 +193,23 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">fib</span> <span class="mi">10</span><span class="p">;;</span> <span class="c">(* get the 10th Fibonacci number *)</span>
 </code></pre></div></div>
 
-<h4 id="anonymous-functions">Anonymous functions</h4>
+<h4 id="anonymous-functions-basics">Anonymous functions basics</h4>
 
 <ul>
-  <li>Key purpose of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.</li>
+  <li>Key advantage of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.</li>
   <li>Much of this course will be showing how this is useful, we are just getting started now</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add1</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* a normal add1 definition *)</span>
-<span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* anonymous version; "x" is argument here *)</span>
+<span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* equivalent anonymous version; "x" is argument here *)</span>
 <span class="n">anon_add1</span> <span class="mi">3</span><span class="p">;;</span>
 <span class="p">(</span><span class="n">anon_add1</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> 
-<span class="p">((</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(* can inline any anonymous function as well *)</span>
+<span class="p">((</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(* can inline anonymous function definition *)</span>
 <span class="p">((</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(*  shorthand notation -- cut off the "ction" *)</span>
 </code></pre></div></div>
 
 <ul>
-  <li>Multiple arguments - just leave spaces between multiple arguments</li>
+  <li>Multiple arguments - just leave s p a c e s between multiple arguments</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;;</span>
@@ -288,6 +289,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 </code></pre></div></div>
 <ul>
   <li>The <code class="highlighter-rouge">then</code> and <code class="highlighter-rouge">else</code> branches must return the same type, here they do not.</li>
+  <li>The <code class="highlighter-rouge">int</code> and <code class="highlighter-rouge">int option</code> types have no overlap of members!  Generally true across OCaml.</li>
 </ul>
 
 <h4 id="pattern-matching-first-example">Pattern matching first example</h4>
@@ -299,7 +301,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">9</span>
 </code></pre></div></div>
 <ul>
-  <li>This shows how OCaml lets us <em>destruct</em> option types, via the <code class="highlighter-rouge">match</code> syntax.</li>
+  <li>This shows how OCaml lets us <em>destruct</em> option values, via the <code class="highlighter-rouge">match</code> syntax.</li>
   <li><code class="highlighter-rouge">match</code> is similar to <code class="highlighter-rouge">switch</code> in C/Java/.. but is much more flexible in OCaml</li>
   <li>The LHS in OCaml can be a general pattern which binds variables (the <code class="highlighter-rouge">i</code> here), etc</li>
   <li>Note that we turned <code class="highlighter-rouge">None</code> into a runtime exception via <code class="highlighter-rouge">failwith</code>.</li>
@@ -307,7 +309,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 
 <h4 id="result">Result</h4>
 
-<p>An “even nicer” version of the above would be to use the <code class="highlighter-rouge">result</code> type, which is very similar to option but is specialized just for error handling.</p>
+<p>An “even nicer” version of the above would be to use the <code class="highlighter-rouge">result</code> type, which is very similar to <code class="highlighter-rouge">option</code> but is specialized just for error handling.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">nicer_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">Error</span> <span class="s2">"Divide by zero"</span> <span class="k">else</span> <span class="nc">Ok</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">);;</span>
 <span class="k">val</span> <span class="n">nicer_div</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">int</span><span class="o">,</span> <span class="kt">string</span><span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
@@ -337,15 +339,21 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 
 <ul>
   <li>This has the property of not needing a match on the result.</li>
-  <li>Note that the built-in <code class="highlighter-rouge">/</code> in fact does this as well.</li>
+  <li>Note that the built-in <code class="highlighter-rouge">/</code> also raises an exception.</li>
   <li>Exceptions are side effects though, we want to minimize their usage to avoid error-at-a-distance.</li>
+  <li>The above examples show how exceptional conditions can either be handled via exceptions or in the return value;
+    <ul>
+      <li>the latter is the C approach but also the monadic approach as we will learn</li>
+      <li>a key dimension of this course is the side effect vs direct trade-off</li>
+    </ul>
+  </li>
 </ul>
 
 <h3 id="lists">Lists</h3>
 
 <ul>
   <li>Lists are pervasive in OCaml</li>
-  <li>They are <strong>immutable</strong> so while they look something like arrays or vectors they are different</li>
+  <li>They are <strong>immutable</strong> so while they look something like arrays or vectors they are not</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
@@ -358,9 +366,9 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <h4 id="building-lists">Building lists</h4>
 
 <p>Lists are represented internally as <strong>binary trees</strong> with left child a leaf.</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">0</span> <span class="o">::</span> <span class="n">l1</span><span class="p">;;</span> <span class="c">(* "::" is 'consing' an element to the front - fast *)</span>
-<span class="mi">0</span> <span class="o">::</span> <span class="p">(</span><span class="mi">1</span> <span class="o">::</span> <span class="p">(</span><span class="mi">2</span> <span class="o">::</span> <span class="p">(</span><span class="mi">3</span> <span class="o">::</span> <span class="bp">[]</span><span class="p">)));;</span> <span class="c">(* equivalent to [1;2;3] *)</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">]</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span> <span class="mi">5</span><span class="p">];;</span> <span class="c">(* appending lists - slower, a new list needs to be built *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">0</span> <span class="o">::</span> <span class="n">l1</span><span class="p">;;</span> <span class="c">(* "::" is 'consing' 0 to the top of the tree - fast *)</span>
+<span class="mi">0</span> <span class="o">::</span> <span class="p">(</span><span class="mi">1</span> <span class="o">::</span> <span class="p">(</span><span class="mi">2</span> <span class="o">::</span> <span class="p">(</span><span class="mi">3</span> <span class="o">::</span> <span class="bp">[]</span><span class="p">)));;</span> <span class="c">(* equivalent to [0;1;2;3] *)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">]</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span> <span class="mi">5</span><span class="p">];;</span> <span class="c">(* appending lists - slower, needs to cons 3/2/1 on front of [4;5] *)</span>
 <span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">;</span> <span class="mi">4</span><span class="p">;</span> <span class="mi">6</span><span class="p">];;</span>
 <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">::</span> <span class="n">z</span><span class="p">;;</span>
 <span class="n">z</span><span class="p">;;</span> <span class="c">(* Observe z itself did not change -- recall lists are immutable in OCaml *)</span>
@@ -376,13 +384,16 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">hd</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"empty list has no head"</span>
-  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="n">x</span> <span class="c">(* the pattern x :: xs  means x is the first elt, xs are ALL the others *)</span>
+  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="n">x</span> <span class="c">(* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)</span>
 <span class="p">;;</span>
 <span class="n">hd</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span>
 <span class="n">hd</span> <span class="bp">[]</span><span class="p">;;</span>
 </code></pre></div></div>
 
-<p>Lists are not random access like arrays; if you want to get the nth element, you need to work for it.</p>
+<ul>
+  <li>Lists are not random access like arrays; if you want to get the nth element, you need to work for it.</li>
+</ul>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">nth</span> <span class="n">l</span> <span class="n">n</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"no nth element in this list"</span>
@@ -399,7 +410,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 </code></pre></div></div>
 <p>(This library uses the <code class="highlighter-rouge">option</code> type instead of raising an exception like we did)</p>
 
-<h4 id="recursive-functions-on-lists">Recursive functions on lists</h4>
+<h4 id="reversing-a-list">Reversing a list</h4>
 
 <ul>
   <li>Let us now write a somewhat more interesting function, reversing a list.</li>

@@ -59,8 +59,8 @@ print_string hw
 
 ### Exploring Basic Data in the top loop
 
-* We will be running many small incremental programs - best done in the top loop.
-* We will always use the `utop` top loop
+* We will be running many small incremental programs in lecture - best done in the top loop.
+* We will always use the `utop` top loop, not the older `ocaml`
 * All the following are typed as input into `utop` with `;;` ending input.
 
  
@@ -90,6 +90,7 @@ true || false;;
 'c';; (* characters *)
 "and of course strings";;
 ```
+
 #### Simple functions on integers
 
 To declare a function `squared` with `x` its one parameter.  `return` is  implicit.
@@ -99,7 +100,7 @@ squared 4;; (* to call a function -- separate arguments with S P A C E S *)
 ```
  *  OCaml has no `return` statement; value of the whole body-expression is what gets returned
  *  Type is automatically **inferred** and printed as domain `->` range
- *  OCaml functions in fact take only one argument - !  multiple arguments can be encoded by a trick (later)
+ *  OCaml functions in fact always take only one argument - !  multiple arguments can be encoded by a trick (later)
 
 #### Fibonacci series example - `0 1 1 2 3 5 8 13 ...` 
 
@@ -114,21 +115,21 @@ let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
 fib 10;; (* get the 10th Fibonacci number *)
 ```
 
-#### Anonymous functions
+#### Anonymous functions basics
 
-* Key purpose of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.
+* Key advantage of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.
 * Much of this course will be showing how this is useful, we are just getting started now
 
 ```ocaml
 let add1 x = x + 1;; (* a normal add1 definition *)
-let anon_add1 = (function x -> x + 1);; (* anonymous version; "x" is argument here *)
+let anon_add1 = (function x -> x + 1);; (* equivalent anonymous version; "x" is argument here *)
 anon_add1 3;;
 (anon_add1 4) + 7;; 
-((function x -> x + 1) 4) + 7;; (* can inline any anonymous function as well *)
+((function x -> x + 1) 4) + 7;; (* can inline anonymous function definition *)
 ((fun x -> x + 1) 4) + 7;; (*  shorthand notation -- cut off the "ction" *)
 ```
 
-* Multiple arguments - just leave spaces between multiple arguments
+* Multiple arguments - just leave s p a c e s between multiple arguments
 
 ```ocaml
 let add x y = x + y;;
@@ -205,6 +206,7 @@ Error: This expression has type int but an expression was expected of type
          'a option
 ```
 - The `then` and `else` branches must return the same type, here they do not.
+- The `int` and `int option` types have no overlap of members!  Generally true across OCaml.
 
 #### Pattern matching first example
 
@@ -215,14 +217,14 @@ Here is a real solution to the above issue:
    | None -> failwith "This should never happen, we divided by 2";;
 - : int = 9
 ```
-* This shows how OCaml lets us *destruct* option types, via the `match` syntax.
+* This shows how OCaml lets us *destruct* option values, via the `match` syntax.
 * `match` is similar to `switch` in C/Java/.. but is much more flexible in OCaml
 * The LHS in OCaml can be a general pattern which binds variables (the `i` here), etc
 * Note that we turned `None` into a runtime exception via `failwith`.
 
 #### Result
 
-An "even nicer" version of the above would be to use the `result` type, which is very similar to option but is specialized just for error handling.
+An "even nicer" version of the above would be to use the `result` type, which is very similar to `option` but is specialized just for error handling.
 
 ```ocaml
 # let nicer_div m n = if n = 0 then Error "Divide by zero" else Ok (m / n);;
@@ -249,13 +251,16 @@ div_exn 3 4;;
 ```
 
 * This has the property of not needing a match on the result.  
-* Note that the built-in `/` in fact does this as well.
+* Note that the built-in `/` also raises an exception.
 * Exceptions are side effects though, we want to minimize their usage to avoid error-at-a-distance.
+* The above examples show how exceptional conditions can either be handled via exceptions or in the return value; 
+   - the latter is the C approach but also the monadic approach as we will learn
+   - a key dimension of this course is the side effect vs direct trade-off
 
 ### Lists
 
 * Lists are pervasive in OCaml
-* They are **immutable** so while they look something like arrays or vectors they are different
+* They are **immutable** so while they look something like arrays or vectors they are not
 
 ```ocaml
 let l1 = [1; 2; 3];;
@@ -269,9 +274,9 @@ let l5 = [];; (* empty list *)
 
 Lists are represented internally as **binary trees** with left child a leaf.
 ```ocaml
-0 :: l1;; (* "::" is 'consing' an element to the front - fast *)
-0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to [1;2;3] *)
-[1; 2; 3] @ [4; 5];; (* appending lists - slower, a new list needs to be built *)
+0 :: l1;; (* "::" is 'consing' 0 to the top of the tree - fast *)
+0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to [0;1;2;3] *)
+[1; 2; 3] @ [4; 5];; (* appending lists - slower, needs to cons 3/2/1 on front of [4;5] *)
 let z = [2; 4; 6];;
 let y = 0 :: z;;
 z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
@@ -286,13 +291,14 @@ z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
 let hd l =
   match l with
   |  [] -> Error "empty list has no head"
-  |  x :: xs -> Ok x (* the pattern x :: xs  means x is the first elt, xs are ALL the others *)
+  |  x :: xs -> Ok x (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
 ;;
 hd [1;2;3];;
 hd [];;
 ```
 
-Lists are not random access like arrays; if you want to get the nth element, you need to work for it.
+* Lists are not random access like arrays; if you want to get the nth element, you need to work for it.
+
 ```ocaml
 let rec nth l n =
   match l with
@@ -311,7 +317,7 @@ Fortunately many common operations are in the `List` module in the `Core` librar
 ```
 (This library uses the `option` type instead of raising an exception like we did)
 
-#### Recursive functions on lists
+#### Reversing a list
 
 * Let us now write a somewhat more interesting function, reversing a list.
 * Lists are immutable so it is going to create a completely new list, not change the original.
