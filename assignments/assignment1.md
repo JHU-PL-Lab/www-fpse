@@ -1,4 +1,4 @@
-Assignment 1: OCaml Introduction (DRAFT)
+Assignment 1: OCaml Introduction
 --------------------------------
 
 You are to write several small programs in OCaml.  There are five Sections to the homework.  In order to help you ease into it we will make two due dates, Part I will be Sections 1-3 and Part II will be Section 4-5.  You will submit the whole assignment each time, we just won't look at Sections 4-5 on the first submission dealine.
