@@ -49,11 +49,11 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="assignments/assignment1.html">Assignment 1</a>
+            <div align="left" class="body">Continuing Basic OCaml
 	    </div> 
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body"><a href="assignments/assignment1.html">Assignment 1</a></div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
