@@ -49,7 +49,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;
+            <div align="left" class="body"><a href="assignments/assignment1.html">Assignment 1</a>
 	    </div> 
           </td>
           <td width="30%"> 
@@ -90,7 +90,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A1 Part I due Friday</div>
           </td>
         </tr>
         <tr> 
