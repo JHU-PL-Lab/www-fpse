@@ -129,7 +129,7 @@ anon_add1 3;;
 ((fun x -> x + 1) 4) + 7;; (*  shorthand notation -- cut off the "ction" *)
 ```
 
-* Multiple arguments - just leave s p a c e s between multiple arguments
+* Multiple arguments - just leave s p a c e s between multiple arguments in both definitions and uses
 
 ```ocaml
 let add x y = x + y;;
