@@ -10,7 +10,7 @@ You are to write several small programs in OCaml.  There are five Sections to th
 * The file `.../assignment1/src/submission.ml` is where you will put your answer code.  Currently it has `unimplemented ()` for all the functions, replace that with your code.
 * The only other file you will want to edit is `.../assignment1/tests/tests.ml` which contains some initial tests; these tests are not complete and you should add a few more.  Concretely, in the Part II submission we will make sure you added at least 5 tests of your own.
 * There is a `.../assignment1/src/dune` and `.../assignment1/tests/dune` file we set up for you, they should allow you to run commands `dune build` and `dune test` respectively from the top level directory `.../assignment1/` to build and/or test your code.  Note you want to stay in the top level to run these commands, unlike `make`, `dune` automatically runs builds in subdirectories.
-* When you are all done the homework, from directory `.../assignment1` run the command `zip -r * submission.zip` or similar to zip up all the files. Please do a `dune clean` before this so you are submitting only the code, not the binaries.
+* When you are all done the homework, from directory `.../assignment1` run the command `zip -r submission.zip *` or similar to zip up all the files. Please do a `dune clean` before this so you are submitting only the code, not the binaries.
 
 ### Resources to help you
 
