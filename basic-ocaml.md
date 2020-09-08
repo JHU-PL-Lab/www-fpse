@@ -560,5 +560,6 @@ let exists ~f l =  (* Note the ~f is declaring a named argument f, we were only 
 - : bool = true
 ```
 
-* Note that in this case folding left or right gives the same answer; that is because `||` is *commutative and associative*.
+* Note that in this case folding left or right gives the same answer; that is because `||` is *commutative and associative*, so e.g. `true || (false || (false) = false || (true || false)`.
+
 
