@@ -113,7 +113,7 @@ rev [1;2;3];; (* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)
 <pre><code class="language-ocaml">let rec zero_negs l =
   match l with
   |  [] -&gt; []
-  |  x :: xs -&gt; (if x &lt; 0 then 0 else x) :: zero_negs xs
+  |  x :: xs -&gt; (if x &amp;lt; 0 then 0 else x) :: zero_negs xs
 in
 zero_negs [1;-2;3];;
 </code></pre>
@@ -121,16 +121,16 @@ zero_negs [1;-2;3];;
 <h3 id="corelist-library-functions">Core.List library functions</h3>
 
 <ul>
-  <li>We already saw a few of these above, <code>List.rev</code> and <code>List.nth</code>.</li>
+  <li>We already saw a few of these previously, e.g. <code>List.rev</code> and <code>List.nth</code>.</li>
   <li><code>List</code> is a <strong>module</strong>, think fancy package.  It contains functions <em>plus</em> values <em>plus</em> types <em>plus</em> even other modules</li>
   <li><code>List</code> is itself in the module <code>Core</code> so the full name for <code>rev</code> is <code>Core.List.rev</code>
     <ul>
       <li>but we put an <code>open Core</code> in our <code>.ocamlinit</code> (and in the template for A1) so you can just write e.g. <code>List.rev</code></li>
     </ul>
   </li>
-  <li>Note that the <code>Core</code> module extends (think subclass) <code>Base</code>, look in <code>Base.List</code> for documentation.</li>
-  <li>Note that <code>List.hd</code> is also available, but you should nearly always be pattern matching to take apart lists; don’t use <code>List.hd</code> on the homework.</li>
-  <li>Let us <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html">peek at the documentation for <code>List</code></a> to see what is available; we will cover a few of them now.</li>
+  <li>Note that the <code>Core</code> module extends (think subclasses) <code>Base</code>, look in <code>Base.List</code> for the <code>List</code> documentation.</li>
+  <li>(Note that <code>List.hd</code> is also available, but you should nearly always be pattern matching to take apart lists; don’t use <code>List.hd</code> on the homework.)</li>
+  <li>Let us <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html">peek at the documentation for <code>Base.List</code></a> to see what is available; we will cover a few of them now.</li>
 </ul>
 
 <h4 id="some-simple-but-very-handy-list-library-functions">Some simple but very handy <code>List</code> library functions</h4>
@@ -140,14 +140,40 @@ List.last_exn [1;2;3];; (* get last element; raises an exception if list is empt
 List.join [[1;2];[22;33];[444;5555]];;
 List.append [1;2] [3;4];; (* Usually the infix @ syntax is used for append *)
 </code></pre>
+<h4 id="-and-their-types">… And their types</h4>
 
 <ul>
-  <li>Let us code a few of these as exercises (you should just use the library function normally, often they are more efficient)</li>
+  <li>The types of the functions are additional hints to their purpose, get used to reading them</li>
+  <li>Much of the time when you mis-use a function you will get a type error</li>
+  <li>Recall that <code>'a list</code> etc is a polymorhic aka generic type, <code>'a</code> can be <em>any</em> type<br />
+```ocaml
+    <h1 id="listlength">List.length;;</h1>
+  </li>
+  <li>: ‘a list -&gt; int = &lt;fun&gt;
+    <h1 id="listis_empty">List.is_empty;;</h1>
+  </li>
+  <li>: ‘a list -&gt; bool = &lt;fun&gt;
+    <h1 id="listlast_exn">List.last_exn;;</h1>
+  </li>
+  <li>: ‘a list -&gt; ‘a = &lt;fun&gt;
+    <h1 id="listjoin">List.join;;</h1>
+  </li>
+  <li>: ‘a list list -&gt; ‘a list = &lt;fun&gt;
+    <h1 id="listappend">List.append;;</h1>
+  </li>
+  <li>: ‘a list -&gt; ‘a list -&gt; ‘a list = &lt;fun&gt;
+    <h1 id="listmap---we-will-do-this-one-below-but-type-gives-it-away-">List.map;;  (* We will do this one below, but type gives it away *)</h1>
+  </li>
+  <li>
+    <p>: ‘a list -&gt; f:(‘a -&gt; ‘b) -&gt; ‘b list = &lt;fun&gt;<br />
+```</p>
+  </li>
+  <li>We coded <code>nth</code> and <code>rev</code> before, here is one more, <code>join</code>:</li>
 </ul>
 
 <pre><code class="language-ocaml">let rec join l = match l with
-  | [] -&gt; []
-  | l :: ls -&gt; l @ join ls (* " by induction assume join will turn list-of-lists to single list" *)
+  | [] -&gt; [] (* "joining together a lists of no-lists is an empty list" *)
+  | l :: ls -&gt; l @ join ls (* " by induction assume (join ls) will turn list-of-lists to single list" *)
 </code></pre>
 
 <h4 id="ocaml-tuples-and-some-list-library-functions-using-tuples">OCaml tuples and some <code>List</code> library functions using tuples</h4>
@@ -160,12 +186,14 @@ List.append [1;2] [3;4];; (* Usually the infix @ syntax is used for append *)
 
 <pre><code class="language-ocaml"># (1,2.,"3");;
 - : int * float * string = (1, 2., "3")
+# [1,2,3];; (* a common error, parens not always needed so this is a singleton list of a 3-tuple, not a list of ints *)
+- : (int * int * int) list = [(1, 2, 3)]
 </code></pre>
 
 <ul>
   <li>Here is a simple function to break a list in half using the <code>List.split_n</code> function
     <ul>
-      <li>a pair of lists is returned by <code>split_n</code></li>
+      <li>a pair of lists is returned by <code>split_n</code>, dividing it at the nth position</li>
     </ul>
   </li>
 </ul>
@@ -179,8 +207,9 @@ split_in_half [2;3;4;5;99];;
 </ul>
 
 <pre><code class="language-ocaml">let all_front_back_pairs l = 
-  let front, back = split_in_half l in List.cartesian_product front back;; (* observe how let can itself pattern match pairs *)
-val all_front_back_pairs : 'a list -&gt; ('a * 'a) list = &lt;fun&gt;
+  let front, back = split_in_half l in 
+    List.cartesian_product front back;; (* observe how let can itself pattern match pairs *)
+val all_front_back_pairs : 'a list -&gt; ('a * 'a) list = &amp;lt;fun&gt;
 # all_front_back_pairs [1;2;3;4;5;6];;
 - : (int * int) list =
 [(1, 4); (1, 5); (1, 6); (2, 4); (2, 5); (2, 6); (3, 4); (3, 5); (3, 6)]
@@ -195,7 +224,7 @@ val all_front_back_pairs : 'a list -&gt; ('a * 'a) list = &lt;fun&gt;
 </code></pre>
 
 <ul>
-  <li>Note the use of <code>@@</code> here, recall it is function application but with “loose binding”, avoids parens</li>
+  <li>Note the use of <code>@@</code> here, recall it is function application but with “loosest binding”, avoids need for parens</li>
   <li>Here is an even cooler way to write the same thing, with pipe operation <code>|&gt;</code> (based on shell pipe <code>|</code>)</li>
 </ul>
 
@@ -223,8 +252,9 @@ Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
     <pre><code class="language-ocaml"># #show_type List.Or_unequal_lengths.t;;
 type nonrec 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
 </code></pre>
-    <p>The latter case is for zipping lists of different lengths:</p>
   </li>
+  <li>This means the value is either <code>Ok(..)</code> or <code>Unequal_lenghts</code>, very similar to <code>result</code></li>
+  <li>The latter case is for zipping lists of different lengths:</li>
 </ul>
 
 <pre><code class="language-ocaml">List.zip [1;2;3] [4;5];;
@@ -234,7 +264,7 @@ Core.List.Or_unequal_lengths.Unequal_lengths
 
 <ul>
   <li>In the original same-length case we got the result from the first clause in this type, <code>Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]</code>.</li>
-  <li>They should have just used the <code>result</code> type here, these values and types are really ugly!!</li>
+  <li>They should have just used the <code>result</code> type here, these values and types are ugly!!</li>
   <li>Note <code>List.zip_exn</code> will just raise an exception for unequal-length lists, avoiding all of this wrapper ugliness
     <ul>
       <li>but in larger programs we really want to avoid exceptions at a distance so it is often worth the suffering</li>
@@ -244,7 +274,7 @@ Core.List.Or_unequal_lengths.Unequal_lengths
 
 <h4 id="zipunzip-and-currying">zip/unzip and Currying</h4>
 
-<p>We should be able to zip and then unzip as a no-op, one should undo the other (we will use the <code>_exn</code> version to avoid the above error wrapper).</p>
+<p>We should be able to zip and then unzip as a no-op, one should undo the other (we will use the <code>_exn</code> version to avoid the above error wrapper issue).</p>
 
 <pre><code class="language-ocaml">List.unzip @@ List.zip_exn [1;2] [3;4];;
 </code></pre>
@@ -258,8 +288,8 @@ Error: This expression has type int list * int list
 
 <ul>
   <li>Oops! It fails.  What happened here?</li>
-  <li><code>List.zip_exn</code> takes two arguments, lists to zip, whereas <code>List.unzip</code> returns a <em>pair of lists</em>.</li>
-  <li>No worries, we can write a wrapper turning <code>List.zip_exn</code> into a version taking a pair of lists:</li>
+  <li><code>List.zip_exn</code> takes two curried arguments, lists to zip (its type is <code>'a list -&gt; 'b list -&gt; ('a * 'b) list </code>), whereas <code>List.unzip</code> returns a <em>pair of lists</em>.</li>
+  <li>No worries, we can write a wrapper (an <em>adapter</em>) turning <code>List.zip_exn</code> into a version taking a pair of lists:</li>
 </ul>
 
 <pre><code class="language-ocaml">let zip_pair (l,r) = List.zip_exn l r in 
@@ -267,11 +297,56 @@ zip_pair @@ List.unzip [(1, 3); (2, 4)];;
 [(1, 3); (2, 4)] |&gt; zip_pair |&gt; List.unzip;; (* Pipe equivalent form *)
 </code></pre>
 <ul>
-  <li>Congratulations, we just wrote a fancy no-op function.</li>
-  <li>The general principle here is a Curried 2-argument function like <code>int -&gt; int -&gt; int</code> is <strong>isomorphic</strong> to <code>int * int -&gt; int</code></li>
+  <li>Congratulations, we just wrote a fancy no-op function :smile:</li>
+  <li>The general principle here is a <em>curried</em> 2-argument function like <code>int -&gt; int -&gt; int</code> is <strong>isomorphic</strong> to <code>int * int -&gt; int</code></li>
   <li>The latter form looks more like a standard function taking multiple arguments and is the <strong>uncurried</strong> form.</li>
   <li>And we sometimes need to interconvert between the two representations</li>
+  <li>This conversion is called <em>uncurrying</em> (curried to pair/triple/etc form) or <em>currying</em> (putting it into curried form)</li>
 </ul>
+
+<h4 id="curryuncurry-are-themselves-functions">Curry/Uncurry are themselves functions</h4>
+<ul>
+  <li>We can even write functions which generically convert between these two forms - !</li>
+  <li><code>curry</code>   - takes in uncurried 2-arg function and returns a curried version</li>
+  <li><code>uncurry</code> - takes in curried 2-arg function and returns an non-curried version</li>
+</ul>
+
+<pre><code class="language-ocaml">let curry f = fun x -&gt; fun y -&gt; f (x, y);;
+let uncurry f = fun (x, y) -&gt; f x y;;
+</code></pre>
+<p>Observe the types themselves in fact fully define their behavior:</p>
+<pre><code class="language-ocaml">curry : ('a * 'b -&gt; 'c) -&gt; 'a -&gt; 'b -&gt; 'c
+uncurry : ('a -&gt; 'b -&gt; 'c) -&gt; 'a * 'b -&gt; 'c
+</code></pre>
+
+<p>We can now use them to build <code>zip_pair</code> directly:</p>
+<pre><code class="language-ocaml">let zip_pair  = uncurry @@ List.zip_exn;;
+</code></pre>
+
+<h4 id="one-last-higher-order-function-compose">One last higher-order function: compose</h4>
+
+<p>Composition function g o f: take two functions, return their composition</p>
+<pre><code class="language-ocaml">let compose g f = (fun x -&gt; g (f x));;
+compose (fun x -&gt; x+3) (fun x -&gt; x*2) 10;;
+</code></pre>
+
+<ul>
+  <li>The type says it all again, <code>('a -&gt; 'b) -&gt; ('c -&gt; 'a) -&gt; 'c -&gt; 'b</code></li>
+  <li>Equivalent ways to code <code>compose</code> in OCaml:</li>
+</ul>
+
+<pre><code class="language-ocaml">let compose g f x =  g (f x);;
+let compose g f x =  x |&gt; f |&gt; g;; (* This is the readability winner: feed x into f and f's result into g *)
+let compose = (fun g -&gt; (fun f -&gt; (fun x -&gt; g(f x))));;
+</code></pre>
+
+<ul>
+  <li>We can express the Zip/unzip composition explicitly with <code>compose</code>:</li>
+</ul>
+
+<pre><code class="language-ocaml"># (compose zip_pair List.unzip) [(1, 3); (2, 4)];;
+- : (int * int) list = [(1, 3); (2, 4)]
+</code></pre>
 
 <h4 id="list-functions-which-take-function-arguments"><code>List</code> functions which take function arguments</h4>
 
@@ -298,14 +373,14 @@ remove_negatives  [1;-1;2;-2;0];;
 
 <p>Let us use <code>filter</code> to write a function determining if a list has any negative elements:</p>
 
-<pre><code class="language-ocaml">let has_negs l = not (l |&gt; List.filter ~f:(fun x -&gt; x &lt; 0) |&gt; List.is_empty);;
+<pre><code class="language-ocaml">let has_negs l = not (l |&gt; List.filter ~f:(fun x -&gt; x &amp;lt; 0) |&gt; List.is_empty);;
 </code></pre>
 <ul>
   <li>The example shows the power of pipelining, it is easier to see the processing order with <code>|&gt;</code></li>
   <li>This is a common operation so there is a library function for it as well: does there <em>exist</em> any element in the list where predicate holds?</li>
 </ul>
 
-<pre><code class="language-ocaml">let has_negs l = List.exists ~f:(fun x -&gt; x &lt; 0) l;;
+<pre><code class="language-ocaml">let has_negs l = List.exists ~f:(fun x -&gt; x &amp;lt; 0) l;;
 </code></pre>
 <p>Similarly, <code>List.for_all</code> checks if it holds for <em>all</em> elements.</p>
 
@@ -319,6 +394,7 @@ remove_negatives  [1;-1;2;-2;0];;
 - : int list = [2; 0; 3; -1; 1]
 # List.map ~f:(fun x -&gt; x &gt;= 0) [1;-1;2;-2;0];;
 - : bool list = [true; false; true; false; true]
+List.map ~f:(fun (x,y) -&gt; x + y) [(1,2);(3,4)];; (* turns list of number pairs into list of their sums *)
 </code></pre>
 
 <h4 id="folding">Folding</h4>
