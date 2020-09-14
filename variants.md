@@ -1,7 +1,8 @@
-### Variants & records
+### Variants
 
-* Variants build or-data (this or this or this), records build and-data (this and this and this)
+* Variants build or-data (this or this or this); records build and-data (this and this and this)
 * They are the fundamental data constructors
+* We start with variants
 
 ### Variants
 * The `option` and `result` types we have been using are simple forms of *variant types*
