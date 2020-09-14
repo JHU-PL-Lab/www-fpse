@@ -40,7 +40,7 @@ Of course `rev` is also in `Core.List` since it is a common operation:
 let rec zero_negs l =
   match l with
   |  [] -> []
-  |  x :: xs -> (if x &lt; 0 then 0 else x) :: zero_negs xs
+  |  x :: xs -> (if x < 0 then 0 else x) :: zero_negs xs
 in
 zero_negs [1;-2;3];;
 ```
@@ -194,7 +194,7 @@ Error: This expression has type int list * int list
 ```ocaml
 let zip_pair (l,r) = List.zip_exn l r in 
 zip_pair @@ List.unzip [(1, 3); (2, 4)];;
-[(1, 3); (2, 4)] |> zip_pair |> List.unzip;; (* Pipe equivalent form *)
+[(1, 3); (2, 4)] |> List.unzip|> zip_pair ;; (* Pipe equivalent form *)
 ```
 * Congratulations, we just wrote a fancy no-op function :smile:
 * The general principle here is a *curried* 2-argument function like `int -> int -> int` is **isomorphic** to `int * int -> int`
@@ -309,7 +309,7 @@ let exists ~f l =  (* Note the ~f is **declaring** a named argument f, we were o
 ```
 
 * The `~f`  parameter is the operation to put between list elements, disjunction `||` in this example;
-* The `~init` is needed because it is a binary operator and an initial value is needed
+* The `~init` is needed because `||` is a binary operator so an initial value is needed to fold
 * For `fold_right` the `~init` is on the **right**, that is why it is called a "fold right":
 
 ```ocaml
@@ -317,13 +317,32 @@ let exists ~f l =  (* Note the ~f is **declaring** a named argument f, we were o
 - : bool = true
 ```
 
-* `List.fold_left` aka `List.fold` puts the `~init` on the left:
+* `List.fold_left` aka `List.fold` (use the latter syntax generally) puts the `~init` on the left:
 ```ocaml
-# List.fold_left ~f:(||) ~init:false [true; false];; (* this is false || (true || false), the FIRST false the ~init *)
+# List.fold ~f:(||) ~init:false [true; false];; (* this is false || (true || false), the FIRST false is the ~init *)
 - : bool = true
 ```
 
 * Note that in this case folding left or right gives the same answer; 
     - that is because `||` is *commutative and associative*, so e.g. `true || (false || (false) = false || (true || false)`.
-* But e.g. `List.fold_left ~f:(-) ~init:0 [1;2;3]` is `-6` and `List.fold_right ~f:(-) ~init:0 [1;2;3]` is `2`
+* But e.g. `List.fold ~f:(-) ~init:0 [1;2;3]` is `-6` and `List.fold_right ~f:(-) ~init:0 [1;2;3]` is `2`
 * Folding left is preferred, it is tail recursive and can be optimized (more on this later)
+
+#### `fold_until`
+
+* Let us end on perhaps the most powerful `List` combinator of all, `fold_until`.
+* This is an extention to `fold` adding the functionality of `break` of C etc looping but in a functional style.
+
+```ocaml
+let summate_til_zero l =
+  List.fold_until l ~init:0
+    ~f:(fun acc i -> match i, acc with
+        | 0, sum -> Stop sum
+        | _, sum -> Continue (i + sum))
+    ~finish:Fn.id
+let stz_example = summate_til_zero [1;2;3;4;0;5;6;7;8;9;10]
+```
+
+* The `Stop` variant is like break, here take `sum` as the final value
+* `Continue` wraps the continue-folding case, which adds `i` to running `sum` here.
+* `~finish` can post-process the result if the `Stop` case was not hit; `Fn.id` is `fun x -> x`, no additional processing here.

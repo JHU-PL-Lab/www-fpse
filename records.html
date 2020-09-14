@@ -1,0 +1,136 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    
+<h3 id="records">Records</h3>
+<ul>
+  <li>like tuples but with label names on fields</li>
+  <li>the types must be declared just like OCaml variants.</li>
+  <li>can be used in pattern matches as well.</li>
+  <li>again the fields are immutable by default (but there is a way to make them mutable ..)</li>
+</ul>
+
+<p>A record type to represent rational numbers</p>
+
+<pre><code class="language-ocaml">type ratio = {num: int; denom: int};;
+let q = {num = 53; denom = 6};;
+q.num;;
+q.denom;;
+</code></pre>
+
+<p>Pattern matching</p>
+<pre><code class="language-ocaml">let rattoint r =
+ match r with
+   {num = n; denom = d} -&gt; n / d;;
+</code></pre>
+
+<p>Only one pattern matched so can again inline pattern in functions and lets</p>
+<pre><code class="language-ocaml">let rattoint {num = n; denom = d}  =
+   n / d;;
+</code></pre>
+
+<p>Short-cut: pun between variable and field name (understand the above form before punning!!):</p>
+
+<pre><code class="language-ocaml">let rattoint {num; denom}  =  num / denom ;;
+</code></pre>
+
+<p>Can also use dot projections a la C etc, but happy path is usually patterns</p>
+<pre><code class="language-ocaml">let rattoint r  =  r.num / r.denom;;
+rattoint q;;
+</code></pre>
+
+<pre><code class="language-ocaml">let add_ratio r1 r2 = {num = r1.num * r2.denom + r2.num * r1.denom; 
+                      denom = r1.denom * r2.denom};;
+add_ratio {num = 1; denom = 3} {num = 2; denom = 5};;
+</code></pre>
+
+<p>Annoying shadowing issue when using dot: there is one global namespace of record labels</p>
+<pre><code class="language-ocaml">type newratio = {num: int; coeff: float};; (* shadows ratio's label num *)
+
+fun x -&gt; x.num;; (* x is a newratio, the most recent num field defined *)
+</code></pre>
+<p>Solution is to avoid dot.  You can also leave out unused fields in a pattern:</p>
+
+<pre><code class="language-ocaml">let numerator {num}  = num;;
+</code></pre>
+
+<h3 id="other-stuff">Other stuff</h3>
+
+<ul>
+  <li>record field name punning also in values: <code>let r = {x;y}</code> abbreviation</li>
+  <li><code>let r' = { r with x = ..; y = }</code>  for changing just a few fields</li>
+  <li>Embedding record declarations in variants - like named args on variant fields:<br />
+<code>type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly</code></li>
+  <li>no need to declare sugar/spice as records, they are in fact not external records.</li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>

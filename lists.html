@@ -113,7 +113,7 @@ rev [1;2;3];; (* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)
 <pre><code class="language-ocaml">let rec zero_negs l =
   match l with
   |  [] -&gt; []
-  |  x :: xs -&gt; (if x &amp;lt; 0 then 0 else x) :: zero_negs xs
+  |  x :: xs -&gt; (if x &lt; 0 then 0 else x) :: zero_negs xs
 in
 zero_negs [1;-2;3];;
 </code></pre>
@@ -294,7 +294,7 @@ Error: This expression has type int list * int list
 
 <pre><code class="language-ocaml">let zip_pair (l,r) = List.zip_exn l r in 
 zip_pair @@ List.unzip [(1, 3); (2, 4)];;
-[(1, 3); (2, 4)] |&gt; zip_pair |&gt; List.unzip;; (* Pipe equivalent form *)
+[(1, 3); (2, 4)] |&gt; List.unzip|&gt; zip_pair ;; (* Pipe equivalent form *)
 </code></pre>
 <ul>
   <li>Congratulations, we just wrote a fancy no-op function :smile:</li>
@@ -415,7 +415,7 @@ List.map ~f:(fun (x,y) -&gt; x + y) [(1,2);(3,4)];; (* turns list of number pair
 
 <ul>
   <li>The <code>~f</code>  parameter is the operation to put between list elements, disjunction <code>||</code> in this example;</li>
-  <li>The <code>~init</code> is needed because it is a binary operator and an initial value is needed</li>
+  <li>The <code>~init</code> is needed because <code>||</code> is a binary operator so an initial value is needed to fold</li>
   <li>For <code>fold_right</code> the <code>~init</code> is on the <strong>right</strong>, that is why it is called a “fold right”:</li>
 </ul>
 
@@ -424,9 +424,9 @@ List.map ~f:(fun (x,y) -&gt; x + y) [(1,2);(3,4)];; (* turns list of number pair
 </code></pre>
 
 <ul>
-  <li><code>List.fold_left</code> aka <code>List.fold</code> puts the <code>~init</code> on the left:<br />
+  <li><code>List.fold_left</code> aka <code>List.fold</code> (use the latter syntax generally) puts the <code>~init</code> on the left:<br />
 ```ocaml
-    <h1 id="listfold_left-f-initfalse-true-false--this-is-false--true--false-the-first-false-the-init-">List.fold_left ~f:(||) ~init:false [true; false];; (* this is false || (true || false), the FIRST false the ~init *)</h1>
+    <h1 id="listfold-f-initfalse-true-false--this-is-false--true--false-the-first-false-is-the-init-">List.fold ~f:(||) ~init:false [true; false];; (* this is false || (true || false), the FIRST false is the ~init *)</h1>
   </li>
   <li>
     <p>: bool = true<br />
@@ -437,8 +437,30 @@ List.map ~f:(fun (x,y) -&gt; x + y) [(1,2);(3,4)];; (* turns list of number pair
       <li>that is because <code>||</code> is <em>commutative and associative</em>, so e.g. <code>true || (false || (false) = false || (true || false)</code>.</li>
     </ul>
   </li>
-  <li>But e.g. <code>List.fold_left ~f:(-) ~init:0 [1;2;3]</code> is <code>-6</code> and <code>List.fold_right ~f:(-) ~init:0 [1;2;3]</code> is <code>2</code></li>
+  <li>But e.g. <code>List.fold ~f:(-) ~init:0 [1;2;3]</code> is <code>-6</code> and <code>List.fold_right ~f:(-) ~init:0 [1;2;3]</code> is <code>2</code></li>
   <li>Folding left is preferred, it is tail recursive and can be optimized (more on this later)</li>
+</ul>
+
+<h4 id="fold_until"><code>fold_until</code></h4>
+
+<ul>
+  <li>Let us end on perhaps the most powerful <code>List</code> combinator of all, <code>fold_until</code>.</li>
+  <li>This is an extention to <code>fold</code> adding the functionality of <code>break</code> of C etc looping but in a functional style.</li>
+</ul>
+
+<pre><code class="language-ocaml">let summate_til_zero l =
+  List.fold_until l ~init:0
+    ~f:(fun acc i -&gt; match i, acc with
+        | 0, sum -&gt; Stop sum
+        | _, sum -&gt; Continue (i + sum))
+    ~finish:Fn.id
+let stz_example = summate_til_zero [1;2;3;4;0;5;6;7;8;9;10]
+</code></pre>
+
+<ul>
+  <li>The <code>Stop</code> variant is like break, here take <code>sum</code> as the final value</li>
+  <li><code>Continue</code> wraps the continue-folding case, which adds <code>i</code> to running <code>sum</code> here.</li>
+  <li><code>~finish</code> can post-process the result if the <code>Stop</code> case was not hit; <code>Fn.id</code> is <code>fun x -&gt; x</code>, no additional processing here.</li>
 </ul>
       
           </section>
