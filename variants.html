@@ -1,0 +1,368 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h3 id="variants--records">Variants &amp; records</h3>
+
+<ul>
+  <li>Variants build or-data (this or this or this), records build and-data (this and this and this)</li>
+  <li>They are the fundamental data constructors</li>
+</ul>
+
+<h3 id="variants">Variants</h3>
+<ul>
+  <li>The <code>option</code> and <code>result</code> types we have been using are simple forms of <em>variant types</em></li>
+  <li>Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the sort</li>
+  <li>They are related to <code>union</code> types in C or <code>enums</code> in Java, but are more safe and more general</li>
+  <li>Like OCaml lists and tuples they are by default immutable</li>
+</ul>
+
+<p>Example variant type for doing mixed arithmetic (integers and floats)</p>
+
+<pre><code class="language-ocaml">type ff_num = Fixed of int | Floating of float;;  (* read "|" as "or" *)
+
+Fixed(5);; (* tag 5 as a Fixed *)
+Floating 4.0;; (* tag 4.0 as a Floating *)
+</code></pre>
+
+<ul>
+  <li>Each case of the variant is wrapped with a ‘Constructor’ which serves for both
+    <ul>
+      <li>Constructing values of the variant type</li>
+      <li>inspecting them by pattern matching</li>
+    </ul>
+  </li>
+  <li>Constructors must start with a Capital Letter to distinguish from variables</li>
+  <li>Variants must be declared but once declared type inference can infer them.</li>
+  <li>The <code>of</code> indicates what type is under the wrapper</li>
+  <li>Note constructors look like functions but they are <strong>not</strong> – you always need to give the argument</li>
+</ul>
+
+<pre><code class="language-ocaml">let ff_as_int x =
+    match x with
+    | Fixed n -&gt; n    (* variants fit well into pattern matching syntax *)
+    | Floating z -&gt; int_of_float z;;
+
+ff_as_int (Fixed 5);;
+</code></pre>
+
+<p>A non-trivial function using the above variant type</p>
+
+<pre><code class="language-ocaml">let ff_add n1 n2 =
+   match n1, n2 with    (* note use of pair here to parallel-match on two variables  *)
+     | Fixed i1, Fixed i2 -&gt; Fixed (i1 + i2)
+     | Fixed i1, Floating f2 -&gt;  Floating(float i1 +. f2) (* need to coerce *)
+     | Floating f1, Fixed i2 -&gt; Floating(f1 +. float i2)  (* ditto *)
+     | Floating f1, Floating f2 -&gt; Floating(f1 +. f2)
+;;
+
+ff_add (Fixed 123) (Floating 3.14159);;
+</code></pre>
+
+<ul>
+  <li>No data item?  leave off the <code>of</code>.</li>
+  <li>Multiple data items in a single variant clause?  Wrap with a tuple:</li>
+</ul>
+
+<pre><code class="language-ocaml">type complex = CZero | Nonzero of float * float;;
+
+let com = Nonzero(3.2,11.2);;
+let zer = CZero;;
+let annoyance = Fn.id Nonzero(3.2,11.2);; (* common parsing error here; use @@ instead of " " *)
+</code></pre>
+
+<h4 id="an-example-of-variants-plus-list-libraries">An Example of Variants plus List. libraries</h4>
+
+<ul>
+  <li>Here is a small Hamming distance calculator for DNA.</li>
+  <li>Observe the <code>[@@deriving eq]</code>, this is a <em>macro</em> (called a “ppx extension” in OCaml)</li>
+  <li>It automatically generates a function <code>equal_nucleotide</code> (<code>equal_the-types-name-here</code> in general)</li>
+  <li>You will need to use this with <code>Core</code> since <code>=</code> will not work on <code>nucleotide</code>s.</li>
+</ul>
+
+<pre><code class="language-ocaml">(* Example derived from 
+   https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
+   This code needs a #require "ppx_deriving.eq";; in top loop to load ppx extension for @@deriving eq 
+   Or, in a dune file it will need   (preprocess (pps ppx_deriving.eq)) added to the library decl *)
+
+type nucleotide = A | C | G | T [@@deriving eq]
+
+let hamming_distance left right =
+  match List.length left, List.length right with
+  | x, y when x &lt;&gt; y -&gt; Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
+  | _ -&gt; Ok (List.length (List.filter ~f:(fun (a,b) -&gt; not (equal_nucleotide a b)) (* _ is wild card match *)
+                                      (List.zip_exn left right))) (* We already know this never fails - OK to _exn *)
+
+let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
+</code></pre>
+
+<h4 id="parametric-variant-types">Parametric variant types</h4>
+
+<p>Here is the system’s declaration of the <code>option</code> type – the <code>#show_type</code> top loop directive will print it:</p>
+<pre><code class="language-ocaml"># #show_type option;;
+type 'a option = None | Some of 'a
+</code></pre>
+<ul>
+  <li>The <code>'a</code> here is a <em>parameter</em>, which gets filled in by a concrete type to make an actual type.</li>
+  <li>e.g. <code>Some("hello") : string option</code> – the <code>string</code> fills in the parameter <code>'a</code></li>
+  <li><code>None : 'a option</code> type means instantiate the <code>'a</code> parameter with polymorphic/generic <code>'a</code></li>
+  <li>This may have been more clear if OCaml used function notation for these types, e.g.<br />
+ <code>type option('a) = None | Some of 'a</code> and  <code>Some("hello") : option(string)</code></li>
+</ul>
+
+<p>And here is <code>result</code>:</p>
+<pre><code class="language-ocaml"># #show_type result;;
+type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
+</code></pre>
+
+<ul>
+  <li>Same idea but <em>a pair</em> of type parameters; <code>'b</code> is the type of the <code>Error</code>.</li>
+  <li>Observe <code>Ok(4) : (int, 'a) result</code> and <code>Error("bad") : ('a, string) result</code></li>
+</ul>
+
+<h4 id="recursive-data-structures">Recursive data structures</h4>
+<ul>
+  <li>A common use of variant types: self-referential ones</li>
+  <li>Functional programming is fantastic for computing over tree-structured data</li>
+  <li>Recursive types can refer to themselves in their own definition
+    <ul>
+      <li>similar in spirit to how C structs can be recursive (but, no pointers needed here)</li>
+    </ul>
+  </li>
+  <li>Unlike with functions, no need for <code>rec</code> (in fact can use <code>nonrec</code> to let OCaml know it is <em>not</em> recursive)</li>
+</ul>
+
+<p>Homebrew lists as a warm-up - the built-in <code>list</code> type is in fact not needed</p>
+
+<pre><code class="language-ocaml">type 'a homebrew_list = Mt | Cons of 'a * 'a homebrew_list;;
+let hb_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to [3;5;7] *)
+</code></pre>
+<p>Coding over homebrew lists is basically identical to built-in lists.</p>
+
+<pre><code class="language-ocaml">let rec map ml ~f:f =
+  match ml with
+    | Mt -&gt; Mt
+    | Cons(hd,tl) -&gt; Cons(f hd,map tl ~f)
+
+let map_eg = map hb_eg ~f:(fun x -&gt; x -1)
+</code></pre>
+
+<p>Lets look at the built-in <code>list</code> type:</p>
+<pre><code class="language-ocaml"># #show_type list;;
+type 'a list = [] | (::) of 'a * 'a list
+</code></pre>
+<p>Looks very similar to our homebrew one, eh??</p>
+
+<h3 id="binary-trees">Binary trees</h3>
+
+<ul>
+  <li>Binary trees are like lists but with two self-referential sub-structures instead of one</li>
+  <li>Binary trees also show how arbitrary recursive variants work; same idea but more variants.</li>
+  <li>Here is a tree with data in the <em>nodes</em> but not the leaves.</li>
+</ul>
+
+<pre><code class="language-ocaml">type 'a bin_tree = Leaf | Node of 'a * 'a bin_tree * 'a bin_tree
+</code></pre>
+
+<p>Here are some simple example trees</p>
+
+<pre><code class="language-ocaml">let bt0 = Node("whack!",Leaf, Leaf);;
+let bt1 = Node("fiddly ",
+            Node("backer ",
+               Leaf,
+               Node("crack ",
+                  Leaf,
+                  Leaf)),
+            bt0);;
+
+let bt2 = Node("fiddly ",
+            Node("backer ",
+               Leaf,
+               Node("crack ",
+                  Leaf,
+                  Leaf)),
+            bt0);;
+(* Type error, like list, must have uniform type: *)
+Node("fiddly",Node(0,Leaf,Leaf),Leaf);;
+</code></pre>
+
+<h4 id="operations-on-binary-trees">Operations on Binary Trees</h4>
+
+<ul>
+  <li>Since lists are built-in we get a massive library of functions on them.</li>
+  <li>For these binary trees (and in general for whatever variants you roll up yourselves) there is no such luxury.</li>
+  <li><strong>But</strong>, that doesn’t mean you should just code everything by recursing over the tree.  Instead
+    <ol>
+      <li>Define the combinators you need (maps, folds, node counts, etc.) using <code>let rec</code></li>
+      <li>Use your combinators without needing <code>let rec</code></li>
+    </ol>
+  </li>
+  <li>Here is a simple recursive function over binary trees for example:
+    <pre><code class="language-ocaml">let rec add_gobble binstringtree =
+ match binstringtree with
+ | Leaf -&gt; Leaf
+ | Node(y, left, right) -&gt;
+     Node(y^"gobble",add_gobble left,add_gobble right)
+</code></pre>
+  </li>
+  <li>Remember, like with lists this is not mutating the tree, its building a new one</li>
+  <li>Observe: this is an instance of the general operation of building a tree with same structure but applying an operation on each node value</li>
+  <li>i.e. it is a <strong>map</strong> operation over a tree.  Let us code it.</li>
+</ul>
+
+<pre><code class="language-ocaml">let rec map tree ~f =
+   match tree with
+   | Leaf -&gt; Leaf
+   | Node(y, left, right) -&gt;
+       Node(f y,map ~f left,map ~f right)
+
+(* using tree map to make a non-recursive add_gobble *)
+let add_gobble tree = map ~f:(fun s -&gt; s ^ "gobble") tree
+</code></pre>
+<ul>
+  <li>Fold is also natural on binary trees, apply operation f to node value and each subtree result.</li>
+</ul>
+
+<pre><code class="language-ocaml">let rec fold tree ~f ~leaf =
+   match tree with
+   | Leaf -&gt; leaf
+   | Node(y, left, right) -&gt;
+       f y (fold ~f ~leaf left) (fold ~f ~leaf right)
+
+(* using tree fold *)
+let int_summate tree = fold ~f:(fun y -&gt; fun ls -&gt; fun rs-&gt; y + ls + rs) ~leaf:0 tree;;
+let bt = Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
+int_summate bt;;
+</code></pre>
+
+<ul>
+  <li>Many of the other <code>List</code> functions have analogues on binary trees and recursive variants in general
+    <ul>
+      <li><code>length</code> (<code>size</code> for a tree), <code>forall</code>, <code>exists</code>, <code>filter</code> (filter out a subtree), etc etc.</li>
+    </ul>
+  </li>
+  <li>For some operations we need to know how to compare the tree elements,</li>
+  <li>e.g. if it is a binary (sorted) tree an insertion requires comparison</li>
+  <li>For integers at least this is easy as we have <code>=</code>:</li>
+</ul>
+
+<pre><code class="language-ocaml">let rec insert_int x bt =
+   match bt with
+   | Leaf -&gt; Node(x, Leaf, Leaf)
+   | Node(y, left, right) -&gt;
+       if x &lt;= y then Node(y, insert_int x left, right)
+       else Node(y, left, insert_int x right)
+;;
+</code></pre>
+
+<p>This is of course not mutating– returns a whole new tree.</p>
+
+<pre><code class="language-ocaml">let bt' = insert_int 4 bt;;
+let bt'' = insert_int 0 bt';; (* **thread** in the most recent tree into subsequent insert *)
+</code></pre>
+
+<ul>
+  <li>For non-integers however, we need to explicitly supply any equal or comparison function.</li>
+  <li>This in fact is part of the <code>List</code> library, take the <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort">sort function there</a></li>
+  <li>Here is how to sort a string list then:</li>
+</ul>
+
+<pre><code class="language-ocaml">List.sort ["Zoo";"Hey";"Abba"] (String.compare);;
+(* insight into compare: *)
+# String.compare "Ahh" "Ahh";; )(* = *)
+- : int = 0
+# String.compare "Ahh" "Bee";; (* &lt; *)
+- : int = -1
+# String.compare "Ahh" "Ack";; (* &gt; *)
+- : int = 1
+</code></pre>
+
+<p>So, a general tree insert would follow the lead of <code>List.sort</code>:</p>
+
+<pre><code class="language-ocaml">let rec insert x bt compare =
+   match bt with
+   | Leaf -&gt; Node(x, Leaf, Leaf)
+   | Node(y, left, right) -&gt;
+       if (compare x y) &lt;= 0 then Node(y, insert x left compare, right)
+       else Node(y, left, insert x right compare)
+;;
+let bt' = insert 4 bt (Int.compare);;
+</code></pre>
+
+<ul>
+  <li>In general all the standard types have both <code>compare</code> and <code>equal</code> (which is same as <code>(=)</code>) defined</li>
+  <li>Define your own compare/equal for your own types</li>
+</ul>
+
+<h3 id="polymorphic-variants">Polymorphic Variants</h3>
+
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>
