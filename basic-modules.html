@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    
+<h3 id="modules-basics">Modules basics</h3>
+
+<ul>
+  <li>We have seen OCaml modules in action, e.g. <code>List.map</code>, <code>Float.(=)</code>, <code>Fn.id</code>, etc.</li>
+  <li>We also covered how modules are collections of functions, values, types, and other modules</li>
+  <li>Now we want to cover how individual <code>.ml</code> files define modules
+    <ul>
+      <li>and, how to hide some items in a module (think <code>private</code> of Java/C++) via <code>.mli</code> file signatures</li>
+    </ul>
+  </li>
+  <li>Also we will cover how most modules are <em>libraries</em> of auxiliary functions but how modules may also define <em>executables</em>.</li>
+  <li>
+    <p>… there are also many more fancy module features which we will cover later</p>
+  </li>
+  <li>We are going to use a running example to explain these concepts; see <a href="http://pl.cs.jhu.edu/pl/fpse/code/set_example.zip">set_example.zip</a> for the full example</li>
+</ul>
+
+<h3 id="ml-files-as-modules"><code>.ml</code> files as modules</h3>
+
+<p>The contents of the file <code>simple_set.ml</code> in the above is the following:</p>
+<pre><code class="language-ocaml">open Core
+
+type 'a t = 'a list
+
+let emptyset : 'a t = []
+
+let add (x : 'a) (s : 'a t) = (x :: s)
+
+let rec remove (x : 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) =
+  match s with
+  | [] -&gt; failwith "item is not in set"
+  | hd :: tl -&gt;
+    if equal hd x then tl
+    else hd :: remove x tl equal
+
+let rec contains (x: 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) =
+  match s with
+  | [] -&gt; false
+  | hd :: tl -&gt;
+    if equal x hd then true else contains x tl equal
+</code></pre>
+<ul>
+  <li>This is just a set implemented as a list; it is in fact a multiset</li>
+  <li>The line <code>type 'a t = 'a list</code> is a <em>type abbreviation</em>, <code>'a t</code> is a synonym for <code>'a list</code></li>
+  <li>Naming a type just <code>t</code> is the standard for “the” underlying type of a module
+    <ul>
+      <li>When outsiders use this module the type will be <code>Simple_set.t</code>, read “Simple set’s type”</li>
+      <li><code>Core</code> extensively uses this convention in libraries</li>
+    </ul>
+  </li>
+  <li>Notice how the functions needing <code>=</code> we have to pass it in explicitly to be polymorphic
+    <ul>
+      <li>In <code>Core.Set</code> there is in fact a much better solution but involves fancier modules which we cover later</li>
+    </ul>
+  </li>
+  <li>Notice also that we declare types on the function parameters for readability, “<code>x : t</code>”
+    <ul>
+      <li>“Can let them be inferred at first but paste in the inferred ones later”</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="building-the-library">Building the library</h4>
+
+<p>This file can be built as a library module with the dune file</p>
+
+<pre><code class="language-scheme">(library
+ (name simple_set)
+ (modules simple_set) 
+ (libraries core)
+)
+</code></pre>
+
+<p>And if you want to play with your library module, command <code>dune utop</code> from the same directory will load it into the top loop:</p>
+
+<pre><code class="language-ocaml">myshell $ dune utop
+...
+utop # Simple_set.add 4 Simple_set.emptyset;;
+- : int list = [4]
+</code></pre>
+
+<ul>
+  <li>Notice how the file name is <code>simple_set.ml</code> and it produces a module <code>Simple_set</code></li>
+  <li>This is the standard, capitalize the first letter (only) going from file to module</li>
+  <li>One thing potentially annoying here is the fact that we used a list gets exposed here</li>
+  <li>But, we can use type abstraction to hide this; next topic</li>
+</ul>
+
+<h3 id="information-hiding-with-module-signatures">Information Hiding with Module Signatures</h3>
+
+<ul>
+  <li>Modules also have types, they are called <em>signatures</em></li>
+  <li>When a module is defined in a file <code>simple_set.ml</code>, make a file <code>simple_set.mli</code> for its corresponding signature
+    <ul>
+      <li>the added “<code>i</code>” is for “interface”</li>
+    </ul>
+  </li>
+  <li>You don’t need an <code>.mli</code> file if there is nothing to hide, the type will be inferred
+    <ul>
+      <li>But, even if nothing is hidden the <code>.mli</code> is good as a document of what is provided to users</li>
+    </ul>
+  </li>
+</ul>
+
+<p>So, here the <code>simple_set.mli</code> file from the above zip:</p>
+
+<pre><code class="language-ocaml">    type 'a t    (* hide the type 'a list here by not giving it in signature *)
+    val emptyset : 'a t
+    val add: 'a -&gt; 'a t -&gt;'a t
+    val remove : 'a -&gt; 'a t -&gt;  ('a -&gt; 'a -&gt; bool) -&gt; 'a t
+    val contains: 'a -&gt; 'a t -&gt;  ('a -&gt; 'a -&gt; bool) -&gt; bool 
+</code></pre>
+
+<p>Now if we <code>dune utop</code> with this added file we get</p>
+
+<pre><code class="language-ocaml">myshell $ dune utop
+...
+utop # Simple_set.add 4 Simple_set.emptyset;;
+- : int Simple_set.t = &lt;abstr&gt;
+</code></pre>
+
+<ul>
+  <li>Notice how the <code>int list</code> result type from before is now <code>int Simple_set.t</code>
+    <ul>
+      <li>it is the <code>t</code> type from module <code>Simple_set</code> and the parameter <code>'a</code> there is instantiated to <code>int</code>.</li>
+    </ul>
+  </li>
+  <li>Also notice that the value is <code>&lt;abstr&gt;</code>, not <code>[4]</code> like before; since the type is hidden so are the values</li>
+  <li>This is both
+    <ul>
+      <li>advantageous (program to interfaces, not implementations)</li>
+      <li>not adventageous (sometimes hard to see what is going on)</li>
+    </ul>
+  </li>
+  <li>We will come back to this topic later in the course</li>
+</ul>
+
+<h3 id="making-an-ocaml-executable">Making an OCaml executable</h3>
+
+<ul>
+  <li>So far all we have made is libraries; let us now make a small OCaml executable.</li>
+  <li>We will make a main module <code>Set_main</code> (in file <code>set_main.ml</code> of course) which takes a string and a file name and looks for that line in the file.</li>
+</ul>
+
+<p>Here is what we need to add to the <code>dune</code> file along with the above to build the executable:</p>
+
+<pre><code class="language-scheme">(executable
+  (name set_main)
+  (libraries simple_set core)
+  (modules set_main)
+)
+</code></pre>
+
+<ul>
+  <li>We will now inspect <code>set_main.ml</code> in VSCode so we can use the tool tips to check out various types</li>
+</ul>
+
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>

@@ -118,7 +118,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body"> Finish <a href="variants.html">Variants</a>, <a href="records.html">Records</a>, <a href="basic-modules.html">Basic Modules</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

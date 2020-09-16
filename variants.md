@@ -222,7 +222,7 @@ int_summate bt;;
 
 * For some operations we need to know how to compare the tree elements, 
 * e.g. if it is a binary (sorted) tree an insertion requires comparison
-* For integers at least this is easy as we have `=`:
+* For integers at least this is easy as we have `<=`:
 
 ```ocaml
 let rec insert_int x bt =
@@ -234,7 +234,7 @@ let rec insert_int x bt =
 ;;
 ```
 
-This is of course not mutating-- returns a whole new tree.
+Like lists operations this is not mutating -- it returns a whole new tree.
 
 ```ocaml
 let bt' = insert_int 4 bt;;
@@ -242,11 +242,12 @@ let bt'' = insert_int 0 bt';; (* **thread** in the most recent tree into subsequ
 ```
 
 * For non-integers however, we need to explicitly supply any equal or comparison function.
-* This in fact is part of the `List` library, take the [sort function there](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort)
-* Here is how to sort a string list then:
+* Library functions needing to compare will in fact take a comparision operation as argument
+* For example in the `List` library, the [`List.sort` function](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort)
+* Here is an example of how to sort a string list with `List.sort`:
 
 ```ocaml
-List.sort ["Zoo";"Hey";"Abba"] (String.compare);;
+List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* takes comparison function as argument *)
 (* insight into compare: *)
 # String.compare "Ahh" "Ahh";; )(* = *)
 - : int = 0
@@ -269,9 +270,52 @@ let rec insert x bt compare =
 let bt' = insert 4 bt (Int.compare);;
 ```
 
-* In general all the standard types have both `compare` and `equal` (which is same as `(=)`) defined
-* Define your own compare/equal for your own types
+* In general all the built-in types have both `compare` and `equal` (which is same as `(=)`) defined
+* Define your own compare/equal for your own types if you need it
+ - `[@@ppx_deriving eq]` as we saw above in Hamming DNA example will automatically define function `equal_mytype` for your type `mytype`
+ - `[@@ppx_deriving ord]` is similar but will define function `compare_mytype`.
 
+### Polymorphic Variants Briefly
 
-### Polymorphic Variants
+* OCaml has an additional form of variant which has different syntax and is overlapping in uses: *polymorphic variants*
+* A better term would be "inferred variants" - you don't need to declare them via `type`.
 
+```ocaml
+# `Zinger(3);;
+- : [> `Zinger of int ] = `Zinger 3
+```
+* This looks a bit useless, it inferred a 1-ary variant type
+* But the "`>`" in the type means there could be other variants showing up in the future.
+
+```ocaml
+# [`Zinger 3; `Zanger "hi"];;
+- : [> `Zanger of string | `Zinger of int ] list = [`Zinger 3; `Zanger "hi"]
+```
+
+* We can of course pattern match as well.
+
+```ocaml
+# let zing_zang z = 
+match z with
+| `Zinger n -> "zing! "^(Int.to_string n)
+| `Zanger s -> "zang! "^s
+val zing_zang : [< `Zanger of string | `Zinger of int ] -> string = <fun>
+```
+Observe how the type now has a `<` instead of a `>`; the meaning is it is those fields or *fewer*.
+
+```ocaml
+# zing_zang @@ `Zanger "wow";;
+- : string = "zang! wow"
+# zing_zang @@ `Zuber 1.2;;
+Line 1, characters 13-23:
+Error: This expression has type [> `Zuber of float ]
+       but an expression was expected of type
+         [< `Zanger of string | `Zinger of int ]
+       The second variant type does not allow tag(s) `Zuber
+```
+
+* Generally you should use the non-polymorphic form by default
+* The main advantage of the polymorphic form is sharing tags amongst different types
+   - regular variants like `Ok(4)` *must* be in only one type, `result` here
+   - variants like `` `Zanger "f"`` can be in ``[> `Zanger of string ]``, ``[> `Zanger of string | `Zinger of int ]``, etc
+   - really OCaml should just have one form; the two forms are historical cruft.

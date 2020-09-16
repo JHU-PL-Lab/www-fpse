@@ -302,7 +302,7 @@ int_summate bt;;
   </li>
   <li>For some operations we need to know how to compare the tree elements,</li>
   <li>e.g. if it is a binary (sorted) tree an insertion requires comparison</li>
-  <li>For integers at least this is easy as we have <code>=</code>:</li>
+  <li>For integers at least this is easy as we have <code>&lt;=</code>:</li>
 </ul>
 
 <pre><code class="language-ocaml">let rec insert_int x bt =
@@ -314,7 +314,7 @@ int_summate bt;;
 ;;
 </code></pre>
 
-<p>This is of course not mutating– returns a whole new tree.</p>
+<p>Like lists operations this is not mutating – it returns a whole new tree.</p>
 
 <pre><code class="language-ocaml">let bt' = insert_int 4 bt;;
 let bt'' = insert_int 0 bt';; (* **thread** in the most recent tree into subsequent insert *)
@@ -322,11 +322,12 @@ let bt'' = insert_int 0 bt';; (* **thread** in the most recent tree into subsequ
 
 <ul>
   <li>For non-integers however, we need to explicitly supply any equal or comparison function.</li>
-  <li>This in fact is part of the <code>List</code> library, take the <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort">sort function there</a></li>
-  <li>Here is how to sort a string list then:</li>
+  <li>Library functions needing to compare will in fact take a comparision operation as argument</li>
+  <li>For example in the <code>List</code> library, the <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort"><code>List.sort</code> function</a></li>
+  <li>Here is an example of how to sort a string list with <code>List.sort</code>:</li>
 </ul>
 
-<pre><code class="language-ocaml">List.sort ["Zoo";"Hey";"Abba"] (String.compare);;
+<pre><code class="language-ocaml">List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* takes comparison function as argument *)
 (* insight into compare: *)
 # String.compare "Ahh" "Ahh";; )(* = *)
 - : int = 0
@@ -349,12 +350,63 @@ let bt' = insert 4 bt (Int.compare);;
 </code></pre>
 
 <ul>
-  <li>In general all the standard types have both <code>compare</code> and <code>equal</code> (which is same as <code>(=)</code>) defined</li>
-  <li>Define your own compare/equal for your own types</li>
+  <li>In general all the built-in types have both <code>compare</code> and <code>equal</code> (which is same as <code>(=)</code>) defined</li>
+  <li>Define your own compare/equal for your own types if you need it</li>
+  <li><code>[@@ppx_deriving eq]</code> as we saw above in Hamming DNA example will automatically define function <code>equal_mytype</code> for your type <code>mytype</code></li>
+  <li><code>[@@ppx_deriving ord]</code> is similar but will define function <code>compare_mytype</code>.</li>
 </ul>
 
-<h3 id="polymorphic-variants">Polymorphic Variants</h3>
+<h3 id="polymorphic-variants-briefly">Polymorphic Variants Briefly</h3>
 
+<ul>
+  <li>OCaml has an additional form of variant which has different syntax and is overlapping in uses: <em>polymorphic variants</em></li>
+  <li>A better term would be “inferred variants” - you don’t need to declare them via <code>type</code>.</li>
+</ul>
+
+<pre><code class="language-ocaml"># `Zinger(3);;
+- : [&gt; `Zinger of int ] = `Zinger 3
+</code></pre>
+<ul>
+  <li>This looks a bit useless, it inferred a 1-ary variant type</li>
+  <li>But the “<code>&gt;</code>” in the type means there could be other variants showing up in the future.</li>
+</ul>
+
+<pre><code class="language-ocaml"># [`Zinger 3; `Zanger "hi"];;
+- : [&gt; `Zanger of string | `Zinger of int ] list = [`Zinger 3; `Zanger "hi"]
+</code></pre>
+
+<ul>
+  <li>We can of course pattern match as well.</li>
+</ul>
+
+<pre><code class="language-ocaml"># let zing_zang z = 
+match z with
+| `Zinger n -&gt; "zing! "^(Int.to_string n)
+| `Zanger s -&gt; "zang! "^s
+val zing_zang : [&lt; `Zanger of string | `Zinger of int ] -&gt; string = &lt;fun&gt;
+</code></pre>
+<p>Observe how the type now has a <code>&lt;</code> instead of a <code>&gt;</code>; the meaning is it is those fields or <em>fewer</em>.</p>
+
+<pre><code class="language-ocaml"># zing_zang @@ `Zanger "wow";;
+- : string = "zang! wow"
+# zing_zang @@ `Zuber 1.2;;
+Line 1, characters 13-23:
+Error: This expression has type [&gt; `Zuber of float ]
+       but an expression was expected of type
+         [&lt; `Zanger of string | `Zinger of int ]
+       The second variant type does not allow tag(s) `Zuber
+</code></pre>
+
+<ul>
+  <li>Generally you should use the non-polymorphic form by default</li>
+  <li>The main advantage of the polymorphic form is sharing tags amongst different types
+    <ul>
+      <li>regular variants like <code>Ok(4)</code> <em>must</em> be in only one type, <code>result</code> here</li>
+      <li>variants like <code>`Zanger "f"</code> can be in <code>[&gt; `Zanger of string ]</code>, <code>[&gt; `Zanger of string | `Zinger of int ]</code>, etc</li>
+      <li>really OCaml should just have one form; the two forms are historical cruft.</li>
+    </ul>
+  </li>
+</ul>
       
           </section>
         </div>
