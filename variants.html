@@ -314,26 +314,32 @@ int_summate bt;;
 ;;
 </code></pre>
 
-<p>Like lists operations this is not mutating – it returns a whole new tree.</p>
+<ul>
+  <li>Like lists operations this is not mutating – it returns a whole new tree.</li>
+</ul>
 
 <pre><code class="language-ocaml">let bt' = insert_int 4 bt;;
-let bt'' = insert_int 0 bt';; (* **thread** in the most recent tree into subsequent insert *)
+let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent insert *)
 </code></pre>
 
 <ul>
-  <li>For non-integers however, we need to explicitly supply any equal or comparison function.</li>
+  <li>For non-integers however, we need to explicitly supply any equal or comparison function.
+    <ul>
+      <li>recall <code>=</code> in <code>Core</code> works on integers only.</li>
+    </ul>
+  </li>
   <li>Library functions needing to compare will in fact take a comparision operation as argument</li>
   <li>For example in the <code>List</code> library, the <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort"><code>List.sort</code> function</a></li>
   <li>Here is an example of how to sort a string list with <code>List.sort</code>:</li>
 </ul>
 
-<pre><code class="language-ocaml">List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* takes comparison function as argument *)
-(* insight into compare: *)
-# String.compare "Ahh" "Ahh";; )(* = *)
+<pre><code class="language-ocaml">List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* pass string's comparison function as argument *)
+(* insight into OCaml expected behavior for compare: *)
+# String.compare "Ahh" "Ahh";; )(* =  returns 0*)
 - : int = 0
-# String.compare "Ahh" "Bee";; (* &lt; *)
+# String.compare "Ahh" "Bee";; (* &lt; returns -1 *)
 - : int = -1
-# String.compare "Ahh" "Ack";; (* &gt; *)
+# String.compare "Ahh" "Ack";; (* &gt; returns 1 *)
 - : int = 1
 </code></pre>
 
@@ -352,8 +358,8 @@ let bt' = insert 4 bt (Int.compare);;
 <ul>
   <li>In general all the built-in types have both <code>compare</code> and <code>equal</code> (which is same as <code>(=)</code>) defined</li>
   <li>Define your own compare/equal for your own types if you need it</li>
-  <li><code>[@@ppx_deriving eq]</code> as we saw above in Hamming DNA example will automatically define function <code>equal_mytype</code> for your type <code>mytype</code></li>
-  <li><code>[@@ppx_deriving ord]</code> is similar but will define function <code>compare_mytype</code>.</li>
+  <li>Appending <code>[@@ppx_deriving eq]</code> to  type decl as we saw above in Hamming DNA example will automatically define function <code>equal_mytype</code> for your type <code>mytype</code></li>
+  <li>Appending <code>[@@ppx_deriving ord]</code> (<code>ord</code> for ordering) is similar but will define function <code>compare_mytype</code>.</li>
 </ul>
 
 <h3 id="polymorphic-variants-briefly">Polymorphic Variants Briefly</h3>
@@ -368,7 +374,7 @@ let bt' = insert 4 bt (Int.compare);;
 </code></pre>
 <ul>
   <li>This looks a bit useless, it inferred a 1-ary variant type</li>
-  <li>But the “<code>&gt;</code>” in the type means there could be other variants showing up in the future.</li>
+  <li>But the “<code>&gt;</code>” in the type means <em>there could be other variants showing up in the future</em>.</li>
 </ul>
 
 <pre><code class="language-ocaml"># [`Zinger 3; `Zanger "hi"];;
@@ -376,7 +382,7 @@ let bt' = insert 4 bt (Int.compare);;
 </code></pre>
 
 <ul>
-  <li>We can of course pattern match as well.</li>
+  <li>We can of course pattern match as well:</li>
 </ul>
 
 <pre><code class="language-ocaml"># let zing_zang z = 
@@ -401,9 +407,9 @@ Error: This expression has type [&gt; `Zuber of float ]
   <li>Generally you should use the non-polymorphic form by default</li>
   <li>The main advantage of the polymorphic form is sharing tags amongst different types
     <ul>
-      <li>regular variants like <code>Ok(4)</code> <em>must</em> be in only one type, <code>result</code> here</li>
+      <li>regular variants like <code>Ok(4)</code> <em>must</em> be in only one type, <code>result</code> for <code>Ok</code> in <code>Core</code></li>
       <li>variants like <code>`Zanger "f"</code> can be in <code>[&gt; `Zanger of string ]</code>, <code>[&gt; `Zanger of string | `Zinger of int ]</code>, etc</li>
-      <li>really OCaml should just have one form; the two forms are historical cruft.</li>
+      <li>really OCaml should just have one form; the two forms are historical baggage.</li>
     </ul>
   </li>
 </ul>

@@ -234,26 +234,27 @@ let rec insert_int x bt =
 ;;
 ```
 
-Like lists operations this is not mutating -- it returns a whole new tree.
+* Like lists operations this is not mutating -- it returns a whole new tree.
 
 ```ocaml
 let bt' = insert_int 4 bt;;
-let bt'' = insert_int 0 bt';; (* **thread** in the most recent tree into subsequent insert *)
+let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent insert *)
 ```
 
 * For non-integers however, we need to explicitly supply any equal or comparison function.
+   - recall `=` in `Core` works on integers only.
 * Library functions needing to compare will in fact take a comparision operation as argument
 * For example in the `List` library, the [`List.sort` function](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort)
 * Here is an example of how to sort a string list with `List.sort`:
 
 ```ocaml
-List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* takes comparison function as argument *)
-(* insight into compare: *)
-# String.compare "Ahh" "Ahh";; )(* = *)
+List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* pass string's comparison function as argument *)
+(* insight into OCaml expected behavior for compare: *)
+# String.compare "Ahh" "Ahh";; )(* =  returns 0*)
 - : int = 0
-# String.compare "Ahh" "Bee";; (* < *)
+# String.compare "Ahh" "Bee";; (* < returns -1 *)
 - : int = -1
-# String.compare "Ahh" "Ack";; (* > *)
+# String.compare "Ahh" "Ack";; (* > returns 1 *)
 - : int = 1
 ```
 
@@ -272,8 +273,8 @@ let bt' = insert 4 bt (Int.compare);;
 
 * In general all the built-in types have both `compare` and `equal` (which is same as `(=)`) defined
 * Define your own compare/equal for your own types if you need it
- - `[@@ppx_deriving eq]` as we saw above in Hamming DNA example will automatically define function `equal_mytype` for your type `mytype`
- - `[@@ppx_deriving ord]` is similar but will define function `compare_mytype`.
+ - Appending `[@@ppx_deriving eq]` to  type decl as we saw above in Hamming DNA example will automatically define function `equal_mytype` for your type `mytype`
+ - Appending `[@@ppx_deriving ord]` (`ord` for ordering) is similar but will define function `compare_mytype`.
 
 ### Polymorphic Variants Briefly
 
@@ -285,14 +286,14 @@ let bt' = insert 4 bt (Int.compare);;
 - : [> `Zinger of int ] = `Zinger 3
 ```
 * This looks a bit useless, it inferred a 1-ary variant type
-* But the "`>`" in the type means there could be other variants showing up in the future.
+* But the "`>`" in the type means *there could be other variants showing up in the future*.
 
 ```ocaml
 # [`Zinger 3; `Zanger "hi"];;
 - : [> `Zanger of string | `Zinger of int ] list = [`Zinger 3; `Zanger "hi"]
 ```
 
-* We can of course pattern match as well.
+* We can of course pattern match as well:
 
 ```ocaml
 # let zing_zang z = 
@@ -316,6 +317,6 @@ Error: This expression has type [> `Zuber of float ]
 
 * Generally you should use the non-polymorphic form by default
 * The main advantage of the polymorphic form is sharing tags amongst different types
-   - regular variants like `Ok(4)` *must* be in only one type, `result` here
+   - regular variants like `Ok(4)` *must* be in only one type, `result` for `Ok` in `Core`
    - variants like `` `Zanger "f"`` can be in ``[> `Zanger of string ]``, ``[> `Zanger of string | `Zinger of int ]``, etc
-   - really OCaml should just have one form; the two forms are historical cruft.
+   - really OCaml should just have one form; the two forms are historical baggage.

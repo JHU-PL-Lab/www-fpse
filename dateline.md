@@ -124,7 +124,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A1 Part 2 Fri</div>
           </td>
         </tr>
         <tr> 
