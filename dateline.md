@@ -121,7 +121,7 @@ Lecture material and assigments are under the indicated links.
             <div align="left" class="body"> Finish <a href="variants.html">Variants</a>, <a href="records.html">Records</a>, <a href="basic-modules.html">Basic Modules</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body"><a href="assignments/assignment2.html">Assignment 2</a> Fri</div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">A1 Part 2 Fri</div>
@@ -135,7 +135,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="assignments/assignment2.html">Assignment 2</a>(out prev Fri)</div>
+            <div align="left" class="body">&nbsp;</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -158,7 +158,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A2 Part I (Friday)</div>
+            <div align="center" class="body">A2 Part I Fri</div>
           </td>
         </tr>
         <tr> 
@@ -209,7 +209,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A2 Part II (Friday)</div>
+            <div align="center" class="body">A2 Part II Fri</div>
           </td>
         </tr>
         <tr> 
