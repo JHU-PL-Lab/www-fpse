@@ -1,4 +1,6 @@
-# OCaml Style Guide for 601.329 Functional Programming in Software Engineering
+OCaml Style Guide for 601.329 Functional Programming in Software Engineering
+============================================================================
+
 
 Author: Kelvin Qian
 

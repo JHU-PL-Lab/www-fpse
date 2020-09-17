@@ -114,3 +114,7 @@ to install the relevant OCaml packages. Here are some handy Atom keymaps for com
 
 * The [Real World OCaml](https://dev.realworldocaml.org/index.html) book has recently been updated to a new edition.
 * It documents many of the extensions we will be using, `Base`/`Core` libraries in particular, and we will be referencing several of the chapters for various lecture topics.
+
+### Coding Style
+
+* The [FPSE Style Guide](http://pl.cs.jhu.edu/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from HW 2 on.
