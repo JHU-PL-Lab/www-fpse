@@ -114,6 +114,8 @@ fun x -&gt; x.num;; (* x is inferred a newratio, the most recent num field defin
 </code></pre>
 <p>Solution is to generally avoid dot; or declare <code>x</code>’s type if needed.</p>
 
+<pre><code class="language-ocaml">fun (x : ratio) -&gt; x.num;; (* x is declared a ratio, avoiding previous shadowing *)
+</code></pre>
 <ul>
   <li>You can often leave out unused fields in a pattern:</li>
 </ul>

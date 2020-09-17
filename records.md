@@ -56,6 +56,9 @@ fun x -> x.num;; (* x is inferred a newratio, the most recent num field defined 
 ```
 Solution is to generally avoid dot; or declare `x`'s type if needed.  
 
+```ocaml
+fun (x : ratio) -> x.num;; (* x is declared a ratio, avoiding previous shadowing *)
+```
 * You can often leave out unused fields in a pattern:
 
 ```ocaml
