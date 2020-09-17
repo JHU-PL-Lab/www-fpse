@@ -26,7 +26,7 @@ We require that you use the [OPAM packaging system](https://opam.ocaml.org) for 
 
 Once you have `opam` and `ocaml` 4.10.0 installed, run the following `opam` command to install additional necessary packages for the class:
 
-    opam install merlin ocp-indent user-setup menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async
+    opam install merlin ocp-indent user-setup menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async ppx_deriving_yojson
 
 And there is currently a glitch with a library so if the above fails with an error about `ppx_string`, run the command
 
