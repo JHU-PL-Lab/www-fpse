@@ -503,30 +503,13 @@ Lecture material and assigments are under the indicated links.
         </tr>
 	<tr> 
           <td width="8%"> 
-            <div align="center" class="body">Dec TBA, 5:00-5:50PM</div>
-          </td>
-          <td width="8%"> 
-            <div align="center" class="body">TBA</div>
-          </td>
-          <td width="30%"> 
-            <div align="left" class="body">&nbsp;<strong>Final Review</strong></div>
-          </td>
-          <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-          <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-        </tr>
-	<tr> 
-          <td width="8%"> 
             <div align="center" class="body">Dec TBA, TBA PM</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">TBA</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;<strong>Final Exam</strong></div>
+            <div align="left" class="body">&nbsp;<strong>Take-Home Final</strong></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
