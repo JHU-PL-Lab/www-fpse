@@ -218,6 +218,60 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
   <li>We will now inspect <code>set_main.ml</code> in VSCode so we can use the tool tips to check out various types</li>
 </ul>
 
+<h4 id="the-stdioin_channel-library">The <code>Stdio.In_channel</code> library</h4>
+
+<ul>
+  <li><code>set_main.ml</code> uses the <code>In_channel</code> module to read in file contents</li>
+  <li>It is part of the <code>Stdio</code> module (which is itself included in <code>Core</code> so <code>Core.In_channel</code> is the same as <code>Stdio.In_channel</code>)</li>
+  <li>The Documentation is <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/stdio/Stdio/In_channel/index.html">here</a>; we will go through it to observe a few points
+    <ul>
+      <li>First, now that we covered abstract types we can see there is an abstract type <code>t</code> here</li>
+      <li>As with our own set, it is “the underlinying data” for the module, in this case file handles</li>
+      <li>It is hidden though so we don’t get access to the details of how “files are handled”</li>
+      <li>If you are used to object-oriented programming you are looking for a constructor/new; in functional code look for functions that only return a <code>t</code>, that is making a new <code>t</code>: <code>create</code> here.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="optional-arguments-tangent">Optional arguments tangent</h4>
+
+<ul>
+  <li>One topic we skipped over which is in many of these libraries is <strong>optional arguments</strong></li>
+  <li>They are named arguments but you don’t need to give them, indicated by a <code>?</code> before the name.</li>
+  <li>If  you <em>do</em> give them, they are like named aguments, use <code>~name:</code> syntax</li>
+  <li>e.g. in <code>In_channel.create</code>, <code>val create : ?⁠binary:Base.bool -&gt; Base.string -&gt; t</code>
+    <ul>
+      <li>an optional flag <code>~binary:true</code> could be passed to make a binary file handle</li>
+      <li>example usage: <code>In_channel.create ~binary:false "/tmp/wowfile"</code></li>
+    </ul>
+  </li>
+  <li>Many languages now support optional arguments (not so 10 years ago - newer feature)</li>
+</ul>
+
+<p>Writing your own functions with optional arguments is easy: the value passed in is an <code>option</code> type</p>
+
+<pre><code class="language-ocaml"># let f ?x y = match x with Some z -&gt; z + y | None -&gt; y;;
+val f : ?x:int -&gt; int -&gt; int = &lt;fun&gt;
+# f ~x:1 2;;
+- : int = 3
+# f 2;;
+- : int = 2
+</code></pre>
+
+<ul>
+  <li>Use them when they are the right thing: will reduce clutter of passing often un-needed items.</li>
+</ul>
+
+<h4 id="the-sys-library">The <code>Sys</code> library</h4>
+
+<ul>
+  <li>We are using this library to read in the command line args, via <code>Sys.get_argv</code>.</li>
+  <li>We will also take a quick look at its documentation <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core__/Core_sys/index.html">here</a>
+    <ul>
+      <li>Notice how this particular module has no carrier type <code>t</code>, it is just a collection of utility functions.</li>
+    </ul>
+  </li>
+</ul>
       
           </section>
         </div>

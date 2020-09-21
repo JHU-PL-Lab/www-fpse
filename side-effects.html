@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="side-effects">Side effects</h2>
+
+<ul>
+  <li>Side effects are operations which do more than return a result</li>
+  <li>So far we have not seen many side effects but a few have snuck in</li>
+</ul>
+
+<p>Side effects of OCaml include</p>
+<ul>
+  <li>Mutatable state - <em>changing</em> the contents of a memory location intead of making a new one
+    <ul>
+      <li>three main basic sorts in OCaml: references, mutable record fields, and arrays.</li>
+    </ul>
+  </li>
+  <li>Exceptions (we saw a bit of this already, <code>failwith "ill-formed"</code>)</li>
+  <li>Input/output (we just looked at file input for example)</li>
+</ul>
+
+<h3 id="state">State</h3>
+<ul>
+  <li>Variables in OCaml are still not directly mutable</li>
+  <li>They can hold a <em>reference</em> to mutable memory (and a way to mutate said reference)</li>
+  <li>i.e. it is only indirect mutability - variable itself can’t change, but what it points to can.</li>
+  <li>OCaml invariant: items are immutable unless their mutability is explicitly declared</li>
+</ul>
+
+<h3 id="mutable-references">Mutable References</h3>
+
+<pre><code class="language-ocaml">let x = ref 4;;    (* always have to declare initial value when creating a reference *)
+</code></pre>
+
+<p>Meaning of the above: x forevermore (i.e. forever unless shadowed) refers to a fixed cell.  The <strong>contents</strong> of that fixed call can change, but not x.</p>
+
+<pre><code class="language-ocaml">x + 1;; (* a type error ! *)
+!x + 1;; (* need !x to get out the value; parallels *x in C *)
+x := 6;; (* assignment - x must be a ref cell.  Returns () - goal is side effect *)
+!x + 1;; (* Mutation happened to contents of cell x *)
+</code></pre>
+
+<ul>
+  <li><code>'a ref</code> is really implemented by a mutable record with one field, contents:</li>
+  <li><code>'a ref</code> abbreviates the type <code>{ mutable contents: 'a }</code></li>
+  <li>The keyword mutable on a record field means it can mutate</li>
+</ul>
+
+<pre><code class="language-ocaml">let x = { contents = 4};; (* identical to x's definition above *)
+x := 6;;
+x.contents &lt;- 7;;  (* same effect as previous line: backarrow updates a field *)
+
+!x + 1;;
+x.contents + 1;; (* same effect as previous line *)
+</code></pre>
+<h4 id="mutable-record-declarations">Mutable record declarations</h4>
+
+<p>Declaring your own mutable record:</p>
+<ul>
+  <li>Default on each field is that value will be immutable</li>
+  <li>Put <code>mutable</code> qualifier on each mutable field that you want to mutate</li>
+  <li>Principle of least mutability: only put <code>mutable</code> on fields you <strong>have</strong> to mutate</li>
+</ul>
+
+<pre><code class="language-ocaml">type mutable_point = { mutable x: float; mutable y: float };;
+let translate p dx dy =
+                p.x &lt;- (p.x +. dx); (* observe use of ";" here to sequence effects *)
+                p.y &lt;- (p.y +. dy)  (* ";" is useless without side effects (think about it) *)
+                                ;;
+let mypoint = { x = 0.0; y = 0.0 };;
+translate mypoint 1.0 2.0;;
+mypoint;;
+</code></pre>
+
+<p>Observe: mypoint is immutable at the top level but it has two spots in it where we can mutate</p>
+
+<p>Tree with mutable nodes</p>
+
+<pre><code class="language-ocaml">type mtree = MLeaf | MNode of int * mtree ref * mtree ref;;
+</code></pre>
+
+<ul>
+  <li>ONLY ref typed variables or mutable records may be assigned to</li>
+  <li>The notion of immutable variables is one of the great strengths of OCaml.</li>
+  <li>Note: <code>let</code> doesn’t turn into a mutation operator with <code>ref</code>:</li>
+</ul>
+
+<pre><code class="language-ocaml">let x = ref 4;;
+let f () = !x;;
+
+x := 234;;
+f();;
+
+let x = ref 6;; (* shadowing previous x definition, NOT an assignment to x !! *)
+f ();;
+</code></pre>
+
+<h4 id="control-structures-to-help-with-mutution">Control structures to help with mutution</h4>
+
+<ul>
+  <li>For and while-loops also exist and are useful with mutable state</li>
+  <li>Also sequencing via “<code>;</code>” becomes useful with side effects</li>
+</ul>
+
+<pre><code class="language-ocaml">let x = ref 1 in
+    while !x &lt; 10 do
+      Out_channel.print_string (Int.to_string !x);
+      Out_channel.print_string "\n";
+      x := !x + 1;
+    done;;
+</code></pre>
+
+<ul>
+  <li>Observe that operations that only have a side effect return <code>() : unit</code></li>
+  <li>Fact: while loops are useless without mutation: would either never loop or infinitely loop</li>
+  <li>Same for <code>e1 ; e2</code> –  if <code>e1</code> has no side effects may as well delete it, it is dead code!</li>
+  <li>May help to know <code>e1; e2</code> is basically the same as <code>let () = e1 in e2</code></li>
+</ul>
+
+<p>Why is immutability good?</p>
+<ul>
+  <li>programmer can depend on the fact that something will never be mutated when writing code: permanent like mathematical definitions</li>
+  <li>ML still lets you express mutation, but its only use it when its really needed</li>
+  <li>Haskell has an even stronger separation of mutation, its all strictly “on top”.</li>
+</ul>
+
+<h3 id="arrays">Arrays</h3>
+<ul>
+  <li>Fairly self-explanatory;</li>
+  <li>Entered and shown as <code>[| 1; 2; 3 |]</code> (added “<code>|</code>”) in top-loop to distinguish from lists.</li>
+  <li>Have to be initialized before using
+    <ul>
+      <li>In general, there is no such thing as “uninitialized” in OCaml.</li>
+      <li>If you really need it, make it an <code>int option array</code> and init to <code>None</code>’s.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-ocaml">let arrhi = Array.make 100 "";; (* size and initial value are the params here *)
+let arr = [| 4; 3; 2 |];; (* another way to make an array *)
+arr.(0);; (* access (unfortunately already used [] for lists in the syntax) *)
+arr.(0) &lt;- 55;; (* update *)
+arr;;
+let a = Array.of_list [1;2;3];;
+let l = Array.to_list a;;
+</code></pre>
+
+<h3 id="exceptions">Exceptions</h3>
+
+<ul>
+  <li>As mentioned earlier, exceptions are powerful but dangerous
+    <ul>
+      <li>They are OK if they are always handled very close to when they are raised</li>
+      <li>If the handler is far away it can lead to buggy code</li>
+      <li>We will aim for idiomatic use of OCaml exceptions here: local necessary ones only.</li>
+    </ul>
+  </li>
+  <li><code>Core</code> discourages over-use of exceptions in its library function signatures</li>
+</ul>
+
+<p>The OCaml syntax for exceptions</p>
+<ul>
+  <li>New exception names need to be declared via <code>exception</code> like <code>type</code>s needs to be declared</li>
+  <li>Unfortunately types do not include what exceptions a function will raise - outdated aspect of ML.</li>
+  <li>The value returned by an exception is very similar in looks to a variant.</li>
+</ul>
+
+<pre><code class="language-ocaml">exception Goo of string;; (* Note like with variants the `of` is optional, no payload required *)
+
+let f _ = raise (Goo "keyboard on fire");;
+f ();;
+
+let g () =
+  try
+    f ()
+  with
+      Foo -&gt; ()
+        | Goo s -&gt;
+      (Out_channel.(print_string("exception raised: ");
+       print_string(s);print_string("\n")))
+;;
+g ();;
+</code></pre>
+
+<p>There are a few simple built-in exceptions which may be familiar:</p>
+
+<pre><code class="language-ocaml">failwith "Oops";; (* Generic code failure - exception is named Failure *)
+invalid_arg "This function works on non-empty lists only";; (* Invalid_argument exception *)
+</code></pre>
+
+<h3 id="contrasting-exceptions-with-bubbling-up-errors">Contrasting exceptions with bubbling up errors</h3>
+
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>

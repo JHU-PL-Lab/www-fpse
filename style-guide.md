@@ -1,6 +1,4 @@
-OCaml Style Guide for 601.329 Functional Programming in Software Engineering
-============================================================================
-
+# OCaml Style Guide for 601.329 Functional Programming in Software Engineering
 
 Author: Kelvin Qian
 
@@ -32,9 +30,26 @@ This document would not have been made possible without the input of the whole F
 
 7. Speaking of exceptions, they are used frequently in OCaml code, but they often make debugging difficult when they're thrown from deep within the code structure.  Especially for larger programs use `option` or `result` values, and handle errors locallly.
 
-8. Use libraries like `Core` whenever possible instead of "rolling your own."  At the end of the day, it's not worth it to re-invent the wheel when there's correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.  The only exceptions are 1) when we tell you not to use a certain library for pedagogical purposes and 2) when literally no library exists for your specific task.
+8. Excessive nesting of conditionals or match statements should be avoided; it causes confusion and bugs (especially if parentheses aren't used).  In particular, when matching on nested data structures (e.g. variants that contain other variants), it's often clearer to match on the entire data structure all at once instead of matching each layer.  For instance, the following:
+    ```ocaml
+    match x with
+    | Ok (Some y) -> (* ... *)
+    | Ok (None) ->  (* ... *)
+    | Error msg -> (* ... *)
+    ```
+    is more concise than
+    ```ocaml
+    match x with
+    | Ok z ->
+      match z with
+      | Some y -> (* ... *)
+      | Non -> (* ... *)
+    | Error msg -> (* ... *)
+    ```
 
-9. In general, you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are useful.  Use them judiciously; don't shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  Also for some homework problems you will be required to avoid mutation.
+9. Use libraries like `Core` whenever possible instead of "rolling your own."  At the end of the day, it's not worth it to re-invent the wheel when there's correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.  The only exceptions are 1) when we tell you not to use a certain library for pedagogical purposes and 2) when literally no library exists for your specific task.
+
+10. In general, you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are useful.  Use them judiciously; don't shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  Also for some homework problems you will be required to avoid mutation.
 
 ## Naming Conventions
 
@@ -50,55 +65,49 @@ This document would not have been made possible without the input of the whole F
 
 ## Indentation
 
-In this course you will be **required** to use ocp-indent, which is an auto-indenter program that you should've installed via opam.  The convention dictated by ocp-indent mandates 2 spaces per indent, as opposed to the usual 4 spaces (let alone tab characters - eww).  To make ocp-indent format your code, use `option-shift-F` on Mac or `alt-shift-F` on Windows.  The following examples show how ocp-indent indents common OCaml expressions:
+In this course you will be **required** to use ocp-indent, which is an auto-indenter program that you should've installed via opam.  The convention dictated by ocp-indent mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don't use tabs for indentation!)  To make ocp-indent format your code in VSCode, use `option-shift-F` on Mac or `alt-shift-F` on Windows.  The following examples show how ocp-indent indents common OCaml expressions:
 
-1. `let ... in ...` expressions.  Nested `let ... in ...` blocks should not be indented, but variable definitions should if they are placed on a new line.
+- `let ... in ...` expressions.  Nested `let ... in ...` blocks should not be indented, but variable definitions should if they are placed on a new line.
+    ```ocaml
+    let short_string = "s" in
+    let long_string = 
+      "This is a very long string so it is indented and on a new line."
+    in
+    short_string ^ " " ^ long_string
+    ```
 
-```OCaml
-let short_string = "s" in
-let long_string = 
-  "This is a very long string so it is indented and on a new line."
-in
-short_string ^ " " ^ long_string
-```
+- `match` (and `with`) statements.  The patterns themselves align with the `match` keyword, while the inner expressions are indented if they are on a new line.
+    ```ocaml
+    match x with
+    | Some _ -> 0
+    | None ->
+      failwith "This is a long string, so we put it on a new line and indented it."
+    ```
 
-2. `match` (and `with`) statements.  The patterns themselves align with the `match` keyword, while the inner expressions are indented if they are on a new line.
-
-```OCaml
-match x with
-| Some _ -> 0
-| None ->
-  failwith "This is a long string, so we put it on a new line and indented it."
-```
-
-3. `if ... then ... else ...` expressions, The conditional branches should be idented, but the keyword `else` should not be.
-
-```OCaml
-if x then
-  0 + 1 * 2
-else
-  3 + 4
-```
+- `if ... then ... else ...` expressions.  The conditional branches (if they're on a new line) should be idented, but the keyword `else` should not be.
+    ```ocaml
+    if x then
+      0 + 1 * 2
+    else
+      3 + 4
+    ```
 
 As a side note, notice how the `if` and `then` keywords are on the same line, while the `else` keyword is on its own line.  In if-statements, predicate variables or expressions (in this case `x`) should be short, but branches can be (reasonably) long.
 
 One thing to point out is that it's bad form to over-indent. ocp-indent should fix any cases of over-indentation, but just remember that this:
-
-```OCaml
-let rec map fn lst =
-        match lst with
-        | []      -> []
-        | x :: xs -> (fn x) :: (match fn xs)
-```
-
-looks worse than this:
-
-```OCaml
-let rec map fn lst =
-  match lst with
-  | [] -> []
-  | x :: xs -> (fn x) :: (match fn xs)
-```
+    ```ocaml
+    let rec map fn lst =
+            match lst with
+            | []      -> []
+            | x :: xs -> (fn x) :: (match fn xs)
+    ```
+    looks worse than this:
+    ```ocaml
+    let rec map fn lst =
+      match lst with
+      | [] -> []
+      | x :: xs -> (fn x) :: (match fn xs)
+    ```
 
 ## Modules
 
@@ -111,7 +120,8 @@ let rec map fn lst =
 3. Use the `open` keyword judiciously.  Many style guides will tell you to avoid using `open` for any module (except for standard libraries like `Core`); they have a point since opening modules without care can result in unwanted name shadowing, as well as confusion over which function belongs to which module.  However, never opening modules can result in `Long.Module_paths.Polluting.Your.codebase`.  In general, it is a good idea to use `open` in a module when:
   - The module is a standard library that you want to use throughout your entire environment (e.g. `Core`).
   - The module is closely related to the module it's being opened in (e.g. if you're opening `My_module` in `my_module_utils.ml`).
-You should also take advantage of features like `let open` and the `Module.( ... )` syntax.  Both features restrict opening the module to a particular scope, allowing you to have the best of both worlds. 
+    
+    You should also take advantage of features like `let open` and the `My_module.( ... )` syntax.  Both features restrict opening the module to a particular scope, allowing you to have the best of both worlds. 
 
 4. When writing a module for a data structure, the type of the underlying data of the module is conventially written as `t` (for "type"), e.g. `String_set.t` is the type of a set of strings, not `String_set.string_set`.  This may seem to contradict the "give descriptive names" guideline we mentioned earlier, but the descriptiveness is already in the module name.  Note that `Core` uses this convention: for example `Core.Result.t` is the `Ok/Error` variant type.
 
@@ -123,16 +133,26 @@ You should also take advantage of features like `let open` and the `Module.( ...
 
 2. A good place to put comments is the `.mli` file, where you can describe functions and other parts of the module signature.  You can, of course, also put comments in the `.ml` file, but putting most of your documentation in the interface allows for comments to focus on _what_ something is doing or _why_ it exists, rather than _how_ it works; it also serves as API documentation if you choose to release your library to the wider world.
 
-3. Both of the previous points hint at how _over-_documentation is a thing.  Over-documentation clutters the code and can make it unreadable.  For example, you should not spam the body of your functions with comments describing every little thing it does; instead, the bulk of the explaining should be done by the code.  That said, do put comments if the code isn't clear enough, or if there's unusual behavior, weird edge cases, interesting algorithms, etc. in your functions, but make sure to do so judiciously.
+3. Both of the previous points hint at how over-documentation is a thing.  Over-documentation clutters the code and can make it unreadable.  For example, you should not spam the body of your functions with comments describing every little thing it does; instead, the bulk of the explaining should be done by the code.  That said, do put comments if the code isn't clear enough, or if there's unusual behavior, weird edge cases, interesting algorithms, etc. in your functions, but make sure to do so judiciously.
 
 4. In `.mli` files, you should follow ocamldoc syntax when writing comments that describe functions or types - i.e. start your comments with `(**` instead of `(*`, and use square brackets to contain OCaml values (e.g. `(** [compare x y] compares two values in a certain way *)`).  For other comments, using `(*` is perfectly acceptable and ocamldoc syntax isn't required.
 
 ## Miscellaneous
 
-1. `match ... with ...` is not the only pattern matching syntax around; you can perform destructuring using `let` bindings if there's only one case to match. `let` destructuring is often more concise than using `match ... with ...`.  For anonymous functions you can also directly pattern match in what was the argument position if you use the `function` keyword: `function [] -> [] | x::xs -> xs`.
+0. Do not write parentheses around function arguments that consist of a single variable or value: `my_function (a) ("bee") (3)` looks worse than `my_function a "bee" 3`.
 
-2. Instead of parentheses, you can use `@@` or `begin ... end` syntax to make your code cleaner.  Use `|>` liberally, it makes a "pipeline" of function operations easier to understand at a glance.
+1. On the other hand, _do_ use parentheses around tuples: while writing `x, y, z` is legal OCaml syntax, you should write `(x, y, z)` to clearly indicate that the value is a tuple.  (That said, you are free to omit parentheses around a tuple when you are _immediately_ destructuring that tuple, e.g. in let or match statements like `let x, y = tuple_fn 0 in ...` or `match x, y with 0, 0 -> ...`.)
 
-3. Tuples should be short and simple.  Do not write tuples with many elements.  A ten-element tuple should instead be a record with named fields.
+2. `match ... with ...` is not the only pattern matching syntax around; you can perform destructuring using `let` bindings if there's only one case to match. `let` destructuring is often more concise than using `match ... with ...`.  For anonymous functions you can also directly pattern match in what was the argument position if you use the `function` keyword: `function [] -> [] | x :: xs -> xs`.
 
-4. Following the above point, each record field should be defined on a new line.  (The same also applies to lists, but only if the list entries are complex and/or have long names).
+3. Instead of parentheses, you can use `@@` or `begin ... end` syntax to make your code cleaner.
+
+4. Use `|>` liberally, since it makes a "pipeline" of function operations easier to understand at a glance.
+
+5. Tuples should be short and simple.  Do not write tuples with many elements.  A ten-element tuple should instead be a record with named fields.
+
+6. Following the above point, each record field should be defined on a new line.  (The same also applies to lists, but only if the list entries are complex and/or have long names).
+
+7. Take advantage of label punning.  For labeled arguments, `my_fun ~compare x y` is more concise than `my_fun ~compare:compare x y`.  For record labels, `let {num, denom} = rational` is a more concise version of `let {num=num, denom=denom} = rational`.
+
+8. If you have large records, use the `with` keyword if you only need to update a few values.  Do not rewrite all fifteen of your record fields!

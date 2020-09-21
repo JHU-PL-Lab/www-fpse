@@ -122,8 +122,44 @@ Here is what we need to add to the `dune` file along with the above to build the
 )
 ```
 
+
 * We will now inspect `set_main.ml` in VSCode so we can use the tool tips to check out various types
 
+#### The `Stdio.In_channel` library
 
+* `set_main.ml` uses the `In_channel` module to read in file contents
+* It is part of the `Stdio` module (which is itself included in `Core` so `Core.In_channel` is the same as `Stdio.In_channel`)
+* The Documentation is [here](https://ocaml.janestreet.com/ocaml-core/latest/doc/stdio/Stdio/In_channel/index.html); we will go through it to observe a few points
+  - First, now that we covered abstract types we can see there is an abstract type `t` here
+  - As with our own set, it is "the underlinying data" for the module, in this case file handles
+  - It is hidden though so we don't get access to the details of how "files are handled"
+  - If you are used to object-oriented programming you are looking for a constructor/new; in functional code look for functions that only return a `t`, that is making a new `t`: `create` here.
 
+#### Optional arguments tangent
 
+* One topic we skipped over which is in many of these libraries is **optional arguments**
+* They are named arguments but you don't need to give them, indicated by a `?` before the name.
+* If  you *do* give them, they are like named aguments, use `~name:` syntax
+* e.g. in `In_channel.create`, `val create : ?⁠binary:Base.bool -> Base.string -> t`
+  - an optional flag `~binary:true` could be passed to make a binary file handle
+  - example usage: `In_channel.create ~binary:false "/tmp/wowfile"`
+* Many languages now support optional arguments (not so 10 years ago - newer feature)
+
+Writing your own functions with optional arguments is easy: the value passed in is an `option` type
+
+```ocaml
+# let f ?x y = match x with Some z -> z + y | None -> y;;
+val f : ?x:int -> int -> int = <fun>
+# f ~x:1 2;;
+- : int = 3
+# f 2;;
+- : int = 2
+```
+
+* Use them when they are the right thing: will reduce clutter of passing often un-needed items.
+
+#### The `Sys` library
+
+* We are using this library to read in the command line args, via `Sys.get_argv`.
+* We will also take a quick look at its documentation [here](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core__/Core_sys/index.html)
+  - Notice how this particular module has no carrier type `t`, it is just a collection of utility functions.
