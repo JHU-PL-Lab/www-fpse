@@ -272,6 +272,14 @@ val f : ?x:int -&gt; int -&gt; int = &lt;fun&gt;
     </ul>
   </li>
 </ul>
+
+<h4 id="running-executables">Running executables</h4>
+
+<ul>
+  <li>If you declared an executable in <code>dune</code> as above, it will make a file <code>my_main_module.exe</code> so in our case that is <code>set_main.exe</code></li>
+  <li>To exec it you can do <code>dune exec ./src/set_main.exe "open Core" src/simple_set.ml</code></li>
+  <li>Which is really just <code>_build/default/src/set_main.exe "open Core" src/simple_set.ml</code></li>
+</ul>
       
           </section>
         </div>

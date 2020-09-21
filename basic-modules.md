@@ -163,3 +163,9 @@ val f : ?x:int -> int -> int = <fun>
 * We are using this library to read in the command line args, via `Sys.get_argv`.
 * We will also take a quick look at its documentation [here](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core__/Core_sys/index.html)
   - Notice how this particular module has no carrier type `t`, it is just a collection of utility functions.
+
+#### Running executables
+
+* If you declared an executable in `dune` as above, it will make a file `my_main_module.exe` so in our case that is `set_main.exe`
+* To exec it you can do `dune exec ./src/set_main.exe "open Core" src/simple_set.ml`
+* Which is really just `_build/default/src/set_main.exe "open Core" src/simple_set.ml`
