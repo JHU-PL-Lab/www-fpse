@@ -403,10 +403,19 @@ val s : '_weak3 t = &lt;abstr&gt; (* Stack.t is the underlying implementation an
 - : string = "hello"
 # Stack.pop s;;
 - : string option = None
-# Stack.exists s ~f:(fun s -&gt; String.contains s 't');; (* Stack has folds, maps, etc too *)
+# Stack.exists s ~f:(fun s -&gt; String.is_substring s "time");; (* Stack has folds, maps, etc too *)
 - : bool = true
 </code></pre>
 
+<h3 id="summing-up-effects-parentheses-matching">Summing up effects: Parentheses Matching</h3>
+
+<ul>
+  <li>To show how to use effects and some of the trade-offs, we look at a small example</li>
+  <li>See file <a href="examples/matching.ml">matching.ml</a> which has several versions of a simple parenthesis matching function</li>
+  <li>It shows uses of <code>Stack</code>, and some trade-offs of using exceptions vs option type.</li>
+  <li>Lastly there is a pure functional version which is arguably simpler</li>
+  <li>Yes you don’t need that mutation!</li>
+</ul>
       
           </section>
         </div>
