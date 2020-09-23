@@ -72,7 +72,7 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 * One thing potentially annoying here is the fact that we used a list gets exposed here
  - But, we can use type abstraction to hide this; next topic
 
-#### Other ways to load a module into the top loop
+#### Other ways to load a module into the top loop besides `dune utop`
 
 * If you type `#use "simple_set.ml";;` it is just like copy/pasting the code of the file in -- you won't get a module.
 * If you want to "paste a file in the top loop as a module", there is a command for that however:

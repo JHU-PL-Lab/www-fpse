@@ -316,7 +316,6 @@ done;;
 
 <h3 id="arrays">Arrays</h3>
 <ul>
-  <li>Fairly self-explanatory;</li>
   <li>Entered and shown as <code>[| 1; 2; 3 |]</code> (added “<code>|</code>”) in top-loop to distinguish from lists.</li>
   <li>Have to be initialized before using
     <ul>
@@ -326,11 +325,14 @@ done;;
   </li>
 </ul>
 
-<pre><code class="language-ocaml">let arrhi = Array.make 100 "";; (* size and initial value are the params here *)
+<pre><code class="language-ocaml">let arrhi = Array.create ~len:10 "hi";; (* length and initial value *)
 let arr = [| 4; 3; 2 |];; (* make a literal array *)
 arr.(0);; (* access (unfortunately already used [] for lists so a bit ugly) *)
 arr.(0) &lt;- 55;; (* update *)
 arr;;
+(* Of course there are many library functions over Array including map fold etc *)
+Array.map ~f:(fun x -&gt; x + 1) arr;;
+(* Here are some conversions *)
 let a = Array.of_list [1;2;3];;
 let l = Array.to_list a;;
 </code></pre>
@@ -342,47 +344,59 @@ let l = Array.to_list a;;
     <ul>
       <li>They are OK if they are always handled very close to when they are raised</li>
       <li>If the handler is far away it can lead to buggy code</li>
-      <li>We will aim for idiomatic use of OCaml exceptions here: local necessary ones only.</li>
+      <li>We will aim for idiomatic use of OCaml exceptions in FPSE: local necessary ones only.</li>
     </ul>
   </li>
-  <li><code>Core</code> discourages over-use of exceptions in its library function signatures</li>
+  <li><code>Core</code> discourages over-use of exceptions in its library function signatures
+    <ul>
+      <li>Avoid the <code>blah_exn</code> named ones unless really needed!</li>
+    </ul>
+  </li>
 </ul>
 
-<p>The OCaml syntax for exceptions</p>
+<p>There are a few simple built-in exceptions which we used a bit:</p>
+
+<pre><code class="language-ocaml">failwith "Oops";; (* Generic code failure - exception is named Failure *)
+invalid_arg "This function works on non-empty lists only";; (* Invalid_argument exception *)
+</code></pre>
+
+<p>Also there are the library functions raising exceptions</p>
+
+<pre><code class="language-ocaml"># List.zip_exn [1;2] [2;3;4];;
+Exception: (Invalid_argument "length mismatch in zip_exn: 2 &lt;&gt; 3")
+</code></pre>
+
+<h3 id="ocaml-syntax-for-defining-raising-and-handling-exceptions">OCaml syntax for defining raising and handling exceptions</h3>
 <ul>
   <li>New exception names need to be declared via <code>exception</code> like <code>type</code>s needs to be declared</li>
-  <li>Unfortunately types do not include what exceptions a function will raise - outdated aspect of ML.</li>
+  <li>Unfortunately types do not include what exceptions a function will raise
+    <ul>
+      <li>an outdated aspect of OCaml</li>
+    </ul>
+  </li>
   <li>The value returned by an exception is very similar in looks to a variant.</li>
 </ul>
 
 <pre><code class="language-ocaml">exception Goo of string;; (* Note like with variants the `of` is optional, no payload required *)
 
-let f _ = raise (Goo "keyboard on fire");;
+let f _ = raise @@ Goo "keyboard on fire";; (* raise is ultimately how all exceptions are raised *)
 f ();;
 
 let g () =
-  try
-    f ()
+  try f ()
   with
-      Foo -&gt; ()
-        | Goo s -&gt;
-      (Out_channel.(print_string("exception raised: ");
-       print_string(s);print_string("\n")))
+  | Foo -&gt; ()
+  | Goo s -&gt; (Out_channel.(print_string("exception raised: ");
+    print_string(s);print_string("\n")))
 ;;
 g ();;
-</code></pre>
-
-<p>There are a few simple built-in exceptions which may be familiar:</p>
-
-<pre><code class="language-ocaml">failwith "Oops";; (* Generic code failure - exception is named Failure *)
-invalid_arg "This function works on non-empty lists only";; (* Invalid_argument exception *)
 </code></pre>
 
 <h3 id="mutating-data-structures-in-base">Mutating data structures in <code>Base</code></h3>
 
 <ul>
   <li>The <code>Stack</code> and <code>Queue</code> modules in <code>Base</code> (and <code>Core</code>) are mutable data structures.</li>
-  <li>Here is a simple example of playing around with a stack for example.</li>
+  <li>Here is a simple example of playing around with a <code>Stack</code> for example.</li>
 </ul>
 
 <pre><code class="language-ocaml"># let s = Stack.create();;
@@ -393,11 +407,11 @@ val s : '_weak3 t = &lt;abstr&gt; (* Stack.t is the underlying implementation an
 - : unit = ()
 # Stack.push s "hello one more time";;
 - : unit = ()
-# Stack.to_list s;; (* very handy function to see what is there *)
+# Stack.to_list s;; (* very handy function to see what is there; top on left *)
 - : string list = ["hello one more time"; "hello again"; "hello"]
 # Stack.pop s;;
 - : string option = Some "hello one more time"
-# Stack.pop_exn s;;
+# Stack.pop_exn s;; (* exception raised if empty here *)
 - : string = "hello again"
 # Stack.pop_exn s;;
 - : string = "hello"
@@ -407,7 +421,7 @@ val s : '_weak3 t = &lt;abstr&gt; (* Stack.t is the underlying implementation an
 - : bool = true
 </code></pre>
 
-<h3 id="summing-up-effects-parentheses-matching">Summing up effects: Parentheses Matching</h3>
+<h3 id="summing-up-effects-parentheses-matching-function">Summing up effects: Parentheses Matching Function</h3>
 
 <ul>
   <li>To show how to use effects and some of the trade-offs, we look at a small example</li>

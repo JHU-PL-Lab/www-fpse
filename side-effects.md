@@ -218,7 +218,6 @@ done;;
 * May help to know `e1; e2` is basically the same as `let () = e1 in e2`
 
 ### Arrays
- - Fairly self-explanatory; 
  - Entered and shown as `[| 1; 2; 3 |]` (added "`|`") in top-loop to distinguish from lists.
  - Have to be initialized before using
      - In general, there is no such thing as "uninitialized" in OCaml.
@@ -226,11 +225,14 @@ done;;
 
 
 ```ocaml
-let arrhi = Array.make 100 "";; (* size and initial value are the params here *)
+let arrhi = Array.create ~len:10 "hi";; (* length and initial value *)
 let arr = [| 4; 3; 2 |];; (* make a literal array *)
 arr.(0);; (* access (unfortunately already used [] for lists so a bit ugly) *)
 arr.(0) <- 55;; (* update *)
 arr;;
+(* Of course there are many library functions over Array including map fold etc *)
+Array.map ~f:(fun x -> x + 1) arr;;
+(* Here are some conversions *)
 let a = Array.of_list [1;2;3];;
 let l = Array.to_list a;;
 ```
@@ -240,44 +242,50 @@ let l = Array.to_list a;;
 * As mentioned earlier, exceptions are powerful but dangerous
   - They are OK if they are always handled very close to when they are raised
   - If the handler is far away it can lead to buggy code
-  - We will aim for idiomatic use of OCaml exceptions here: local necessary ones only.
+  - We will aim for idiomatic use of OCaml exceptions in FPSE: local necessary ones only.
 * `Core` discourages over-use of exceptions in its library function signatures
+  - Avoid the `blah_exn` named ones unless really needed!
 
-The OCaml syntax for exceptions
-* New exception names need to be declared via `exception` like `type`s needs to be declared
-* Unfortunately types do not include what exceptions a function will raise - outdated aspect of ML.
-* The value returned by an exception is very similar in looks to a variant.
-
-
-```ocaml
-exception Goo of string;; (* Note like with variants the `of` is optional, no payload required *)
-
-let f _ = raise (Goo "keyboard on fire");;
-f ();;
-
-let g () =
-  try
-    f ()
-  with
-      Foo -> ()
-        | Goo s ->
-      (Out_channel.(print_string("exception raised: ");
-       print_string(s);print_string("\n")))
-;;
-g ();;
-```
-
-There are a few simple built-in exceptions which may be familiar:
+There are a few simple built-in exceptions which we used a bit:
 
 ```ocaml
 failwith "Oops";; (* Generic code failure - exception is named Failure *)
 invalid_arg "This function works on non-empty lists only";; (* Invalid_argument exception *)
 ```
 
+Also there are the library functions raising exceptions
+
+```ocaml
+# List.zip_exn [1;2] [2;3;4];;
+Exception: (Invalid_argument "length mismatch in zip_exn: 2 <> 3")
+```
+
+### OCaml syntax for defining raising and handling exceptions
+* New exception names need to be declared via `exception` like `type`s needs to be declared
+* Unfortunately types do not include what exceptions a function will raise 
+  - an outdated aspect of OCaml
+* The value returned by an exception is very similar in looks to a variant.
+
+```ocaml
+exception Goo of string;; (* Note like with variants the `of` is optional, no payload required *)
+
+let f _ = raise @@ Goo "keyboard on fire";; (* raise is ultimately how all exceptions are raised *)
+f ();;
+
+let g () =
+  try f ()
+  with
+  | Foo -> ()
+  | Goo s -> (Out_channel.(print_string("exception raised: ");
+    print_string(s);print_string("\n")))
+;;
+g ();;
+```
+
 ### Mutating data structures in `Base`
 
 * The `Stack` and `Queue` modules in `Base` (and `Core`) are mutable data structures.
-* Here is a simple example of playing around with a stack for example.
+* Here is a simple example of playing around with a `Stack` for example.
 
 ```ocaml
 # let s = Stack.create();;
@@ -288,11 +296,11 @@ val s : '_weak3 t = <abstr> (* Stack.t is the underlying implementation and is h
 - : unit = ()
 # Stack.push s "hello one more time";;
 - : unit = ()
-# Stack.to_list s;; (* very handy function to see what is there *)
+# Stack.to_list s;; (* very handy function to see what is there; top on left *)
 - : string list = ["hello one more time"; "hello again"; "hello"]
 # Stack.pop s;;
 - : string option = Some "hello one more time"
-# Stack.pop_exn s;;
+# Stack.pop_exn s;; (* exception raised if empty here *)
 - : string = "hello again"
 # Stack.pop_exn s;;
 - : string = "hello"
@@ -302,7 +310,7 @@ val s : '_weak3 t = <abstr> (* Stack.t is the underlying implementation and is h
 - : bool = true
 ```
 
-### Summing up effects: Parentheses Matching
+### Summing up effects: Parentheses Matching Function
 
 * To show how to use effects and some of the trade-offs, we look at a small example
 * See file [matching.ml](examples/matching.ml) which has several versions of a simple parenthesis matching function

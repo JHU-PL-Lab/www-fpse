@@ -15,13 +15,14 @@ let are_balanced_stack s =
   let stack_of_lefts = Stack.create() in
   let match_with s c = Option.value_map (Stack.pop s) ~f: (fun c' -> Char.(=) c c') ~default: false in
   let parse = function
-    |'(' |'{' |'[' as c -> Fn.const true @@ Stack.push stack_of_lefts c
+    |'(' |'{' |'[' as c -> Stack.push stack_of_lefts c; true
     |')' -> match_with stack_of_lefts '('
     |'}' -> match_with stack_of_lefts '{'
     |']' -> match_with stack_of_lefts '['
     | _ -> true
   in  
-  let r = String.fold ~init:true ~f:(fun b -> fun c -> b && parse c) s in
+  let r = String.for_all~f:(fun c -> parse c) s in
+  (* fold eqiuvalent: r = String.fold ~init:true ~f:(fun b -> fun c -> b && parse c) s in *)
     r && Stack.is_empty stack_of_lefts
 
 (* Another version which uses an exception for the empty stack pop case.  
