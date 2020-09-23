@@ -1,67 +1,32 @@
+# Lecture Outline
 
-# Outline of Lecture Units
+### Near term topics
+* side effects, with more and more realistic examples
+* Nested modules, top loop vs file modules. (#use doesn't make a module for example #mod_use does though)
+* dune utop, #use_output "dune top";; (wrote that in basic-modules, briefly cover it)
+* ppx_deriving_json for HW2
 
-#### Introduction to OCaml notes
-High-level outline of how PLI version needs to evolve
-* utop and `Core`/`Base` from the get-go: = on ints only but pop into `Poly` when convenient.
-* Lots of List.blah early on, including folds, pipes, etc.
-* add in all of the syntax stuff below that I skipped in PLI
-* Many more real examples of programs, get further away from the toy stuff.
-* Type-directed programming basics early
-* Need to decide on modality, either feeding into top loop or dune.  Problem is VSCode needs a dune build to get merlin file set up properly, it is hard to have files loaded that give errors.
-
-#### Basic Functional Programming in OCaml
-* Basic OCaml
-    - elementary `ocaml`, `utop`, `.ocamlinit` file
-    - expressions, let, functions, lists, pattern matching, higher-order functions
-    - Lists lists lists, folds, pipes etc.
-
-#### Foundational Libraries I
-* Lists in Base - RWOC 1 a bit (tour) and RWOC 3.  Lots of important functions available.
-* Fn, Option, Result, etc etc etc Base versions
-
-#### NOTES: New stuff not in PLI for Basic OCaml now.
-* @@ application
-* _ - all the places it works
-* pipelining
-* Pipelining for functional data construction - `List.([] |>  cons 1 |> cons 2 |> cons 3 |> cons 4)` (notice it makes it in reverse).  similar to message chaining of OOP.
-* `let rec sum = function | [] -> ..` (needs function not fun)
-* Minimal commands for dune, .ocamlinit, top loop.  Basically fixed recipes to start with.
-* let is a special application - needed for monads later
-* = on ints only by default with `Base`.  `String.(=)` etc explicitly for other base types.  Or cheat with `open Poly` (restores original OCaml polymorphic `=` which is dangerous)
-* Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.
+### Topics left to hit from early part of outline
+* Keep making more real examples of programs!
+* Type-directed programming examples would be good
 * Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.  see RWOC prefix and infix operators.
 * `begin`/`end` to replace parens
-* effects done later, not in earlier HWs anyway.
-
-## Data structures (variants and records)
-This is mostly covered in RWOC chapters on variants and records.
-
-* Basic records and variants stuff obviously
-* `result` type - `Ok` or `Error`.
-* Advanced patterns - `p when e`, `'a' .. 'z'`, `as x`, or `|` patterns in let, `{x;y}` is same as `{x=x;y=y}`...  Cornell 3.1.7
-* Polymorphic variants aka anonymous variants - Cornell 3.2.4.4, RWOC variants chapter
-* See RWOC chapters on variants and records for lots of new conventions and examples.
-* record field name punning: `let r = {x;y}` abbreviation - RWOC Ch5
-* `let r' = { r with x = ..; y = }`  for changing just a few fields - RWOC 5
-* Embedding record declarations in variants - like named args on variant fields:
-`type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly`
+* Advanced patterns - `p when e`, `'a' .. 'z'`, `as x`, or `|` patterns in let...  Cornell 3.1.7
 
 ## Types
-* Type inference
-* Extensible variants - OCaml manual 8.14
+* Type inference and weak polymorphism
 * Equality on and Pretty printing declated data types with `ppx_deriving`
 * Type-driven development - very important topic to touch on somewhere; fits well with GADTS.
 
-## Modules
-- Structures and functors; look at the `Core` libraries to see what we need to cover, need to at least be users of things like `include`, nested modules, first-class modules, etc (whatever Core uses in particular).  Idea is to start out as writers of basic modules and users of the fancier stuff, and learn how to write the fancier stuff later.
-- type abstraction, module signatures
+## More Modules
+- Modules defined in the top loop
+- Using that syntax to define nested modules
+- include
+- first-class modules
+- `Core`'s set library
+- high-level discussion of witness stuff.
 
-## Basic Development
-(Could do this a bit earlier, it is making modules but could skip on that for a bit)
 
-* Simple whole programs, basic dune building and testing -- see `code/set_example` .. might want to change to use `In_Channel` to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.
-* Merlin super basics (can pretty much ignore as dune should build a correct `.merlin` file)
 
 ## Side effects
 

@@ -72,6 +72,14 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 * One thing potentially annoying here is the fact that we used a list gets exposed here
  - But, we can use type abstraction to hide this; next topic
 
+#### Other ways to load a module into the top loop
+
+* If you type `#use "simple_set.ml";;` it is just like copy/pasting the code of the file in -- you won't get a module.
+* If you want to "paste a file in the top loop as a module", there is a command for that however:
+  `#mod_use "simple_set.ml";;`
+* And if that was not enough there is one more method: you can `#use_output "dune top"`
+  - this runs the shell command `dune top` and pastes the output into the top loop; that `dune` command generates byte code files and then spits out a bunch of `#load` commands to load all the libraries as well as your code.
+
 ### Information Hiding with Module Signatures
 
 * Modules also have types, they are called *signatures*

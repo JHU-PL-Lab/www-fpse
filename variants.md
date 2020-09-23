@@ -215,6 +215,8 @@ let rec fold tree ~f ~leaf =
 let int_summate tree = fold ~f:(fun y -> fun ls -> fun rs-> y + ls + rs) ~leaf:0 tree;;
 let bt = Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
 int_summate bt;;
+(* fold can also do map-like operations - the folder can return a tree *)
+let bump_nodes tree = fold ~f:(fun y -> fun ls -> fun rs-> Node(y+1,ls,rs)) ~leaf:Leaf tree;;
 ```
 
 * Many of the other `List` functions have analogues on binary trees and recursive variants in general
