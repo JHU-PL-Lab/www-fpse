@@ -60,88 +60,40 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
-    
-<h1 id="outline-of-lecture-units">Outline of Lecture Units</h1>
+    <h1 id="lecture-outline">Lecture Outline</h1>
 
-<h4 id="introduction-to-ocaml-notes">Introduction to OCaml notes</h4>
-<p>High-level outline of how PLI version needs to evolve</p>
+<h3 id="near-term-topics">Near term topics</h3>
 <ul>
-  <li>utop and <code>Core</code>/<code>Base</code> from the get-go: = on ints only but pop into <code>Poly</code> when convenient.</li>
-  <li>Lots of List.blah early on, including folds, pipes, etc.</li>
-  <li>add in all of the syntax stuff below that I skipped in PLI</li>
-  <li>Many more real examples of programs, get further away from the toy stuff.</li>
-  <li>Type-directed programming basics early</li>
-  <li>Need to decide on modality, either feeding into top loop or dune.  Problem is VSCode needs a dune build to get merlin file set up properly, it is hard to have files loaded that give errors.</li>
+  <li>side effects, with more and more realistic examples</li>
+  <li>Nested modules, top loop vs file modules. (#use doesn’t make a module for example #mod_use does though)</li>
+  <li>dune utop, #use_output “dune top”;; (wrote that in basic-modules, briefly cover it)</li>
+  <li>ppx_deriving_json for HW2</li>
 </ul>
 
-<h4 id="basic-functional-programming-in-ocaml">Basic Functional Programming in OCaml</h4>
+<h3 id="topics-left-to-hit-from-early-part-of-outline">Topics left to hit from early part of outline</h3>
 <ul>
-  <li>Basic OCaml
-    <ul>
-      <li>elementary <code>ocaml</code>, <code>utop</code>, <code>.ocamlinit</code> file</li>
-      <li>expressions, let, functions, lists, pattern matching, higher-order functions</li>
-      <li>Lists lists lists, folds, pipes etc.</li>
-    </ul>
-  </li>
-</ul>
-
-<h4 id="foundational-libraries-i">Foundational Libraries I</h4>
-<ul>
-  <li>Lists in Base - RWOC 1 a bit (tour) and RWOC 3.  Lots of important functions available.</li>
-  <li>Fn, Option, Result, etc etc etc Base versions</li>
-</ul>
-
-<h4 id="notes-new-stuff-not-in-pli-for-basic-ocaml-now">NOTES: New stuff not in PLI for Basic OCaml now.</h4>
-<ul>
-  <li>@@ application</li>
-  <li>_ - all the places it works</li>
-  <li>pipelining</li>
-  <li>Pipelining for functional data construction - <code>List.([] |&gt;  cons 1 |&gt; cons 2 |&gt; cons 3 |&gt; cons 4)</code> (notice it makes it in reverse).  similar to message chaining of OOP.</li>
-  <li><code>let rec sum = function | [] -&gt; ..</code> (needs function not fun)</li>
-  <li>Minimal commands for dune, .ocamlinit, top loop.  Basically fixed recipes to start with.</li>
-  <li>let is a special application - needed for monads later</li>
-  <li>= on ints only by default with <code>Base</code>.  <code>String.(=)</code> etc explicitly for other base types.  Or cheat with <code>open Poly</code> (restores original OCaml polymorphic <code>=</code> which is dangerous)</li>
-  <li>Named and optional and optional/w/default function arguments, punning with f ~x (x is both var at caller and name in callee), similar as pun in definition of function).  RWOC covers well.</li>
+  <li>Keep making more real examples of programs!</li>
+  <li>Type-directed programming examples would be good</li>
   <li>Operators as functions and making your own infix syntax - <code>let (^^) x y = x * y</code> kind of thing.  see RWOC prefix and infix operators.</li>
   <li><code>begin</code>/<code>end</code> to replace parens</li>
-  <li>effects done later, not in earlier HWs anyway.</li>
-</ul>
-
-<h2 id="data-structures-variants-and-records">Data structures (variants and records)</h2>
-<p>This is mostly covered in RWOC chapters on variants and records.</p>
-
-<ul>
-  <li>Basic records and variants stuff obviously</li>
-  <li><code>result</code> type - <code>Ok</code> or <code>Error</code>.</li>
-  <li>Advanced patterns - <code>p when e</code>, <code>'a' .. 'z'</code>, <code>as x</code>, or <code>|</code> patterns in let, <code>{x;y}</code> is same as <code>{x=x;y=y}</code>…  Cornell 3.1.7</li>
-  <li>Polymorphic variants aka anonymous variants - Cornell 3.2.4.4, RWOC variants chapter</li>
-  <li>See RWOC chapters on variants and records for lots of new conventions and examples.</li>
-  <li>record field name punning: <code>let r = {x;y}</code> abbreviation - RWOC Ch5</li>
-  <li><code>let r' = { r with x = ..; y = }</code>  for changing just a few fields - RWOC 5</li>
-  <li>Embedding record declarations in variants - like named args on variant fields:<br />
-<code>type gbu = | Good of { sugar : string; } | Bad of { spice: string; } | Ugly</code></li>
+  <li>Advanced patterns - <code>p when e</code>, <code>'a' .. 'z'</code>, <code>as x</code>, or <code>|</code> patterns in let…  Cornell 3.1.7</li>
 </ul>
 
 <h2 id="types">Types</h2>
 <ul>
-  <li>Type inference</li>
-  <li>Extensible variants - OCaml manual 8.14</li>
+  <li>Type inference and weak polymorphism</li>
   <li>Equality on and Pretty printing declated data types with <code>ppx_deriving</code></li>
   <li>Type-driven development - very important topic to touch on somewhere; fits well with GADTS.</li>
 </ul>
 
-<h2 id="modules">Modules</h2>
+<h2 id="more-modules">More Modules</h2>
 <ul>
-  <li>Structures and functors; look at the <code>Core</code> libraries to see what we need to cover, need to at least be users of things like <code>include</code>, nested modules, first-class modules, etc (whatever Core uses in particular).  Idea is to start out as writers of basic modules and users of the fancier stuff, and learn how to write the fancier stuff later.</li>
-  <li>type abstraction, module signatures</li>
-</ul>
-
-<h2 id="basic-development">Basic Development</h2>
-<p>(Could do this a bit earlier, it is making modules but could skip on that for a bit)</p>
-
-<ul>
-  <li>Simple whole programs, basic dune building and testing – see <code>code/set_example</code> .. might want to change to use <code>In_Channel</code> to just read in the numbers, see RWOC for some boilerplate for that at end of the tour.. includes basic dune etc.</li>
-  <li>Merlin super basics (can pretty much ignore as dune should build a correct <code>.merlin</code> file)</li>
+  <li>Modules defined in the top loop</li>
+  <li>Using that syntax to define nested modules</li>
+  <li>include</li>
+  <li>first-class modules</li>
+  <li><code>Core</code>’s set library</li>
+  <li>high-level discussion of witness stuff.</li>
 </ul>
 
 <h2 id="side-effects">Side effects</h2>

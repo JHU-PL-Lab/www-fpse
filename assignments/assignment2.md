@@ -16,7 +16,7 @@ There are three Sections to the homework.  In order to help you ease into it we 
 Here are a few additional resources to keep in mind to help with this assignment.
 
 * For Section 3 we in particular recommend adding the library [`ppx_deriving_yojson` (click for docs)](https://github.com/ocaml-ppx/ppx_deriving_yojson), see the files for details.  This library uses the polymorphic form of variants briefly covered at the end of the [variants lecture](../variants.html).
-* In this assignment we are giving you the `Tree` module signature in the form of the file `tree.mli`.  This is the "type" of the module, and you need to construct all the things in the module.  See the [Basic Modules](../basic-modules.html) lecture for more information on this, and there is a [simple-set.zip](http://pl.cs.jhu.edu/fpse/code/simple-set.zip) example there which shows how this works if it is unclear.
+* In this assignment we are giving you the `Tree` module signature in the form of the file `tree.mli`.  This is the "type" of the module, and you need to construct all the things in the module.  See the [Basic Modules](../basic-modules.html) lecture for more information on this, and there is a [simple-set.zip](../examples/simple-set.zip) example there which shows how this works if it is unclear.
 * We recommend you use [`Core.Sys`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core__/Core_sys/index.html) and [`Stdio`](https://ocaml.janestreet.com/ocaml-core/latest/doc/stdio/Stdio/index.html) libraries in Section 3.
 
 ### Submission and Grading

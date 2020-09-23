@@ -65,22 +65,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Side effects are operations which do more than return a result</li>
   <li>So far we have not seen many side effects but a few have snuck in</li>
+  <li>Principle of idiomatic OCaml (and style for this class): <strong>avoid effects</strong>, unless it is critically needed.</li>
 </ul>
 
 <p>Side effects of OCaml include</p>
 <ul>
   <li>Mutatable state - <em>changing</em> the contents of a memory location intead of making a new one
     <ul>
-      <li>three main basic sorts in OCaml: references, mutable record fields, and arrays.</li>
+      <li>Three built-in sorts in OCaml: references, mutable record fields, and arrays.</li>
+      <li>Plus many libraries: <code>Stack</code> etc</li>
     </ul>
   </li>
   <li>Exceptions (we saw a bit of this already, <code>failwith "ill-formed"</code>)</li>
-  <li>Input/output (we just looked at file input for example)</li>
+  <li>Input/output (in basic modules lecture we looked at file input and results printing for example)</li>
 </ul>
 
 <h3 id="state">State</h3>
 <ul>
-  <li>Variables in OCaml are still not directly mutable</li>
+  <li>Variables in OCaml are <em>still</em> not directly mutable</li>
   <li>They can hold a <em>reference</em> to mutable memory (and a way to mutate said reference)</li>
   <li>i.e. it is only indirect mutability - variable itself can’t change, but what it points to can.</li>
   <li>OCaml invariant: items are immutable unless their mutability is explicitly declared</li>
@@ -88,18 +90,74 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h3 id="mutable-references">Mutable References</h3>
 
-<pre><code class="language-ocaml">let x = ref 4;;    (* always have to declare initial value when creating a reference *)
+<ul>
+  <li>References, mutable references, refs, reference cells, and cells are all more or less synomyms</li>
+</ul>
+
+<pre><code class="language-ocaml">let x = ref 4;; (* have to declare initial value when creating *)
+val x : int ref = {contents = 4}
 </code></pre>
 
 <p>Meaning of the above: x forevermore (i.e. forever unless shadowed) refers to a fixed cell.  The <strong>contents</strong> of that fixed call can change, but not x.</p>
 
-<pre><code class="language-ocaml">x + 1;; (* a type error ! *)
-!x + 1;; (* need !x to get out the value; parallels *x in C *)
-x := 6;; (* assignment - x must be a ref cell.  Returns () - goal is side effect *)
-!x + 1;; (* Mutation happened to contents of cell x *)
+<pre><code class="language-ocaml"># let x = ref 4;;
+val x : int ref = {contents = 4}
+# x + 1;;
+Line 1, characters 0-1:
+Error: This expression has type int ref but an expression was expected of type
+         int
+# !x + 1;; (* need !x to get out the value; parallels *x in C *)
+- : int = 5
+# x := 6;; (* assignment - x must be a ref cell.  Returns () - only performs side effect *)
+- : unit = ()
+# !x + 1;; (* Mutation happened to contents of cell x *)
+- : int = 7
+# 
+</code></pre>
+
+<h4 id="null-or-nil-initial-cell-contents-in-ocaml-and-weakly-polymorphic-types">Null or Nil initial cell contents in OCaml, and Weakly Polymorphic types</h4>
+
+<ul>
+  <li>If you don’t yet have a well-formed initial value, use an <code>option</code>:
+    <pre><code class="language-ocaml">let x = ref None;; (* Use an option type if initial value not known yet *)
+val x : '_weak1 option ref = {contents = None}
+</code></pre>
+  </li>
+  <li>Note the type here, <code>'_weak1 option ref</code>, this is a <em>weakly polymorphic type</em></li>
+  <li>Which really is not polymorphic at all - what it means is the type can be only a single type
+    <ul>
+      <li>which is not known yet</li>
+    </ul>
+  </li>
+  <li>If you think about it, there is no other possibility, can’t put int and string in same cell
+    <ul>
+      <li>would not know the type when taking out of cell.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-ocaml"># x := Some 3;;
+- : unit = ()
+# !x;;
+- : int option = Some 3 (* `'_weak1` = `int` now, permanently *)
+# let y = ref None;;
+val y : '_weak2 option ref = {contents = None} (* next one is `'_weak2` etc *)
 </code></pre>
 
 <ul>
+  <li>At various points OCaml will infer only weak types on certain things</li>
+  <li>Most of the time it is because it would be incorrect not to</li>
+  <li>But occasionally OCaml is too dumb to realize things are not weak
+    <ul>
+      <li>there are some workarounds for this case</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="mutable-records">Mutable Records</h3>
+
+<ul>
+  <li>Along with refs we can make some record fields mutable</li>
   <li><code>'a ref</code> is really implemented by a mutable record with one field, contents:</li>
   <li><code>'a ref</code> abbreviates the type <code>{ mutable contents: 'a }</code></li>
   <li>The keyword mutable on a record field means it can mutate</li>
@@ -112,36 +170,60 @@ x.contents &lt;- 7;;  (* same effect as previous line: backarrow updates a field
 !x + 1;;
 x.contents + 1;; (* same effect as previous line *)
 </code></pre>
-<h4 id="mutable-record-declarations">Mutable record declarations</h4>
+<h4 id="declaring-mutable-record-types">Declaring Mutable Record Types</h4>
 
-<p>Declaring your own mutable record:</p>
 <ul>
-  <li>Default on each field is that value will be immutable</li>
-  <li>Put <code>mutable</code> qualifier on each mutable field that you want to mutate</li>
+  <li>Default on each field is the value will be <em>immutable</em></li>
+  <li>Put <code>mutable</code> qualifier on each field that you want to mutate</li>
   <li>Principle of least mutability: only put <code>mutable</code> on fields you <strong>have</strong> to mutate</li>
 </ul>
 
 <pre><code class="language-ocaml">type mutable_point = { mutable x: float; mutable y: float };;
 let translate p dx dy =
-                p.x &lt;- (p.x +. dx); (* observe use of ";" here to sequence effects *)
-                p.y &lt;- (p.y +. dy)  (* ";" is useless without side effects (think about it) *)
-                                ;;
+  p.x &lt;- (p.x +. dx); (* observe use of ";" here to sequence effects *)
+  p.y &lt;- (p.y +. dy);;
 let mypoint = { x = 0.0; y = 0.0 };;
 translate mypoint 1.0 2.0;;
 mypoint;;
 </code></pre>
 
-<p>Observe: mypoint is immutable at the top level but it has two spots in it where we can mutate</p>
+<h4 id="tree-with-mutable-subtrees">Tree with mutable subtrees</h4>
 
-<p>Tree with mutable nodes</p>
-
-<pre><code class="language-ocaml">type mtree = MLeaf | MNode of int * mtree ref * mtree ref;;
+<pre><code class="language-ocaml">(* version using ref: *)
+type 'a mtree = MLeaf | MNode of 'a * 'a mtree ref * 'a mtree ref;;
+(* But, this type would be more readable with mutable record - no `!` needed: *)
+type 'a mtree = MLeaf | MNode of { data : 'a; mutable left : 'a mtree; mutable right : 'a mtree};;
 </code></pre>
 
 <ul>
-  <li>ONLY ref typed variables or mutable records may be assigned to</li>
-  <li>The notion of immutable variables is one of the great strengths of OCaml.</li>
-  <li>Note: <code>let</code> doesn’t turn into a mutation operator with <code>ref</code>:</li>
+  <li>Note that in this <code>mtree</code> we can only mutate the subtrees, not the data</li>
+  <li>Also, cannot replace a leaf at top of tree with a non-leaf.</li>
+  <li>The idea is to put mutablility only where you are doing mutation, no more no less.</li>
+</ul>
+
+<p>Example use: mutate right tree</p>
+
+<pre><code class="language-ocaml"># let mt = MNode {data = 3; left = MLeaf; right = MLeaf};;
+val mt : int mtree = MNode {data = 3; left = MLeaf; right = MLeaf}
+# match mt with 
+| MLeaf -&gt; ()
+| MNode ({data;left;right} as r) -&gt; r.left &lt;- MNode {data = 5; left = MLeaf; right = MLeaf};;
+- : unit = ()
+# mt;;
+- : int mtree =
+MNode
+ {data = 3; left = MNode {data = 5; left = MLeaf; right = MLeaf};
+  right = MLeaf}
+</code></pre>
+<ul>
+  <li>Note the use of the <code>... as r</code> in the pattern, sometimes something needs a name that didn’t have one</li>
+  <li>And of course notice that <code>mt</code> actually <em>changed</em> here unlike with immutables</li>
+</ul>
+
+<h4 id="variables-are-still-themselves-immutable">Variables are still themselves immutable</h4>
+
+<ul>
+  <li>To be clear, <code>let</code> doesn’t turn into a mutation operator with <code>ref</code>:</li>
 </ul>
 
 <pre><code class="language-ocaml">let x = ref 4;;
@@ -150,37 +232,86 @@ let f () = !x;;
 x := 234;;
 f();;
 
-let x = ref 6;; (* shadowing previous x definition, NOT an assignment to x !! *)
-f ();;
+let x = ref 6;; (* shadows previous x definition, NOT an assignment to x !! *)
+f ();; (* 234, not 6 *)
+</code></pre>
+
+<h3 id="physical-equality">Physical equality</h3>
+
+<ul>
+  <li>Occasionally in imperative programs you need to check for “same pointer”</li>
+  <li><code>phys_equal</code> is <code>Core</code> notion for for “same pointer” (use <code>==</code> in non-Core)</li>
+</ul>
+
+<pre><code class="language-ocaml"># phys_equal 2 2;;
+- : bool = true
+# let x = ref 4;;
+val x : int ref = {contents = 4}
+# let y = x;;
+val y : int ref = {contents = 4}
+# phys_equal x y;;
+- : bool = true (* same pointer *)
+# let z = ref 4;;
+val z : int ref = {contents = 4}
+# phys_equal x z;;
+- : bool = false (* different pointers *)
 </code></pre>
 
 <h4 id="control-structures-to-help-with-mutution">Control structures to help with mutution</h4>
 
 <ul>
-  <li>For and while-loops also exist and are useful with mutable state</li>
-  <li>Also sequencing via “<code>;</code>” becomes useful with side effects</li>
+  <li>Sequencing via “<code>;</code>” becomes useful with side effects</li>
 </ul>
 
-<pre><code class="language-ocaml">let x = ref 1 in
-    while !x &lt; 10 do
-      Out_channel.print_string (Int.to_string !x);
-      Out_channel.print_string "\n";
-      x := !x + 1;
-    done;;
+<pre><code class="language-ocaml">print_string "hi"; print_string "\n";;
 </code></pre>
 
 <ul>
-  <li>Observe that operations that only have a side effect return <code>() : unit</code></li>
+  <li>Observe that operations that only have a side effect return <code>() : unit</code>
+    <ul>
+      <li><code>:=</code>, <code>&lt;-</code>, <code>print</code>ing, etc</li>
+      <li>But sometimes operators will both have effects and return something</li>
+      <li>Sometimes need to sequence that and you may get an annoying warning if so:</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-ocaml"># let count = ref 0 in 
+let incr () = count := !count + 1; !count in incr;;
+- : unit -&gt; int = &lt;fun&gt;
+# incr() ; incr();;
+Line 1, characters 0-6:
+Warning 10: this expression should have type unit.
+...
+</code></pre>
+
+<ul>
+  <li>Gives a warning since it is concerned that the first incr does not return unit.</li>
+  <li>This warning is actually good most of the time in fact, it means <code>;</code> was used incorrectly</li>
+  <li>To silence warning (once you are clear you are doing the right thing):</li>
+</ul>
+
+<pre><code class="language-ocaml"># ignore(incr()) ; incr()
+</code></pre>
+
+<ul>
+  <li><code>for</code> and <code>while</code> loops are useful with mutable state</li>
+  <li>But, don’t fall back into old state habits; good OCaml style is functional by default</li>
+  <li>Here is a <code>while .. do .. done</code> loop; <code>for</code> syntax also standard</li>
+</ul>
+
+<pre><code class="language-ocaml">let x = ref 1 in
+while !x &lt; 10 do
+  Out_channel.print_string (Int.to_string !x);
+  Out_channel.print_string "\n";
+  x := !x + 1;
+done;;
+</code></pre>
+
+<ul>
   <li>Fact: while loops are useless without mutation: would either never loop or infinitely loop</li>
   <li>Same for <code>e1 ; e2</code> –  if <code>e1</code> has no side effects may as well delete it, it is dead code!</li>
   <li>May help to know <code>e1; e2</code> is basically the same as <code>let () = e1 in e2</code></li>
-</ul>
-
-<p>Why is immutability good?</p>
-<ul>
-  <li>programmer can depend on the fact that something will never be mutated when writing code: permanent like mathematical definitions</li>
-  <li>ML still lets you express mutation, but its only use it when its really needed</li>
-  <li>Haskell has an even stronger separation of mutation, its all strictly “on top”.</li>
 </ul>
 
 <h3 id="arrays">Arrays</h3>
@@ -196,8 +327,8 @@ f ();;
 </ul>
 
 <pre><code class="language-ocaml">let arrhi = Array.make 100 "";; (* size and initial value are the params here *)
-let arr = [| 4; 3; 2 |];; (* another way to make an array *)
-arr.(0);; (* access (unfortunately already used [] for lists in the syntax) *)
+let arr = [| 4; 3; 2 |];; (* make a literal array *)
+arr.(0);; (* access (unfortunately already used [] for lists so a bit ugly) *)
 arr.(0) &lt;- 55;; (* update *)
 arr;;
 let a = Array.of_list [1;2;3];;
@@ -247,7 +378,34 @@ g ();;
 invalid_arg "This function works on non-empty lists only";; (* Invalid_argument exception *)
 </code></pre>
 
-<h3 id="contrasting-exceptions-with-bubbling-up-errors">Contrasting exceptions with bubbling up errors</h3>
+<h3 id="mutating-data-structures-in-base">Mutating data structures in <code>Base</code></h3>
+
+<ul>
+  <li>The <code>Stack</code> and <code>Queue</code> modules in <code>Base</code> (and <code>Core</code>) are mutable data structures.</li>
+  <li>Here is a simple example of playing around with a stack for example.</li>
+</ul>
+
+<pre><code class="language-ocaml"># let s = Stack.create();;
+val s : '_weak3 t = &lt;abstr&gt; (* Stack.t is the underlying implementation and is hidden *)
+# Stack.push s "hello";;
+- : unit = ()
+# Stack.push s "hello again";;
+- : unit = ()
+# Stack.push s "hello one more time";;
+- : unit = ()
+# Stack.to_list s;; (* very handy function to see what is there *)
+- : string list = ["hello one more time"; "hello again"; "hello"]
+# Stack.pop s;;
+- : string option = Some "hello one more time"
+# Stack.pop_exn s;;
+- : string = "hello again"
+# Stack.pop_exn s;;
+- : string = "hello"
+# Stack.pop s;;
+- : string option = None
+# Stack.exists s ~f:(fun s -&gt; String.contains s 't');; (* Stack has folds, maps, etc too *)
+- : bool = true
+</code></pre>
 
       
           </section>

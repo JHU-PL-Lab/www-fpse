@@ -292,6 +292,8 @@ let add_gobble tree = map ~f:(fun s -&gt; s ^ "gobble") tree
 let int_summate tree = fold ~f:(fun y -&gt; fun ls -&gt; fun rs-&gt; y + ls + rs) ~leaf:0 tree;;
 let bt = Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
 int_summate bt;;
+(* fold can also do map-like operations - the folder can return a tree *)
+let bump_nodes tree = fold ~f:(fun y -&gt; fun ls -&gt; fun rs-&gt; Node(y+1,ls,rs)) ~leaf:Leaf tree;;
 </code></pre>
 
 <ul>
