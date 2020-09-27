@@ -183,7 +183,8 @@ print_string "hi"; print_string "\n";;
     - Sometimes need to sequence that and you may get an annoying warning if so:
 
 ```ocaml
-# let count = ref 0 in 
+# let incr = 
+let count = ref 0 in 
 let incr () = count := !count + 1; !count in incr;;
 - : unit -> int = <fun>
 # incr() ; incr();;
@@ -231,7 +232,8 @@ arr.(0);; (* access (unfortunately already used [] for lists so a bit ugly) *)
 arr.(0) <- 55;; (* update *)
 arr;;
 (* Of course there are many library functions over Array including map fold etc *)
-Array.map ~f:(fun x -> x + 1) arr;;
+Array.map ~f:(fun x -> x + 1) arr;; (* standard map - produces a new array *)
+Array.map_inplace ~f:(fun x -> x + 1) arr;; (* This *changes* the array based on map-function *)
 (* Here are some conversions *)
 let a = Array.of_list [1;2;3];;
 let l = Array.to_list a;;
@@ -275,16 +277,26 @@ f ();;
 let g () =
   try f ()
   with
-  | Foo -> ()
   | Goo s -> (Out_channel.(print_string("exception raised: ");
     print_string(s);print_string("\n")))
 ;;
 g ();;
 ```
 
+* Exceptions are in fact first-class data, all of the single type `exn`  
+ - This is not very often useful.
+
+```ocaml
+# let ex = Goo "oops";;
+val ex : exn = Goo("oops")
+# raise ex;;
+Exception: Goo("oops").
+```
+
 ### Mutating data structures in `Base`
 
 * The `Stack` and `Queue` modules in `Base` (and `Core`) are mutable data structures.
+* (There is also `Hash_set` which is a (hashed) mutable set and `Hashtbl` which is a mutable hashtable; more on those later)
 * Here is a simple example of playing around with a `Stack` for example.
 
 ```ocaml
@@ -316,4 +328,4 @@ val s : '_weak3 t = <abstr> (* Stack.t is the underlying implementation and is h
 * See file [matching.ml](examples/matching.ml) which has several versions of a simple parenthesis matching function
 * It shows uses of `Stack`, and some trade-offs of using exceptions vs option type.
 * Lastly there is a pure functional version which is arguably simpler
- - Yes you don't need that mutation!
+ - Yes you **don't** need that mutation!

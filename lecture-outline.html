@@ -62,18 +62,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h1 id="lecture-outline">Lecture Outline</h1>
 
-<h3 id="near-term-topics">Near term topics</h3>
-<ul>
-  <li>side effects, with more and more realistic examples</li>
-  <li>Nested modules, top loop vs file modules. (#use doesn’t make a module for example #mod_use does though)</li>
-  <li>dune utop, #use_output “dune top”;; (wrote that in basic-modules, briefly cover it)</li>
-  <li>ppx_deriving_json for HW2</li>
-</ul>
-
 <h3 id="topics-left-to-hit-from-early-part-of-outline">Topics left to hit from early part of outline</h3>
 <ul>
-  <li>Keep making more real examples of programs!</li>
-  <li>Type-directed programming examples would be good</li>
+  <li>Type-directed programming would be good - show how type errors lead to fixed code.</li>
   <li>Operators as functions and making your own infix syntax - <code>let (^^) x y = x * y</code> kind of thing.  see RWOC prefix and infix operators.</li>
   <li><code>begin</code>/<code>end</code> to replace parens</li>
   <li>Advanced patterns - <code>p when e</code>, <code>'a' .. 'z'</code>, <code>as x</code>, or <code>|</code> patterns in let…  Cornell 3.1.7</li>
@@ -81,37 +72,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h2 id="types">Types</h2>
 <ul>
-  <li>Type inference and weak polymorphism</li>
-  <li>Equality on and Pretty printing declated data types with <code>ppx_deriving</code></li>
-  <li>Type-driven development - very important topic to touch on somewhere; fits well with GADTS.</li>
-</ul>
-
-<h2 id="more-modules">More Modules</h2>
-<ul>
-  <li>Modules defined in the top loop</li>
-  <li>Using that syntax to define nested modules</li>
-  <li>include</li>
-  <li>first-class modules</li>
-  <li><code>Core</code>’s set library</li>
-  <li>high-level discussion of witness stuff.</li>
-</ul>
-
-<h2 id="side-effects">Side effects</h2>
-
-<h3 id="mutation">Mutation</h3>
-<ul>
-  <li>Standard mutation topics: ref, mutable records, arrays.  Printing earlier - ?</li>
-  <li>sequencing; <code>ignore(3+4); print_string "hi"</code> to avoid warnings.  Cornell 8.3</li>
-  <li><code>==</code> vs <code>=</code> - Cornell 8.6</li>
-  <li>Mutable stack eg - Cornell 8.8; get a Base alternative example, e.g. <code>Hashtbl</code> (see libraries)</li>
-  <li>Weakly polymorphic types <code>‘_a</code> - Cornell 8.8 (save details on this for advanced types below?)</li>
-</ul>
-
-<h3 id="exceptions">Exceptions</h3>
-<p>See RWOC Error/Exceptions chapter.</p>
-<ul>
-  <li>lack of exception effects in types is old-fashioned.  Using option types or Ok/Error is often better.</li>
-  <li><code>match f x with exception _ -&gt; blah | ...</code> shorthand syntax</li>
+  <li>
+    <p>Type-driven development - very important topic to touch on somewhere; fits well with GADTS.</p>
+  </li>
+  <li>Command line parsing - RWOC ch14</li>
+  <li>JSON data - RWOC ch15</li>
 </ul>
 
 <h3 id="io-and-stdio">I/O and Stdio</h3>
@@ -124,20 +89,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h2 id="libraries">Libraries</h2>
-<p>Do libraries with modules as the <code>Core</code> modules need understanding of functors, abstraction, etc</p>
-
-<ul>
-  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/index.html"><code>Core</code></a>
-    <ul>
-      <li><code>Map</code> (and <code>List.Assoc</code> a bit).  RWOC 13.</li>
-      <li><code>Hashtbl</code>, good example of mutable code.  RWOC 13</li>
-    </ul>
-  </li>
-  <li>Command line parsing - RWOC ch14</li>
-  <li>JSON data - RWOC ch15</li>
-</ul>
-
 <h2 id="buildpackagetest-in-ocaml">Build/Package/Test in Ocaml</h2>
 
 <h3 id="dune">Dune</h3>
@@ -148,7 +99,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Using libraries via <code>libraries</code> (uses <code>ocamlfind</code> in the background)</li>
   <li>etc for other options in <code>dune</code> files</li>
   <li>Test executables with <code>Ounit2</code></li>
-  <li>Poking your code in the top loop: <code>dune utop</code>, <code>dune top</code>, and <code>#use_output "dune top";;</code></li>
   <li>Merlin with dune - basics on configuring to parse libraries used properly, etc.  Cornell 3.1.3.4</li>
   <li>Command line: <code>dune build</code>, <code>dune runtest</code>, <code>dune exec</code></li>
   <li>Backtracing on error in dune: use <code>Base</code>, backtraces turned on by default then.</li>
@@ -200,7 +150,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Specifying properties of programs
     <ul>
-      <li>Type-directed programming: start out by writing types &amp; module signatures as a skeleton</li>
+      <li>Type-directed programming: start out by writing types &amp; module signatures as a skeleton
+        <ul>
+          <li>Types are a high-level spec on behavior; getting out type errors is progress!</li>
+        </ul>
+      </li>
       <li><code>assert</code> for more fine-grained properties not expressible with types</li>
       <li>Referential transparency</li>
       <li>Abstract interfaces: white box vs gray box vs black box (&lt;abst&gt;).
@@ -226,25 +180,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Memoization - RWOC Imperative chapter, Cornell 12.4</li>
 </ul>
 
-<h2 id="advanced-modules">Advanced modules</h2>
-<p>(May need to do some of this earlier)</p>
-
-<ul>
-  <li><code>include</code> - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it</li>
-  <li>Nested modules - in RWOC 4.</li>
-  <li>First-class modules - RWOC 10.</li>
-  <li><code>let open List in ..</code> and <code>List.(...map....)</code> syntax</li>
-  <li>Anonymous functors:  <code>module F = functor (M : S) -&gt; ... -&gt; functor (M : S) -&gt; struct  ... end</code></li>
-  <li>more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3</li>
-  <li>passing anonymous structs to functors Cornell 5.3.2.3</li>
-  <li><code>comparator_witness</code> and comparison in Jane Street modules</li>
-  <li>Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.</li>
-</ul>
-
 <h2 id="advanced-types">Advanced Types</h2>
 
 <ul>
-  <li>Weak polymorphism</li>
+  <li>Weak polymorphism (covered)</li>
   <li>Covariant types <code>+'a t = ...</code> - declares contents are not mutable so can be fully polymorphic not weakly.  RWOC weak polymorphism section.</li>
   <li>GADTS - see PLII lecture notes.    Make sure to discuss with type-driven development</li>
   <li>New Jane street extensions: <a href="https://github.com/janestreet/higher_kinded/">higher-kinded types</a> and <a href="https://github.com/janestreet/accessor">accessors</a> which are like Haskell lenses.</li>

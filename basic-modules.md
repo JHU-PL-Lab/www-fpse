@@ -8,7 +8,7 @@
 * Also we will cover how most modules are *libraries* of auxiliary functions but how modules may also define *executables*.
 * ... there are also many more fancy module features which we will cover later
 
-* We are going to use a running example to explain these concepts; see [simple-set.zip](examples/simple-set.zip) for the full example
+* We are going to use a running example to explain these concepts; see [set-example.zip](examples/set-example.zip) for the full example
 
 
 ### `.ml` files as modules

@@ -276,7 +276,8 @@ val z : int ref = {contents = 4}
   </li>
 </ul>
 
-<pre><code class="language-ocaml"># let count = ref 0 in 
+<pre><code class="language-ocaml"># let incr = 
+let count = ref 0 in 
 let incr () = count := !count + 1; !count in incr;;
 - : unit -&gt; int = &lt;fun&gt;
 # incr() ; incr();;
@@ -331,7 +332,8 @@ arr.(0);; (* access (unfortunately already used [] for lists so a bit ugly) *)
 arr.(0) &lt;- 55;; (* update *)
 arr;;
 (* Of course there are many library functions over Array including map fold etc *)
-Array.map ~f:(fun x -&gt; x + 1) arr;;
+Array.map ~f:(fun x -&gt; x + 1) arr;; (* standard map - produces a new array *)
+Array.map_inplace ~f:(fun x -&gt; x + 1) arr;; (* This *changes* the array based on map-function *)
 (* Here are some conversions *)
 let a = Array.of_list [1;2;3];;
 let l = Array.to_list a;;
@@ -385,17 +387,28 @@ f ();;
 let g () =
   try f ()
   with
-  | Foo -&gt; ()
   | Goo s -&gt; (Out_channel.(print_string("exception raised: ");
     print_string(s);print_string("\n")))
 ;;
 g ();;
 </code></pre>
 
+<ul>
+  <li>Exceptions are in fact first-class data, all of the single type <code>exn</code></li>
+  <li>This is not very often useful.</li>
+</ul>
+
+<pre><code class="language-ocaml"># let ex = Goo "oops";;
+val ex : exn = Goo("oops")
+# raise ex;;
+Exception: Goo("oops").
+</code></pre>
+
 <h3 id="mutating-data-structures-in-base">Mutating data structures in <code>Base</code></h3>
 
 <ul>
   <li>The <code>Stack</code> and <code>Queue</code> modules in <code>Base</code> (and <code>Core</code>) are mutable data structures.</li>
+  <li>(There is also <code>Hash_set</code> which is a (hashed) mutable set and <code>Hashtbl</code> which is a mutable hashtable; more on those later)</li>
   <li>Here is a simple example of playing around with a <code>Stack</code> for example.</li>
 </ul>
 
@@ -428,7 +441,7 @@ val s : '_weak3 t = &lt;abstr&gt; (* Stack.t is the underlying implementation an
   <li>See file <a href="examples/matching.ml">matching.ml</a> which has several versions of a simple parenthesis matching function</li>
   <li>It shows uses of <code>Stack</code>, and some trade-offs of using exceptions vs option type.</li>
   <li>Lastly there is a pure functional version which is arguably simpler</li>
-  <li>Yes you don’t need that mutation!</li>
+  <li>Yes you <strong>don’t</strong> need that mutation!</li>
 </ul>
       
           </section>

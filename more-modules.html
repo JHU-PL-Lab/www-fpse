@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="more-modules-and-libraries">More Modules and Libraries</h2>
+
+<h3 id="tangent-ish-ppx_jane-and-deriving">Tangent-ish: <code>ppx_jane</code> and <code>deriving</code></h3>
+
+<ul>
+  <li>We briefly hit on <code>[@@deriving eq]</code> syntax in the <a href="variants.html">Variants lecture</a>, to get an <code>=</code> for free on our type.</li>
+  <li>Here cover the Jane Street <code>ppx_jane</code> version of <code>[@@deriving ...]</code></li>
+  <li>Recall our genome type declaration with added <code>[@@deriving eq]</code> which made an <code>equal_nucleotide</code> function</li>
+  <li>For the Jane Street equivalent just say <code>[@@deriving equal]</code> instead of <code>[@@deriving eq]</code></li>
+</ul>
+
+<pre><code class="language-ocaml">(* Needs #require "ppx_jane";; in top loop, and (preprocess (pps (ppx_jane))) in dune file  *)
+# type nucleotide = A | C | G | T [@@deriving equal];;
+type nucleotide = A | C | G | T
+val equal_nucleotide : nucleotide -&gt; nucleotide -&gt; bool = &lt;fun&gt;
+</code></pre>
+<ul>
+  <li>The <code>[@@zibbo...]</code> indicates the type declaration is processed by the macro named <code>ppx_zibbo</code></li>
+  <li>The <code>equal</code> is a parameter to the macro, here it is which <code>deriving</code> extension is added</li>
+  <li>The <code>[@@deriving equal]</code> in particular causes an <code>equal_nucleotide</code> function to be automatically generated</li>
+  <li>Without this function we would have to use pattern matching to write our own equality.</li>
+</ul>
+
+<h4 id="composing-deriving-equal">Composing <code>deriving equal</code></h4>
+
+<ul>
+  <li>If we have an <code>xyy_equal</code> function on component types, <code>deriving</code> can derive <code>equal</code> for a type built from those components:<br />
+```ocaml
+    <h1 id="type-n_list--nucleotide-list-deriving-equal">type n_list = nucleotide list [@@deriving equal];;</h1>
+    <p>type n_list = nucleotide list<br />
+val equal_n_list : n_list -&gt; n_list -&gt; bool = <fun></fun></p>
+    <h1 id="equal_n_list-aaa-aga">equal_n_list [A;A;A] [A;G;A];;</h1>
+  </li>
+  <li>: bool = false
+    <h1 id="type-n_queue--nucleotide-queuet-deriving-equal">type n_queue = nucleotide Queue.t [@@deriving equal];;</h1>
+    <p>type n_queue = nucleotide Core_kernel.Queue.t<br />
+val equal_n_queue : n_queue -&gt; n_queue -&gt; bool = <fun>
+```</fun></p>
+  </li>
+  <li>Notice that the <code>Core</code> libraries are designed to play well as they have <code>List.equal</code>, <code>Queue.equal</code> built in</li>
+  <li>Generally for a component type that is the <code>t</code> of a module, the name looked for is <code>My_module.equal</code> instead of <code>t_equal</code></li>
+  <li>Similarly, if we are making our own module with its carrier type <code>t</code> it will also generate <code>My_module.equal</code> if we use <code>[@@deriving equal]</code></li>
+</ul>
+
+<h3 id="some-other-useful-deriving-type-accessor-extensions-in-ppx_jane">Some other useful <code>@@deriving</code> type accessor extensions in ppx_jane</h3>
+
+<ul>
+  <li><code>sexp</code> is handy for displaying data internals</li>
+  <li>Unfortunately it puts it in this S expression format and not normal OCaml style syntax</li>
+  <li>But it is not too hard to read S-expressions after a bit of staring<br />
+```ocaml
+    <h1 id="type-nucleotide--a--c--g--t-deriving-equal-sexp">type nucleotide = A | C | G | T [@@deriving equal, sexp];;</h1>
+    <p>type nucleotide = A | C | G | T<br />
+val equal_nucleotide : nucleotide -&gt; nucleotide -&gt; bool = <fun>
+val nucleotide_of_sexp : Sexp.t -&gt; nucleotide = <fun>
+val sexp_of_nucleotide : nucleotide -&gt; Sexp.t = <fun>
+ type n_list = nucleotide list [@@deriving equal, sexp];;
+type n_list = nucleotide list
+type n_list = nucleotide list
+val equal_n_list : n_list -&gt; n_list -&gt; bool = <fun>
+val n_list_of_sexp : Sexp.t -&gt; n_list = <fun>
+val sexp_of_n_list : n_list -&gt; Sexp.t = <fun></fun></fun></fun></fun></fun></fun></p>
+    <h1 id="sexp_of_n_list-agg">sexp_of_n_list [A;G;G];;</h1>
+  </li>
+  <li>: Sexp.t = (A G G) (* this is the “S-Expression” version of a list.. parens and spaces *)<br />
+```</li>
+  <li><code>[@@deriving compare]</code> is exactly analogous to <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code><br />
+```ocaml
+    <h1 id="type-nucleotide--a--c--g--t-deriving-compare">type nucleotide = A | C | G | T [@@deriving compare];;</h1>
+    <p>type nucleotide = A | C | G | T<br />
+val compare_nucleotide : nucleotide -&gt; nucleotide -&gt; int = <fun></fun></p>
+    <h1 id="compare_nucleotide-a-c">compare_nucleotide A C;;</h1>
+  </li>
+  <li>: int = -1<br />
+utop # compare_nucleotide C A;;</li>
+  <li>: int = 1<br />
+```</li>
+  <li>Lastly for the homework there is a to/from JSON format function you can add to any type</li>
+  <li>this will save wear and tear on your fingers, no need to convert.</li>
+</ul>
+
+<pre><code class="language-ocaml"># #require "ppx_deriving_yojson";; (* see the ppx_deriving_yojson docs linked in HW for `dune` use *)
+# type nucleotide = A | C | G | T [@@deriving yojson];;
+type nucleotide = A | C | G | T
+val nucleotide_to_yojson : nucleotide -&gt; Yojson.Safe.t = &lt;fun&gt;
+val nucleotide_of_yojson :
+  Yojson.Safe.t -&gt; nucleotide Ppx_deriving_yojson_runtime.error_or = &lt;fun&gt;
+</code></pre>
+
+<h2 id="defining-modules-in-the-top-loop">Defining Modules in the top loop</h2>
+
+<ul>
+  <li>We will now cover how you can define modules in the top loop.</li>
+  <li>The main reason we are covering this is it will help us understand nested modules and functors
+    <ul>
+      <li>generally the file-based method of defining a module we have done thus far is how modules are defined.</li>
+    </ul>
+  </li>
+  <li>Basic idea to input a module in top-loop: wrap <code>module My_module = struct ... end</code> with file in the <code>...</code></li>
+  <li>Simple set example:</li>
+</ul>
+
+<pre><code class="language-ocaml"># module Simple_set = struct 
+
+open Core
+
+type 'a t = 'a list
+
+let emptyset : 'a t = []
+
+let add (x : 'a) (s : 'a t) = (x :: s)
+
+let rec remove (x : 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) =
+  match s with
+  | [] -&gt; failwith "item is not in set"
+  | hd :: tl -&gt;
+    if equal hd x then tl
+    else hd :: remove x tl equal
+
+let rec contains (x: 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) =
+  match s with
+  | [] -&gt; false
+  | hd :: tl -&gt;
+    if equal x hd then true else contains x tl equal
+end
+;;
+module Simple_set :
+  sig
+    type 'a t = 'a list
+    val emptyset : 'a t
+    val add : 'a -&gt; 'a t -&gt; 'a t
+    val remove : 'a -&gt; 'a t -&gt; ('a -&gt; 'a -&gt; bool) -&gt; 'a t
+    val contains : 'a -&gt; 'a t -&gt; ('a -&gt; 'a -&gt; bool) -&gt; bool
+  end
+# Simple_set.emptyset;;
+- : 'a list = []
+</code></pre>
+
+<ul>
+  <li>Notice how it infers a module type (aka signature)</li>
+  <li>We can also declare module types and explicitly declare along with the module.</li>
+</ul>
+
+<pre><code class="language-ocaml">module type Simple_set = (* module and module type namespaces are distinct, can re-use name *)
+  sig
+    type 'a t
+    val emptyset : 'a t
+    val add : 'a -&gt; 'a t -&gt; 'a t
+    val remove : 'a -&gt; 'a t -&gt; ('a -&gt; 'a -&gt; bool) -&gt; 'a t
+    val contains : 'a -&gt; 'a t -&gt; ('a -&gt; 'a -&gt; bool) -&gt; bool
+  end
+</code></pre>
+
+<p>Then can replace <code>module Simple_set = struct .. end</code> with</p>
+<pre><code class="language-ocaml">module Simple_set : Simple_set = struct ... end
+</code></pre>
+
+<p>and it will define the module with the above signature on it</p>
+
+<h2 id="nested-modules">Nested modules</h2>
+
+<ul>
+  <li>The real use of the above top-loop syntax is it also lets us define modules within modules</li>
+  <li>We are using many of those already, e.g. <code>Core.List.map</code> means <code>List</code> is just a module inside <code>Core</code>.</li>
+  <li>Modules nest exactly as you would expect, just write a <code>module My_module = struct .. end</code> declaration<br />
+ within a module</li>
+  <li>Here is an example
+    <ul>
+      <li>(note we will do top-loop version here, could remove top/bottom lines and put in file as well)</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-ocaml">module Super_simple_core = struct
+
+  module Simple_set = struct (* insert above code here ... *) end
+
+  module List = Core.List (* just borrow Core's list for our Super_simple_core *)
+end
+</code></pre>
+
+<h3 id="basic-functors">Basic functors</h3>
+
+<ul>
+  <li>Functors are simply parametric modules, i.e. functions from modules to modules</li>
+  <li>They let us define a generic code library to which we can plug in some concrete code
+    <ul>
+      <li>in other words, just like what higher-order functions do except for modules</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Simple example: fix the problem of <code>equal</code> function needed for our <code>Simple_set</code> module.</p>
+
+<pre><code class="language-ocaml">module type Eq = sig 
+type t
+val equal: t -&gt; t -&gt; bool 
+end
+
+module Simple_set_functor (M: Eq) = 
+struct
+open Core
+
+type t = M.t list
+
+let emptyset : t = []
+
+let add (x : M.t) (s : t) = (x :: s)
+
+let rec remove (x : M.t) (s: t) =
+  match s with
+  | [] -&gt; failwith "item is not in set"
+  | hd :: tl -&gt;
+    if M.equal hd x then tl
+    else hd :: remove x tl
+
+let rec contains (x: M.t) (s: t) =
+  match s with
+  | [] -&gt; false
+  | hd :: tl -&gt;
+    if M.equal x hd then true else contains x tl
+end
+</code></pre>
+
+<ul>
+  <li>more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3</li>
+  <li>Anonymous functors:  <code>module F = functor (M : S) -&gt; ... -&gt; functor (M : S) -&gt; struct  ... end</code></li>
+  <li>passing anonymous structs to functors Cornell 5.3.2.3</li>
+</ul>
+
+<h3 id="very-basic-first-class-modules">Very Basic First Class Modules</h3>
+
+<h1 id="outline">Outline</h1>
+
+<h2 id="more-modules">More Modules</h2>
+<ul>
+  <li>First-class modules super basics</li>
+  <li>high-level discussion of witness stuff.</li>
+  <li><code>include</code> - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it</li>
+  <li>Nested modules - in RWOC 4.</li>
+  <li><code>let open List in ..</code> and <code>List.(...map....)</code> syntax</li>
+</ul>
+
+<p>Leftovers for later</p>
+<ul>
+  <li>General first-class modules - RWOC 10.</li>
+  <li><code>Comparable</code> and witnesses</li>
+  <li>Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.</li>
+</ul>
+
+<h2 id="using-core-libraries">Using Core Libraries</h2>
+<p>Do libraries with modules as the <code>Core</code> modules need understanding of functors, abstraction, etc</p>
+
+<ul>
+  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/index.html"><code>Core</code></a>
+    <ul>
+      <li><code>Map</code>, <code>Set</code> (and <code>List.Assoc</code> a bit).  RWOC 13.</li>
+      <li><code>Hashtbl</code>, good example of mutable code.  RWOC 13</li>
+    </ul>
+  </li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>
