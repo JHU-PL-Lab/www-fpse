@@ -1,5 +1,31 @@
 # Lecture Outline
 
+## Leftover topics from modules
+
+* more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3
+* Anonymous functors:  `module F = functor (M : S) -> ... -> functor (M : S) -> struct  ... end`
+* passing anonymous structs to functors Cornell 5.3.2.3
+
+#### More Modules
+- high-level discussion of witness stuff.
+* `include` - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it
+* Nested modules - in RWOC 4.
+* `let open List in ..` and `List.(...map....)` syntax
+
+Leftovers for later
+* General first-class modules - RWOC 10.
+* `Comparable` and witnesses
+* Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.
+
+
+#### Using Core Libraries
+Do libraries with modules as the `Core` modules need understanding of functors, abstraction, etc
+
+* [`Core`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/index.html)
+    - `Map`, `Set` (and `List.Assoc` a bit).  RWOC 13.
+    - `Hashtbl`, good example of mutable code.  RWOC 13
+
+
 ### Topics left to hit from early part of outline
 * Type-directed programming would be good - show how type errors lead to fixed code.
 * Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.  see RWOC prefix and infix operators.
@@ -8,7 +34,6 @@
 
 ## Types
 * Type-driven development - very important topic to touch on somewhere; fits well with GADTS.
-
 * Command line parsing - RWOC ch14
 * JSON data - RWOC ch15
 
@@ -17,7 +42,6 @@
 * Basic printing
 * `Stdio`
     - Channels, etc
-
 
 ## Build/Package/Test in Ocaml
 

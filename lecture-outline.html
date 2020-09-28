@@ -62,6 +62,41 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h1 id="lecture-outline">Lecture Outline</h1>
 
+<h2 id="leftover-topics-from-modules">Leftover topics from modules</h2>
+
+<ul>
+  <li>more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3</li>
+  <li>Anonymous functors:  <code>module F = functor (M : S) -&gt; ... -&gt; functor (M : S) -&gt; struct  ... end</code></li>
+  <li>passing anonymous structs to functors Cornell 5.3.2.3</li>
+</ul>
+
+<h4 id="more-modules">More Modules</h4>
+<ul>
+  <li>high-level discussion of witness stuff.</li>
+  <li><code>include</code> - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it</li>
+  <li>Nested modules - in RWOC 4.</li>
+  <li><code>let open List in ..</code> and <code>List.(...map....)</code> syntax</li>
+</ul>
+
+<p>Leftovers for later</p>
+<ul>
+  <li>General first-class modules - RWOC 10.</li>
+  <li><code>Comparable</code> and witnesses</li>
+  <li>Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.</li>
+</ul>
+
+<h4 id="using-core-libraries">Using Core Libraries</h4>
+<p>Do libraries with modules as the <code>Core</code> modules need understanding of functors, abstraction, etc</p>
+
+<ul>
+  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/index.html"><code>Core</code></a>
+    <ul>
+      <li><code>Map</code>, <code>Set</code> (and <code>List.Assoc</code> a bit).  RWOC 13.</li>
+      <li><code>Hashtbl</code>, good example of mutable code.  RWOC 13</li>
+    </ul>
+  </li>
+</ul>
+
 <h3 id="topics-left-to-hit-from-early-part-of-outline">Topics left to hit from early part of outline</h3>
 <ul>
   <li>Type-directed programming would be good - show how type errors lead to fixed code.</li>
@@ -72,9 +107,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h2 id="types">Types</h2>
 <ul>
-  <li>
-    <p>Type-driven development - very important topic to touch on somewhere; fits well with GADTS.</p>
-  </li>
+  <li>Type-driven development - very important topic to touch on somewhere; fits well with GADTS.</li>
   <li>Command line parsing - RWOC ch14</li>
   <li>JSON data - RWOC ch15</li>
 </ul>

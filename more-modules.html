@@ -65,7 +65,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="tangent-ish-ppx_jane-and-deriving">Tangent-ish: <code>ppx_jane</code> and <code>deriving</code></h3>
 
 <ul>
-  <li>We briefly hit on <code>[@@deriving eq]</code> syntax in the <a href="variants.html">Variants lecture</a>, to get an <code>=</code> for free on our type.</li>
+  <li>We briefly hit on <code>[@@deriving eq]</code> syntax in the <a href="variants.html">Variants lecture</a>
+    <ul>
+      <li>append to <code>type</code> declaration to get an <code>equal</code> function for free on our type.</li>
+    </ul>
+  </li>
   <li>Here cover the Jane Street <code>ppx_jane</code> version of <code>[@@deriving ...]</code></li>
   <li>Recall our genome type declaration with added <code>[@@deriving eq]</code> which made an <code>equal_nucleotide</code> function</li>
   <li>For the Jane Street equivalent just say <code>[@@deriving equal]</code> instead of <code>[@@deriving eq]</code></li>
@@ -74,7 +78,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <pre><code class="language-ocaml">(* Needs #require "ppx_jane";; in top loop, and (preprocess (pps (ppx_jane))) in dune file  *)
 # type nucleotide = A | C | G | T [@@deriving equal];;
 type nucleotide = A | C | G | T
-val equal_nucleotide : nucleotide -&gt; nucleotide -&gt; bool = &lt;fun&gt;
+val equal_nucleotide : nucleotide -&gt; nucleotide -&gt; bool = fun
 </code></pre>
 <ul>
   <li>The <code>[@@zibbo...]</code> indicates the type declaration is processed by the macro named <code>ppx_zibbo</code></li>
@@ -90,14 +94,14 @@ val equal_nucleotide : nucleotide -&gt; nucleotide -&gt; bool = &lt;fun&gt;
 ```ocaml
     <h1 id="type-n_list--nucleotide-list-deriving-equal">type n_list = nucleotide list [@@deriving equal];;</h1>
     <p>type n_list = nucleotide list<br />
-val equal_n_list : n_list -&gt; n_list -&gt; bool = <fun></fun></p>
+val equal_n_list : n_list -&gt; n_list -&gt; bool = fun</p>
     <h1 id="equal_n_list-aaa-aga">equal_n_list [A;A;A] [A;G;A];;</h1>
   </li>
   <li>: bool = false
     <h1 id="type-n_queue--nucleotide-queuet-deriving-equal">type n_queue = nucleotide Queue.t [@@deriving equal];;</h1>
     <p>type n_queue = nucleotide Core_kernel.Queue.t<br />
-val equal_n_queue : n_queue -&gt; n_queue -&gt; bool = <fun>
-```</fun></p>
+val equal_n_queue : n_queue -&gt; n_queue -&gt; bool = fun<br />
+```</p>
   </li>
   <li>Notice that the <code>Core</code> libraries are designed to play well as they have <code>List.equal</code>, <code>Queue.equal</code> built in</li>
   <li>Generally for a component type that is the <code>t</code> of a module, the name looked for is <code>My_module.equal</code> instead of <code>t_equal</code></li>
@@ -107,46 +111,48 @@ val equal_n_queue : n_queue -&gt; n_queue -&gt; bool = <fun>
 <h3 id="some-other-useful-deriving-type-accessor-extensions-in-ppx_jane">Some other useful <code>@@deriving</code> type accessor extensions in ppx_jane</h3>
 
 <ul>
-  <li><code>sexp</code> is handy for displaying data internals</li>
-  <li>Unfortunately it puts it in this S expression format and not normal OCaml style syntax</li>
-  <li>But it is not too hard to read S-expressions after a bit of staring<br />
+  <li><code>sexp</code> generates S-expression printable representations of types which is handy for displaying data internals</li>
+  <li>S-expressions are a general data format like JSON or XML, in fact they are the first such format</li>
+  <li>For some reason the <code>Core</code> libraries make heavy use of S-expressions instead of JSON - a mistake really.</li>
+  <li>It is not too hard to read S-expressions after a bit of staring<br />
 ```ocaml
     <h1 id="type-nucleotide--a--c--g--t-deriving-equal-sexp">type nucleotide = A | C | G | T [@@deriving equal, sexp];;</h1>
     <p>type nucleotide = A | C | G | T<br />
-val equal_nucleotide : nucleotide -&gt; nucleotide -&gt; bool = <fun>
-val nucleotide_of_sexp : Sexp.t -&gt; nucleotide = <fun>
-val sexp_of_nucleotide : nucleotide -&gt; Sexp.t = <fun>
- type n_list = nucleotide list [@@deriving equal, sexp];;
-type n_list = nucleotide list
-type n_list = nucleotide list
-val equal_n_list : n_list -&gt; n_list -&gt; bool = <fun>
-val n_list_of_sexp : Sexp.t -&gt; n_list = <fun>
-val sexp_of_n_list : n_list -&gt; Sexp.t = <fun></fun></fun></fun></fun></fun></fun></p>
+val equal_nucleotide : nucleotide -&gt; nucleotide -&gt; bool = fun<br />
+val nucleotide_of_sexp : Sexp.t -&gt; nucleotide = fun<br />
+val sexp_of_nucleotide : nucleotide -&gt; Sexp.t = fun<br />
+ type n_list = nucleotide list [@@deriving equal, sexp];;<br />
+type n_list = nucleotide list<br />
+type n_list = nucleotide list<br />
+val equal_n_list : n_list -&gt; n_list -&gt; bool = fun<br />
+val n_list_of_sexp : Sexp.t -&gt; n_list = fun<br />
+val sexp_of_n_list : n_list -&gt; Sexp.t = fun</p>
     <h1 id="sexp_of_n_list-agg">sexp_of_n_list [A;G;G];;</h1>
   </li>
   <li>: Sexp.t = (A G G) (* this is the “S-Expression” version of a list.. parens and spaces *)<br />
 ```</li>
-  <li><code>[@@deriving compare]</code> is exactly analogous to <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code><br />
+  <li><code>[@@deriving compare]</code> is analogous to <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code><br />
 ```ocaml
     <h1 id="type-nucleotide--a--c--g--t-deriving-compare">type nucleotide = A | C | G | T [@@deriving compare];;</h1>
     <p>type nucleotide = A | C | G | T<br />
-val compare_nucleotide : nucleotide -&gt; nucleotide -&gt; int = <fun></fun></p>
+val compare_nucleotide : nucleotide -&gt; nucleotide -&gt; int = fun</p>
     <h1 id="compare_nucleotide-a-c">compare_nucleotide A C;;</h1>
   </li>
   <li>: int = -1<br />
 utop # compare_nucleotide C A;;</li>
   <li>: int = 1<br />
 ```</li>
-  <li>Lastly for the homework there is a to/from JSON format function you can add to any type</li>
+  <li><code>Core</code> does have some libraries for dealing with JSON as well fortunately.</li>
+  <li>For the homework there is a to/from JSON format function you can add to any type</li>
   <li>this will save wear and tear on your fingers, no need to convert.</li>
 </ul>
 
 <pre><code class="language-ocaml"># #require "ppx_deriving_yojson";; (* see the ppx_deriving_yojson docs linked in HW for `dune` use *)
 # type nucleotide = A | C | G | T [@@deriving yojson];;
 type nucleotide = A | C | G | T
-val nucleotide_to_yojson : nucleotide -&gt; Yojson.Safe.t = &lt;fun&gt;
+val nucleotide_to_yojson : nucleotide -&gt; Yojson.Safe.t = fun
 val nucleotide_of_yojson :
-  Yojson.Safe.t -&gt; nucleotide Ppx_deriving_yojson_runtime.error_or = &lt;fun&gt;
+  Yojson.Safe.t -&gt; nucleotide Ppx_deriving_yojson_runtime.error_or = fun
 </code></pre>
 
 <h2 id="defining-modules-in-the-top-loop">Defining Modules in the top loop</h2>
@@ -158,34 +164,29 @@ val nucleotide_of_yojson :
       <li>generally the file-based method of defining a module we have done thus far is how modules are defined.</li>
     </ul>
   </li>
-  <li>Basic idea to input a module in top-loop: wrap <code>module My_module = struct ... end</code> with file in the <code>...</code></li>
-  <li>Simple set example:</li>
+  <li>Basic idea to input a module in top-loop: write <code>module My_module = struct ... end</code> with file in the `..</li>
+  <li><code>struct</code> stands for structure, modules used to be called that in OCaml; view a struct as = to a module.</li>
+  <li>Modules are by default not expressions, so we normally can’t define with <code>let</code></li>
+  <li>Simple set example put in top-loop syntax:</li>
 </ul>
 
 <pre><code class="language-ocaml"># module Simple_set = struct 
-
 open Core
-
 type 'a t = 'a list
-
 let emptyset : 'a t = []
-
 let add (x : 'a) (s : 'a t) = (x :: s)
-
 let rec remove (x : 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) =
   match s with
   | [] -&gt; failwith "item is not in set"
   | hd :: tl -&gt;
     if equal hd x then tl
     else hd :: remove x tl equal
-
 let rec contains (x: 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) =
   match s with
   | [] -&gt; false
   | hd :: tl -&gt;
     if equal x hd then true else contains x tl equal
-end
-;;
+end;;
 module Simple_set :
   sig
     type 'a t = 'a list
@@ -199,8 +200,9 @@ module Simple_set :
 </code></pre>
 
 <ul>
-  <li>Notice how it infers a module type (aka signature)</li>
-  <li>We can also declare module types and explicitly declare along with the module.</li>
+  <li>Notice how it infers a module type (aka signature – <code>sig</code> at the start is for signature)</li>
+  <li>We can also declare module types and explicitly declare along with the module</li>
+  <li>Use <code>module type Type_name_here = ... type here ...</code> to declare module types:</li>
 </ul>
 
 <pre><code class="language-ocaml">module type Simple_set = (* module and module type namespaces are distinct, can re-use name *)
@@ -222,13 +224,18 @@ module Simple_set :
 <h2 id="nested-modules">Nested modules</h2>
 
 <ul>
-  <li>The real use of the above top-loop syntax is it also lets us define modules within modules</li>
+  <li>OK generally we will use file-defined modules, why this detour into how to define them in top loop?</li>
+  <li>Answer: the real use of the above syntax is it also lets us define <em>modules within modules</em> in files
+    <ul>
+      <li>which is in fact very useful</li>
+    </ul>
+  </li>
   <li>We are using many of those already, e.g. <code>Core.List.map</code> means <code>List</code> is just a module inside <code>Core</code>.</li>
   <li>Modules nest exactly as you would expect, just write a <code>module My_module = struct .. end</code> declaration<br />
- within a module</li>
+ within a (file-based <em>or</em> top-loop-defined) module</li>
   <li>Here is an example
     <ul>
-      <li>(note we will do top-loop version here, could remove top/bottom lines and put in file as well)</li>
+      <li>(note we will do top-loop version here, could remove top/bottom two lines and put in file)</li>
     </ul>
   </li>
 </ul>
@@ -252,7 +259,7 @@ end
   </li>
 </ul>
 
-<p>Simple example: fix the problem of <code>equal</code> function needed for our <code>Simple_set</code> module.</p>
+<p>Simple example: fix the problem of the <code>equal</code> function needed as a parameter to <code>remove</code> and <code>contains</code> on our <code>Simple_set</code> module.</p>
 
 <pre><code class="language-ocaml">module type Eq = sig 
 type t
@@ -262,20 +269,15 @@ end
 module Simple_set_functor (M: Eq) = 
 struct
 open Core
-
 type t = M.t list
-
 let emptyset : t = []
-
 let add (x : M.t) (s : t) = (x :: s)
-
 let rec remove (x : M.t) (s: t) =
   match s with
   | [] -&gt; failwith "item is not in set"
   | hd :: tl -&gt;
     if M.equal hd x then tl
     else hd :: remove x tl
-
 let rec contains (x: M.t) (s: t) =
   match s with
   | [] -&gt; false
@@ -285,42 +287,53 @@ end
 </code></pre>
 
 <ul>
-  <li>more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3</li>
-  <li>Anonymous functors:  <code>module F = functor (M : S) -&gt; ... -&gt; functor (M : S) -&gt; struct  ... end</code></li>
-  <li>passing anonymous structs to functors Cornell 5.3.2.3</li>
+  <li>Notice how the type that was polymorphic, <code>'a</code> in the original <code>Simple_set</code>, is <code>M.t</code> here – we are<br />
+taking the type from the <code>Eq</code> module – that is the type we need, the type over the <code>equal</code> operation.</li>
+  <li>To use the functor, just define a specific module by applying the functor to a module that has a type <code>t</code> and a function <code>equal : t -&gt; t-&gt; bool</code>.</li>
 </ul>
 
-<h3 id="very-basic-first-class-modules">Very Basic First Class Modules</h3>
+<pre><code class="language-ocaml"># module String_set = Simple_set_functor(String);;
+module String_set :
+  sig
+    type t = string list
+    val emptyset : t
+    val add : string -&gt; t -&gt; string list
+    val remove : string -&gt; t -&gt; string list
+    val contains : string -&gt; t -&gt; bool
+  end
+</code></pre>
 
-<h1 id="outline">Outline</h1>
-
-<h2 id="more-modules">More Modules</h2>
-<ul>
-  <li>First-class modules super basics</li>
-  <li>high-level discussion of witness stuff.</li>
-  <li><code>include</code> - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it</li>
-  <li>Nested modules - in RWOC 4.</li>
-  <li><code>let open List in ..</code> and <code>List.(...map....)</code> syntax</li>
-</ul>
-
-<p>Leftovers for later</p>
-<ul>
-  <li>General first-class modules - RWOC 10.</li>
-  <li><code>Comparable</code> and witnesses</li>
-  <li>Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.</li>
-</ul>
-
-<h2 id="using-core-libraries">Using Core Libraries</h2>
-<p>Do libraries with modules as the <code>Core</code> modules need understanding of functors, abstraction, etc</p>
+<h3 id="the-concept-of-first-class-modules">The Concept of “First Class Modules”</h3>
 
 <ul>
-  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/index.html"><code>Core</code></a>
+  <li>“First class X” in a programming language generally means X is usually not a directly-manipulable data object but it becomes one by making it a first class element.</li>
+  <li>Example: in JavaScript message names are first-class, they are just strings.  In Java on the other hand they can’t be dynamically created at run-time</li>
+  <li>OCaml modules are generally “above” the expressions, they can contain expressions <br />
+  but expressions normally don’t contain modules, don’t pass them to or return from functions, etc.</li>
+  <li>The first-class modules extension lets modules to some degree be treated as regular data.</li>
+  <li>Note that you could then use a function in place of a functor sometimes
     <ul>
-      <li><code>Map</code>, <code>Set</code> (and <code>List.Assoc</code> a bit).  RWOC 13.</li>
-      <li><code>Hashtbl</code>, good example of mutable code.  RWOC 13</li>
+      <li>But, first-class modules have some restrictions so use them only when needed</li>
     </ul>
   </li>
+  <li>We are going to make some elementary use of libraries using first-class modules now (e.g. <code>Map</code>, <code>Hashtbl</code>, etc in <code>Core</code>)</li>
 </ul>
+
+<h3 id="example-use-of-coremap">Example use of Core.Map</h3>
+
+<ul>
+  <li>The <code>Core</code> libraries could have used the above functor method to define specific set etc modules at certain types</li>
+  <li>But, to make them easier to use and avoid needing functors they use first-class modules.</li>
+  <li>We will go over the code of <a href="examples/school.ml">school.ml</a>, some simple code that uses a <code>Core.Map</code>.</li>
+</ul>
+
+<h3 id="other-libraries">Other Libraries</h3>
+
+<ul>
+  <li>We will briefly look at <code>Hashtbl</code> (a mutable map), <code>Set</code> (a functional set), <code>Bag</code> (a functional multiset), etc.</li>
+</ul>
+
+<h3 id="include">Include</h3>
       
           </section>
         </div>
