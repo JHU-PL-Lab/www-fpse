@@ -192,7 +192,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A2 Part II Fri</div>
           </td>
         </tr>
         <tr> 
@@ -209,7 +209,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A2 Part II Fri</div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
         <tr> 
