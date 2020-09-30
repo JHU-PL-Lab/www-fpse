@@ -54,8 +54,10 @@ let sort_better_with_map (school : t) =
   IntMap.map school
     ~f:(fun data -> (List.sort data ~compare:(String.compare) ))
 
+(* Students in grade then alphabetic order *)
 let roster school = school |> sort |> IntMap.data |> List.concat
 
-let dump school = school |> IntMap.to_alist (* Auxiliary function to dump data structure *)
+(* Auxiliary function to dump data structure *)
+let dump school = school |> IntMap.to_alist 
 
 let test_school = empty |> add 2 "Ku" |> add 3 "Lu" |> add 9 "Mu" |> add 9 "Pupu"  |> add 9 "Apu"

@@ -470,8 +470,13 @@ module SList :
 module SListMap :
   sig ... end
 </code></pre>
+<p>Simpler way to do above: can inline the module definition, no need to name it</p>
+<pre><code class="language-ocaml"># module SListMap = Map.Make(struct type t = string list [@@deriving compare,sexp] end);;
+module SListMap :
+  sig .. end
+</code></pre>
 <ul>
-  <li>This is a map where the <em>keys</em> are lists of strings</li>
+  <li>The above is a map where the <em>keys</em> are lists of strings</li>
   <li>The above examples show how non-trivial data structures can be map keys</li>
   <li>Here is the opposite, how we can make e.g. a variant with maps in it.</li>
   <li>This assumes the keys are integer pairs, and the values can be any type (<code>'a</code>)</li>
