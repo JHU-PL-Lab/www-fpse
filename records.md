@@ -26,8 +26,14 @@ let rattoint {num = n; denom = d}  =  n / d;;
 Short-cut: pun between variable and field name (understand the above form before punning!!):
 
 ```ocaml
-let rattoint {num; denom}  =  num / denom ;;
+let rat_to_int {num; denom}  =  num / denom ;;
 ```
+
+Another short-cut if you only care about a few fields (very useful for a big record):
+```ocaml
+let get_num {num; _}  =  num;;
+```
+ - This is a special form of pattern, "`; _`" at the *end* of a record means don't-care on all the missing fields.
 
 Can also use dot projections a la C etc, but happy path is usually patterns
 ```ocaml

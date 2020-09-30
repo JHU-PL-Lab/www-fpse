@@ -86,8 +86,15 @@ let q = {num = 53; denom = 6};;
 
 <p>Short-cut: pun between variable and field name (understand the above form before punning!!):</p>
 
-<pre><code class="language-ocaml">let rattoint {num; denom}  =  num / denom ;;
+<pre><code class="language-ocaml">let rat_to_int {num; denom}  =  num / denom ;;
 </code></pre>
+
+<p>Another short-cut if you only care about a few fields (very useful for a big record):</p>
+<pre><code class="language-ocaml">let get_num {num; _}  =  num;;
+</code></pre>
+<ul>
+  <li>This is a special form of pattern, “<code>; _</code>” at the <em>end</em> of a record means don’t-care on all the missing fields.</li>
+</ul>
 
 <p>Can also use dot projections a la C etc, but happy path is usually patterns</p>
 <pre><code class="language-ocaml">let rattoint r  =  r.num / r.denom;;

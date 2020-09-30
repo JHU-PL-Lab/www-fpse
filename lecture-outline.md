@@ -1,9 +1,8 @@
 # Lecture Outline
 
-## Leftover topics from modules
+## Advanced modules
 
 * more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3
-* Anonymous functors:  `module F = functor (M : S) -> ... -> functor (M : S) -> struct  ... end`
 * passing anonymous structs to functors Cornell 5.3.2.3
 
 #### More Modules
@@ -16,6 +15,18 @@ Leftovers for later
 * General first-class modules - RWOC 10.
 * `Comparable` and witnesses
 * Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.
+
+
+#### Tangent-ish: The Concept of "First Class Modules" 
+[ wrote these notes but decided to save til later ]
+* "First class X" in a programming language generally means X is usually not a directly-manipulable data object but it becomes one by making it a first class element.
+* Example: in JavaScript message names are first-class, they are just strings.  In Java on the other hand they can't be dynamically created at run-time
+* OCaml modules are generally "above" the expressions, they can contain expressions 
+    but expressions normally don't contain modules, don't pass them to or return from functions, etc.
+* The first-class modules extension lets modules to some degree be treated as regular data.
+* Note that you could then use a function in place of a functor sometimes
+    - But, first-class modules have some restrictions so use them only when needed
+* We are going to make some elementary use of libraries using first-class modules now (e.g. `Map`, `Hashtbl`, etc in `Core`)
 
 
 #### Using Core Libraries
@@ -160,15 +171,3 @@ See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book
 -   Java lambdas
 - Elm
   
-
-## Top level directives (not sure where to put this, just my own reference for now)
-* `#directory adir` - adds `adir` to the list of directories to search for files.
-* `#pwd` - shows current working directory.
-* `#trace afun` - calls and returns to `afun` will now be dumped to top level - a simple debugging tool.
-* `#use "afile.ml"` - loads code file as if it was copied and pasted into the top loop.
-* `#mod_use` - like `#use` but loads the file like it was a module (name of file as a module name)
-* `#load "blah.cmo"`,`#load "blahlib.cma"` - load a compiled binary or library file.
-* `#show` - shows the type for an entity (variable or module).
-* `#show_type` - expands a type definition (if it has an expansion)
-* `#require` - loads a library (does not `open` it, just loads the module)
-* `#use_output "dune top"` - like the shell `xargs` command - run a command and assume output is top loop input commands.  The particular command `dune top` generates top loop commands to set up libraries and load the current project.

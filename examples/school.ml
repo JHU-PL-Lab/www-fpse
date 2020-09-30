@@ -3,35 +3,54 @@
 
 open Core
 
-let empty = Map.empty(module Int) (* new syntax: first-class module Int *)
+(* The Make functor in the Map module specializes maps to Ints in this case *)
 
-(* Map.t has three type parameters: key type, value type, 
-   and a nonce (witness) for the comparison function used for the key.
-   Here we use key = int, value = string list.*)
+module IntMap = Map.Make(Int)
 
-type t = (int, string list, Int.comparator_witness) Map.t
+(* The Int here is the type of keys of the map; we need to use a functor because we need 
+   an underling compare function for maps to work.  Built-in Core.Int has such. 
+   
+Here in fact is the module type of Make's argument:
+
+module type Key =
+  sig
+    type t
+    val compare : t -> t -> int
+    val t_of_sexp : Sexp.t -> t
+    val sexp_of_t : t -> Sexp.t
+  end
+  
+  So it needs to have the underlying type t (int here), compare, plus to-from s-expression 
+  functions.
+
+  *)
+
+(* We are defining the School module; let us follow convention and name 
+  "its" underlying data type t.  
+  Note that IntMap has one type parameter which is string list for a School *)
+type t = (string list) IntMap.t
 
 (**  Add a student stud in grade grade to school database 
      Map.add_multi assumes values are lists and conses to key's list
      or, creates a new key and singleton list if key not present. **)
-let add grade stud (school : t) =  Map.add_multi school ~key:grade ~data:(stud)
+let add grade stud (school : t) =  IntMap.add_multi school ~key:grade ~data:(stud)
 
 (** 
   Sorting using a fold over the map.
   Folding over a map is like folding over a list but you get both key and value
 **)
 let sort (school : t) = 
-  Map.fold school
-    ~init:empty 
-    ~f:(fun ~key -> fun ~data -> fun scl -> Map.add_exn scl ~key ~data:(List.sort data ~compare:(String.compare) ))
+  IntMap.fold school
+    ~init:IntMap.empty 
+    ~f:(fun ~key -> fun ~data -> fun scl -> IntMap.add_exn scl ~key ~data:(List.sort data ~compare:(String.compare) ))
 
 (** Note that Map.map is a better way; it maps over the values only, keeping key structure intact **)
 let sort_better_with_map (school : t) = 
-  Map.map school
+  IntMap.map school
     ~f:(fun data -> (List.sort data ~compare:(String.compare) ))
 
-let roster school = school |> sort |> Map.data |> List.concat
+let roster school = school |> sort |> IntMap.data |> List.concat
 
-let dump school = school |> Map.to_alist
+let dump school = school |> IntMap.to_alist
 
-let test = empty |> add 2 "Ku" |> add 3 "Lu" |> add 9 "Mu" |> add 9 "Pupu"
+let test = IntMap.empty |> add 2 "Ku" |> add 3 "Lu" |> add 9 "Mu" |> add 9 "Pupu"

@@ -9,7 +9,9 @@
 * For the Jane Street equivalent just say `[@@deriving equal]` instead of `[@@deriving eq]`
 
 ```ocaml
-(* Needs #require "ppx_jane";; in top loop, and (preprocess (pps (ppx_jane))) in dune file  *)
+(* Needs #require "ppx_jane";; in top loop, 
+   and (preprocess (pps (ppx_jane))) in as part of the library declaration *)
+   (i.e. it is (library (name ..)  .. (preprocess ... )) - one of the library decl components)
 # type nucleotide = A | C | G | T [@@deriving equal];;
 type nucleotide = A | C | G | T
 val equal_nucleotide : nucleotide -> nucleotide -> bool = fun
@@ -163,13 +165,17 @@ module Super_simple_core = struct
 end
 ```
 
-### Basic functors
+### Basic Functors
 
 * Functors are simply parametric modules, i.e. functions from modules to modules
 * They let us define a generic code library to which we can plug in some concrete code
     - in other words, just like what higher-order functions do except for modules
+* Like modules they are also "top-level-definable" only in basic OCaml
+  - they are not expressions
 
-Simple example: fix the problem of the `equal` function needed as a parameter to `remove` and `contains` on our `Simple_set` module.
+#### Simple Functors Example
+
+* Lets fix the problem of the `equal` function needed as a parameter to `remove` and `contains` on our `Simple_set` module.
 
 ```ocaml
 module type Eq = sig 
@@ -201,6 +207,36 @@ end
 taking the type from the `Eq` module -- that is the type we need, the type over the `equal` operation. 
 * To use the functor, just define a specific module by applying the functor to a module that has a type `t` and a function `equal : t -> t-> bool`.
 
+* Alternate syntax for functors - anonymous form like with expression's "`function x -> ...`"
+
+```ocaml
+module Simple_set_functor = functor (M : Eq) -> struct  (stuff above ...) end
+```
+* (Can also make higher-order functors: pass and return functors from functors)
+
+#### Types of functors
+
+* Functors also have types, OCaml inferred a type for `Simple_set_functor` but we can also declare it:
+
+```ocaml
+# module type SSF = functor (M : Eq) ->
+    sig
+      type t = M.t list
+      val emptyset : t
+      val add : M.t -> t -> M.t list
+      val remove : M.t -> t -> M.t list
+      val contains : M.t -> t -> bool
+    end;;
+```
+* Observe the type is generally `functor (M : Module_type) -> sig ... end`
+* Notice how the argument module `M` occurs in the result type since it has types in it
+ - Such a type is called a *dependent type*
+
+### Using functors
+
+* Pass a module to a functor to make a module specializing the parameter to what was passed
+* In other words, just like a function but on modules
+
 ```ocaml
 # module String_set = Simple_set_functor(String);;
 module String_set :
@@ -212,26 +248,133 @@ module String_set :
     val contains : string -> t -> bool
   end
 ```
+* Note that we passed in a `String` module where the parameter had the `Eq` module type
+* `String.t` is the underlying type of the string, and `String.equal` exists as an equality operation on strings, so `String` matches the `Eq` module type
+ - (`utop` command `#show_module String` will dump the full module if you want to verify `t` and `equal` are there)
+* Note `String` also has a whole **ton** of other functions, types, etc
+  - but like with subclasses or Java interfaces you match if you have "at least" the stuff needed.
+* Here is one way you can test if a module matches a module type:
 
-### The Concept of "First Class Modules" 
+```ocaml
+# module String2 = (String : Eq);;
+module String2 : Eq
+# module String2 : Eq = String;; (* Equivalent way to write the above *)
+module String2 : Eq
+```
+ - This declares a new module `String2` which is `String` matched against the `Eq` type.
+ - Note that `String2` is restricted to *only* have `t`/`equal` with this declaration (`String` of course keeps everything, no mutuation!)
 
-* "First class X" in a programming language generally means X is usually not a directly-manipulable data object but it becomes one by making it a first class element.
-* Example: in JavaScript message names are first-class, they are just strings.  In Java on the other hand they can't be dynamically created at run-time
-* OCaml modules are generally "above" the expressions, they can contain expressions 
-    but expressions normally don't contain modules, don't pass them to or return from functions, etc.
-* The first-class modules extension lets modules to some degree be treated as regular data.
-* Note that you could then use a function in place of a functor sometimes
-    - But, first-class modules have some restrictions so use them only when needed
-* We are going to make some elementary use of libraries using first-class modules now (e.g. `Map`, `Hashtbl`, etc in `Core`)
+* Here is how we could instantiate the `Simple_set_functor` with our own data type
+
+```ocaml
+# #require "ppx_jane";;
+# module Nucleotide = struct type t = A | C | G | T [@@deriving equal] end;;
+module Nucleotide : sig type t = A | C | G | T val equal : t -> t -> bool end
+# module Nuc_set = Simple_set_functor(Nucleotide);;
+module Nuc_set :
+  sig
+    type t = Nucleotide.t list
+    val emptyset : t
+    val add : Nucleotide.t -> t -> Nucleotide.t list
+    val remove : Nucleotide.t -> t -> Nucleotide.t list
+    val contains : Nucleotide.t -> t -> bool
+  end
+  ```
+
+* Note this requires us to make a module out of our type
+* (also note that we used `[@@deriving equal]` to make the `equal` for free)
+  - (and note it is given the name `Nucleotide.equal` and not `Nucleotide.equal_nucleotide`, since it is in a module and is the type `t` there)
+
+### `Core`'s Set, Map, Hash table, etc
+
+* The `Core` advanced data structures support something similar to what we did above
+  - "plug in the comparison in an initialization phase and then forget about it"
+* Here for example is how you make a map where the key is a built-in type (which has an associated module)
+
+```ocaml
+# module FloatMap = Map.Make(Float);; (* Or Char/Int/String/Bool/etc *)
+module FloatMap :
+  sig ... end
+```
+
+* Note it requires a bit more than just the type and comparison to be in `Float` for this to work
+ - to/from S-expression conversions needed; use `[@@deriving compare, sexp]` on your own type:
+
+```ocaml
+#require "ppx_jane";;
+# module IntPair = struct
+type t = int * int [@@deriving compare, sexp]
+end;;
+module IntPair :
+  sig
+    type t = int * int
+    val compare : t -> t -> int
+    val t_of_sexp : Sexplib0.Sexp.t -> t
+    val sexp_of_t : t -> Sexp.t
+  end
+# module IPMap = Map.Make(IntPair);;
+module IPMap :
+  sig ... end
+# module IPSet = Set.Make(IntPair);;  (* Sets in Core also need compare (sorts internally) *)
+```
+
+Observe that only non-parametric types can be keys for maps:
+
+```ocaml
+# module FloatMap = Map.Make(List);;
+Line 1, characters 27-31:
+Error: Signature mismatch:
+       ...
+       Type declarations do not match:
+         type 'a t = 'a list
+       is not included in
+         type t
+       They have different arities.
+       File "src/map_intf.ml", line 29, characters 2-35: Expected declaration
+       File "src/list.mli", line 12, characters 0-48: Actual declaration
+```
 
 ### Example use of Core.Map
 
-* The `Core` libraries could have used the above functor method to define specific set etc modules at certain types
-* But, to make them easier to use and avoid needing functors they use first-class modules.
-* We will go over the code of [school.ml](examples/school.ml), some simple code that uses a `Core.Map`.
+* Many `Core` libraries support the above functor method to define specific set etc modules at certain types
+* In particular there is a creator-functor in the module called `Make`, so for example `Map.Make` is a functor to make maps.
+* We will go over the code of [school.ml](examples/school.ml), simple code that uses a `Core.Map`.
+* Note that there is a fancier way than `Map.Make` using advanced features we have not covered yet: *first-class modules*.
+  - We will peek at [cool_school.ml](examples/cool_school.ml) which re-writes the `school.ml` example to use first-class modules
+  - The advantage of this code is you don't need to make a new module for every type you use it at
+  - Imagine if for every `List` type we had to make an `IntList`, `StringList` etc module - painful!
+  - (`List` itself avoids this problem by not being comparison-friendly, we had to pass in `compare` to `List.sort` for example)
 
-### Other Libraries
+### Other Data Structures in `Core`
 
-* We will briefly look at `Hashtbl` (a mutable map), `Set` (a functional set), `Bag` (a functional multiset), etc.
+* `Core` has complete implementations of many classic data structures
+* Be sure to be careful on imperative vs functional, it is not well-documented or consistently-named
+* Functional data structures in `Core`:
+  - `Set`, `Map`, `Bag` (a multi-set), `Doubly_linked` (list), `Fqueue`, `Fdeque` (functional (double-ended) queue)
+* Imperative data structures:
+  - `Stack` and `Queue` as we previously discussed (which don't need `compare`), plus `Hash_queue`, `Hash_set`, `Hashtbl` (mutable hashed queue/set/map),  `Linked_queue`
 
-### Include
+
+### Tangent:  Summary of Important Directives for `utop`
+* `show_val` - shows the type of a value
+* `#show_type` - expands a type definition (if it has an expansion)
+* `#show_module` - shows all the elements inside a particular module *or functor*
+* `#show_module_type` - as previous but for module types
+* `#show` - the above four condensed into one command
+* `#require` - loads a library (does not `open` it, just loads the module)
+* `#use "afile.ml"` - loads code file as if it was copied and pasted into the top loop.
+* `#mod_use` - like `#use` but loads the file like it was a module (name of file as a module name)
+* `#load "blah.cmo"`, `#load "blahlib.cma"` - load a compiled binary or library file.
+* `#use_output "dune top"` - run a command and assume output is top loop input commands.  
+  - The particular argument `dune top` here generates top loop commands to load the current project.
+  - If `dune utop` is not working this is very similar but less glitchy.
+* `#directory adir` - adds `adir` to the list of directories to search for files.
+* `#pwd` - shows current working directory.
+* `#cd` - changes directory for loads etc.
+* `#trace afun` - subsequent calls and returns to `afun` will now be dumped to top level - a simple debugging tool.
+* `#help` - in case you forget one of the above
+
+Also, standard edit/search keys work in `utop`:
+* control-R searches for a previous input with a certin string in it
+* control-P / control-N go up and down to edit, control-A is start of line, control-E is end
+* up/down arrow go to previous/next inputs

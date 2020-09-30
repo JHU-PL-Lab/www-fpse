@@ -62,11 +62,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h1 id="lecture-outline">Lecture Outline</h1>
 
-<h2 id="leftover-topics-from-modules">Leftover topics from modules</h2>
+<h2 id="advanced-modules">Advanced modules</h2>
 
 <ul>
   <li>more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3</li>
-  <li>Anonymous functors:  <code>module F = functor (M : S) -&gt; ... -&gt; functor (M : S) -&gt; struct  ... end</code></li>
   <li>passing anonymous structs to functors Cornell 5.3.2.3</li>
 </ul>
 
@@ -83,6 +82,22 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>General first-class modules - RWOC 10.</li>
   <li><code>Comparable</code> and witnesses</li>
   <li>Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.</li>
+</ul>
+
+<h4 id="tangent-ish-the-concept-of-first-class-modules">Tangent-ish: The Concept of “First Class Modules”</h4>
+<p>[ wrote these notes but decided to save til later ]</p>
+<ul>
+  <li>“First class X” in a programming language generally means X is usually not a directly-manipulable data object but it becomes one by making it a first class element.</li>
+  <li>Example: in JavaScript message names are first-class, they are just strings.  In Java on the other hand they can’t be dynamically created at run-time</li>
+  <li>OCaml modules are generally “above” the expressions, they can contain expressions <br />
+  but expressions normally don’t contain modules, don’t pass them to or return from functions, etc.</li>
+  <li>The first-class modules extension lets modules to some degree be treated as regular data.</li>
+  <li>Note that you could then use a function in place of a functor sometimes
+    <ul>
+      <li>But, first-class modules have some restrictions so use them only when needed</li>
+    </ul>
+  </li>
+  <li>We are going to make some elementary use of libraries using first-class modules now (e.g. <code>Map</code>, <code>Hashtbl</code>, etc in <code>Core</code>)</li>
 </ul>
 
 <h4 id="using-core-libraries">Using Core Libraries</h4>
@@ -277,19 +292,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Elm</li>
 </ul>
 
-<h2 id="top-level-directives-not-sure-where-to-put-this-just-my-own-reference-for-now">Top level directives (not sure where to put this, just my own reference for now)</h2>
-<ul>
-  <li><code>#directory adir</code> - adds <code>adir</code> to the list of directories to search for files.</li>
-  <li><code>#pwd</code> - shows current working directory.</li>
-  <li><code>#trace afun</code> - calls and returns to <code>afun</code> will now be dumped to top level - a simple debugging tool.</li>
-  <li><code>#use "afile.ml"</code> - loads code file as if it was copied and pasted into the top loop.</li>
-  <li><code>#mod_use</code> - like <code>#use</code> but loads the file like it was a module (name of file as a module name)</li>
-  <li><code>#load "blah.cmo"</code>,<code>#load "blahlib.cma"</code> - load a compiled binary or library file.</li>
-  <li><code>#show</code> - shows the type for an entity (variable or module).</li>
-  <li><code>#show_type</code> - expands a type definition (if it has an expansion)</li>
-  <li><code>#require</code> - loads a library (does not <code>open</code> it, just loads the module)</li>
-  <li><code>#use_output "dune top"</code> - like the shell <code>xargs</code> command - run a command and assume output is top loop input commands.  The particular command <code>dune top</code> generates top loop commands to set up libraries and load the current project.</li>
-</ul>
       
           </section>
         </div>
