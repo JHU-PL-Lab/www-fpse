@@ -434,6 +434,9 @@ module IntPair :
 module IPMap :
   sig ... end
 # module IPSet = Set.Make(IntPair);;  (* Sets in Core also need compare (sorts internally) *)
+...
+# IPSet.(empty |&gt; Fn.flip add (1,2) |&gt; Fn.flip add (3,2) |&gt; Fn.flip add (3,2) |&gt; to_list);;
+- : IntPair.t list = [(1, 2); (3, 2)]
 </code></pre>
 
 <p>Observe that only non-parametric types can be keys for maps:</p>
@@ -451,11 +454,37 @@ Error: Signature mismatch:
        File "src/list.mli", line 12, characters 0-48: Actual declaration
 </code></pre>
 
-<h3 id="example-use-of-coremap">Example use of Core.Map</h3>
-
 <ul>
-  <li>Many <code>Core</code> libraries support the above functor method to define specific set etc modules at certain types</li>
-  <li>In particular there is a creator-functor in the module called <code>Make</code>, so for example <code>Map.Make</code> is a functor to make maps.</li>
+  <li>Mildly annoying solution: explictly make a module for the list type you care about:</li>
+</ul>
+
+<pre><code class="language-ocaml"># module SList = struct type t = string list [@@deriving compare,sexp] end;;
+module SList :
+  sig
+    type t = string list
+    val compare : t -&gt; t -&gt; int
+    val t_of_sexp : Sexp.t -&gt; t
+    val sexp_of_t : t -&gt; Sexp.t
+  end
+# module SListMap = Map.Make(SList);;
+module SListMap :
+  sig ... end
+</code></pre>
+<ul>
+  <li>This is a map where the <em>keys</em> are lists of strings</li>
+  <li>The above examples show how non-trivial data structures can be map keys</li>
+  <li>Here is the opposite, how we can make e.g. a variant with maps in it.</li>
+  <li>This assumes the keys are integer pairs, and the values can be any type (<code>'a</code>)</li>
+</ul>
+
+<pre><code class="language-ocaml"># type 'a intpairmaptree = Leaf | Node of ('a IPMap.t) * 'a intpairmaptree * 'a intpairmaptree;; 
+type 'a intpairmaptree =
+    Leaf
+  | Node of 'a IPMap.t * 'a intpairmaptree * 'a intpairmaptree
+</code></pre>
+
+<h3 id="larger-example-using-coremap">Larger Example Using Core.Map</h3>
+<ul>
   <li>We will go over the code of <a href="examples/school.ml">school.ml</a>, simple code that uses a <code>Core.Map</code>.</li>
   <li>Note that there is a fancier way than <code>Map.Make</code> using advanced features we have not covered yet: <em>first-class modules</em>.
     <ul>
@@ -470,8 +499,8 @@ Error: Signature mismatch:
 <h3 id="other-data-structures-in-core">Other Data Structures in <code>Core</code></h3>
 
 <ul>
-  <li><code>Core</code> has complete implementations of many classic data structures</li>
-  <li>Be sure to be careful on imperative vs functional, it is not well-documented or consistently-named</li>
+  <li><code>Core</code> has complete implementations of many classic data structures, many of which are built similarly with functor like <code>Map.Make</code></li>
+  <li>Be careful on imperative vs functional, difference is not well-documented or consistently-named</li>
   <li>Functional data structures in <code>Core</code>:
     <ul>
       <li><code>Set</code>, <code>Map</code>, <code>Bag</code> (a multi-set), <code>Doubly_linked</code> (list), <code>Fqueue</code>, <code>Fdeque</code> (functional (double-ended) queue)</li>
@@ -479,7 +508,7 @@ Error: Signature mismatch:
   </li>
   <li>Imperative data structures:
     <ul>
-      <li><code>Stack</code> and <code>Queue</code> as we previously discussed (which don’t need <code>compare</code>), plus <code>Hash_queue</code>, <code>Hash_set</code>, <code>Hashtbl</code> (mutable hashed queue/set/map),  <code>Linked_queue</code></li>
+      <li><code>Stack</code> and <code>Queue</code> as we previously discussed (which don’t need <code>Make</code>/<code>compare</code>), plus <code>Hash_queue</code>, <code>Hash_set</code>, <code>Hashtbl</code> (mutable hashed queue/set/map),  <code>Linked_queue</code></li>
     </ul>
   </li>
 </ul>
@@ -511,7 +540,7 @@ Error: Signature mismatch:
 <p>Also, standard edit/search keys work in <code>utop</code>:</p>
 <ul>
   <li>control-R searches for a previous input with a certin string in it</li>
-  <li>control-P / control-N go up and down to edit, control-A is start of line, control-E is end</li>
+  <li>control-P / control-N go up and down to edit, control-A is start of line, control-E is end, control-D deletes current</li>
   <li>up/down arrow go to previous/next inputs</li>
 </ul>
       

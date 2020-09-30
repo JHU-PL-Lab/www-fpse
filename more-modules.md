@@ -316,6 +316,9 @@ module IntPair :
 module IPMap :
   sig ... end
 # module IPSet = Set.Make(IntPair);;  (* Sets in Core also need compare (sorts internally) *)
+...
+# IPSet.(empty |> Fn.flip add (1,2) |> Fn.flip add (3,2) |> Fn.flip add (3,2) |> to_list);;
+- : IntPair.t list = [(1, 2); (3, 2)]
 ```
 
 Observe that only non-parametric types can be keys for maps:
@@ -334,10 +337,34 @@ Error: Signature mismatch:
        File "src/list.mli", line 12, characters 0-48: Actual declaration
 ```
 
-### Example use of Core.Map
+* Mildly annoying solution: explictly make a module for the list type you care about:
 
-* Many `Core` libraries support the above functor method to define specific set etc modules at certain types
-* In particular there is a creator-functor in the module called `Make`, so for example `Map.Make` is a functor to make maps.
+```ocaml
+# module SList = struct type t = string list [@@deriving compare,sexp] end;;
+module SList :
+  sig
+    type t = string list
+    val compare : t -> t -> int
+    val t_of_sexp : Sexp.t -> t
+    val sexp_of_t : t -> Sexp.t
+  end
+# module SListMap = Map.Make(SList);;
+module SListMap :
+  sig ... end
+```
+* This is a map where the *keys* are lists of strings
+* The above examples show how non-trivial data structures can be map keys
+* Here is the opposite, how we can make e.g. a variant with maps in it.
+* This assumes the keys are integer pairs, and the values can be any type (`'a`)
+
+```ocaml
+# type 'a intpairmaptree = Leaf | Node of ('a IPMap.t) * 'a intpairmaptree * 'a intpairmaptree;; 
+type 'a intpairmaptree =
+    Leaf
+  | Node of 'a IPMap.t * 'a intpairmaptree * 'a intpairmaptree
+```
+
+### Larger Example Using Core.Map
 * We will go over the code of [school.ml](examples/school.ml), simple code that uses a `Core.Map`.
 * Note that there is a fancier way than `Map.Make` using advanced features we have not covered yet: *first-class modules*.
   - We will peek at [cool_school.ml](examples/cool_school.ml) which re-writes the `school.ml` example to use first-class modules
@@ -347,13 +374,12 @@ Error: Signature mismatch:
 
 ### Other Data Structures in `Core`
 
-* `Core` has complete implementations of many classic data structures
-* Be sure to be careful on imperative vs functional, it is not well-documented or consistently-named
+* `Core` has complete implementations of many classic data structures, many of which are built similarly with functor like `Map.Make`
+* Be careful on imperative vs functional, difference is not well-documented or consistently-named
 * Functional data structures in `Core`:
   - `Set`, `Map`, `Bag` (a multi-set), `Doubly_linked` (list), `Fqueue`, `Fdeque` (functional (double-ended) queue)
 * Imperative data structures:
-  - `Stack` and `Queue` as we previously discussed (which don't need `compare`), plus `Hash_queue`, `Hash_set`, `Hashtbl` (mutable hashed queue/set/map),  `Linked_queue`
-
+  - `Stack` and `Queue` as we previously discussed (which don't need `Make`/`compare`), plus `Hash_queue`, `Hash_set`, `Hashtbl` (mutable hashed queue/set/map),  `Linked_queue`
 
 ### Tangent:  Summary of Important Directives for `utop`
 * `show_val` - shows the type of a value
@@ -376,5 +402,5 @@ Error: Signature mismatch:
 
 Also, standard edit/search keys work in `utop`:
 * control-R searches for a previous input with a certin string in it
-* control-P / control-N go up and down to edit, control-A is start of line, control-E is end
+* control-P / control-N go up and down to edit, control-A is start of line, control-E is end, control-D deletes current
 * up/down arrow go to previous/next inputs
