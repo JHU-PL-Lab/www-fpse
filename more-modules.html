@@ -322,8 +322,8 @@ taking the type from the <code>Eq</code> module – that is the type we need, th
     sig
       type t = M.t list
       val emptyset : t
-      val add : M.t -&gt; t -&gt; M.t list
-      val remove : M.t -&gt; t -&gt; M.t list
+      val add : M.t -&gt; t -&gt; t
+      val remove : M.t -&gt; t -&gt; t
       val contains : M.t -&gt; t -&gt; bool
     end;;
 </code></pre>
@@ -500,6 +500,92 @@ type 'a intpairmaptree =
     </ul>
   </li>
 </ul>
+
+<h3 id="a-few-other-module-features-include-and-with">A few other module features: <code>include</code> and <code>with</code></h3>
+
+<h4 id="include"><code>include</code></h4>
+
+<ul>
+  <li><code>include</code> is pretty straightforward, it “copies/pastes” one module or module type’s definitions inside a new definition.
+    <pre><code class="language-ocaml"># module Sized_set = struct 
+include Simple_set 
+let size (s : 'a t) = List.length s
+end
+</code></pre>
+    <p>will make a new module <code>Sized_set</code> which is the same as <code>Simple_set</code> but with an added <code>size</code> function.</p>
+  </li>
+</ul>
+
+<p>Similarly module types (and also functors) can use <code>include</code></p>
+
+<pre><code class="language-ocaml">module type Size_set =
+  sig
+    include Simple_set
+    val size : 'a t -&gt; int
+  end
+</code></pre>
+
+<h4 id="with"><code>with</code></h4>
+
+<ul>
+  <li><code>with</code> is needed when you have a module type with an abstract <code>type</code> in it (so values in the type will be <code>&lt;abstr&gt;</code> to outsiders)</li>
+  <li>
+    <p><strong>but</strong> you need to see the concrete type.</p>
+  </li>
+  <li>Example: here is a type of modules which contain pairs (a non-useful but small example)</li>
+  <li>Note we want this to be generic over any type of pair so we let <code>l</code> and <code>r</code> be undefined</li>
+  <li>But, the downside is we are going to also make them <code>&lt;abstr&gt;</code> by doing this which is not always what we want…
+    <pre><code class="language-ocaml">module type Pair_hidden = 
+sig
+  type l
+  type r
+  val left : (l * r) -&gt; l
+  val right : (l * r) -&gt; r
+end;;
+</code></pre>
+    <p>OK lets make a concrete example of the above on <code>int</code> and <code>string</code></p>
+    <pre><code class="language-ocaml">module Pair = struct 
+ type l = int
+ type r = string
+ let left ((l:l), (r:r)) = l
+ let right ((l:l), (r:r)) = r
+end;;
+</code></pre>
+    <p>Now the problem is if we put the above signature on the module, we hid too much!</p>
+    <pre><code class="language-ocaml"># module Matched_pair = (Pair : Pair_hidden);;
+module Matched_pair : Pair_hidden
+# Matched_pair.left (4,"hi");;
+Line 1, characters 19-20:
+Error: This expression has type int but an expression was expected of type
+       Matched_pair.l
+</code></pre>
+  </li>
+</ul>
+
+<p>The solution is you can instantiate abstract types in module types by <code>with</code>:</p>
+
+<pre><code class="language-ocaml"># module Matched_pair = (Pair : Pair_hidden with type l = int with type r = string);;
+module Matched_pair :
+  sig
+    type l = int
+    type r = string
+    val left : l * r -&gt; l
+    val right : l * r -&gt; r
+  end
+# Matched_pair.left (4,"hi");;
+- : int = 4
+</code></pre>
+<p>Usually <code>with</code> is inlined like above, but it is just defining a new module type:</p>
+
+<pre><code class="language-ocaml"># module type Pair_unhidden = Pair_hidden with type l = int with type r = string;;
+module type Pair_unhidden =
+  sig
+    type l = int
+    type r = string
+    val left : l * r -&gt; l
+    val right : l * r -&gt; r
+  end
+</code></pre>
 
 <h3 id="other-data-structures-in-core">Other Data Structures in <code>Core</code></h3>
 

@@ -223,8 +223,8 @@ module Simple_set_functor = functor (M : Eq) -> struct  (stuff above ...) end
     sig
       type t = M.t list
       val emptyset : t
-      val add : M.t -> t -> M.t list
-      val remove : M.t -> t -> M.t list
+      val add : M.t -> t -> t
+      val remove : M.t -> t -> t
       val contains : M.t -> t -> bool
     end;;
 ```
@@ -377,6 +377,93 @@ type 'a intpairmaptree =
   - The advantage of this code is you don't need to make a new module for every type you use it at
   - Imagine if for every `List` type we had to make an `IntList`, `StringList` etc module - painful!
   - (`List` itself avoids this problem by not being comparison-friendly, we had to pass in `compare` to `List.sort` for example)
+
+
+### A few other module features: `include` and `with`
+
+#### `include`
+
+* `include` is pretty straightforward, it "copies/pastes" one module or module type's definitions inside a new definition.
+```ocaml
+# module Sized_set = struct 
+  include Simple_set 
+  let size (s : 'a t) = List.length s
+end
+```
+ will make a new module `Sized_set` which is the same as `Simple_set` but with an added `size` function.
+
+ Similarly module types (and also functors) can use `include`
+
+```ocaml
+module type Size_set =
+  sig
+    include Simple_set
+    val size : 'a t -> int
+  end
+```
+
+#### `with`
+
+* `with` is needed when you have a module type with an abstract `type` in it (so values in the type will be `<abstr>` to outsiders) 
+ - **but** you need to see the concrete type.
+
+* Example: here is a type of modules which contain pairs (a non-useful but small example)
+* Note we want this to be generic over any type of pair so we let `l` and `r` be undefined
+* But, the downside is we are going to also make them `<abstr>` by doing this which is not always what we want...
+```ocaml
+module type Pair_hidden = 
+  sig
+    type l
+    type r
+    val left : (l * r) -> l
+    val right : (l * r) -> r
+  end;;
+```
+OK lets make a concrete example of the above on `int` and `string`
+```ocaml
+module Pair = struct 
+ type l = int
+ type r = string
+ let left ((l:l), (r:r)) = l
+ let right ((l:l), (r:r)) = r
+end;;
+```
+Now the problem is if we put the above signature on the module, we hid too much!
+```ocaml
+# module Matched_pair = (Pair : Pair_hidden);;
+module Matched_pair : Pair_hidden
+# Matched_pair.left (4,"hi");;
+Line 1, characters 19-20:
+Error: This expression has type int but an expression was expected of type
+         Matched_pair.l
+```
+
+The solution is you can instantiate abstract types in module types by `with`:
+
+```ocaml
+# module Matched_pair = (Pair : Pair_hidden with type l = int with type r = string);;
+module Matched_pair :
+  sig
+    type l = int
+    type r = string
+    val left : l * r -> l
+    val right : l * r -> r
+  end
+# Matched_pair.left (4,"hi");;
+- : int = 4
+```
+Usually `with` is inlined like above, but it is just defining a new module type:
+
+```ocaml
+# module type Pair_unhidden = Pair_hidden with type l = int with type r = string;;
+module type Pair_unhidden =
+  sig
+    type l = int
+    type r = string
+    val left : l * r -> l
+    val right : l * r -> r
+  end
+```
 
 ### Other Data Structures in `Core`
 

@@ -1,0 +1,345 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="specification">Specification</h2>
+
+<ul>
+  <li>
+    <p>Let us step back from syntax and look at the bigger picture</p>
+  </li>
+  <li>Specification: <em>what</em> the program should do</li>
+  <li>Implementation: <em>how</em> it does it</li>
+</ul>
+
+<h3 id="why-specify">Why specify?</h3>
+
+<ul>
+  <li>You have to have at least some idea what your goal is before you start coding</li>
+  <li>The more clear that goal is, the better chance you will make it</li>
+</ul>
+
+<h3 id="degrees-of-specification">Degrees of specification</h3>
+
+<ul>
+  <li>Requirements and Design documents: high-level informal descriptions of what the app should do
+    <ul>
+      <li>This is the classic form of specification in software engineering; far from code</li>
+    </ul>
+  </li>
+  <li>Types, e.g. writing an <code>.mli</code> file before implementing the code
+    <ul>
+      <li>Much more precise than the previous in terms of code/spec relationship, but limited expressiveness</li>
+    </ul>
+  </li>
+  <li>Tests
+    <ul>
+      <li>a test suite constitutes a specification on a finite window of behavior</li>
+      <li>Can be very accurate on the cases listed, but could be woefully incomplete</li>
+    </ul>
+  </li>
+  <li>Full logical assertions
+    <ul>
+      <li>e.g. <em>precondition</em> on a function that tree parameter is a binary tree (left values &lt; right values)</li>
+      <li>e.g. <em>postcondition</em> that <code>List.sort</code> always returns a sorted list</li>
+      <li>e.g. <em>invariants</em> on data structures such as a <code>Set</code> implementation which uses an underlying always-sorted list.</li>
+      <li>More general than tests, but not necessarily verified</li>
+    </ul>
+  </li>
+  <li>Verified assertions aka formal methods
+    <ul>
+      <li>after making the above logical assertions, <em>verify</em> the code meets the assertions</li>
+      <li>now this is mostly research, but becoming more mainstream</li>
+    </ul>
+  </li>
+</ul>
+
+<p>### Type-directed programming</p>
+
+<p>Fact: types outline the “shape” of the code you need to write and so serve as a “structural” spec.</p>
+
+<ul>
+  <li>You have been doing type-directed programming, perhaps getting very annoyed whilst</li>
+  <li>With time the annoyance turns to thanks (we promise!)</li>
+  <li>Principle is: just to write code matching declared (or even inferred) type will get you well on the way to an implementation
+    <ul>
+      <li>type errors point to code errors to be fixed</li>
+      <li>when the last type error drops, the code will often directly work</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Review example: not bubbling up <code>option</code> or other wrapped results properly</p>
+
+<pre><code class="language-ocaml"># let zadd l1 l2 = let l = List.zip l1 l2 in List.map ~f:(fun (x,y) -&gt; x+y) l;;
+Line 1, characters 74-75:
+Error: This expression has type ('a * 'b) list List.Or_unequal_lengths.t
+       but an expression was expected of type 'c list
+</code></pre>
+<ul>
+  <li>To solve this type error you will need to <code>match</code> on the result</li>
+</ul>
+
+<p>Review example: with partial parameters applied, remainder types hint at what is needed.</p>
+
+<pre><code class="language-ocaml">let l = [[3;3]; [4;4]; 22;17] in
+List.map l;;
+- : f:(int list -&gt; '_weak1) -&gt; '_weak1 list = &lt;fun&gt;
+</code></pre>
+<ul>
+  <li>The type shows that <code>f</code> needs to be a function taking an <code>int list</code> as argument.</li>
+</ul>
+
+<p>Review example: the type in an <code>.mli</code> file can direct your implementation, e.g. <code>map</code> on <code>dict</code> example from HW2</p>
+<pre><code class="language-ocaml">val map : ('a -&gt; 'b) -&gt; 'a dict -&gt; 'b dict
+</code></pre>
+<ul>
+  <li>Q: “how can I get a dict of <code>'b</code>’s built from a dict of <code>'a</code>’s here</li>
+  <li>A: “Use the function from <code>'a</code> to <code>'b</code> on elements of <code>'a dict</code>.</li>
+</ul>
+
+<p>Extension example: add a new field to a record or a new variant case, chase the type errors to patch</p>
+
+<pre><code class="language-ocaml">type party = Dem | Rep
+type voter = { name : string; party: party }
+let count_parties (l : voter list) =
+  List.fold l ~init: (0,0) 
+    ~f:(fun (cd,cr) -&gt; fun {party; _} -&gt; 
+     match party with 
+     | Dem -&gt; (cd+1, cr)
+     | Rep -&gt; (cd, cr+1) );;
+</code></pre>
+
+<p>Adding a <code>Gre</code> for green party:</p>
+
+<pre><code class="language-ocaml">type party = Dem | Rep | Gre
+type voter = { name : string; party: party }
+let count_parties (l : voter list) =
+  List.fold l ~init: (0,0) 
+    ~f:(fun (cd,cr) -&gt; fun {party; _} -&gt; 
+     match party with 
+     | Dem -&gt; (cd+1, cr)
+     | Rep -&gt; (cd, cr+1) );;
+Lines 6-8, characters 5-24:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+Gre
+type party = Dem | Rep | Gre
+type voter = { name : string; party : party; }
+val count_parties : voter list -&gt; int * int = &lt;fun&gt;
+</code></pre>
+
+<ul>
+  <li>Shows a new <code>match</code> case is needed; in process of adding new case it will become clear a triple is also needed</li>
+  <li>This example also shows why non-exhaustive pattern matches are bad: errors often lurk</li>
+</ul>
+
+<h3 id="preconditions-and-postconditions">Preconditions and Postconditions</h3>
+
+<ul>
+  <li>Types are fine for high-level structural information, but cannot express deeper properties.
+    <ul>
+      <li>“a function only takes non-negative input”</li>
+      <li>“a function returns a sorted list”</li>
+      <li>etc</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Let us consider some preconditions, postconditions, and invariants on the <code>Simple_set</code>:</p>
+
+<pre><code class="language-ocaml">module Simple_set_functor (M: Eq) = 
+struct
+open Core
+type t = M.t list
+let emptyset : t = []
+let add (x : M.t) (s : t) = (x :: s)
+let rec remove (x : M.t) (s: t) =
+  match s with
+  | [] -&gt; failwith "item is not in set"
+  | hd :: tl -&gt;
+    if M.equal hd x then tl
+    else hd :: remove x tl
+let rec contains (x: M.t) (s: t) =
+  match s with
+  | [] -&gt; false
+  | hd :: tl -&gt;
+    if M.equal x hd then true else contains x tl
+end
+</code></pre>
+
+<ul>
+  <li>Precondition on <code>remove</code>: <code>s</code> is not empty (it would always fail otherwise)</li>
+  <li>Stronger precondition: <code>contains x s</code> must hold</li>
+  <li>Postcondition on <code>remove</code> for it returning set <code>s'</code>?  <code>not(contains x s')</code> - ??
+    <ul>
+      <li>No, this set data structure could be a multiset</li>
+      <li>If we had this postcondition on our spec we would know our implementation failed</li>
+    </ul>
+  </li>
+  <li>Postcondition on <code>add x s</code>: for the resulting set <code>s'</code>, <code>contains x s'</code> is true</li>
+</ul>
+
+<h4 id="assertions">Assertions</h4>
+
+<ul>
+  <li><code>assert</code> can be placed in code to directly verify properties</li>
+  <li>Example new version of <code>add</code> above:
+    <pre><code class="language-ocaml">let add (x : M.t) (s : t) = 
+let s' = (x :: s) in assert (contains x s')
+</code></pre>
+  </li>
+  <li>Good for development mode, but not after deployment (slows things down)</li>
+</ul>
+
+<h3 id="data-structure-invariants">Data structure invariants</h3>
+
+<ul>
+  <li>It is often the case that there are additional restrictions on values allowed in a data structure type</li>
+  <li>Example from <code>dict</code> on homework: <code>is_ordered</code> must hold for the binary tree.</li>
+  <li>Such data structure invariants should be made clear in the code documentation</li>
+</ul>
+
+<h3 id="specification-and-abstraction">Specification and Abstraction</h3>
+
+<ul>
+  <li>The better a module is specified the less the users need to know about the underlying implementration</li>
+  <li>The built-in <code>Core.Map</code> etc types are examples where the users need to know nothing about the implementation</li>
+  <li>But they are a bit idealistic as “everyone knows” what an e.g. Map should do</li>
+  <li>Still, on your own libraries you can often abstract details behind a rich spec
+    <ul>
+      <li>and it will make it a lot easier for users, they can just think about the spec view.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="formal-verification">Formal Verification</h3>
+
+<ul>
+  <li>We are not going to focus on this topic as it is not a part of mainstream software engineering (yet)</li>
+  <li>But it is getting there and will become more and more common through your careers</li>
+  <li>A simple view of what it is is the preconditions/postconditions/invariants/<code>asserts</code> above will be <strong>verified</strong> to always hold by a computer program.
+    <ul>
+      <li>like how a compiler verifies the type information but on a much grander scale.</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="testing">Testing</h2>
+
+<ul>
+  <li>Testing wears two very different but both very useful hats:
+    <ol>
+      <li>Implementation-based: find bugs in code, for example when you change code make sure you didn’t break it.</li>
+      <li>Specification-based: use tests to define and refine what the code should do</li>
+    </ol>
+  </li>
+  <li>When testing, wear both hats!!
+    <ul>
+      <li>Writing tests before fully coding the answer makes the tests serve as your “coding spec”</li>
+      <li>Adding tests for corner cases will flesh out the spec</li>
+      <li>Adding tests covering past bugs will make sure they are caught quickly next time</li>
+    </ul>
+  </li>
+  <li>Another way this is phrased: black-box (spec) and glass-box (code-based) testing</li>
+  <li>Black-box tests are those written against the spec</li>
+  <li>Glass-box tests are in the context of bugs in the code and other code properties</li>
+</ul>
+
+<h3 id="testing-and-coverage">Testing and coverage</h3>
+
+<ul>
+  <li>Code coverage is a great <em>glass-box</em> (impl-based) metric of how good your test suite is</li>
+  <li>The simple idea of coverage: are there lines of your code that never get exercised by any of your tests?</li>
+  <li>Coverage tools let you easily check this.</li>
+</ul>
+
+<h3 id="bisect-for-ocaml-code-coverage">Bisect for OCaml code coverage</h3>
+
+<ul>
+  <li>The <code>bisect_ppx</code> preprocessor can decorate your code with one hit-bit per line
+    <ul>
+      <li>it can then show which lines are “hit” upon running your test suite</li>
+    </ul>
+  </li>
+  <li>Add <code>(preprocess (pps bisect_ppx))</code> to library or executable declaration in <code>dune</code> to decorate</li>
+  <li>The do a <code>dune test</code> which will generate the low-level hit-lines data in a file.</li>
+  <li>Shell command <code>bisect-ppx-report html</code> then generates a pretty report showing which lines hit
+    <ul>
+      <li>open <code>_coverage/index.html</code> in your browser to see the report</li>
+    </ul>
+  </li>
+  <li>See <a href="https://github.com/aantron/bisect_ppx">Bisect docs</a> for more details</li>
+</ul>
+
+<p>We will check how well my tests of the simple set example covered the code using Bisect</p>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>

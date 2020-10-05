@@ -33,7 +33,7 @@ type t = (string list) IntMap.t
 
 (* The empty school *)
 
-let empty = IntMap.empty
+let empty : t = IntMap.empty
 
 (**  Add a student stud in grade grade to school database 
      Map.add_multi assumes values are lists and conses to key's list

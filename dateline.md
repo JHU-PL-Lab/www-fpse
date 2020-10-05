@@ -186,13 +186,13 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body"><a href="more-modules.html">More Modules</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A2 Part II Fri</div>
+            <div align="center" class="body">A2 Part II Sun</div>
           </td>
         </tr>
         <tr> 
@@ -203,7 +203,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body"><a href="specification-test.html">Specification and Testing</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

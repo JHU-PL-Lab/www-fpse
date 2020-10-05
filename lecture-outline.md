@@ -3,15 +3,10 @@
 ## Advanced modules
 
 * more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3
-* passing anonymous structs to functors Cornell 5.3.2.3
 
 #### More Modules
 - high-level discussion of witness stuff.
 * `include` - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it
-* Nested modules - in RWOC 4.
-* `let open List in ..` and `List.(...map....)` syntax
-
-Leftovers for later
 * General first-class modules - RWOC 10.
 * `Comparable` and witnesses
 * Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.
