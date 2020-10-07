@@ -74,14 +74,13 @@ Here are all the tools we will be using.  You are required to have a build for w
 * [`ocamldoc`](http://caml.inria.fr/pub/docs/manual-ocaml/ocamldoc.html) is the documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.
 * [`dune`](https://dune.build) is the build tool (think `make`) that we will be using.  `ocamlbuild` is the standard build tool but it is not very flexible so we will not be using it.
 * [OUnit](https://github.com/gildor478/ounit) is the unit tester for OCaml.  The opam package is called `ounit2` for obscure reasons.
-* [`ppx_deriving`](https://github.com/ocaml-ppx/ppx_deriving) adds boilerplate code to type declarations including pretty printing (`ppx_deriving.show`) and comparison (`ppx_deriving.eq`,`ppx_deriving.ord`).
+* [`ppx_jane`](https://github.com/janestreet/ppx_jane) adds boilerplate functions to type definitions as well as many other macros.  Unfortuantely it is not documented, but `[@@deriving equal, compare, sexp]` for example will add equal and compare on a type, and to/from s-expression convertor functions.
 
 The above tools will be our "bread and butter", we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.
 
-* [Base_quickcheck](https://opensource.janestreet.com/base_quickcheck/) is a fuzz tester / automated test generator for OCaml, designed to work well with the `Base` library.
-* [`bisect_ppx`](https://github.com/aantron/bisect_ppx) will be used for code coverage.
+* [Bisect](https://github.com/aantron/bisect_ppx) will be used for code coverage.
+* [QCheck](https://github.com/c-cube/qcheck) is a fuzz tester / automated test generator for OCaml.
 * [Async](https://opensource.janestreet.com/async/) is a non-preempting asychronous threads library.
-* We may also use `ppx_jane` which has functionality related to `ppx_deriving` and more.
 
 
 ### Development Environments for OCaml

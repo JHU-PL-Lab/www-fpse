@@ -512,8 +512,9 @@ include Simple_set
 let size (s : 'a t) = List.length s
 end
 </code></pre>
-    <p>will make a new module <code>Sized_set</code> which is the same as <code>Simple_set</code> but with an added <code>size</code> function.</p>
   </li>
+  <li>This will make a new module <code>Sized_set</code> which is the same as <code>Simple_set</code> but with an added <code>size</code> function.</li>
+  <li>Observe how <code>'a t</code> works to refer to a type in <code>Simple_set</code>, just like we had pasted all that stuff in.</li>
 </ul>
 
 <p>Similarly module types (and also functors) can use <code>include</code></p>

@@ -24,22 +24,14 @@
 * We are going to make some elementary use of libraries using first-class modules now (e.g. `Map`, `Hashtbl`, etc in `Core`)
 
 
-#### Using Core Libraries
-Do libraries with modules as the `Core` modules need understanding of functors, abstraction, etc
-
-* [`Core`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/index.html)
-    - `Map`, `Set` (and `List.Assoc` a bit).  RWOC 13.
-    - `Hashtbl`, good example of mutable code.  RWOC 13
 
 
 ### Topics left to hit from early part of outline
-* Type-directed programming would be good - show how type errors lead to fixed code.
 * Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.  see RWOC prefix and infix operators.
 * `begin`/`end` to replace parens
 * Advanced patterns - `p when e`, `'a' .. 'z'`, `as x`, or `|` patterns in let...  Cornell 3.1.7
 
-## Types
-* Type-driven development - very important topic to touch on somewhere; fits well with GADTS.
+
 * Command line parsing - RWOC ch14
 * JSON data - RWOC ch15
 

@@ -390,7 +390,8 @@ type 'a intpairmaptree =
   let size (s : 'a t) = List.length s
 end
 ```
- will make a new module `Sized_set` which is the same as `Simple_set` but with an added `size` function.
+ * This will make a new module `Sized_set` which is the same as `Simple_set` but with an added `size` function.
+ * Observe how `'a t` works to refer to a type in `Simple_set`, just like we had pasted all that stuff in.
 
  Similarly module types (and also functors) can use `include`
 
