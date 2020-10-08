@@ -223,7 +223,7 @@ Lecture material and assigments are under the indicated links.
             <div align="left" class="body"><a href="specification-test.html">Specification and Testing</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A3</div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -260,7 +260,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A3 P I Fri</div>
           </td>
         </tr>
         <tr> 
@@ -294,7 +294,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A3 P2</div>
           </td>
         </tr>
         <tr> 
