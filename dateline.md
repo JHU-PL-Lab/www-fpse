@@ -220,7 +220,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body"><a href="specification-test.html">Specification and Testing</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
