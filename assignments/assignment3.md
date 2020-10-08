@@ -13,12 +13,11 @@ As usual we will give two due dates for the two parts.
 ### The file structure
 
 * [Use the this zip file](assignment3.zip) for your assignment.  Download and unzip it in a fresh directory/folder that you made (we will suppose you are putting it in a directory `assignment3` in the below).  
-* Like assignment 1-2, we are giving you a skeleton to fill in.  Your Part I answers will go in the file  `.../assignment3/src/abstraction.ml` and Part II will be in `.../assignment3/test/`.
-* We have made initial `dune` files which generally should work but you can add additional libraries if needed.
+* Like assignment 1-2, we are giving you a skeleton to fill in.  Your Part I answers will go in the file  `.../assignment3/src/abstraction.ml` and Part II will mostly be in `.../assignment3/test/`.
 
 ### Part II
 * Your primary task in Part II is to write your own test suite which has good coverage of the code you wrote for part I.
-* You will also need to incorporate the Bisect tool into your dune file yourself, and use its output to improve the coverage of your test suite.
+* You will also need to incorporate the Bisect tool into your dune build file, and use its output to improve the coverage of your test suite.
 * Lastly we would like you to write some specifications for various functions as per the lecture, which we now list.
 
 #### Specifications to write
@@ -28,7 +27,7 @@ As usual we will give two due dates for the two parts.
  3. Write a recursion/loop/fold invariant for your `mode` function of exercise 5.
  4. For Exercise 6b, write a data structure invariant on your `Hashtbl`
 
-For each of the above, add your specifications as comments to your existing code.
+For each of the above, add your specifications as comments to your existing code.  You don't need to add any `assert`s.  But do try to make your assertions precise.
 
 ### Resources
 Here are a few resources to keep in mind to help with this assignment.

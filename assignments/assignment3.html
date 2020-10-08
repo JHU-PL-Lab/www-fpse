@@ -75,14 +75,13 @@ the Bisect code coverage tool which will verify you have good coverage with your
 
 <ul>
   <li><a href="assignment3.zip">Use the this zip file</a> for your assignment.  Download and unzip it in a fresh directory/folder that you made (we will suppose you are putting it in a directory <code>assignment3</code> in the below).</li>
-  <li>Like assignment 1-2, we are giving you a skeleton to fill in.  Your Part I answers will go in the file  <code>.../assignment3/src/abstraction.ml</code> and Part II will be in <code>.../assignment3/test/</code>.</li>
-  <li>We have made initial <code>dune</code> files which generally should work but you can add additional libraries if needed.</li>
+  <li>Like assignment 1-2, we are giving you a skeleton to fill in.  Your Part I answers will go in the file  <code>.../assignment3/src/abstraction.ml</code> and Part II will mostly be in <code>.../assignment3/test/</code>.</li>
 </ul>
 
 <h3 id="part-ii">Part II</h3>
 <ul>
   <li>Your primary task in Part II is to write your own test suite which has good coverage of the code you wrote for part I.</li>
-  <li>You will also need to incorporate the Bisect tool into your dune file yourself, and use its output to improve the coverage of your test suite.</li>
+  <li>You will also need to incorporate the Bisect tool into your dune build file, and use its output to improve the coverage of your test suite.</li>
   <li>Lastly we would like you to write some specifications for various functions as per the lecture, which we now list.</li>
 </ul>
 
@@ -95,7 +94,7 @@ the Bisect code coverage tool which will verify you have good coverage with your
   <li>For Exercise 6b, write a data structure invariant on your <code>Hashtbl</code></li>
 </ol>
 
-<p>For each of the above, add your specifications as comments to your existing code.</p>
+<p>For each of the above, add your specifications as comments to your existing code.  You don’t need to add any <code>assert</code>s.  But do try to make your assertions precise.</p>
 
 <h3 id="resources">Resources</h3>
 <p>Here are a few resources to keep in mind to help with this assignment.</p>

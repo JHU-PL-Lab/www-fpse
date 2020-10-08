@@ -409,8 +409,7 @@ let () = run_test_tt_main tests
 <ul>
   <li>The above <code>tests.ml</code> file is just defining an executable, like <code>cloc.ml/exe</code> on HW2</li>
   <li>Build and run the executable to run the tests</li>
-  <li><code>dune test</code> is just a shorthand for building the tests</li>
-  <li>Here is the dune build file for the simple set for example:</li>
+  <li>Here is the dune build file for the simple set tests for example:</li>
 </ul>
 
 <pre><code class="language-scheme">(executable
@@ -421,7 +420,6 @@ let () = run_test_tt_main tests
   ))
 
 ; dune rule so command line "dune runtest" (and "dune test") will run tests.
-; Note you may not need this, dune often has good default behavior
 (rule
  (alias runtest)
  (action (chdir %{project_root}
@@ -430,7 +428,16 @@ let () = run_test_tt_main tests
 
 <ul>
   <li>The alias rule also runs the tests after building them</li>
+  <li>There in fact is a shorthand for the above in dune: replace <code>executable</code> with <code>test</code> and it makes an executable with the above alias to run tests:</li>
 </ul>
+
+<pre><code class="language-scheme">(test
+  (name tests)
+  (libraries
+    ounit2
+    simple_set
+  ))
+</code></pre>
 
 <h3 id="tangent-defining-infix-operators">Tangent: defining infix operators</h3>
 
