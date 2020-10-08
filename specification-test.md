@@ -262,8 +262,7 @@ let () = run_test_tt_main tests
 #### How the tests run
 * The above `tests.ml` file is just defining an executable, like `cloc.ml/exe` on HW2
 * Build and run the executable to run the tests
-* `dune test` is just a shorthand for building the tests
-* Here is the dune build file for the simple set for example:
+* Here is the dune build file for the simple set tests for example:
 
 ```scheme
 (executable
@@ -274,7 +273,6 @@ let () = run_test_tt_main tests
   ))
 
 ; dune rule so command line "dune runtest" (and "dune test") will run tests.
-; Note you may not need this, dune often has good default behavior
 (rule
  (alias runtest)
  (action (chdir %{project_root}
@@ -282,6 +280,16 @@ let () = run_test_tt_main tests
 ```
 
 - The alias rule also runs the tests after building them
+* There in fact is a shorthand for the above in dune: replace `executable` with `test` and it makes an executable with the above alias to run tests:
+
+```scheme
+(test
+  (name tests)
+  (libraries
+    ounit2
+    simple_set
+  ))
+  ```
 
 ### Tangent: defining infix operators
 
