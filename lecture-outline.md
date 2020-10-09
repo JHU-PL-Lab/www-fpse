@@ -1,49 +1,14 @@
 # Lecture Outline
 
-## Advanced modules
-
-* more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3
-
-#### More Modules
-- high-level discussion of witness stuff.
-* `include` - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it
-* General first-class modules - RWOC 10.
-* `Comparable` and witnesses
-* Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.
-
-
-#### Tangent-ish: The Concept of "First Class Modules" 
-[ wrote these notes but decided to save til later ]
-* "First class X" in a programming language generally means X is usually not a directly-manipulable data object but it becomes one by making it a first class element.
-* Example: in JavaScript message names are first-class, they are just strings.  In Java on the other hand they can't be dynamically created at run-time
-* OCaml modules are generally "above" the expressions, they can contain expressions 
-    but expressions normally don't contain modules, don't pass them to or return from functions, etc.
-* The first-class modules extension lets modules to some degree be treated as regular data.
-* Note that you could then use a function in place of a functor sometimes
-    - But, first-class modules have some restrictions so use them only when needed
-* We are going to make some elementary use of libraries using first-class modules now (e.g. `Map`, `Hashtbl`, etc in `Core`)
-
-
-
-
-### Topics left to hit from early part of outline
-* Operators as functions and making your own infix syntax - `let (^^) x y = x * y` kind of thing.  see RWOC prefix and infix operators.
+## Smaller topics left to hit
 * `begin`/`end` to replace parens
 * Advanced patterns - `p when e`, `'a' .. 'z'`, `as x`, or `|` patterns in let...  Cornell 3.1.7
+* `ocamldoc`comments, Cornell 2.3.7
+* Memoization - RWOC Imperative chapter, Cornell 12.4
+* `QCheck` - really more of a 1-day topic, not that small.
 
 
-* Command line parsing - RWOC ch14
-* JSON data - RWOC ch15
-
-
-### I/O and Stdio
-* Basic printing
-* `Stdio`
-    - Channels, etc
-
-## Build/Package/Test in Ocaml
-
-### Dune
+## Dune
 * Tree nature of dune files
 * Defining libraries with `library`
 * Defining executables with `executable`
@@ -53,12 +18,6 @@
 * Merlin with dune - basics on configuring to parse libraries used properly, etc.  Cornell 3.1.3.4
 * Command line: `dune build`, `dune runtest`, `dune exec`
 * Backtracing on error in dune: use `Base`, backtraces turned on by default then.
-
-### Basic Documentation and Testing 
-* Principles of testing
-    - black box and glass box testing.  Cornell Ch7
-* `ocamldoc`comments, Cornell 2.3.7
-* `OUnit` unit testing library Cornell 3.1.3
 
 ## Idiomatic Functional Programming
 * A major theme of the course
@@ -83,32 +42,34 @@
 * The expression problem and functional vs OO trade-off.
 
 
-## Specification
-
-* Specifying properties of programs
-    - Type-directed programming: start out by writing types & module signatures as a skeleton
-        - Types are a high-level spec on behavior; getting out type errors is progress!
-    - `assert` for more fine-grained properties not expressible with types
-    - Referential transparency
-    - Abstract interfaces: white box vs gray box vs black box (&lt;abst&gt;).  
-        - Black box can be bad - like closed-source code.  Really need a read-only notion, you can see the structure if needed.  Too hard now to figure out what is under the hood.
-
-* Invariants
-    - Types as (basic) invariants, with an automatic always-running static checker
-    - Data structure Invariants - Cornell Representation Invariants, Ch6
-    - recursive function invariants
-    - representation invariants
-
-## Orphan Topics
+### More Libraries
+* Command line parsing - RWOC ch14
+* JSON data - RWOC ch15
+* `Stdio`
+    - Channels, etc
 * Streams and laziness - Cornell 12.1
-* Memoization - RWOC Imperative chapter, Cornell 12.4
  
 
+## Advanced Modules
+* more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3
+* General first-class modules - RWOC 10.
+* `Comparable` and witnesses in `Core`
+* Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.
+
+#### First Class Modules
+[ wrote these notes but decided to save til later ]
+* "First class X" in a programming language generally means X is usually not a directly-manipulable data object but it becomes one by making it a first class element.
+* Example: in JavaScript message names are first-class, they are just strings.  In Java on the other hand they can't be dynamically created at run-time
+* OCaml modules are generally "above" the expressions, they can contain expressions 
+    but expressions normally don't contain modules, don't pass them to or return from functions, etc.
+* The first-class modules extension lets modules to some degree be treated as regular data.
+* Note that you could then use a function in place of a functor sometimes
+    - But, first-class modules have some restrictions so use them only when needed
+* We are going to make some elementary use of libraries using first-class modules now (e.g. `Map`, `Hashtbl`, etc in `Core`)
 
 
 ## Advanced Types
 
-* Weak polymorphism (covered)
 * Covariant types `+'a t = ...` - declares contents are not mutable so can be fully polymorphic not weakly.  RWOC weak polymorphism section.
 * GADTS - see PLII lecture notes.    Make sure to discuss with type-driven development
 * New Jane street extensions: [higher-kinded types](https://github.com/janestreet/higher_kinded/) and [accessors](https://github.com/janestreet/accessor) which are like Haskell lenses.
@@ -120,6 +81,7 @@ See [draft RWOC chapter](https://github.com/realworldocaml/book/tree/master/book
 * Along with `OUnit` may also want to do `ppx_inline_tests` or whatever it is called.  RWOC using it.. Only problem is it is not working with 4.10 and utop.
 * `Bisect` for code coverage. Cornell 7.4
 * Property-based testing aka randomized testing aka fuzz testing, `QCheck`.  Cornell 7.7-7.9
+
 
  
 ## Monads and monad-likes

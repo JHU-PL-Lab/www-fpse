@@ -62,61 +62,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h1 id="lecture-outline">Lecture Outline</h1>
 
-<h2 id="advanced-modules">Advanced modules</h2>
-
+<h2 id="smaller-topics-left-to-hit">Smaller topics left to hit</h2>
 <ul>
-  <li>more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3</li>
-</ul>
-
-<h4 id="more-modules">More Modules</h4>
-<ul>
-  <li>high-level discussion of witness stuff.</li>
-  <li><code>include</code> - Cornell 5.3.1; 5.3.1.2; subtlety of abstr with it</li>
-  <li>General first-class modules - RWOC 10.</li>
-  <li><code>Comparable</code> and witnesses</li>
-  <li>Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.</li>
-</ul>
-
-<h4 id="tangent-ish-the-concept-of-first-class-modules">Tangent-ish: The Concept of “First Class Modules”</h4>
-<p>[ wrote these notes but decided to save til later ]</p>
-<ul>
-  <li>“First class X” in a programming language generally means X is usually not a directly-manipulable data object but it becomes one by making it a first class element.</li>
-  <li>Example: in JavaScript message names are first-class, they are just strings.  In Java on the other hand they can’t be dynamically created at run-time</li>
-  <li>OCaml modules are generally “above” the expressions, they can contain expressions <br />
-  but expressions normally don’t contain modules, don’t pass them to or return from functions, etc.</li>
-  <li>The first-class modules extension lets modules to some degree be treated as regular data.</li>
-  <li>Note that you could then use a function in place of a functor sometimes
-    <ul>
-      <li>But, first-class modules have some restrictions so use them only when needed</li>
-    </ul>
-  </li>
-  <li>We are going to make some elementary use of libraries using first-class modules now (e.g. <code>Map</code>, <code>Hashtbl</code>, etc in <code>Core</code>)</li>
-</ul>
-
-<h3 id="topics-left-to-hit-from-early-part-of-outline">Topics left to hit from early part of outline</h3>
-<ul>
-  <li>Operators as functions and making your own infix syntax - <code>let (^^) x y = x * y</code> kind of thing.  see RWOC prefix and infix operators.</li>
   <li><code>begin</code>/<code>end</code> to replace parens</li>
-  <li>
-    <p>Advanced patterns - <code>p when e</code>, <code>'a' .. 'z'</code>, <code>as x</code>, or <code>|</code> patterns in let…  Cornell 3.1.7</p>
-  </li>
-  <li>Command line parsing - RWOC ch14</li>
-  <li>JSON data - RWOC ch15</li>
+  <li>Advanced patterns - <code>p when e</code>, <code>'a' .. 'z'</code>, <code>as x</code>, or <code>|</code> patterns in let…  Cornell 3.1.7</li>
+  <li><code>ocamldoc</code>comments, Cornell 2.3.7</li>
+  <li>Memoization - RWOC Imperative chapter, Cornell 12.4</li>
+  <li><code>QCheck</code> - really more of a 1-day topic, not that small.</li>
 </ul>
 
-<h3 id="io-and-stdio">I/O and Stdio</h3>
-<ul>
-  <li>Basic printing</li>
-  <li><code>Stdio</code>
-    <ul>
-      <li>Channels, etc</li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="buildpackagetest-in-ocaml">Build/Package/Test in Ocaml</h2>
-
-<h3 id="dune">Dune</h3>
+<h2 id="dune">Dune</h2>
 <ul>
   <li>Tree nature of dune files</li>
   <li>Defining libraries with <code>library</code></li>
@@ -127,17 +82,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Merlin with dune - basics on configuring to parse libraries used properly, etc.  Cornell 3.1.3.4</li>
   <li>Command line: <code>dune build</code>, <code>dune runtest</code>, <code>dune exec</code></li>
   <li>Backtracing on error in dune: use <code>Base</code>, backtraces turned on by default then.</li>
-</ul>
-
-<h3 id="basic-documentation-and-testing">Basic Documentation and Testing</h3>
-<ul>
-  <li>Principles of testing
-    <ul>
-      <li>black box and glass box testing.  Cornell Ch7</li>
-    </ul>
-  </li>
-  <li><code>ocamldoc</code>comments, Cornell 2.3.7</li>
-  <li><code>OUnit</code> unit testing library Cornell 3.1.3</li>
 </ul>
 
 <h2 id="idiomatic-functional-programming">Idiomatic Functional Programming</h2>
@@ -170,45 +114,45 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The expression problem and functional vs OO trade-off.</li>
 </ul>
 
-<h2 id="specification">Specification</h2>
-
+<h3 id="more-libraries">More Libraries</h3>
 <ul>
-  <li>Specifying properties of programs
+  <li>Command line parsing - RWOC ch14</li>
+  <li>JSON data - RWOC ch15</li>
+  <li><code>Stdio</code>
     <ul>
-      <li>Type-directed programming: start out by writing types &amp; module signatures as a skeleton
-        <ul>
-          <li>Types are a high-level spec on behavior; getting out type errors is progress!</li>
-        </ul>
-      </li>
-      <li><code>assert</code> for more fine-grained properties not expressible with types</li>
-      <li>Referential transparency</li>
-      <li>Abstract interfaces: white box vs gray box vs black box (&lt;abst&gt;).
-        <ul>
-          <li>Black box can be bad - like closed-source code.  Really need a read-only notion, you can see the structure if needed.  Too hard now to figure out what is under the hood.</li>
-        </ul>
-      </li>
+      <li>Channels, etc</li>
     </ul>
   </li>
-  <li>Invariants
-    <ul>
-      <li>Types as (basic) invariants, with an automatic always-running static checker</li>
-      <li>Data structure Invariants - Cornell Representation Invariants, Ch6</li>
-      <li>recursive function invariants</li>
-      <li>representation invariants</li>
-    </ul>
-  </li>
+  <li>Streams and laziness - Cornell 12.1</li>
 </ul>
 
-<h2 id="orphan-topics">Orphan Topics</h2>
+<h2 id="advanced-modules">Advanced Modules</h2>
 <ul>
-  <li>Streams and laziness - Cornell 12.1</li>
-  <li>Memoization - RWOC Imperative chapter, Cornell 12.4</li>
+  <li>more examples of functors being useful. libraries, etc. Cornell 5.3.2.2, .3</li>
+  <li>General first-class modules - RWOC 10.</li>
+  <li><code>Comparable</code> and witnesses in <code>Core</code></li>
+  <li>Type sharing constraints and destructive substitution to deal with too-hidden types.  RWOC Functors chapter.</li>
+</ul>
+
+<h4 id="first-class-modules">First Class Modules</h4>
+<p>[ wrote these notes but decided to save til later ]</p>
+<ul>
+  <li>“First class X” in a programming language generally means X is usually not a directly-manipulable data object but it becomes one by making it a first class element.</li>
+  <li>Example: in JavaScript message names are first-class, they are just strings.  In Java on the other hand they can’t be dynamically created at run-time</li>
+  <li>OCaml modules are generally “above” the expressions, they can contain expressions <br />
+  but expressions normally don’t contain modules, don’t pass them to or return from functions, etc.</li>
+  <li>The first-class modules extension lets modules to some degree be treated as regular data.</li>
+  <li>Note that you could then use a function in place of a functor sometimes
+    <ul>
+      <li>But, first-class modules have some restrictions so use them only when needed</li>
+    </ul>
+  </li>
+  <li>We are going to make some elementary use of libraries using first-class modules now (e.g. <code>Map</code>, <code>Hashtbl</code>, etc in <code>Core</code>)</li>
 </ul>
 
 <h2 id="advanced-types">Advanced Types</h2>
 
 <ul>
-  <li>Weak polymorphism (covered)</li>
   <li>Covariant types <code>+'a t = ...</code> - declares contents are not mutable so can be fully polymorphic not weakly.  RWOC weak polymorphism section.</li>
   <li>GADTS - see PLII lecture notes.    Make sure to discuss with type-driven development</li>
   <li>New Jane street extensions: <a href="https://github.com/janestreet/higher_kinded/">higher-kinded types</a> and <a href="https://github.com/janestreet/accessor">accessors</a> which are like Haskell lenses.</li>
