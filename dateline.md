@@ -237,7 +237,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body"><a href="idiomatic-fp.html">Idiomatic Functional Programming</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

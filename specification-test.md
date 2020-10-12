@@ -225,7 +225,7 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun x a -> if f x then x::a else 
 * **Unit testing**: what you have mainly done -- test the small pieces of the app
 * **Acceptance testing**: test the bigger pieces.  
   - For example testing your `cloc.exe` on a certain fixed directory tree.
-* **Random testing** aka fuzz aka monkey testing aka quickcheck: test on randomly generated inputs in some distribution
+* **Random testing** aka fuzz testing aka monkey testing aka property-based testing aka quickcheck: test on randomly generated inputs in some distribution
 
 ### Testing and coverage
 

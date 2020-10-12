@@ -84,36 +84,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Backtracing on error in dune: use <code>Base</code>, backtraces turned on by default then.</li>
 </ul>
 
-<h2 id="idiomatic-functional-programming">Idiomatic Functional Programming</h2>
-<ul>
-  <li>A major theme of the course</li>
-  <li>design patterns (OO) = idioms (FP)</li>
-  <li>Contrasting OO with functional - state machine vs pipeline of data (data-oriented design). Look into doing this earlier in the class.</li>
-  <li>Refactoring also applies to FP.
-    <ul>
-      <li>pull out duplicate code as its own function parameter, or inline if gratuitous</li>
-      <li>Divide one function into two if it is doing two different things</li>
-      <li>Make code more parametric (or less if not needed)</li>
-      <li>Rename</li>
-      <li>Lift or hide (demote) functions/variables</li>
-      <li>Inline definition or converse - inline let definitions if simple, make more if too complex</li>
-      <li>Move around reponsibilties, make more modular by putting fewer things in public interface</li>
-      <li>Type refactoring - remove unneeded things, generalize (make polymorphic or GADT)</li>
-      <li>Module refactoring - pull out code into a new module, move a function from one module to another.</li>
-      <li>Combinize: replace recursion with maps and folds</li>
-      <li>Use more pattern matching</li>
-      <li>[A list of smells and principles also would be good, many of the above are DRY or “compression-driven development” issues.]</li>
-    </ul>
-  </li>
-  <li>Type-aided extension: add a type to a variant, then clean up on the type error messages.
-    <ul>
-      <li>Applies to many other contexts as well: make a change, chase type errors.  Type errors gone =&gt; code works.</li>
-    </ul>
-  </li>
-  <li>Go through some imperative to functional code refactorings</li>
-  <li>The expression problem and functional vs OO trade-off.</li>
-</ul>
-
 <h3 id="more-libraries">More Libraries</h3>
 <ul>
   <li>Command line parsing - RWOC ch14</li>

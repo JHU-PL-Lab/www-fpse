@@ -19,29 +19,6 @@
 * Command line: `dune build`, `dune runtest`, `dune exec`
 * Backtracing on error in dune: use `Base`, backtraces turned on by default then.
 
-## Idiomatic Functional Programming
-* A major theme of the course
-* design patterns (OO) = idioms (FP)
-* Contrasting OO with functional - state machine vs pipeline of data (data-oriented design). Look into doing this earlier in the class.
-* Refactoring also applies to FP.
-    - pull out duplicate code as its own function parameter, or inline if gratuitous
-    - Divide one function into two if it is doing two different things
-    - Make code more parametric (or less if not needed)
-    - Rename
-    - Lift or hide (demote) functions/variables
-    - Inline definition or converse - inline let definitions if simple, make more if too complex
-    - Move around reponsibilties, make more modular by putting fewer things in public interface
-    - Type refactoring - remove unneeded things, generalize (make polymorphic or GADT)
-    - Module refactoring - pull out code into a new module, move a function from one module to another.
-    - Combinize: replace recursion with maps and folds
-    - Use more pattern matching
-    - [A list of smells and principles also would be good, many of the above are DRY or "compression-driven development" issues.]
-* Type-aided extension: add a type to a variant, then clean up on the type error messages.
-    - Applies to many other contexts as well: make a change, chase type errors.  Type errors gone => code works.
-* Go through some imperative to functional code refactorings
-* The expression problem and functional vs OO trade-off.
-
-
 ### More Libraries
 * Command line parsing - RWOC ch14
 * JSON data - RWOC ch15

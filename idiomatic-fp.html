@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    
+<h2 id="idiomatic-functional-programming">Idiomatic Functional Programming</h2>
+
+<ul>
+  <li>A major theme of the course</li>
+  <li>design principles, design patterns, refactoring (OO) = principles &amp; idioms (FP)</li>
+  <li><strong>Principles</strong>: overarching principles; <strong>Idioms</strong>: more focused ideas to aid in achieving principles</li>
+</ul>
+
+<h3 id="fp-principles">FP Principles</h3>
+
+<ol>
+  <li>“Concise is nice”
+    <ul>
+      <li>Goal of making code as short as possible</li>
+      <li>From the classic Strunk and White English writing guide:
+        <blockquote>
+          <p>A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts (<strong>and, code should have no unnecessary constructs</strong>).</p>
+        </blockquote>
+      </li>
+      <li>Concise code means on a larger program more will fit in your brain’s working set</li>
+      <li>This focus on concision mirrors mathematicians who are obsessed with this in their writing</li>
+    </ul>
+    <ul>
+      <li>Perhaps in an unhealthy way sometimes</li>
+    </ul>
+  </li>
+  <li>Avoid side effects; it will help you achieve 1.
+    <ul>
+      <li>Conversely, use side effects instead of standing on your head to make something functional</li>
+      <li>Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on</li>
+      <li>Get your head into pipeline mode when writing functional code</li>
+      <li>If the pipeline metaphor is failing, add state</li>
+    </ul>
+    <ul>
+      <li>And if you are a beginning FPer, try three more times to get the pipeline view going</li>
+    </ul>
+  </li>
+  <li>Modularity / focus of responsibility
+    <ul>
+      <li>Make clear, strong divisions of responsibility between different modules and functions</li>
+      <li>Attempt to make this factoring of responsibilities the most elegant which will aid in theme 1. above.</li>
+      <li>(This is also a theme of OO design, a similar principle applies there)</li>
+    </ul>
+  </li>
+  <li>Speed schmeed (much of the time)
+    <ul>
+      <li>There is always a trade-off in programming between efficiency and elegance</li>
+      <li>Prioritize concision and modularity over running time and space</li>
+      <li><strong>unless</strong> speed matters (the point is, it often does not)</li>
+    </ul>
+    <ul>
+      <li>If speed was so important, Python and JavaScript would not exist; they are ~5-10 times slower.</li>
+      <li>Do generally avoid high polynomial or exponential algorithms</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="fp-idioms">FP Idioms</h3>
+
+<p>Here is a list of idioms, many of which are review as we touched on them before</p>
+
+<h4 id="dont-repeat-yourself-dry-from-oo">Don’t Repeat Yourself (DRY from OO):</h4>
+<ul>
+  <li>Extract duplicate code into its own function</li>
+  <li>Code usually won’t be exact duplicate; extract different bits as function parameters</li>
+  <li>May also entail replacing specific types with generic types <code>'a</code> or functor parameter types <code>t</code>, <code>elt</code> etc</li>
+</ul>
+
+<h4 id="hide-it-behind-an-interface">Hide it behind an interface</h4>
+<ul>
+  <li>If a function is an auxiliary function to another function, define it in the body of the latter.</li>
+  <li>If a function is not local to a single function but is not used outside its module, leave it out of the module type which will hide it to module users</li>
+  <li>Make a new module for a new data type, include operations on the type (only) in it
+    <ul>
+      <li>This is not just for generic data structures lke <code>Map</code>/<code>Set</code>, it is for app-specific data structures</li>
+    </ul>
+  </li>
+  <li>Hide types <code>t</code> in module types if users don’t need to see the details
+    <ul>
+      <li>But, open it up if needed for e.g. testing</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="have-a-focus-of-responsibility">Have a focus of responsibility</h4>
+<ul>
+  <li>Divide one function into two if it is doing two different things</li>
+  <li>A module should have a very clear focus of responsibility
+    <ul>
+      <li>Don’t add random stuff to module if it doesn’t fir with it’s big picture</li>
+      <li>If you need more in an existing module, make a new one and <code>include</code> the old one
+        <ul>
+          <li>Don’t just put the new additional functions in some random user-module</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="concision">Concision</h4>
+<ul>
+  <li><strong>Combinize</strong>: replace recursion with <code>map</code>s, <code>fold</code>s and the like
+    <ul>
+      <li>and, for your own data structures write your own combinators and then use in place of <code>rec</code></li>
+    </ul>
+  </li>
+  <li>Use advanced pattern matching (<code>as</code>, <code>with</code>, deep patterns, partial record patterns, <code>_</code>, etc)</li>
+  <li>Use <code>|&gt;</code> in place of call sequences, use <code>@@</code> in place of parentheses</li>
+  <li>Inline simple <code>let</code> definitions to make code read as a concise sentence
+    <ul>
+      <li>Also a small function called only once or twice may read better inlined</li>
+      <li>Conversely, make more <code>let</code> definitions if the code is too convoluted</li>
+    </ul>
+  </li>
+  <li>Avoid <code>long_variable_names_containing_too_much_detail</code>
+    <ul>
+      <li>Conversely, don’t use <code>temp1</code> etc unless code is highly local</li>
+      <li>Variables tend to have more local scope in FP compared to OO, shorter is better in FP</li>
+      <li></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="examples-of-idiomatic-fp">Examples of Idiomatic FP</h3>
+<ul>
+  <li>
+    <p>We already have seen many, we will do a couple more now</p>
+  </li>
+  <li>Go through some imperative to functional code refactorings</li>
+  <li>The expression problem and functional vs OO trade-off.</li>
+</ul>
+
+<h2 id="efficiency">Efficiency</h2>
+<ul>
+  <li>fold l vs r, tail calls</li>
+  <li>
+    <p>Imperative vs functional: Map vs Hashmap, Set vs Hashset</p>
+  </li>
+  <li>Contrasting OO with functional - state machine vs pipeline of data (data-oriented design).</li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>

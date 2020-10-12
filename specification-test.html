@@ -363,7 +363,7 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun x a -&gt; if f x then x::a el
       <li>For example testing your <code>cloc.exe</code> on a certain fixed directory tree.</li>
     </ul>
   </li>
-  <li><strong>Random testing</strong> aka fuzz aka monkey testing aka quickcheck: test on randomly generated inputs in some distribution</li>
+  <li><strong>Random testing</strong> aka fuzz testing aka monkey testing aka property-based testing aka quickcheck: test on randomly generated inputs in some distribution</li>
 </ul>
 
 <h3 id="testing-and-coverage">Testing and coverage</h3>
