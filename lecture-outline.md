@@ -5,7 +5,9 @@
 * Advanced patterns - `p when e`, `'a' .. 'z'`, `as x`, or `|` patterns in let...  Cornell 3.1.7
 * `ocamldoc`comments, Cornell 2.3.7
 * Memoization - RWOC Imperative chapter, Cornell 12.4
-* `QCheck` - really more of a 1-day topic, not that small.
+* `QCheck` - really more of a 1-day topic, not that small.  Do `Base_quickcheck` instead
+* Go through some imperative to functional code refactorings
+* The expression problem and functional vs OO trade-off.
 
 
 ## Dune

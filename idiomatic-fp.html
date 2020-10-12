@@ -62,9 +62,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     
 <h2 id="idiomatic-functional-programming">Idiomatic Functional Programming</h2>
+<p>This a major theme of the course; we have already covered some of this but let’s put it all together now.</p>
 
 <ul>
-  <li>A major theme of the course</li>
   <li>design principles, design patterns, refactoring (OO) = principles &amp; idioms (FP)</li>
   <li><strong>Principles</strong>: overarching principles; <strong>Idioms</strong>: more focused ideas to aid in achieving principles</li>
 </ul>
@@ -87,8 +87,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Perhaps in an unhealthy way sometimes</li>
     </ul>
   </li>
-  <li>Avoid side effects; it will help you achieve 1.
+  <li>Modularity / focus of responsibility
     <ul>
+      <li>Make clear, strong divisions of responsibility between different modules and functions</li>
+      <li>Attempt to make this factoring of responsibilities the most elegant which will aid in theme 1. above.</li>
+      <li>(This is also a theme of OO design, a similar principle applies there)</li>
+    </ul>
+  </li>
+  <li>Avoid side effects; it will help you achieve 1. and 2.
+    <ul>
+      <li>Recall how pure functional code is referentially transparent, the behavior is all in the interface with no “hidden” effects.</li>
       <li>Conversely, use side effects instead of standing on your head to make something functional</li>
       <li>Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on</li>
       <li>Get your head into pipeline mode when writing functional code</li>
@@ -96,13 +104,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
     <ul>
       <li>And if you are a beginning FPer, try three more times to get the pipeline view going</li>
-    </ul>
-  </li>
-  <li>Modularity / focus of responsibility
-    <ul>
-      <li>Make clear, strong divisions of responsibility between different modules and functions</li>
-      <li>Attempt to make this factoring of responsibilities the most elegant which will aid in theme 1. above.</li>
-      <li>(This is also a theme of OO design, a similar principle applies there)</li>
     </ul>
   </li>
   <li>Speed schmeed (much of the time)
@@ -114,6 +115,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>If speed was so important, Python and JavaScript would not exist; they are ~5-10 times slower.</li>
       <li>Do generally avoid high polynomial or exponential algorithms</li>
+      <li>Also pay more attention when data sets get very large, even n vs n log n gets noticeable there.</li>
     </ul>
   </li>
 </ol>
@@ -143,14 +145,21 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>But, open it up if needed for e.g. testing</li>
     </ul>
   </li>
+  <li>Write specifications (preconditions, postconditions, invariants)
+    <ul>
+      <li>Users can then program to the spec., not the implementation</li>
+    </ul>
+  </li>
+  <li>Replace imperative code with an equivalent functional implementation which has a clearer interface</li>
 </ul>
 
 <h4 id="have-a-focus-of-responsibility">Have a focus of responsibility</h4>
 <ul>
-  <li>Divide one function into two if it is doing two different things</li>
+  <li>Each function and module should have a clear focus that can be summarized in a sentence</li>
+  <li>Divide one function/module into two if it is doing two different things</li>
   <li>A module should have a very clear focus of responsibility
     <ul>
-      <li>Don’t add random stuff to module if it doesn’t fir with it’s big picture</li>
+      <li>Don’t add random stuff to module if it doesn’t fit with it’s summary purpose</li>
       <li>If you need more in an existing module, make a new one and <code>include</code> the old one
         <ul>
           <li>Don’t just put the new additional functions in some random user-module</li>
@@ -177,29 +186,126 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Avoid <code>long_variable_names_containing_too_much_detail</code>
     <ul>
-      <li>Conversely, don’t use <code>temp1</code> etc unless code is highly local</li>
+      <li>Conversely, don’t use <code>x</code> <code>f</code> etc unless it is very local (in which case it is preferred)</li>
       <li>Variables tend to have more local scope in FP compared to OO, shorter is better in FP</li>
-      <li></li>
+      <li>Declared function names on the other hand can be longer since their scope is broader</li>
+      <li>The general principle is there is a spectrum of local to global
+        <ul>
+          <li>The more local the shorter the name, the more global the longer the name</li>
+        </ul>
+      </li>
     </ul>
   </li>
 </ul>
 
-<h3 id="examples-of-idiomatic-fp">Examples of Idiomatic FP</h3>
+<h2 id="efficiency">Efficiency</h2>
+
 <ul>
-  <li>
-    <p>We already have seen many, we will do a couple more now</p>
-  </li>
-  <li>Go through some imperative to functional code refactorings</li>
-  <li>The expression problem and functional vs OO trade-off.</li>
+  <li>Our main goal is conciseness, but in some cases efficiency does matter</li>
+  <li>So, here is an initial discussion of some efficiency issues in FP; more later as well</li>
 </ul>
 
-<h2 id="efficiency">Efficiency</h2>
+<h3 id="tail-recursion">Tail recursion</h3>
+
 <ul>
-  <li>fold l vs r, tail calls</li>
-  <li>
-    <p>Imperative vs functional: Map vs Hashmap, Set vs Hashset</p>
+  <li>A tail-recursive function is a function where there is no work to do after returning from recursive calls
+    <ul>
+      <li>Just bubble up the result</li>
+    </ul>
   </li>
-  <li>Contrasting OO with functional - state machine vs pipeline of data (data-oriented design).</li>
+  <li>Observe: since there is no need to mark the call point to resume from, no stack is needed!</li>
+  <li>Overwrite the parameters going “down”, and return the base case at the bottom, done!</li>
+  <li>Compilers take advantage of this to get rid of stack in this case</li>
+  <li>Moral: to save space/time you may want to tail-call</li>
+</ul>
+
+<h4 id="folding-left-vs-right-and-tail-calls">Folding left vs right and tail calls</h4>
+
+<p><code>fold_right</code> is not tail-recursive; here is an implementation:</p>
+
+<pre><code class="language-ocaml">let rec fold_right ~f ~init l = 
+match l with
+  | [] -&gt; init
+  | h::t -&gt; f h (fold_right ~f ~init t)
+
+let summate l = fold_right ~f:(+)  ~init:0 l
+let concatenate l = fold_right ~f:(^) ~init:"" l
+</code></pre>
+
+<ul>
+  <li>Observe: after each recursive call completes, it must compute <code>f h rec-call-result</code></li>
+  <li>That is how folding right can start from the right, it computes <code>f</code> on the way up the call stack.</li>
+  <li>Folding left is the opposite, computing <code>f</code> and passing accumulated result <em>down</em> the call stack:</li>
+</ul>
+
+<pre><code class="language-ocaml">let rec fold_left ~f ~init l = 
+match l with
+  | [] -&gt; init
+  | h::t -&gt; fold_left ~f ~init:(f init h) t
+
+let summate l = fold_left ~f:(+) ~init:0 l
+let concatenate l = fold_left ~f:(^) ~init:"" l
+</code></pre>
+
+<ul>
+  <li>Observe that in the recursive case when the <code>fold_left</code> completes at the base case there is no more work to do</li>
+  <li>Thus, <code>fold_left</code> is tail-recursive
+    <ul>
+      <li>The <code>init</code> of the base case is in fact the final result.</li>
+    </ul>
+  </li>
+  <li>So, if the choice doesn’t matter, use <code>fold_left</code> ovef <code>fold_right</code></li>
+  <li><code>Core</code> has <code>fold</code> as an abbreviation of <code>fold_left</code> to bias you to use it over right fold.</li>
+  <li>If you are doing millions of iterations, you may have to refactor your code to use tail calls
+    <ul>
+      <li>Or you could run out of memory</li>
+      <li>Yes, this is a bit of a wart on the FP approach, sometimes you need to be aware of non-tail calls</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="imperative-vs-functional-data-structures">Imperative vs functional data structures</h3>
+
+<p><code>List</code> vs <code>Array</code></p>
+<ul>
+  <li>Adding an element to the front (extending list) is constant time for list, O(n) for array
+    <ul>
+      <li>different lists can share tail due to referential transparency</li>
+    </ul>
+  </li>
+  <li>But, instead of adding to array you are usually updating in-place which is constant</li>
+  <li>Updating one element of a list is worst-case O(n) - re-build whole list</li>
+  <li>Random access of nth element: O(n) list, O(1) array.</li>
+</ul>
+
+<p><code>Map</code> vs <code>Hashtbl</code></p>
+<ul>
+  <li><code>Map</code> is implemented like the <code>dict</code> of the homework, but avoids the worst case of an unbalanced tree (on average the <code>dict</code> should be good but it could build a long thin tree in worst case)</li>
+  <li>O(log n) time for <code>Map</code> to look up, add, or change an entry</li>
+  <li>O(1) for <code>Hashtbl</code> - will matter for really big data sets.</li>
+</ul>
+
+<p><code>Set</code> vs <code>Hash_set</code></p>
+<ul>
+  <li>
+    <p>See previous; again the mutable is constant and the immutable is O(log n) for common operations</p>
+  </li>
+  <li>
+    <p><a href="https://ocaml.org/learn/tutorials/comparison_of_standard_containers.html">Here is a summary of OCaml data structure complexity</a> (for the standard OCaml library but same results as <code>Core</code> version)</p>
+  </li>
+  <li>
+    <p>Is functional ever any better?  Yes!</p>
+    <ul>
+      <li>If you have many related maps, e.g. repeatedly forking off a map into two sub-versions</li>
+      <li>Due to referential transparency the cost of copying is <strong>zero</strong>!!</li>
+      <li>See <a href="https://dev.realworldocaml.org/maps-and-hashtables.html">Real World OCaml</a> for example benchmarks of this</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="examples-of-idiomatic-and-not-so-idiomatic-fp">Examples of Idiomatic and not so Idiomatic FP</h3>
+<ul>
+  <li>We already have seen several, will do more</li>
 </ul>
       
           </section>
