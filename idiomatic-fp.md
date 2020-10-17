@@ -122,7 +122,7 @@ let concatenate l = fold_left ~f:(^) ~init:"" l
 * Observe that in the recursive case when the `fold_left` completes at the base case there is no more work to do
 * Thus, `fold_left` is tail-recursive
   - The `init` of the base case is in fact the final result.
-* So, if the choice doesn't matter, use `fold_left` ovef `fold_right`
+* So, if the choice doesn't matter, use `fold_left` over `fold_right`
 * `Core` has `fold` as an abbreviation of `fold_left` to bias you to use it over right fold.
 * If you are doing millions of iterations, you may have to refactor your code to use tail calls
   - Or you could run out of memory
@@ -151,7 +151,18 @@ let concatenate l = fold_left ~f:(^) ~init:"" l
 * Is functional ever any better?  Yes!
   - If you have many related maps, e.g. repeatedly forking off a map into two sub-versions
   - Due to referential transparency the cost of copying is **zero**!!
+  - Multiple Lists similarly can share common portions
   - See [Real World OCaml](https://dev.realworldocaml.org/maps-and-hashtables.html) for example benchmarks of this
 
-### Examples of Idiomatic and not so Idiomatic FP
-  * We already have seen several, will do more
+### Examples of Idiomatic FP
+<a name = "examples"></a>
+* Here are some codebases we will spend a whole class inspecting and critiqueing.
+
+  * [dolog](https://github.com/UnixJunkie/dolog) is a very simple logging utility
+     - Shows some nice use of state, `include`, and a `Make` functor.
+  * [ocaml-cuid](https://github.com/marcoonroad/ocaml-cuid) is a utility to generate highly random string IDs for webpages etc.
+     - Lots of nice piping here
+  * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io 
+    - [This implementation](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c) shows several nice OCaml patterns
+    - Will look at an [imperative approach](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae59540d18f3c18615dcbb956) with a little too much imperative-think in it
+    - We also made a [variation on the functional version](examples/mine_array.ml) to be less inefficient and with a bit of cleaning up
