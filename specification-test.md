@@ -378,7 +378,36 @@ OUnit [Overview docs](https://gildor478.github.io/ounit/ounit2/index.html) and [
 
 We will check how well my tests of the simple set example covered the code using Bisect
 
-### QCheck for random testing
+<a name = "quickcheck"></a>
+## Base_quickcheck and Random Testing
+
+* Recall we previously discussed random testing: generate random data in a given type to test
+* We are now going to go into more details on how to do your own random testing
+
+### Fuzz testing vs Random Testing
+
+* We are focusing on random testing (aka property-based testing) now but fuzz testing also important
+* Slogan: "fuzz testing is to acceptance tests as random testing is to unit tests"
+  - fuzzers feed in inputs on `stdio` and other input channels to whole app
+  - random testers are internally generating random data
+* Industry fuzz testers do a lot more more than generate totally random data
+  - They may be aware that the string input should fit a particular grammar, e.g. html
+  - They may be combined with a coverage tool and work to find random data "covering" all the code
+
+
+### Base_quickcheck
+
+* Three key algorithms:
+  1. Generators, `Quickcheck.Generator` - make random data of desired distribution in given type
+  2. Shrinkers, `Quickcheck.Strinker` - if a failing case is discovered, make it smaller
+  3. Runner, `Quickcheck.test` etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.
+
+* We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](examples/quickcheck_examples.ml)
+
+* [Base_quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/base_quickcheck/Base_quickcheck/index.html)
+* [Quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Quickcheck/index.html)
+
+### QCheck for random testing (OLD - we decided to use Jane Street's Quickcheck not QCheck)
 
 * The `QCheck` library lets you easily write random tests
 

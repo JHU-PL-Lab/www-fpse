@@ -163,6 +163,6 @@ let concatenate l = fold_left ~f:(^) ~init:"" l
   * [ocaml-cuid](https://github.com/marcoonroad/ocaml-cuid) is a utility to generate highly random string IDs for webpages etc.
      - Lots of nice piping here
   * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io 
-    - [This implementation](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c) shows several nice OCaml patterns
+    - [This functional implementation](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c) shows several nice OCaml patterns
     - Will look at an [imperative approach](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae59540d18f3c18615dcbb956) with a little too much imperative-think in it
     - We also made a [variation on the functional version](examples/mine_array.ml) to be less inefficient and with a bit of cleaning up

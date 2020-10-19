@@ -313,13 +313,21 @@ let concatenate l = fold_left ~f:(^) ~init:"" l
     <ul>
       <li><a href="https://github.com/UnixJunkie/dolog">dolog</a> is a very simple logging utility
         <ul>
-          <li>it shows some nice use of state, <code>include</code>, and a <code>Make</code> functor.</li>
+          <li>Shows some nice use of state, <code>include</code>, and a <code>Make</code> functor.</li>
         </ul>
       </li>
-      <li><a href="https://github.com/marcoonroad/ocaml-cuid">ocaml-cuid</a> is a utility to generate highly random string IDs for webpages etc.</li>
-      <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper">Minesweeper</a> at Exercism.io</li>
-      <li>shows several nice OCaml patterns</li>
-      <li>shows how the “imperative view” leads to bigger code</li>
+      <li><a href="https://github.com/marcoonroad/ocaml-cuid">ocaml-cuid</a> is a utility to generate highly random string IDs for webpages etc.
+        <ul>
+          <li>Lots of nice piping here</li>
+        </ul>
+      </li>
+      <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper">Minesweeper</a> at Exercism.io
+        <ul>
+          <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c">This functional implementation</a> shows several nice OCaml patterns</li>
+          <li>Will look at an <a href="https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae59540d18f3c18615dcbb956">imperative approach</a> with a little too much imperative-think in it</li>
+          <li>We also made a <a href="examples/mine_array.ml">variation on the functional version</a> to be less inefficient and with a bit of cleaning up</li>
+        </ul>
+      </li>
     </ul>
   </li>
 </ul>
