@@ -271,7 +271,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body"><a href="specification-test.html#quickcheck">Random testing with Quickcheck</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -288,7 +288,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body"><a href="advanced_modules.ml">Advanced Modules</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

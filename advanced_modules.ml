@@ -3,6 +3,8 @@
 (* ******************************************* *)
 
 open Core
+(* Will need #require "ppx_jane" in top loop
+   and (preprocess (pps ppx_jane)) line in dune for this file to work *)
 
 (* Review: the Big Picture of what is unique in OCaml types
 
