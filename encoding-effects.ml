@@ -2,7 +2,7 @@
 (* Encoding effects functionally *)
 (* ***************************** *)
 
-(* Aka "Journey to Monad Land" *)
+(* Aka "A Journey through Monad Land" *)
 
 open Core
 
@@ -11,18 +11,19 @@ open Core
   * But, sometimes it is a large handicap to not have side effects
   * One middle ground is possible: *encode* effects using functional code only
     - we already saw a bit of this with the option type replacing exceptions
-    - also the use of piping such as *)
+    - also the use of piping such as 
+*)
 
 let _ : bool = Map.empty(module String) 
                |> Map.set ~key: "hi" ~data: 3 
                |> Map.set ~key: "ho" ~data: 17
                |> Map.for_all ~f:(fun i -> i > 10)
 
-(* etc which is an informal "hand over fist passing" encoding 
-   of what would normally be a mutable structure 
+(*   etc which is an informal "hand over fist passing" encoding 
+     of what would normally be a mutable structure 
 
   * Idea: make a more structured encoding which is not informal like the above
-  * Think of it as defining a language-inside-of-a-language: "monad-land"
+  * Think of it as defining a language-inside-a-language: "monad-land"
   * Will allow functional code to be written which "feels" close to effectful code
   * But it still will preserve the referential transparency etc in most places
   * The mathematical basis for this is a structure called a *monad*.
@@ -74,7 +75,8 @@ let ex l1 l2 =
 (* 
  * The key operation of a monad is `bind` 
  * For Option it already exists as Option.bind
- * Here is its code: *)
+ * Here is its code: 
+ *)
 
 let bind (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) = 
   match opt with 
@@ -95,6 +97,7 @@ let bind (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) =
 (* 
  * Here is what Option.return is
  * It is called return because it is returning a "regular" value to the monad 
+ * I have to say the name seems backwards to me but it is the traditional name
 *)
 let return (v : 'a) : 'a option = Some v
 
@@ -121,6 +124,11 @@ let ex_bind l1 l2 =
       bind (List.hd tail) ~f:(fun hd_tail -> 
         return(hd_tail))))
 
+(* 
+  * Observe in the above that we can invoke functions which are in monad-land like zip above
+  * And, we can also invoke regular functions like List.fold; no need for bind on them
+  * Just make sure to keep track of whats in and whats out of monad-land - !
+*)
 
 (* Note you can't cheat and leave out the last return, you will get a type error *)
 
@@ -130,20 +138,15 @@ let ex_bind_error l1 l2 =
   let%bind tail = List.tl m in
   let%bind hd_tail = List.hd tail in
   hd_tail
- (* type error! *)
+ (* type error! Both of let%bind's arguments need to be in monad-land, Option.t here *)
 
-(* 
-  * Observe in the above that we can invoke functions which are in monad-land like zip above
-  * And, we can also invoke regular functions like List.fold; no need for bind on them
-  * Just make sure to keep track of whats in and whats out of monad-land
-*)
 
 (* Equivalent pipe version syntax 
    * a >>= b is just an infix form of bind, it is nothing but bind a b
    * a >>| b is used when b is just a "normal" function which is not returning an option.
       - encoding:  a >>| b is bind a (fun x -> return (f x))
       - the additional "return" "lifts" f's result back into monad-land
-   * If you are just sequencing a bunch of function calls it reads better with pipes
+   * If you are just sequencing a bunch of function calls as above it reads better with pipes
 *)
 
 let ex_piped l1 l2 =
@@ -177,12 +180,13 @@ module Exception = struct
     let map = `Custom(the_map) (* simpler version:  `Define_using_bind *)
     type 'a result = 'a 
     (* `run` is the standard name for "enter monad-land from normal-land" function 
-        and process the result back into normal-land *)
+        and process the result back into normal-land 
+        Option.run doesn't exist, it is not the full monad package *)
     let run (m : 'a t) : 'a result =
       match m with 
       | Some x -> x 
       | None -> failwith "uncaught exception"
-    (* Some more exception-looking syntax *)
+    (* Some more exception-looking syntax; also not in Core.Option *)
     let raise () : 'a t = None
     let try_with (m : 'a t) (f : unit -> 'a t): 'a t =
       match m with 
@@ -196,7 +200,7 @@ end
 open Exception
 open Exception.Let_syntax
 
-(* a simple example *)
+(* a simple example.  Note this is very artificial, don't enter monad-land unless you need to! *)
 let oneplustwo = 
   bind (return 1) 
     ~f:(fun onev -> 
@@ -216,7 +220,7 @@ let oneplustwo' =
 *)
 let _ : int = run oneplustwo'
 
-(* Redoing the previous example we did on Option above *)
+(* Redoing the previous example we did on Option using Exception now *)
 let ex_exception l1 l2 =
   let%bind l = zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
@@ -238,6 +242,7 @@ let test_monad x =
     (fun () -> return(101))
 
 let _ : int = run @@ test_monad 4
+let _ : int = run @@ test_monad 0
 
 (* While moving the 1 + in is the right thing to do for the above code, sometimes you can't..
    Lets as an exercise keep the 1 + in the original spot with bind (using let%bind syntax)
@@ -267,6 +272,7 @@ module type Monadic = sig
   val run : 'a t -> 'a result
 end
 
+(* (Base.Monad's version also requires map but does not require run) *)
 (* Let us verify our version above is indeed a monad *)
 
 module Exception_test = (Exception : Monadic)
@@ -308,14 +314,14 @@ module Log = struct
 
     let return (x : 'a) : 'a t = fun l -> (x, l)
     let bind (m : 'a t) ~(f : 'a -> 'b t): 'b t =
-      fun l -> match m l with (x, l') -> f x l'
+      fun l -> let (x,l') = m l in f x l'
     let map = `Define_using_bind
   end
   include T
   include Monad.Make(T)
   type 'a result = 'a * log
   let run (m: 'a t): 'a result =
-    match m [] with (x, l) -> (x, l)
+    let (x,l) =  m [] in (x,l)
   let log msg : unit t = fun l -> ((), msg :: l)
 end
 
@@ -323,6 +329,8 @@ module Exception_test = (Log : Monadic) (* verify again it is a monad *)
 
 open Log
 open Log.Let_syntax
+
+(* A stupid example *)
 
 let log_abs n = run
     (if n >= 0 
