@@ -471,9 +471,9 @@ module type Pair_unhidden =
 * `Core` has complete implementations of many classic data structures, many of which are built similarly with functor like `Map.Make`
 * Be careful on imperative vs functional, difference is not well-documented or consistently-named
 * Functional data structures in `Core`:
-  - `Set`, `Map`, `Bag` (a multi-set), `Doubly_linked` (list), `Fqueue`, `Fdeque` (functional (double-ended) queue)
+  - `Set`, `Map`, `Doubly_linked` (list), `Fqueue`, `Fdeque` (functional (double-ended) queue)
 * Imperative data structures:
-  - `Stack` and `Queue` as we previously discussed (which don't need `Make`/`compare`), plus `Hash_queue`, `Hash_set`, `Hashtbl` (mutable hashed queue/set/map),  `Linked_queue`
+  - `Stack` and `Queue` as we previously discussed (which don't need `Make`/`compare`), plus `Hash_queue`, `Hash_set`, `Hashtbl` (mutable hashed queue/set/map),  `Linked_queue`,  `Bag` (a multi-set)
 
 ### Tangent:  Summary of Important Directives for `utop`
 * `show_val` - shows the type of a value

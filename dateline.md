@@ -305,7 +305,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body"><a href="encoding-effects.ml">Encoding Effects</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -322,7 +322,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body"><a href="encoding-effects.ml">Encoding Effects</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
