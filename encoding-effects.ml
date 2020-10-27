@@ -83,7 +83,10 @@ let bind (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) =
   | None -> None 
   | Some v -> f v
 
+let _ = bind (zip [1;2] [3;4]) ~f:(fun _ -> None)
+
 (* 
+  * bind *sequences* two side effects
   * Observe this is nothing but a "bubbler" to avoid all the match-es like above.
     - if the first argument None's then skip the f run.
   * besides the bubbling of None's it is a lot like a "let" expression.
@@ -112,7 +115,7 @@ open Option.Let_syntax (* This opens a macro let%bind etc to make code more read
 let ex_bind_macro l1 l2 =
   let%bind l = zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
-  let%bind tail = List.tl m in
+  let%bind tail = List.tl m in 
   let%bind hd_tail = List.hd tail in
   return(hd_tail)
 
@@ -151,7 +154,7 @@ let ex_bind_error l1 l2 =
 
 let ex_piped l1 l2 =
   zip l1 l2 
-  >>| List.fold ~init:[] ~f:(fun acc (x,y) -> x + y :: acc)
+  >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
   >>= List.tl
   >>= List.hd
   >>= return
@@ -231,7 +234,7 @@ let ex_exception l1 l2 =
 (* Let us encode some normal OCaml code raising an exception *)
 
 let test_normal_ocaml x =
-  try 1 + (if x = 0 then failwith "error" else 100 / x)
+  try (1 + (if x = 0 then failwith "error" else 100 / x))
   with Failure _ -> 101
 
 (* Monad near-equivalent - note the + 1 moved in, 1 must be bound if written exactly as above *)
