@@ -143,7 +143,6 @@ let ex_bind_error l1 l2 =
   hd_tail
  (* type error! Both of let%bind's arguments need to be in monad-land, Option.t here *)
 
-
 (* Equivalent pipe version syntax 
    * a >>= b is just an infix form of bind, it is nothing but bind a b
    * a >>| b is used when b is just a "normal" function which is not returning an option.
@@ -159,7 +158,33 @@ let ex_piped l1 l2 =
   >>= List.hd
   >>= return
 
-(* Observe the return line is not needed *)
+
+(* Here are some other versions that came up in lecture *)
+
+(* First, the last return is in fact not needed in either let%bind or piped version
+   as the previous 'a t typed value is all we need *)
+
+let ex_bind' l1 l2 =
+  bind (zip l1 l2) ~f:(fun l ->
+   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
+    bind (List.tl m) ~f:(fun tail -> (List.hd tail)))
+
+let ex_piped' l1 l2 =
+  zip l1 l2 
+  >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
+  >>= List.tl
+  >>= List.hd
+
+(* And, the >>| is like >>= but the second computation (the ~f one) is expected to return a 
+   non-monadic value and >>| automatically lifts it to monad-land with a return 
+   Here we turn >>| into a normal monad-pipe >>= with explicit return to illustrate. *)
+
+let ex_piped'' l1 l2 =
+  zip l1 l2 
+  >>= fun l -> return(List.fold l ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)))
+  >>= List.tl
+  >>= List.hd
+   
 
 (* 
   * Option extended to a more general Exception monad
@@ -230,6 +255,8 @@ let ex_exception l1 l2 =
   let%bind tail = List.tl m in
   let%bind hd_tail = List.hd tail in
   return(hd_tail)
+
+let _ : int = run @@ ex_exception [1;2;3] [9;8;7]
 
 (* Let us encode some normal OCaml code raising an exception *)
 
