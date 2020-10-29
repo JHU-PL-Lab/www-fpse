@@ -62,12 +62,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h2 id="assignment-4-n-grams-and-a-real-app">Assignment 4: N-Grams and a real app</h2>
 
+<h3 id="part-i">Part I</h3>
+
 <p>For Part I of this assignment you will be writing various modules and functions which will lead to a n-gram model generator.  This is Exercises 1-8 in the file <code>src/lib.ml</code> (at the download link below).  Nearly all the details of the assignment you will find in that file.</p>
+
+<h3 id="part-ii">Part II</h3>
 
 <p>For Part II you will</p>
 
 <p>1) make a standalone app which uses the functions from part I. That is exercises 8 and 9 in <code>lib.ml</code>.<br />
-  2) You will also need to write a test suite for your application.  Note we recommend you start on this in Part I of the submission so you can help debug issues in your code more quickly.<br />
+  2) You will also need to write a test suite for your application.  Note we recommend you start on this in Part I of the submission so you can help debug issues in your code more quickly.  You should have separate <code>src/</code> and <code>test/</code> subdirectories like in previous submissions.  In this case you will need to make your own <code>test/</code> directory from scratch.  You will need to obtain good unit test coverage on the <code>lib.ml</code> code (use Bisect to verify!), but need not write acceptance tests for the executable in <code>ngrams.exe</code>.<br />
   3) In addition, for your exercise 8 sanitizer answer write a <code>Base_quickcheck</code> random test as one of your OUnit tests following the <a href="../specification-test.html#quickcheck">Quickcheck lecture</a>.  To partially verify the random test data follows the specification just perform sanity checks, e.g. verify there are no “%” etc in the output, and that no words in the input were dropped.</p>
 
 <p>As usual we will give two due dates for the two parts.</p>
@@ -76,7 +80,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li><a href="assignment4.zip">Use the this zip file</a> for your assignment.  Download and unzip it in a fresh directory/folder that you made (we will suppose you are putting it in a directory <code>assignment4</code> in the below).</li>
-  <li>Like assignment 1-3, we are giving you a skeleton to fill in.  Your Part I answers will go in the file  <code>.../assignment4/src/lib.ml</code> and Part II will mostly be in <code>.../assignment4/src/ngrams.ml</code>.  You will also need to make a unit tester in <code>.../assignment4/tests/tests.ml</code> etc following the previous assignments.</li>
+  <li>Like assignment 1-3, we are giving you a skeleton to fill in.  Your Part I answers will go in the file  <code>.../assignment4/src/lib.ml</code> and Part II will be in that file and in <code>.../assignment4/src/ngrams.ml</code>.  You will also need to make a unit tester in <code>.../assignment4/tests/tests.ml</code> etc following the previous assignments.</li>
 </ul>
 
 <h3 id="submission-and-grading">Submission and Grading</h3>
