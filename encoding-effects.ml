@@ -122,10 +122,10 @@ let ex_bind_macro l1 l2 =
 (* Let us write out the bind calls (expand the macro) to show why the macro is good: *)
 let ex_bind l1 l2 =
   bind (zip l1 l2) ~f:(fun l ->
-   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
-    bind (List.tl m) ~f:(fun tail -> 
-      bind (List.hd tail) ~f:(fun hd_tail -> 
-        return(hd_tail))))
+      let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
+      bind (List.tl m) ~f:(fun tail -> 
+          bind (List.hd tail) ~f:(fun hd_tail -> 
+              return(hd_tail))))
 
 (* 
   * Observe in the above that we can invoke functions which are in monad-land like zip above
@@ -141,22 +141,22 @@ let ex_bind_error l1 l2 =
   let%bind tail = List.tl m in
   let%bind hd_tail = List.hd tail in
   hd_tail
- (* type error! Both of let%bind's arguments need to be in monad-land, Option.t here *)
+(* type error! Both of let%bind's arguments need to be in monad-land, Option.t here *)
 
 (* Equivalent pipe version syntax 
    * a >>= b is just an infix form of bind, it is nothing but bind a b
    * a >>| b is used when b is just a "normal" function which is not returning an option.
-      - encoding:  a >>| b is bind a (fun x -> return (f x))
-      - the additional "return" "lifts" f's result back into monad-land
+   - encoding:  a >>| b is bind a (fun x -> return (f x))
+   - the additional "return" "lifts" f's result back into monad-land
    * If you are just sequencing a bunch of function calls as above it reads better with pipes
 *)
 
 let ex_piped l1 l2 =
-  zip l1 l2 
-  >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
-  >>= List.tl
-  >>= List.hd
-  >>= return
+  ((((zip l1 l2 
+  >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)))
+  >>= List.tl)
+  >>= List.hd)
+  >>= return)
 
 
 (* Here are some other versions that came up in lecture *)
@@ -166,14 +166,39 @@ let ex_piped l1 l2 =
 
 let ex_bind' l1 l2 =
   bind (zip l1 l2) ~f:(fun l ->
-   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
-    bind (List.tl m) ~f:(fun tail -> (List.hd tail)))
+      let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
+      bind (List.tl m) ~f:(fun tail -> (List.hd tail)))
 
 let ex_piped' l1 l2 =
   zip l1 l2 
   >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
   >>= List.tl
   >>= List.hd
+
+(* A subtle point is that the pipe notation is associating the sequencing in a different
+   order.  
+   - We all know that a;(b;c) "is the same order as" (a;b);c (e.g. in OCaml they give same results)
+   - for let, the rule is a bit more convoluted:
+       let xa = a in let xb = b in c   is   let xc = (let xb = (let xa = a in b) in c)
+   - the let%bind notation is doing the former and the pipes the latter.
+   - Note that not all monads in OCaml have this associative property but they *should*
+   - the mathematical notion of a monad must have this, it is a *monad law* (more later)
+
+*)
+
+(* Here we also see how the >>| is a map *)
+
+let ex_piped_expanded l1 l2 =
+  bind(bind (map (zip l1 l2) ~f:(List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))))
+         ~f: List.tl)
+    ~f: List.hd
+
+let ex_piped_expanded_percent l1 l2 =
+  let%bind tail = 
+    let%bind m = 
+      let%map l = zip l1 l2 in List.fold l ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)) in
+    List.tl m in
+  List.hd tail
 
 (* And, the >>| is like >>= but the second computation (the ~f one) is expected to return a 
    non-monadic value and >>| automatically lifts it to monad-land with a return 
@@ -184,7 +209,6 @@ let ex_piped'' l1 l2 =
   >>= fun l -> return(List.fold l ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)))
   >>= List.tl
   >>= List.hd
-   
 
 (* 
   * Option extended to a more general Exception monad
@@ -202,7 +226,9 @@ module Exception = struct
       | None -> None 
       | Some x -> f x
     (* Core requires that a map operation be defined 
-       - map is like bind but the f is just a normal-land function *)
+       - map is like bind but the f is just a normal-land function 
+       - it is called "map" because if you think of the option as a 0/1 length list
+         the map operation here is analogous to List.map *)
     let the_map (m: 'a t) ~(f: 'a -> 'b): 'b t = 
       bind m ~f:(fun x -> return(f x))
     let map = `Custom(the_map) (* simpler version:  `Define_using_bind *)
@@ -228,7 +254,23 @@ end
 open Exception
 open Exception.Let_syntax
 
-(* a simple example.  Note this is very artificial, don't enter monad-land unless you need to! *)
+(* Redoing the previous example we did on Option using Exception now *)
+let ex_exception l1 l2 =
+  let%bind l = zip l1 l2 in 
+  let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
+  let%bind tail = List.tl m in
+  let%bind hd_tail = List.hd tail in
+  return(hd_tail)
+
+(* And, we can "run" them from normal-land as well: *)
+let _ : int = run @@ ex_exception [1;2;3] [9;8;7]
+
+(* In general all the Option examples above work in Exception *)
+
+(* Here is yet another example, showing how some really simple computation can be
+   put in monad-land.  Note you should not do this, effect-free code can remain as-is
+   This example is just to illustrate how monads sequence *)
+
 let oneplustwo = 
   bind (return 1) 
     ~f:(fun onev -> 
@@ -242,21 +284,7 @@ let oneplustwo' =
   let%bind twov = return 2 in 
   return (onev + twov)
 
-(* 
-  * Lift the above back into normal-land from the monad 
-  * Note here we in fact already "ran" the code but not so in all monads
-*)
 let _ : int = run oneplustwo'
-
-(* Redoing the previous example we did on Option using Exception now *)
-let ex_exception l1 l2 =
-  let%bind l = zip l1 l2 in 
-  let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
-  let%bind tail = List.tl m in
-  let%bind hd_tail = List.hd tail in
-  return(hd_tail)
-
-let _ : int = run @@ ex_exception [1;2;3] [9;8;7]
 
 (* Let us encode some normal OCaml code raising an exception *)
 
@@ -318,99 +346,170 @@ module Exception_test = (Exception : Monadic)
 
 
 (* First it is always good for a quick look at the "zero", the no-op monad. 
-   Taken from Base.Monad *)
+   based on version in Base.Monad *)
 
 module Ident = struct
   type 'a t = 'a (* the identity wrapper: 'a wrapped is 'a *)
-
   include Monad.Make (struct
       type nonrec 'a t = 'a t
-      let bind a ~f = f a
-      let return a = a
-      let map = `Custom (fun a ~f -> f a)
+      let bind (a : 'a t) ~(f : 'a -> 'b t) = f a
+      let return (a : 'a t) = a
+      let map = `Custom (fun (a : 'a t)  ~(f : 'a -> 'b) -> f a)
+      type 'a result = 'a
+      let run (a : 'a t) : 'a result = a
     end)
 end
 
-(* Observe there is no run in Base's notion of a Monad *)
+(* It might be more obvious how this is an indentity by having
+   an actual wrapper in place -- here is an explicit identity monad *)
+
+module Ident_explicit = struct
+  type 'a t = Wrapped of 'a
+  include Monad.Make (struct
+      type nonrec 'a t = 'a t
+      let unwrap (Wrapped a) = a
+      let bind (a : 'a t) ~(f : 'a -> 'b t) = f (unwrap a)
+      let return (a : 'a) = Wrapped a
+      let map = `Custom (fun (a : 'a t)  ~(f : 'a -> 'b) -> Wrapped(f @@ unwrap a))
+      let run (a : 'a t) = unwrap a
+    end)
+end
+
+open Ident_explicit
+open Ident_explicit.Let_syntax
+let oneplustwo' = 
+  let%bind onev = return 1 in 
+  let%bind twov = return 2 in 
+  return (onev + twov)
+
 
 (* **************************** *)
 (* Print / Output / Write / Log *)
 (* **************************** *)
 
-module Log = struct
+(* 
+* There is a family of monads where the effect is "return more stuff on the side"
+  i.e. the 'a t type is 'a * ... stuff ... or some such
+* Here is one such simple monad; there are many
+* A common name for these is "writer" as that is the Haskell library name.  
+*)
+module Logger = struct
   module T = struct
-    type log = string list
-    type 'a t = log -> 'a * log
-
-    let return (x : 'a) : 'a t = fun l -> (x, l)
+    type log = string list (* we will tack a string list on the side here *)
+    type 'a t = 'a * log
+    (* Beyond the type, the key to a monad is what bind/return are *)
+    (* The key for a logger is to append the logs from the two sequenced computations *)
     let bind (m : 'a t) ~(f : 'a -> 'b t): 'b t =
-      fun l -> let (x,l') = m l in f x l'
+      let (x,l') = m in 
+      let (x',l'') = f x in (x',l'@l'')
     let map = `Define_using_bind
+    let return (x : 'a) : 'a t = (x, [])
+
   end
   include T
   include Monad.Make(T)
   type 'a result = 'a * log
-  let run (m: 'a t): 'a result =
-    let (x,l) =  m [] in (x,l)
-  let log msg : unit t = fun l -> ((), msg :: l)
+  let run (m: 'a t): 'a result = m 
+  let log msg : unit t = ((), [msg])
 end
 
-module Exception_test = (Log : Monadic) (* verify again it is a monad *)
+module Excion_test = (Logger : Monadic) (* verify again it is a monad *)
 
-open Log
-open Log.Let_syntax
+open Logger
+open Logger.Let_syntax
 
-(* A stupid example *)
+(* A simple example *)
 
-let log_abs n = run
-    (if n >= 0 
-     then let%bind _ = log "positive" in return n
-     else let%bind _ = log "negative" in return (-n))
+let log_abs n = 
+  if n >= 0 
+  then let%bind _ = log "positive" in return n
+  else let%bind _ = log "negative" in return (-n)
+
+(* another simple example, add log messages to 1+2 example above *)
+let oneplustwo_logged = 
+  let%bind _ = log "Starting!" in
+  let%bind onev = return 1 in 
+  let%bind twov = return 2 in 
+  let%bind r = return (onev + twov) in
+  let%bind _ = log "Ending!" in
+  return(r)
+
 
 
 (* **************** *)
 (* Input aka Reader *)
 (* **************** *)
 
+(* 
+ * All the monads up to now were "first order", the carrier type has no function types
+ * Monads get *really* useful with higher-order monads, functions in the .t type
+ * The simplest example is probably "Reader"
+ * Don't think of it as "input", it is more like an "environment" of values you get implicitly
+ *)
+
+
 module Reader = struct
   module T = struct
+    (* 
+   * In Logger above we *returned* extra goodies, here we are *passing in* extra goodies 
+   * Here we let the goodies be arbitrary, of type 'e for environment
+  *)
     type ('a, 'e) t = ('e -> 'a)
-    let run (m : ('a, 'e) t) (d : 'e) = m d
-    let bind (m : ('a, 'e) t) ~(f : 'a -> ('b,'e) t) = 
-      fun (d : 'e) -> (f (m d) d)
+    (* bind needs t return a 'e -> 'a so it starts with fun e ->
+       This means it gets in the goodies e from its caller
+       bind's job is then to pass on the goodies to its two sequenced computations *)
+    let bind (m : ('a, 'e) t) ~(f : 'a -> ('b,'e) t) : ('a, 'e) t = 
+      fun (e : 'e) -> (f (m e) e) (* Pass the goodies e to m and f! *)
     let map = `Define_using_bind
-    let return (x : 'a) = fun (_: 'e) -> x
+    let return (x : 'a) = fun (_: 'e) -> x (* not using the goodies here *)
+    let get () = fun (e : 'e) -> e (* since every monad elt gets goodies, grab here *)
+    (* Here is an extra function to change goodies mid-stream if needed 
+       Note this is not like state, look at bind and you will see two sequenced
+       computations still get the same goodies-state.
+    *)
     let put_env (f : 'e -> 'e) (m : ('a, 'e) t) : ('a, 'e) t = 
-      fun (d : 'e) -> m (f d)
-    let get () = fun (d : 'e) -> d
+      fun (e : 'e) -> m (f e)
+    let run (m : ('a, 'e) t) (e : 'e) = m e
   end
   include T
   include Monad.Make2(T) (* Make2 is where there are *2* type parameters on t *)
 end
 
-(* Example from https://gist.github.com/VincentCordobes/fff2356972a88756bd985e86cce03023 *)
+(* A simple example *)
+open Reader
+open Reader.Let_syntax
 
+(* Here is a simple environment type *)
 type d = {
   name: string;
   age: int;
 }
+
+let is_retired = 
+  let%bind r = get() in return (r.age > 65)
+
+let _ : bool = run is_retired {name = "Gobo"; age = 88}
+
+
+(* Bigger example 
+   from https://gist.github.com/VincentCordobes/fff2356972a88756bd985e86cce03023 *)
+
 let to_string age name = 
   "name: " ^ name ^ "\nage: " ^ string_of_int age
 let name d = d.name
-let () =
-  let open Reader in
-  let m =
+
+let m =
     return 24
     >>| (fun x -> x + 1)
     >>= (fun x -> get () 
           >>| name
           >>| (to_string x))
     |> put_env (fun d -> {d with name="Vincent"})
-  in
-  let env = {name= "Jack"; age= 85} in
-  printf "%s\n" (run m env)
+
+let () = printf "%s\n" (run m {name= "Jack"; age= 85})
 
 (* Alternative Reader with a Core.Map as the data structure *)
+(* We will skip details of this in lecture as it is very similar to Reader *)
 
 module Environment = struct
   module T = struct
@@ -436,12 +535,15 @@ end
 
 (* 
   * To *really* be a monad you also need to satisfy some invariants.
-    - bind (return a) ~f ≈ f a 
-    - bind a ~f:(fun x -> return x) ≈ a
-    - bind (bind a ~f:(fun x -> b)) ~f:(fun y -> c) ≈ bind a (fun x -> bind b ~f:(fun y -> c))
+    - bind (return a) ~f  =  f a 
+    - bind a ~f:(fun x -> return x)   =  a
+    - bind a (fun x -> bind b ~f:(fun y -> c))  =  bind (bind a ~f:(fun x -> b)) ~f:(fun y -> c)
+  * (Note "=" here means we can replace one with the other and notice no difference)
   * These are called the "Monad Laws"
-  * Note how they are too strong (logically) to write as assert's, but can be tested on examples.
-  * We will think for a bit about how the above monads fare vis a vis the laws
+  * The last one is the trickiest but we hit on it above, it is associativity of bind
+  * The first two are mostly intuitive properties of injecting normal values into a monad
+  * Note how the laws are too strong (logically) to write as assert's, but can be tested on examples.
+  * We will look at the first two vis a vis Reader
 *)
 
 
@@ -449,18 +551,31 @@ end
 (* State *)
 (* ***** *)
 
-(* A simple State monad - just uses a Map with String keys as the store *)
+(* 
+ * Mutable state is a key side effect
+ * Let us construct a monad encoding side effects in OCaml
+ * 
+ *)
 
 module State = struct
   module T = struct
-    type 'a m = (string, 'a, String.comparator_witness) Map.t
+    type 'v m = (string, 'v, String.comparator_witness) Map.t (* shorthand name for map w/string keys *)
+    (* Here is the monad type: we need to *thread* the state through all computations
+       So, pass it in like Reader *and* return it like Logger *)
     type ('a, 'v) t = 'v m -> 'a * 'v m
-
-    let return (x : 'a) : ('a, 'v) t = fun v -> (x, v)
+    (* Let us now construct bind.
+       1) Like Reader, the result is a fun m -> ... since we pass in state
+       2) First we pass the state we got to the first computation, x
+       3) x returns a pair with a new state, m'
+       4) Now the key to being stateful is pass that latest state on to f
+       -- This sequence means assignments in x will be "seen" in f, the key idea of mutation
+    *)
     let bind (x : ('a, 'v) t) ~(f: 'a -> ('b,'v) t) : ('b,'v) t =
-      fun v -> let (x', v') = x v in f x' v'
+      fun (m : 'v m) -> let (x', m') = x m in f x' m'
+    let return (x : 'a) : ('a, 'v) t = fun m -> (x, m)
     let map = `Define_using_bind
     type 'a result = 'a 
+    (* Run needs to pass in an empty state *)
     let run (c : ('a, 'v) t) : 'a result = 
       let mt_map = Map.empty(module String) in fst (c mt_map)
     let set (k : string) (v : 'a) : (unit, 'v) t =
@@ -472,4 +587,17 @@ module State = struct
   include Monad.Make2(T)
 end
 
-(* TODO: examples of above *)
+open State
+open State.Let_syntax
+
+let sumlist l =
+  let%bind r = set "r" 0 in
+  let rec sum = function
+    | [] -> get "r"
+    | hd :: tl -> 
+      let%bind n = get "r" in 
+      let%bind _ = set "r" (n + hd) in
+      sum tl
+  in sum l
+
+let _ : int = run (sumlist [1;2;3;4;5])
