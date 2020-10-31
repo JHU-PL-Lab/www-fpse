@@ -3,7 +3,7 @@ Assignment 4: N-Grams and a real app
 
 ### Part I
 
-For Part I of this assignment you will be writing various modules and functions which will lead to a n-gram model generator.  This is Exercises 1-8 in the file `src/lib.ml` (at the download link below).  Nearly all the details of the assignment you will find in that file.
+For Part I of this assignment you will be writing various modules and functions which will lead to a n-gram model generator.  This is Exercises 1-7 in the file `src/lib.ml` (at the download link below).  Nearly all the details of the assignment you will find in that file.
 
 ### Part II
 
