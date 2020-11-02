@@ -153,10 +153,10 @@ let ex_bind_error l1 l2 =
 
 let ex_piped l1 l2 =
   ((((zip l1 l2 
-  >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)))
-  >>= List.tl)
-  >>= List.hd)
-  >>= return)
+      >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)))
+     >>= List.tl)
+    >>= List.hd)
+   >>= return)
 
 
 (* Here are some other versions that came up in lecture *)
@@ -458,7 +458,7 @@ module Reader = struct
     (* bind needs t return a 'e -> 'a so it starts with fun e ->
        This means it gets in the goodies e from its caller
        bind's job is then to pass on the goodies to its two sequenced computations *)
-    let bind (m : ('a, 'e) t) ~(f : 'a -> ('b,'e) t) : ('a, 'e) t = 
+    let bind (m : ('a, 'e) t) ~(f : 'a -> ('b,'e) t) : ('b, 'e) t = 
       fun (e : 'e) -> (f (m e) e) (* Pass the goodies e to m and f! *)
     let map = `Define_using_bind
     let return (x : 'a) = fun (_: 'e) -> x (* not using the goodies here *)
@@ -490,7 +490,6 @@ let is_retired =
 
 let _ : bool = run is_retired {name = "Gobo"; age = 88}
 
-
 (* Bigger example 
    from https://gist.github.com/VincentCordobes/fff2356972a88756bd985e86cce03023 *)
 
@@ -498,15 +497,57 @@ let to_string age name =
   "name: " ^ name ^ "\nage: " ^ string_of_int age
 let name d = d.name
 
-let m =
-    return 24
-    >>| (fun x -> x + 1)
-    >>= (fun x -> get () 
-          >>| name
-          >>| (to_string x))
-    |> put_env (fun d -> {d with name="Vincent"})
+let a_run : (string, d) t =
+    let%bind age0 = return 24 in
+    let%bind age1 = return(age0 + 1) in
+    let%bind r = get () in
+    let record = to_string age1 r.name in
+    return record
+
+let a_run : (string, d) t =
+    let%bind age0 = return 24 in
+    let%bind age1 = return(age0 + 1) in
+    match%bind get () with {name} -> (* another ppx_let extension, monadic match *)
+    let record = to_string age1 name in
+    return record
+
+let m = put_env (fun d -> {d with name="Vincent"}) a_run
 
 let () = printf "%s\n" (run m {name= "Jack"; age= 85})
+
+(* Pipe alternative *)
+
+let m' =
+  return 24
+  >>| (fun x -> x + 1)
+  >>= (fun x -> get () 
+        >>| name
+        >>| (to_string x))
+  |> put_env (fun d -> {d with name="Vincent"})
+
+(* The following shows how a changed envt only propagates on that node, not
+   from the let to the in.. need both reader and writer to do that! *)
+let no_state : (string, d) t =
+    let%bind age0 = return 24 in
+    let%bind age1 = put_env (fun d -> {d with name="Vincent"}) (return(age0 + 1)) in
+    match%bind get () with {name} -> (* another ppx_let extension, monadic match *)
+    let record = to_string age1 name in
+    return record
+
+let () = printf "%s\n" (run no_state {name= "Jack"; age= 85})
+
+(* But, the change will propagate locally "down" *) 
+
+let downward_prop : (string, d) t =
+    let%bind age0 = return 24 in
+    let%bind age1 = return(age0 + 1) in
+    match%bind put_env (fun d -> {d with name="Vincent"}) (get ())
+       with {name} -> (* another ppx_let extension, monadic match *)
+    let record = to_string age1 name in
+    return record
+
+let () = printf "%s\n" (run downward_prop {name= "Jack"; age= 85})
+
 
 (* Alternative Reader with a Core.Map as the data structure *)
 (* We will skip details of this in lecture as it is very similar to Reader *)
@@ -551,10 +592,107 @@ end
 (* State *)
 (* ***** *)
 
+(* as a warm-up to state, let's just make a Monad with a simple counter. 
+   * This monad is like State in that it 
+   - gets in some side data (the integer count here)
+   - possibly does something with it
+   - passes it on for future potential users 
+   - and, we can in fact have get/set for read/write on this int data - mini-state! *)
+
+module Count = struct
+  module T = struct
+    (* Here is the monad type: we need to *thread* the count through all computations
+       So, pass count in like Reader *and* return it like Logger *)
+    type 'a t = int -> 'a * int
+    (* Let us now construct bind.
+       1) Like Reader, the result is a fun i : int -> ... since we pass in count
+       2) First we pass the count i, plus one, to the first computation x
+       3) x returns a pair with a new count, i'
+       4) Now the key to being a stateful count is thread that latest state on to f
+       -- f will then "see" the count of steps of x.
+    *)
+    let bind (x : 'a t) ~(f: 'a -> 'b t) : 'b t =
+      fun (i : int) -> let (x', i') = x i in f x' i'
+    let return (x : 'a) : 'a t = fun i -> (x, i)
+    let map = `Define_using_bind
+    type 'a result = 'a * int
+    (* Run needs to pass in an initial count, 0 *)
+    let run (c : 'a t) : 'a result = c 0
+    let inc () = 
+      fun (n : int) -> (n+1,n+1) (* return +1 of count AND set state to +1 *)
+    (* This is in fact a really simple state monad if we add get and set *)
+    let set (n : int) =
+      fun (_ : int) -> ((),n) (* return () as value, CHANGE state to n *)
+    let get () =
+      fun (n : int) -> (n,n) (* return the state n AND propagate n as state *)
+
+  end
+  include T
+  include Monad.Make(T)
+end
+
+open Count
+open Count.Let_syntax
+
+let oneplustwo_incing = 
+  let%bind _ = inc () in
+  let%bind onev = return 1 in 
+  let%bind twov = return 2 in 
+  let%bind r = return (onev + twov) in
+  let%bind _ = inc () in
+  return(r)
+
+(* Count in fact is also a very simple store with one integer value in the heap *)
+(* The set and get functions will set/get this single integer value *)
+
+(* Here is an OCaml example of how state is implicitly threaded along *)
+let r = ref 0 in
+let () = r := r + 1 in
+let result = !r in result (* r implicitly has latest value *)
+
+(* Here is the same example in the Count monad *)
+
+let simple_state () = 
+  let%bind rv = get() in
+  let%bind () = set(rv + 1) in
+  let%bind result = get() in return(result)
+
+run @@ simple_state ();;
+
+
+
+let rec sumlist = function
+  | [] -> get ()
+  | hd :: tl -> 
+    let%bind n = get () in 
+    let%bind _ = set (n + hd) in
+    sumlist tl
+
+let _ : int Count.result  = run (sumlist [1;2;3;4;5])
+
+
+(* Let us try to write inc ourselves using the Monad's set/get 
+   It can't jusy be a normal-land function, it must be in monad-land to use side effect 
+   Note we also can't write set (get() + 1) because get is in monad-land and + is not!
+*)
+
+let bad_inc = set ( get() + 1) (* type error ! *)
+
+let our_inc () =
+  let%bind cur = get () in
+  let%bind () = set (cur + 1) in
+  get ()
+
+let oneplustwo_our_incing = 
+  let%bind _ = our_inc () in
+  let%bind onev = return 1 in 
+  let%bind twov = return 2 in 
+  let%bind r = return (onev + twov) in
+  let%bind _ = our_inc () in
+  return(r)
+
 (* 
- * Mutable state is a key side effect
- * Let us construct a monad encoding side effects in OCaml
- * 
+ * Here is a more general State monad - the store is an arbitrary Map from strings to values
  *)
 
 module State = struct
@@ -601,3 +739,125 @@ let sumlist l =
   in sum l
 
 let _ : int = run (sumlist [1;2;3;4;5])
+
+
+(* Type-directed monads 
+ * Pretty much any OCaml type has a natural monad behind it
+ * Some are more useful than others
+ * Let us consider a monad where t is 'a list, what can that do?
+*)
+
+type 'a t = 'a list
+(* Let us just try to write non-trivial bind/return that type check *)
+
+let bind (m : 'a t) ~(f : 'a -> 'a t) : 'a t = failwith "TO DO"
+let return (v : 'a) : 'a t = failwith "TO DO"
+
+
+
+
+
+
+
+
+(* ************** *)
+(* Nondeterminism *)
+(* ************** *)
+
+module Nondet = struct
+  module T = struct
+    type 'a t = 'a list
+    let return (x : 'a) : 'a t = [x]
+    let rec bind (m : 'a t) ~(f : 'a -> 'b t) : 'b t =
+      List.join @@ List.map m ~f
+    let map = `Define_using_bind
+
+    type 'a result = 'a list
+    let run (m : 'a t) : 'a result = m
+
+    let zero : 'a t = []
+    let either (a : 'a t) (b : 'a t): 'a t = a @ b
+  end
+  include T
+  include Monad.Make(T)
+end
+
+open Nondet
+open Nondet.Let_syntax
+
+(* All divisors of a number *)
+
+let divisors n = 
+  let rec _divisors n count = 
+    if count = 1 then return(1)
+    else 
+      either 
+        (if n mod count = 0 then return count else zero)
+        (_divisors n (count-1))
+  in _divisors n n
+
+(* powerset of a set (represented as a list here for simplicity) *)
+
+let rec powerset (l : 'a list) : 'a list t =
+  match l with
+  | [] -> return []
+  | hd :: tl -> let%bind pow_member = powerset tl in
+    either 
+      (return pow_member)
+      (return @@ hd :: pow_member)
+
+(* all permutations of a list *)
+
+let rec insert (x : 'a)  (l : 'a list) : 'a list t =
+  either
+    (return (x :: l))
+    (match l with
+     | [] -> zero
+     | hd :: tl -> let%bind l' = insert x tl in return (hd :: l'))
+
+let rec permut (l : 'a list) : ('a list t) =
+  match l with
+  | [] -> return []
+  | hd :: tl -> let%bind l' = permut tl in insert hd l'
+
+let test_nondet : int list list = run (permut [1;2;3])
+
+(* Other monads we are skipping for now
+ * Continuations *)
+type 'a t = ('a -> 'a result) -> 'a result
+(* 
+   - the ('a -> 'a result) is the continuation, the "rest of the computation"
+   - Coroutines are a variation on the continuation monad where "rest" is the other routines
+ *)
+
+
+(* Composing monads *)
+
+(* 
+ * Suppose you need both state and exceptions, what to do?
+ * Solution is to compose the types/binds/returns into a single monad
+ * Monad transformers are functors that take monads to monads to do this
+ * Here we are just going to manually compose which is often easier
+*)
+
+(* recall the types of Exception and State 
+   (lets use Count to stand for State for simplicity - just one cell holding an int)
+*)
+
+type 'a except = 'a Option.t
+type 'a state = int -> 'a * int
+
+(* There are *two* ways to compose types, depending on which type is on the "outside"
+   * option 1: state on the outside *)
+
+type 'a state_except = int -> ('a Option.t) * int
+
+(* Option 2: option on the outside: *)
+type 'a except_state = (int -> 'a * int) Option.t
+
+(* 
+ * The second one tosses the state in the event of an exception
+ * The first one keeps it 
+ * You are used to the first kind, state never gets tossed in usual PL's.
+ * Could even combine both: inner and outer exception
+ *)
