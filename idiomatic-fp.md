@@ -92,7 +92,7 @@ Here is a list of idioms, many of which are review as we touched on them before
 * Moral: to save space/time you may want to tail-call
 
 #### Folding left vs right and tail calls
-
+<a name = "tail-recursion"></a>
 `fold_right` is not tail-recursive; here is an implementation:
 
 ```ocaml

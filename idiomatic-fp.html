@@ -220,8 +220,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h4 id="folding-left-vs-right-and-tail-calls">Folding left vs right and tail calls</h4>
-
-<p><code>fold_right</code> is not tail-recursive; here is an implementation:</p>
+<p><a name="tail-recursion"></a><br />
+<code>fold_right</code> is not tail-recursive; here is an implementation:</p>
 
 <pre><code class="language-ocaml">let rec fold_right ~f ~init l = 
 match l with

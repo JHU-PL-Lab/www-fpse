@@ -1,0 +1,220 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="efficiency-in-functional-programming">Efficiency in Functional Programming</h2>
+
+<ul>
+  <li>Functional data structures:
+    <ul>
+      <li>at first they may feel super-inefficient</li>
+      <li>but they are often in practice perfectly fine even if asymptotic behavior is worse</li>
+      <li>and, they are better in a few cases because past states “persist for free”</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="case-study-minesweeper">Case Study: Minesweeper</h3>
+
+<ul>
+  <li>Let us analyze the complexity of different implementations of Minesweeper.</li>
+  <li>Assume a grid of n elements (a square-root n by square-root n grid)</li>
+</ul>
+
+<p>Monadic version with 2D array update as a copy in implementation</p>
+<ul>
+  <li>Each grid square increment will take O(n) since the whole grid has to be rebuilt with one change</li>
+  <li>O(n) inc’s are performed total so it will be O(n^2).</li>
+</ul>
+
+<p>Alternative monad implementation as a Core.Map from keys (i,j) to characters:</p>
+<ul>
+  <li>lookup and increment will be O(log n) since Core.Map is implemented as a balanced search tree
+    <ul>
+      <li>one change to a Map’s tree is only log n because only one path in tree is changed, rest can be re-used</li>
+    </ul>
+  </li>
+  <li>So total time is O(n log n)</li>
+</ul>
+
+<p>Regular imperative implementation using a 2D array</p>
+<ul>
+  <li>O(1) for each inc operation so O(n) in total.</li>
+</ul>
+
+<p>Conclusion</p>
+<ul>
+  <li>For Minesweeper, O(n^2) is in fact fine as billion-by-billion grids are not used</li>
+  <li>But clearly in your “big data” app such a penalty could be intolerable</li>
+  <li>It is in general a waste of power .. more greenhouse gases</li>
+</ul>
+
+<h3 id="when-fp-wins">When FP wins</h3>
+
+<ul>
+  <li>Some algorithms are in fact better in the FP world</li>
+</ul>
+
+<h4 id="many-related-worlds-algorithms">Many Related Worlds Algorithms</h4>
+<ul>
+  <li>Portions of immutable data structures can be shared without conflict</li>
+  <li>So if an algorithm has many related stores in it the FP version can be superior</li>
+  <li>Example: a simple transactional store in pseudocode</li>
+</ul>
+
+<pre><code class="language-ocaml">module Transactional_store = struct
+    type store = (* The type of the heap data here *)
+    (* In the monad type, pass two stores, one in-use one saved *)
+    type 'a t = store * store -&gt; 'a * store * store 
+    let bind (x : 'a t) ~(f: 'a -&gt; 'b t) : 'b t =
+      fun (s : store * store) -&gt; let (x', s1', s2') = x s in f x' (s1', s2')
+    let return (x : 'a) : 'a t = fun ss -&gt; (x, ss)
+    let set (v : data) =
+      fun (s1, s2) -&gt; ((),store_put s1 v,s2) (* update s1, pass along s2 *)
+    let get () =
+      fun (s1, s2) -&gt; (store_get s1,s1,s2) (* fetch data from s1 *)
+    let save () = 
+      fun (s1, s2) -&gt; ((),s1,s1) (* save the current store *)
+    let rollback () = 
+      fun (s1, s2) -&gt; ((),s2,s2) (* toss s1, rollback to the saved store s2 *)
+  end
+end
+</code></pre>
+
+<ul>
+  <li>If the <code>store</code> in the above is say a Map, the <code>s1</code> and <code>s2</code> maps should be “nearly all shared” on average.</li>
+  <li>So, copying and memory use minimized.</li>
+  <li>The real benefit comes when there are <code>n</code> stores <code>s1</code>, …, <code>sn</code> with sharing</li>
+</ul>
+
+<h4 id="fp-and-paralellism">FP and paralellism</h4>
+
+<ul>
+  <li>If we know there are no side effects, any independent computation can be done in parallel</li>
+  <li>Common example: <code>List.map</code> and other <code>.map</code>’s can apply <code>f</code> in parallel</li>
+  <li>Multiple function arguments can be evaluated in parallel</li>
+  <li>etc..</li>
+</ul>
+
+<h3 id="writing-more-efficient-fp">Writing more efficient FP</h3>
+
+<ul>
+  <li>We already covered some of this with the tail recursion topic
+    <ul>
+      <li>tail recursion principle: if the last action in a function is a recursive call, compiler can optimize away the call stack</li>
+    </ul>
+  </li>
+  <li>Let us consider that and a few other topics now.</li>
+</ul>
+
+<h4 id="memoization">Memoization</h4>
+
+<ul>
+  <li>If a function has no side effects it can easily be <em>memoized</em>
+    <ul>
+      <li>given a fixed input, the output is always the same</li>
+      <li>so, keep a history of past input -&gt; output pairs and look up input in table first</li>
+      <li>if the function is expensive and is often invoked on the same argument it will be very effective</li>
+      <li>example of fibbonici from your assignment: exponential to linear</li>
+    </ul>
+  </li>
+  <li>Note that memoization implicitly needs a store for this past history</li>
+  <li>Could use mutable store, but could also do the “state monad thing”
+    <ul>
+      <li>pass in and return the store in the memoized function
+        <pre><code class="language-ocaml">fib : int -&gt; (int,int,..) Map.t -&gt; (int * (int,int,..) Map.t)
+</code></pre>
+      </li>
+      <li>Requires monadic state threading and store itself will be less efficient</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="tail-recursion-hacks">Tail recursion hacks</h3>
+
+<ul>
+  <li>As we discussed earlier in the <a href="idiomatic-fp.html#tail-recursion">idiomatic fp topic</a>, left fold is tail-recursive whereas right fold is not</li>
+  <li>The problem is it is somewhat random whether a given algorithm is tail-recursive or not</li>
+  <li>But, we can re-factor many algorithms to be tail recursive</li>
+  <li>A classic technique for this is <em>continuation passing style</em> aka CPS</li>
+</ul>
+
+<h4 id="continuation-passing-style-cps">Continuation Passing Style (CPS)</h4>
+
+<ul>
+  <li>Idea: pass the “rest of the computation” as an additional argument <code>c</code> to a function</li>
+  <li>The last line of the function will be <code>c(..)</code> – call <code>c</code>.</li>
+  <li>If <code>c</code> is the current function itself, it will be a tail call - efficient!</li>
+  <li>See file <a href="continuation-trees.ml">continuation-trees.ml</a> for how to code tree fold using CPS.</li>
+</ul>
+
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>

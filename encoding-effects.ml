@@ -789,8 +789,8 @@ end
 open Nondet
 open Nondet.Let_syntax
 
-(* simple eg *)
-bind [2;6] ~f:(fun x -> [x;x + 1]);;
+(* simple example *)
+let _ : int t = bind [2;6] ~f:(fun x -> [x;x + 1])
 
 (* All divisors of a number *)
 
