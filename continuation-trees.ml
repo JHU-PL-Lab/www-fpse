@@ -17,7 +17,8 @@ let bt = Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
 int_summate bt;;
 
 (* CPS tree fold function *)
-let rec fold_cps (tree:'b bin_tree) ~(f:'b -> 'a -> 'a -> 'a) ~(leaf:'a) ~(c : 'a -> 'b) =
+let rec fold_cps (tree:'b bin_tree) ~(f:'b -> 'a -> 'a -> 'a) ~(leaf:'a) 
+                ~(c : 'a -> 'b) =
   match tree with
   | Leaf -> c(leaf)
   | Node(x, left, right) ->
