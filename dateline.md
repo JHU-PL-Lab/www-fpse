@@ -410,7 +410,7 @@ Lecture material and assigments are under the indicated links.
             <div align="left" class="body">Mini-Projects and Libraries</div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">Mini-Project</div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -475,7 +475,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Lab</div>
+            <div align="left" class="body">Mini-Project Lab</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -492,7 +492,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body">TBA</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
