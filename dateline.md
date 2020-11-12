@@ -308,7 +308,7 @@ Lecture material and assigments are under the indicated links.
             <div align="left" class="body"><a href="encoding-effects.ml">Encoding Effects I</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A4</div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -345,7 +345,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A4 PI</div>
           </td>
         </tr>
         <tr> 
@@ -376,10 +376,10 @@ Lecture material and assigments are under the indicated links.
             <div align="left" class="body"><a href="efficiency.html">Efficiency</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A5</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A4 PII</div>
           </td>
         </tr>
         <tr> 
@@ -424,13 +424,13 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body">TBA</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A5</div>
           </td>
         </tr>
         <tr> 
@@ -475,7 +475,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body">Lab</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
