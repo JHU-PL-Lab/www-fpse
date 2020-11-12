@@ -390,7 +390,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body"><a href="lazy-async.html">Laziness and Asynchrony</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -407,7 +407,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body">Mini-Projects and Libraries</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -441,7 +441,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body">Eat Turkey or Tofurky</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -458,7 +458,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;</div>
+            <div align="left" class="body">Eat More Turkey or Tofurky</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -503,13 +503,13 @@ Lecture material and assigments are under the indicated links.
         </tr>
 	<tr> 
           <td width="8%"> 
-            <div align="center" class="body">Dec TBA, TBA PM</div>
+            <div align="center" class="body">Dec 18</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">TBA</div>
+            <div align="center" class="body">Fri</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;<strong>Take-Home Final</strong></div>
+            <div align="left" class="body">&nbsp;<strong>Mini-Projects Due</strong></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

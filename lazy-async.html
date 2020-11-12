@@ -1,0 +1,332 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="lazy-data-structures">Lazy Data Structures</h2>
+
+<ul>
+  <li>OCaml is by default eager
+    <ul>
+      <li>function parameters are evaluated to values before calling functions</li>
+      <li>Pairs, records, and variants all have their internals computed to values recursively.</li>
+    </ul>
+  </li>
+  <li>But, sometimes laziness can be both useful and more efficient
+    <ul>
+      <li>for lazy funcation call, no need to compute arguments that are not used</li>
+      <li>It allows for construction of “infinite” lists, etc
+        <ul>
+          <li>Don’t compute the nth element until it is asked for</li>
+          <li>But, once it is computed, cache it (a form of memoizing)</li>
+          <li>Just don’t ask for all infinitely many elements!</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="super-simple-encoding-of-laziness-in-ocaml">Super simple encoding of laziness in OCaml</h4>
+
+<ul>
+  <li>OCaml has no built-in Laziness (Haskell does)</li>
+  <li>But it can be encoded via a <em>thunk</em></li>
+</ul>
+
+<pre><code class="language-ocaml">let frozen_add = fun () -&gt; printf "Have a smiley day!\n"; 4 + 3
+let thaw e = e ()
+thaw frozen_add;; (* 4+3 not computed until here *)
+</code></pre>
+
+<ul>
+  <li>This encoding is in fact just “call by name”, laziness means memoizing the result.</li>
+</ul>
+
+<h4 id="the-baselazy-module">The <code>Base.Lazy</code> module</h4>
+
+<ul>
+  <li><code>Base.Lazy</code> is a much more usable sugar for the above</li>
+</ul>
+
+<pre><code class="language-ocaml"># open Lazy;;
+# let l = lazy(printf "Have a smiley day!\n";2+3);;
+val l : int lazy_t = &lt;lazy&gt; (* lazy_t is the wrapper type *)
+# force l;;
+Have a smiley day!
+- : int = 5
+# let f lv =  (force lv) + (force lv);;
+val f : int lazy_t -&gt; int = &lt;fun&gt;
+# f l;;
+Have a smiley day! (* this is printed only once, the 2nd force uses cached 5 value *)
+- : int = 10
+</code></pre>
+
+<ul>
+  <li>Fact: laziness is just a “wrapper” on a computation</li>
+  <li>So: Lazy is in fact (yet) another monad - !
+    <ul>
+      <li>We won’t get into <code>Lazy.bind</code> etc here but lets make an infinite stream of fib’s.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-ocaml">open Core
+open Lazy
+type 'a stream = Cons of 'a * 'a stream Lazy.t (* List MUST be infinite *)
+
+let rec all_ones : int stream = Cons(1,lazy(all_ones))
+
+let rec ints n : int stream = Cons(n,lazy(ints (n+1)))
+
+(* Code to get the nth element of a lazy list *)
+
+let rec nth (Cons(hd, tl) : 'a stream) (n : int) :'a =
+  if n = 0 then hd
+  else nth (force tl) (n-1)
+
+(* A more interesting example - shows memoization, this is not exponential *)
+
+let rec fib : int stream = 
+  let rec fib_rest (Cons(hd, tl) : int stream) : (int stream) = 
+   let Cons(hd',_) = force tl in
+    Cons (hd + hd', lazy(fib_rest (force tl))) in
+  Cons(1, lazy(Cons(1, lazy(fib_rest fib))))
+</code></pre>
+
+<ul>
+  <li>One thing not clear from the code is that a <code>Lazy</code> will not be recomputed</li>
+  <li>Once the list is “unrolled” by one call it doesn’t need to be “re-unrolled”</li>
+  <li>This is a form of caching / memoization built into <code>Lazy</code>
+    <ul>
+      <li>(but not in our crude encoding of it above)</li>
+    </ul>
+  </li>
+  <li>Note that becuase of that the above nth function will in fact be linear, not exponential</li>
+</ul>
+
+<h2 id="asynchronous-programming">Asynchronous Programming</h2>
+
+<p>Concurrency is needed for two main reasons</p>
+<ol>
+  <li>You want to run things in parallel for speed gain (multi-core, cluster, etc)</li>
+  <li>You are waiting for a result from an I/O action
+    <ul>
+      <li>Disk read/write, network request, remote API call, etc</li>
+      <li>(Sometimes also awaiting for internal actions such as time-outs)</li>
+    </ul>
+  </li>
+</ol>
+
+<p>In OCaml</p>
+<ul>
+  <li>Concurrency for speed gain is a work in progress, look for a release in a year or two</li>
+  <li>Concurrency to support asynchronous waiting: <code>Async</code> library (which is based on the <code>Lwt</code> library)</li>
+</ul>
+
+<p>Local concurrency for speed</p>
+<ul>
+  <li>This is usually done via <em>threads</em></li>
+  <li>fork off another computation with its own runtime stack etc but share the heap</li>
+  <li>But, threads are notoriously difficult to debug
+    <ul>
+      <li>100’s of patches have been added to help (channels, monitors, locks, ownership types, etc etc etc) but still hard</li>
+    </ul>
+  </li>
+  <li>So, better to use a simpler system focused on waiting for I/O if that is all you really need</li>
+</ul>
+
+<h3 id="async"><code>Async</code></h3>
+
+<ul>
+  <li><code>Async</code> is another Jane Street library</li>
+  <li>It is based on the notion of a <em>promise</em></li>
+  <li>Promises have been around for a very long time but are gaining in popularity</li>
+  <li>Many languages have libraries implementing some form</li>
+  <li>In <code>Async</code> they are called deferreds, of type <code>Deferred.t</code></li>
+</ul>
+
+<h4 id="deferreds">Deferreds</h4>
+
+<ul>
+  <li>A <code>Deferred.t</code> is an action returning a result</li>
+  <li>Until the action is forced, it won’t run (like laziness)</li>
+  <li>When it is forced a result will be returned which is an <code>option</code>
+    <ul>
+      <li><code>None</code> will mean failure; I/O always needs failure case</li>
+    </ul>
+  </li>
+  <li>Here is an example using <code>Async.Reader.file_contents</code>
+    <ul>
+      <li>reads a whole file into a string</li>
+      <li>but, calls to it <em>immediately</em> return</li>
+      <li>The file is not in fact read until the deferred is run</li>
+      <li>This is a special file operation function part of <code>Async</code> to support deferreds.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-ocaml"># #require "async";;
+# #require "ppx_jane";;
+# open Async;;
+# let eventual_string = Reader.file_contents "update.py";;
+val eventual_string : string Deferred.t = &lt;abstr&gt;
+# Deferred.peek eventual_string;;
+- : string option = None (* nothing has been done to force the Deferred to run *)
+# eventual_string;; (* .. utop forces it to run implicitly - like Lazy.force but implicit *)
+- : string =
+"#!/usr/bin/python\...\n\n"
+# Deferred.peek eventual_string;;
+- : string option =
+Some
+ "#!/usr/bin/python\...\n\n"
+</code></pre>
+<ul>
+  <li>An odd thing about the above is let-defining a <code>Deferred</code> will not run it
+    <ul>
+      <li>but, if it is directly fed into the top loop it will implicitly run</li>
+      <li>this is becuase <code>utop</code> when it sees a direct deferred will run it and return the result</li>
+    </ul>
+  </li>
+</ul>
+
+<p>(Note the <code>Async</code> examples we base on <a href="https://dev.realworldocaml.org/concurrent-programming.html">Real World OCaml Chapter 15</a> which has a lot more than what we are covering)</p>
+
+<h4 id="the-async-monad">The Async monad</h4>
+
+<ul>
+  <li><code>Lazy</code> and <code>Option</code> we saw it was often not hard to avoid the <code>bind</code>/<code>return</code> view</li>
+  <li>This is also possible with <code>Async</code> but often I/O actions are sequenced and <code>bind</code>/<code>return</code> is thus very helpful.</li>
+</ul>
+
+<pre><code class="language-ocaml"># let uppercase_file (filename : string) : (unit Deferred.t) =
+    let%bind s = Reader.file_contents filename in
+        Writer.save filename ~contents:(String.uppercase s)
+# uppercase_file "t.txt" (* this will implicitly run the Deferred above *)
+- : unit = ()
+# Reader.file_contents "t.txt"
+- : string = "HELLO FOLKS!"
+</code></pre>
+
+<p><code>Deferred.return</code> does the normal wrapping thing, it defers a normal value</p>
+<pre><code class="language-ocaml">let d = return(10);;
+val d : int Deferred.t = &lt;abstr&gt;
+# d;;
+- : int = 10
+</code></pre>
+
+<h3 id="ivars">Ivars</h3>
+
+<ul>
+  <li>Deferred’s are in fact implemented with <code>Ivars</code></li>
+  <li>Think of it as “the implementation of a promise”</li>
+  <li>Often you can use library functions that are <code>Deferred</code> aware</li>
+  <li>But using <code>Ivar</code> you can write your own</li>
+  <li>Here is an example based on RWOC:</li>
+</ul>
+
+<pre><code class="language-ocaml"># let ivar = Ivar.create () (* Create an Ivar; think of it like a ref cell *)
+val ivar : '_weak1 Ivar.t =
+  {Async_kernel__.Types.Ivar.cell = Async_kernel__Types.Cell.Empty}
+# let def = Ivar.read ivar  (* Read the contents of the promise -- an empty one now! *)
+val def : '_weak2 Deferred.t = &lt;abstr&gt;
+# Deferred.peek def
+- : '_weak3 option = None (* It is nothing.  Typing `def;;` now will loop forever! *)
+# Ivar.fill ivar "Hello" (* Fill a promise explicitly *)
+- : unit = ()
+# Deferred.peek def
+- : string option = Some "Hello" (* Indeed it got filled *)
+def;;
+- : string = "Hello"
+</code></pre>
+
+<h3 id="making-the-monadic-bind-and-return">Making the monadic <code>bind</code> and return`</h3>
+
+<ul>
+  <li>Let us show how <code>bind</code> can be defined with <code>Ivar</code>s</li>
+  <li>This will give us the complete picture of the monad</li>
+  <li>Uses <code>upon : 'a Deferred.t -&gt; ('a -&gt; unit) -&gt; unit</code>
+    <ul>
+      <li>takes an <code>Ivar</code> (a promise), and when it is fulfilled runs the <code>('a -&gt; unit)</code> code</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-ocaml">let bind' (d: 'a Deferred.t) ~(f:('a -&gt; 'b Deferred.t)) : 'b Deferred.t =
+    let i = Ivar.create () in
+    upon d (fun x -&gt; (* Run this first function when d is determined *)
+             upon (f x) (* then run f x *)
+                  (fun y -&gt; Ivar.fill i y)
+           ); (* call the promise "filled" when f x is determined *)
+    Ivar.read i (* this returns a Deferred so users can pull on it *)
+</code></pre>
+
+<p>We covered the basic concepts of <code>Async</code> above. See <a href="https://dev.realworldocaml.org/concurrent-programming.html">Real World OCaml Chapter 15</a> for larger examples including asynchronous http.</p>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>
