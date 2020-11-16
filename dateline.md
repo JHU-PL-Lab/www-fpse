@@ -90,7 +90,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A1 Part I due Friday</div>
+            <div align="center" class="body">A1 PI due Friday</div>
           </td>
         </tr>
         <tr> 
@@ -124,7 +124,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body"><a href="assignments/assignment2.html">Assignment 2</a> Fri</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A1 Part 2 Fri</div>
+            <div align="center" class="body">A1 PII Fri</div>
           </td>
         </tr>
         <tr> 
@@ -158,7 +158,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A2 Part I Fri</div>
+            <div align="center" class="body">A2 PI Fri</div>
           </td>
         </tr>
         <tr> 
@@ -192,7 +192,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A2 Part II Sun</div>
+            <div align="center" class="body">A2 PII Sun</div>
           </td>
         </tr>
         <tr> 
@@ -260,7 +260,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A3 P I Fri</div>
+            <div align="center" class="body">A3 PI Fri</div>
           </td>
         </tr>
         <tr> 

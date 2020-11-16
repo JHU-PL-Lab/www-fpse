@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="the-fpse-mini-projects">The FPSE Mini-Projects</h2>
+
+<p>For the final Assignment you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.  Given that there is a month for this assignment the scope will be scaled appropriately.</p>
+
+<h3 id="requirements">Requirements</h3>
+<p>Here are some high-level requirements for the mini-projects.</p>
+
+<ul>
+  <li>All the code must be in OCaml obviously (excepting small bits of glue code)</li>
+  <li>You should use the course libraries – <code>Core</code>, <code>Async</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
+  <li>You are encouraged to partner up although there is no requirement to; effort will be scaled accordingly (i.e. two people should have twice as much “stuff” in the end as one person).</li>
+  <li>A very rough idea of the scope of the project is around 250-500 lines of code per person.</li>
+  <li>There will be two official check-ins: there will be an in-class lab after Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 18th.</li>
+</ul>
+
+<h3 id="project-topic-thrusts">Project Topic Thrusts</h3>
+
+<ul>
+  <li>You will need to make a standalone application as you did in assignments 2 and 4.</li>
+  <li>Given the time available, we suggest focusing one of the three following tracks.
+    <ol>
+      <li>Libraries: create an application using some of the powerful libraries (see list below).</li>
+      <li>Algorithm: stick to the class libraries but create a useful algorithm in the model of Assignment 4.</li>
+      <li>Monad: Re-write some standard algorithms in monadic style.</li>
+    </ol>
+  </li>
+  <li>Note the above tracks are not necessarily mutually exclusive.</li>
+</ul>
+
+<h3 id="specific-topic-areas-and-associated-libraries">Specific Topic Areas and Associated Libraries</h3>
+
+<h4 id="web-based">Web-based</h4>
+
+<ul>
+  <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_async</code></a> for both web client (API reading / crawling) and server applications.</li>
+  <li>See <a href="https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3">Real World OCaml Chapter 15</a> for an example of how to perform http requests with <code>Cohttp_async</code>.</li>
+  <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
+  <li>Write a browser app in OCaml, and compile it to JavaScript to run in the browser via <a href="https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview"><code>js_of_ocaml</code></a>.</li>
+</ul>
+
+<h4 id="persistence">Persistence</h4>
+
+<ul>
+  <li>Make a command-line application which persists data in either a file or database.</li>
+  <li>If you are familiar with databases, the <a href="https://github.com/mmottl/sqlite3-ocaml">sqlite3-ocaml</a> and <a href="https://mmottl.github.io/postgresql-ocaml/">postgresql-ocaml</a> bindings should work for accessing SQLite or Postgres databases from within OCaml.</li>
+</ul>
+
+<h4 id="data-processing">Data Processing</h4>
+<ul>
+  <li><a href="https://ocaml.xyz/book/">Owl</a> is a very well-documented numerical processing library.</li>
+  <li><a href="https://github.com/zshipko/ocaml-bimage">ocaml-bimage</a> is an image processing library.</li>
+</ul>
+
+<h4 id="and-more">And more!</h4>
+
+<ul>
+  <li>There are many OCaml libraries as well as bindings to existing C etc libraries</li>
+  <li>The <a href="https://ocamlverse.github.io/content/ecosystem.html">OCamlverse Ecosystem page</a> lists many libraries available.
+    <ul>
+      <li>Note that some libraries in the list are not particularly up-to-date or reliable or well-documented.  They are roughly sorted though so start with the ones at the top of a given list.</li>
+    </ul>
+  </li>
+  <li><a href="https://github.com/ocaml-community/awesome-ocaml">Awesome OCaml</a> is another such list.</li>
+</ul>
+
+<h3 id="some-concrete-ideas-to-get-the-juices-flowing">Some concrete ideas to get the juices flowing</h3>
+
+<p>Foremost, you should aim to make an app in an area that interests you, so start there.</p>
+
+<p>Here are some rough directions to get the juices flowing</p>
+
+<ul>
+  <li>Simple website</li>
+  <li>RESTFul API collator/processor - see e.g. <a href="https://rapidapi.com">Rapid API</a> for APIs available</li>
+  <li>Web crawler</li>
+  <li>RSS feed</li>
+  <li>Command-line web API usage</li>
+  <li>To-do or scheduling or memo command-line app</li>
+</ul>
+
+<h3 id="submissions">Submissions</h3>
+
+<ul>
+  <li>There will be two submission points in Gradescope, one for the initial design and one for the final code</li>
+  <li>The initial design submission must include
+    <ol>
+      <li>An overview of the purpose of the project</li>
+      <li>A proposed list of libraries you plan on using</li>
+      <li>Commented module type declarations which will provide you with an initial specification to code to</li>
+      <li>It may also include any sketches or other information which will make it easier to understand your mini-project.</li>
+    </ol>
+  </li>
+  <li>The final submission will in addition include
+    <ol>
+      <li>All of the code of course!</li>
+      <li>It should include a dune file which successfuly builds your project</li>
+      <li>It should include a <code>Readme.md</code> at the top outlining how to build and run the project.  If any other <code>opam</code> installs are needed outside of the offical course list, describe them in your <code>Readme.md</code>.</li>
+      <li>You will also need to include a test suite with good coverage.</li>
+    </ol>
+  </li>
+  <li>We will put up two submission points in Gradescope for you to upload your zipped hierarchies for the Design and Final submissions.  Please include all the source files needed to build the project but no binary or built files.</li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>
