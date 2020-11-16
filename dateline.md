@@ -407,7 +407,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Mini-Projects and Libraries</div>
+            <div align="left" class="body"><a href="assignments/mini-project.html">Mini-Projects and Libraries</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">Mini-Project</div>
