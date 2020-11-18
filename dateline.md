@@ -424,7 +424,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">TBA</div>
+            <div align="left" class="body"><a href="fp-universe.html">The FP Universe</a>; Haskell by Devin</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -475,7 +475,7 @@ Lecture material and assigments are under the indicated links.
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">TBA</div>
+            <div align="left" class="body"><a href="fp-universe.html">The FP Universe</a>; Clojure by Kelvin</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
