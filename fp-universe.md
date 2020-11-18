@@ -24,7 +24,8 @@ Haskell is in the ML school; Devin will present Haskell in detail.
 * [F#](https://fsharp.org) is Microsoft's ML-style language, it has all the main features of OCaml
 * It integrates well with the MSFT toolchain
 * Here is an example from their tutorial; looks familiar, eh?
-```f#
+
+```fsharp
 let square x = x * x
 let isOdd x = x % 2 <> 0
 
@@ -49,7 +50,6 @@ let getArea shape =
 let square = Square 2.0
 printfn "The area of the square is %f" (getArea square)
 ```
-
 
 ### Reason
 

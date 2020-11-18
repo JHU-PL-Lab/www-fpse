@@ -92,102 +92,137 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li><a href="https://fsharp.org">F#</a> is Microsoft’s ML-style language, it has all the main features of OCaml</li>
   <li>It integrates well with the MSFT toolchain</li>
-  <li>Here is an example from their tutorial; looks familiar, eh?<br />
-```f#<br />
-let square x = x * x<br />
-let isOdd x = x % 2 &lt;&gt; 0</li>
+  <li>Here is an example from their tutorial; looks familiar, eh?</li>
 </ul>
 
-<p>let sumOfOddSquares nums =<br />
-    nums<br />
-    |&gt; List.filter isOdd<br />
-    |&gt; List.sumBy square</p>
+<pre><code class="language-fsharp">let square x = x * x
+let isOdd x = x % 2 &lt;&gt; 0
 
-<p>let numbers = [1; 2; 3; 4; 5]<br />
-let sum = sumOfOddSquares numbers<br />
-printfn “The sum of the odd squares in %A is %d” numbers sum</p>
+let sumOfOddSquares nums =
+    nums
+    |&gt; List.filter isOdd
+    |&gt; List.sumBy square
 
-<p>type Shape =<br />
-    | Square of side: double<br />
-    | Rectangle of width: double * length: double</p>
+let numbers = [1; 2; 3; 4; 5]
+let sum = sumOfOddSquares numbers
+printfn "The sum of the odd squares in %A is %d" numbers sum
 
-<p>let getArea shape =<br />
-    match shape with<br />
-    | Square side -&gt; side * side<br />
-    | Rectangle (width, length) -&gt; width * length</p>
+type Shape =
+    | Square of side: double
+    | Rectangle of width: double * length: double
 
-<p>let square = Square 2.0<br />
-printfn “The area of the square is %f” (getArea square)</p>
-<pre><code>
+let getArea shape =
+    match shape with
+    | Square side -&gt; side * side
+    | Rectangle (width, length) -&gt; width * length
 
-### Reason
+let square = Square 2.0
+printfn "The area of the square is %f" (getArea square)
+</code></pre>
 
-* [Reason](https://reasonml.github.io) is an interesting beast, it has **exactly** the features of OCaml
-  - but with a somewhat different syntax not so loaded with historical oddities and kludges
-  - You can convert `.rs` to `.ml` and vice-versa very cleanly and it also translates to JavaScript for browser code
-  - The [Overview](https://reasonml.github.io/docs/en/overview) provides a glimpse of the syntax
-    - it is not hard to see how it is a minor variation on OCaml
-  - We will play with [this live demo](https://reasonml.github.io/en/try) which shows code in all three languages at once
+<h3 id="reason">Reason</h3>
 
-#### ReasonReact
+<ul>
+  <li><a href="https://reasonml.github.io">Reason</a> is an interesting beast, it has <strong>exactly</strong> the features of OCaml
+    <ul>
+      <li>but with a somewhat different syntax not so loaded with historical oddities and kludges</li>
+      <li>You can convert <code>.rs</code> to <code>.ml</code> and vice-versa very cleanly and it also translates to JavaScript for browser code</li>
+      <li>The <a href="https://reasonml.github.io/docs/en/overview">Overview</a> provides a glimpse of the syntax
+        <ul>
+          <li>it is not hard to see how it is a minor variation on OCaml</li>
+        </ul>
+      </li>
+      <li>We will play with <a href="https://reasonml.github.io/en/try">this live demo</a> which shows code in all three languages at once</li>
+    </ul>
+  </li>
+</ul>
 
-* The main thrust behind Reason is use of FP in web UI programming
-* ReasonReact is the Reason version of Facebook's excellent React UI library
-* We will take a peek at a [Simple To Do app](https://github.com/reasonml-old/reason-react-example/tree/master/src/todomvc) written in ReasonReact
+<h4 id="reasonreact">ReasonReact</h4>
 
-### Elm
+<ul>
+  <li>The main thrust behind Reason is use of FP in web UI programming</li>
+  <li>ReasonReact is the Reason version of Facebook’s excellent React UI library</li>
+  <li>We will take a peek at a <a href="https://github.com/reasonml-old/reason-react-example/tree/master/src/todomvc">Simple To Do app</a> written in ReasonReact</li>
+</ul>
 
-* [Elm](https://elm-lang.org) is an ML-school language 
-* Designed for writing web apps, it runs in the browser via translation to JS.
-   - Similar to Reason in goal
+<h3 id="elm">Elm</h3>
 
-### Scala
+<ul>
+  <li><a href="https://elm-lang.org">Elm</a> is an ML-school language</li>
+  <li>Designed for writing web apps, it runs in the browser via translation to JS.
+    <ul>
+      <li>Similar to Reason in goal</li>
+    </ul>
+  </li>
+</ul>
 
-* Scala is a hybrid of Java and ML which runs on the JVM so can link with Java libraries
-* It is easier to do FP in compared to Java since it was built-in from the start: pattern matching, type inference, etc.
+<h3 id="scala">Scala</h3>
 
-### Lisp / Scheme / Racket
+<ul>
+  <li>Scala is a hybrid of Java and ML which runs on the JVM so can link with Java libraries</li>
+  <li>It is easier to do FP in compared to Java since it was built-in from the start: pattern matching, type inference, etc.</li>
+</ul>
 
-* Lisp was the very first functional programming language, from the late 50's
-  - it was dynamically typed, there are no type declarations or inference and errors caught at runtime.
-* Scheme was a clean-up of Lisp in the 70's-80's, there were several errors in the Lisp design
-  - e.g. dynamic scoping -- closures were not computed in Lisp.
-* [Racket](https://racket-lang.org) is a popular modern dialect of Scheme with many added features including types
-* Additionally, Smalltalk, Ruby, Python, and JavaScript are dynamically-typed and are thus descended from Lisp.
+<h3 id="lisp--scheme--racket">Lisp / Scheme / Racket</h3>
 
-### Clojure
+<ul>
+  <li>Lisp was the very first functional programming language, from the late 50’s
+    <ul>
+      <li>it was dynamically typed, there are no type declarations or inference and errors caught at runtime.</li>
+    </ul>
+  </li>
+  <li>Scheme was a clean-up of Lisp in the 70’s-80’s, there were several errors in the Lisp design
+    <ul>
+      <li>e.g. dynamic scoping – closures were not computed in Lisp.</li>
+    </ul>
+  </li>
+  <li><a href="https://racket-lang.org">Racket</a> is a popular modern dialect of Scheme with many added features including types</li>
+  <li>Additionally, Smalltalk, Ruby, Python, and JavaScript are dynamically-typed and are thus descended from Lisp.</li>
+</ul>
 
-Clojure is in the Lisp school; Kelvin will present Clojure in detail.
+<h3 id="clojure">Clojure</h3>
 
+<p>Clojure is in the Lisp school; Kelvin will present Clojure in detail.</p>
 
-## FP Extensions to YourFavoriteLang
+<h2 id="fp-extensions-to-yourfavoritelang">FP Extensions to YourFavoriteLang</h2>
 
-* It is now possible to do FP-style programming in Java, C++, Python, JavaScript, etc.
-* All of these languages now fully support higher-order functions with Currying, etc.
-* But, there is not necessarily good library support or integration
-* Also, to "really do" FP you need immutable data structures and variables
-  - limited support for that in most of these languages currently
+<ul>
+  <li>It is now possible to do FP-style programming in Java, C++, Python, JavaScript, etc.</li>
+  <li>All of these languages now fully support higher-order functions with Currying, etc.</li>
+  <li>But, there is not necessarily good library support or integration</li>
+  <li>Also, to “really do” FP you need immutable data structures and variables
+    <ul>
+      <li>limited support for that in most of these languages currently</li>
+    </ul>
+  </li>
+</ul>
 
-### FP in Java
+<h3 id="fp-in-java">FP in Java</h3>
 
-Java 8+ has **Lambdas**
+<p>Java 8+ has <strong>Lambdas</strong></p>
 
-*   Lambdas are a bit clunky to use compared to OCaml due to how they were patched in.
-*   Java 8 higher-order functions  "pun" as an interface with only one method in it.  
-    - the function is taken to be the body of that single method, no need to write the method name when declaring the function then.
-*   There is also some (limited) type inference for Lambda parameters.
-*   [Here is a tutorial](http://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html)
-*   Currying in Java, somewhat painfully: [Gist currying example](https://gist.github.com/timyates/7674005). For that example here is the [Function](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html) and [BiFunction](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/BiFunction.html) type.
-* Use `final` to declare variables immutable in Java - use it!
+<ul>
+  <li>Lambdas are a bit clunky to use compared to OCaml due to how they were patched in.</li>
+  <li>Java 8 higher-order functions  “pun” as an interface with only one method in it.
+    <ul>
+      <li>the function is taken to be the body of that single method, no need to write the method name when declaring the function then.</li>
+    </ul>
+  </li>
+  <li>There is also some (limited) type inference for Lambda parameters.</li>
+  <li><a href="http://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html">Here is a tutorial</a></li>
+  <li>Currying in Java, somewhat painfully: <a href="https://gist.github.com/timyates/7674005">Gist currying example</a>. For that example here is the <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html">Function</a> and <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/BiFunction.html">BiFunction</a> type.</li>
+  <li>Use <code>final</code> to declare variables immutable in Java - use it!</li>
+</ul>
 
-Terminology aside: _closure_
+<p>Terminology aside: <em>closure</em></p>
 
-*   A _closure_ is just a higher-order function return value
-*   The term "closure" comes from how they are implemented -- all variables not local to the function must be remembered
-*   OCaml example:
+<ul>
+  <li>A <em>closure</em> is just a higher-order function return value</li>
+  <li>The term “closure” comes from how they are implemented – all variables not local to the function must be remembered</li>
+  <li>OCaml example:</li>
+</ul>
 
-```ocaml
-# let f = (fun x -&gt; fun y -&gt; x + y) 4;;
+<pre><code class="language-ocaml"># let f = (fun x -&gt; fun y -&gt; x + y) 4;;
 val f : int -&gt; int = &lt;fun&gt; (* f is at runtime the closure &lt;fun y code, {x |-&gt; 4}&gt; *)
 # f 3;;
 - : int = 7   &lt;/pre&gt;
