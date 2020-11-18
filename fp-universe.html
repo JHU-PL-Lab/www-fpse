@@ -263,32 +263,40 @@ print adder(4)(18)
   <li>The above is a bit clunky having to name the intermediate function</li>
   <li><code>map</code>, <code>filter</code>, <code>reduce</code> etc are already in the core language</li>
   <li>In addition, the <a href="https://docs.python.org/3/library/functools.html"><code>functools</code></a> standard library supports other convenience higher-order function operations</li>
-  <li>Plus, if you want even more FP-ism, there are additional libraries such as <a href="https://toolz.readthedocs.io/en/latest/index.html">PyToolz</a><br />
-```python<br />
-from toolz import curry<br />
-@curry<br />
- def add(x, y):<br />
-   return x + y</li>
+  <li>Plus, if you want even more FP-ism, there are additional libraries such as <a href="https://toolz.readthedocs.io/en/latest/index.html">PyToolz</a></li>
 </ul>
 
-<p>plusfour = add(4)</p>
-<pre><code>
-* PyToolz is basically a port of the Clojure FP libraries to Python
-* Python is weak on immutable variables, there is no `const`/`final`
-    - but the tuples and `frozenset` are immutable data structures
-    - and Python 3.8 now has `final`
+<pre><code class="language-python">from toolz import curry
+@curry
+ def add(x, y):
+     return x + y
 
+plusfour = add(4)     
+</code></pre>
 
-### FP In JavaScript
+<ul>
+  <li>PyToolz is basically a port of the Clojure FP libraries to Python</li>
+  <li>Python is weak on immutable variables, there is no <code>const</code>/<code>final</code>
+    <ul>
+      <li>but the tuples and <code>frozenset</code> are immutable data structures</li>
+      <li>and Python 3.8 now has <code>final</code></li>
+    </ul>
+  </li>
+</ul>
 
-* JavaScript is similar to Python, it has the basics built-in already
-```javascript
-function adder(a) 
+<h3 id="fp-in-javascript">FP In JavaScript</h3>
+
+<ul>
+  <li>JavaScript is similar to Python, it has the basics built-in already</li>
+</ul>
+
+<pre><code class="language-javascript">function adder(a) 
 { return function uni_adder(b) 
     { return a+b;
     };
 };
 </code></pre>
+
 <ul>
   <li><code>const</code> declarations bring the FP immutable variable default to JS - use it!</li>
   <li>JavaScript has no immutable data structures however

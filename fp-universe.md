@@ -152,6 +152,7 @@ print adder(4)(18)
 * `map`, `filter`, `reduce` etc are already in the core language
 * In addition, the [`functools`](https://docs.python.org/3/library/functools.html) standard library supports other convenience higher-order function operations
 * Plus, if you want even more FP-ism, there are additional libraries such as [PyToolz](https://toolz.readthedocs.io/en/latest/index.html)
+
 ```python
 from toolz import curry
 @curry
@@ -170,6 +171,7 @@ plusfour = add(4)
 ### FP In JavaScript
 
 * JavaScript is similar to Python, it has the basics built-in already
+
 ```javascript
 function adder(a) 
 { return function uni_adder(b) 
@@ -177,6 +179,7 @@ function adder(a)
     };
 };
 ```
+
 * `const` declarations bring the FP immutable variable default to JS - use it!
 * JavaScript has no immutable data structures however
   - means e.g. lists won't be able to share sub-structures so "FP programming" will be less efficient in JS.
