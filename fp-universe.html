@@ -1,0 +1,276 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://piazza.com/class/kd4zpku2vbg1az">Piazza</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h1 id="the-functional-programming-language-universe">The Functional Programming Language Universe</h1>
+
+<ul>
+  <li>“This is the Dawn of the Age of FP”, there are now many choices of languages</li>
+  <li>There are both many viable Functional-focused languages as well as FP extensions to existing languages.</li>
+</ul>
+
+<h2 id="functional-focused-languages">Functional-focused languages</h2>
+
+<ul>
+  <li>These are languages designed with FP style in mind from the start: immutable variables and data structures, full higher-order functions, currying, etc.</li>
+  <li>There are generally two “schools”
+    <ul>
+      <li>ML school: static types, type inference, polymorphism, pattern matching (OCaml, Standard ML, Haskell, F#, etc)</li>
+      <li>Lisp school: dynamically typed (Lisp, Scheme, Clojure, etc)</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="ocaml">OCaml</h3>
+
+<p>Of course we have to mention OCaml!</p>
+
+<h3 id="haskell">Haskell</h3>
+
+<p>Haskell is in the ML school; Devin will present Haskell in detail.</p>
+
+<h3 id="f">F#</h3>
+
+<ul>
+  <li><a href="https://fsharp.org">F#</a> is Microsoft’s ML-style language, it has all the main features of OCaml</li>
+  <li>It integrates well with the MSFT toolchain</li>
+  <li>Here is an example from their tutorial; looks familiar, eh?<br />
+```f#<br />
+let square x = x * x<br />
+let isOdd x = x % 2 &lt;&gt; 0</li>
+</ul>
+
+<p>let sumOfOddSquares nums =<br />
+    nums<br />
+    |&gt; List.filter isOdd<br />
+    |&gt; List.sumBy square</p>
+
+<p>let numbers = [1; 2; 3; 4; 5]<br />
+let sum = sumOfOddSquares numbers<br />
+printfn “The sum of the odd squares in %A is %d” numbers sum</p>
+
+<p>type Shape =<br />
+    | Square of side: double<br />
+    | Rectangle of width: double * length: double</p>
+
+<p>let getArea shape =<br />
+    match shape with<br />
+    | Square side -&gt; side * side<br />
+    | Rectangle (width, length) -&gt; width * length</p>
+
+<p>let square = Square 2.0<br />
+printfn “The area of the square is %f” (getArea square)</p>
+<pre><code>
+
+### Reason
+
+* [Reason](https://reasonml.github.io) is an interesting beast, it has **exactly** the features of OCaml
+  - but with a somewhat different syntax not so loaded with historical oddities and kludges
+  - You can convert `.rs` to `.ml` and vice-versa very cleanly and it also translates to JavaScript for browser code
+  - The [Overview](https://reasonml.github.io/docs/en/overview) provides a glimpse of the syntax
+    - it is not hard to see how it is a minor variation on OCaml
+  - We will play with [this live demo](https://reasonml.github.io/en/try) which shows code in all three languages at once
+
+#### ReasonReact
+
+* The main thrust behind Reason is use of FP in web UI programming
+* ReasonReact is the Reason version of Facebook's excellent React UI library
+* We will take a peek at a [Simple To Do app](https://github.com/reasonml-old/reason-react-example/tree/master/src/todomvc) written in ReasonReact
+
+### Elm
+
+* [Elm](https://elm-lang.org) is an ML-school language 
+* Designed for writing web apps, it runs in the browser via translation to JS.
+   - Similar to Reason in goal
+
+### Scala
+
+* Scala is a hybrid of Java and ML which runs on the JVM so can link with Java libraries
+* It is easier to do FP in compared to Java since it was built-in from the start: pattern matching, type inference, etc.
+
+### Lisp / Scheme / Racket
+
+* Lisp was the very first functional programming language, from the late 50's
+  - it was dynamically typed, there are no type declarations or inference and errors caught at runtime.
+* Scheme was a clean-up of Lisp in the 70's-80's, there were several errors in the Lisp design
+  - e.g. dynamic scoping -- closures were not computed in Lisp.
+* [Racket](https://racket-lang.org) is a popular modern dialect of Scheme with many added features including types
+* Additionally, Smalltalk, Ruby, Python, and JavaScript are dynamically-typed and are thus descended from Lisp.
+
+### Clojure
+
+Clojure is in the Lisp school; Kelvin will present Clojure in detail.
+
+
+## FP Extensions to YourFavoriteLang
+
+* It is now possible to do FP-style programming in Java, C++, Python, JavaScript, etc.
+* All of these languages now fully support higher-order functions with Currying, etc.
+* But, there is not necessarily good library support or integration
+* Also, to "really do" FP you need immutable data structures and variables
+  - limited support for that in most of these languages currently
+
+### FP in Java
+
+Java 8+ has **Lambdas**
+
+*   Lambdas are a bit clunky to use compared to OCaml due to how they were patched in.
+*   Java 8 higher-order functions  "pun" as an interface with only one method in it.  
+    - the function is taken to be the body of that single method, no need to write the method name when declaring the function then.
+*   There is also some (limited) type inference for Lambda parameters.
+*   [Here is a tutorial](http://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html)
+*   Currying in Java, somewhat painfully: [Gist currying example](https://gist.github.com/timyates/7674005). For that example here is the [Function](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html) and [BiFunction](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/BiFunction.html) type.
+* Use `final` to declare variables immutable in Java - use it!
+
+Terminology aside: _closure_
+
+*   A _closure_ is just a higher-order function return value
+*   The term "closure" comes from how they are implemented -- all variables not local to the function must be remembered
+*   OCaml example:
+
+```ocaml
+# let f = (fun x -&gt; fun y -&gt; x + y) 4;;
+val f : int -&gt; int = &lt;fun&gt; (* f is at runtime the closure &lt;fun y code, {x |-&gt; 4}&gt; *)
+# f 3;;
+- : int = 7   &lt;/pre&gt;
+</code></pre>
+
+<pre><code>Note how `x` is a function parameter and is remembered in spite of function returning, means `x` needs to be _copied_ into the closure.
+</code></pre>
+
+<h3 id="fp-in-c">FP in C++</h3>
+
+<ul>
+  <li>Everyone is joining the Lambda party!</li>
+  <li>Details <a href="http://en.wikipedia.org/wiki/Anonymous_function#C.2B.2B_.28since_C.2B.2B11.29">here</a>.</li>
+  <li>Closures are a headache in C++ due to different low-level ways data can be accessed in C++.</li>
+  <li>Use <code>const</code> declarations to get immutable variables</li>
+  <li>C++ also has some type inference a la OCaml  <a href="https://en.wikipedia.org/wiki/C%2B%2B11#Type_inference">C++ local type inference </a>
+    <ul>
+      <li>e.g. <code>auto mydata = 22;</code>. <code>auto</code> is like <code>var</code> in Java.</li>
+    </ul>
+  </li>
+  <li>C++-14 adds <a href="http://en.wikipedia.org/wiki/C++14#Generic_lambdas">generic lambdas</a> which look like the polymorphic types of OCaml/Java but are really just fancy macros.</li>
+</ul>
+
+<h2 id="fp-in-python">FP In Python</h2>
+
+<ul>
+  <li>Python “already has” FP including closures and Currying.</li>
+</ul>
+
+<pre><code class="language-python">def adder(x):
+     def uni_adder(y):
+         return x + y
+     return uni_adder
+ 
+print adder(4)(18)
+</code></pre>
+<ul>
+  <li>The above is a bit clunky having to name the intermediate function</li>
+  <li><code>map</code>, <code>filter</code>, <code>reduce</code> etc are already in the core language</li>
+  <li>In addition, the <a href="https://docs.python.org/3/library/functools.html"><code>functools</code></a> standard library supports other convenience higher-order function operations</li>
+  <li>Plus, if you want even more FP-ism, there are additional libraries such as <a href="https://toolz.readthedocs.io/en/latest/index.html">PyToolz</a><br />
+```python<br />
+from toolz import curry<br />
+@curry<br />
+ def add(x, y):<br />
+   return x + y</li>
+</ul>
+
+<p>plusfour = add(4)</p>
+<pre><code>
+* PyToolz is basically a port of the Clojure FP libraries to Python
+* Python is weak on immutable variables, there is no `const`/`final`
+    - but the tuples and `frozenset` are immutable data structures
+    - and Python 3.8 now has `final`
+
+
+### FP In JavaScript
+
+* JavaScript is similar to Python, it has the basics built-in already
+```javascript
+function adder(a) 
+{ return function uni_adder(b) 
+    { return a+b;
+    };
+};
+</code></pre>
+<ul>
+  <li><code>const</code> declarations bring the FP immutable variable default to JS - use it!</li>
+  <li>JavaScript has no immutable data structures however
+    <ul>
+      <li>means e.g. lists won’t be able to share sub-structures so “FP programming” will be less efficient in JS.</li>
+    </ul>
+  </li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>
