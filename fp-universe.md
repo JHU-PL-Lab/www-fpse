@@ -2,7 +2,7 @@ The Functional Programming Language Universe
 ============================================
 
 * "This is the Dawn of the Age of FP", there are now many choices of languages
-* There are both many viable Functional-focused languages as well as FP extensions to existing languages.
+* There are both viable functional-focused languages as well as FP extensions to existing languages.
 
 ## Functional-focused languages
 
@@ -13,11 +13,9 @@ The Functional Programming Language Universe
 
 ### OCaml
 
-Of course we have to mention OCaml!
+Of course we have to mention OCaml!  
 
-### Haskell
-
-Haskell is in the ML school; Devin will present Haskell in detail.
+Standard ML is another variant of ML but is not so popular any more.
 
 ### F#
 
@@ -77,6 +75,10 @@ printfn "The area of the square is %f" (getArea square)
 * Scala is a hybrid of Java and ML which runs on the JVM so can link with Java libraries
 * It is easier to do FP in compared to Java since it was built-in from the start: pattern matching, type inference, etc.
 
+### Haskell
+
+Haskell is in the ML school; Devin will present Haskell in detail.
+
 ### Lisp / Scheme / Racket
 
 * Lisp was the very first functional programming language, from the late 50's
@@ -94,7 +96,7 @@ Clojure is in the Lisp school; Kelvin will present Clojure in detail.
 ## FP Extensions to YourFavoriteLang
 
 * It is now possible to do FP-style programming in Java, C++, Python, JavaScript, etc.
-* All of these languages now fully support higher-order functions with Currying, etc.
+* All of these languages support higher-order functions with Currying, etc.
 * But, there is not necessarily good library support or integration
 * Also, to "really do" FP you need immutable data structures and variables
   - limited support for that in most of these languages currently
@@ -110,6 +112,7 @@ Java 8+ has **Lambdas**
 *   [Here is a tutorial](http://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html)
 *   Currying in Java, somewhat painfully: [Gist currying example](https://gist.github.com/timyates/7674005). For that example here is the [Function](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html) and [BiFunction](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/BiFunction.html) type.
 * Use `final` to declare variables immutable in Java - use it!
+* There are no immutable data structures in the Java standard library unfortunately
 
 Terminology aside: _closure_
 
@@ -121,10 +124,10 @@ Terminology aside: _closure_
 # let f = (fun x -> fun y -> x + y) 4;;
 val f : int -> int = <fun> (* f is at runtime the closure <fun y code, {x |-> 4}> *)
 # f 3;;
-- : int = 7   </pre>
+- : int = 7
 ```
 
-    Note how `x` is a function parameter and is remembered in spite of function returning, means `x` needs to be _copied_ into the closure.
+* Note how `x` is a function parameter and is remembered in spite of function returning, means `x` needs to be _copied_ into the closure.
 
 ### FP in C++
 
@@ -136,7 +139,7 @@ val f : int -> int = <fun> (* f is at runtime the closure <fun y code, {x |-> 4}
     - e.g. `auto mydata = 22;`. `auto` is like `var` in Java.
 *   C++-14 adds [generic lambdas](http://en.wikipedia.org/wiki/C++14#Generic_lambdas) which look like the polymorphic types of OCaml/Java but are really just fancy macros.
 
-## FP In Python
+### FP In Python
 
 * Python "already has" FP including closures and Currying.
 
@@ -165,7 +168,7 @@ plusfour = add(4)
 * PyToolz is basically a port of the Clojure FP libraries to Python
 * Python is weak on immutable variables, there is no `const`/`final`
     - but the tuples and `frozenset` are immutable data structures
-    - and Python 3.8 now has `final`
+    - and Python 3.8 finally has `final`
 
 
 ### FP In JavaScript

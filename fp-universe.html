@@ -64,7 +64,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>“This is the Dawn of the Age of FP”, there are now many choices of languages</li>
-  <li>There are both many viable Functional-focused languages as well as FP extensions to existing languages.</li>
+  <li>There are both viable functional-focused languages as well as FP extensions to existing languages.</li>
 </ul>
 
 <h2 id="functional-focused-languages">Functional-focused languages</h2>
@@ -83,9 +83,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Of course we have to mention OCaml!</p>
 
-<h3 id="haskell">Haskell</h3>
-
-<p>Haskell is in the ML school; Devin will present Haskell in detail.</p>
+<p>Standard ML is another variant of ML but is not so popular any more.</p>
 
 <h3 id="f">F#</h3>
 
@@ -163,6 +161,10 @@ printfn "The area of the square is %f" (getArea square)
   <li>It is easier to do FP in compared to Java since it was built-in from the start: pattern matching, type inference, etc.</li>
 </ul>
 
+<h3 id="haskell">Haskell</h3>
+
+<p>Haskell is in the ML school; Devin will present Haskell in detail.</p>
+
 <h3 id="lisp--scheme--racket">Lisp / Scheme / Racket</h3>
 
 <ul>
@@ -188,7 +190,7 @@ printfn "The area of the square is %f" (getArea square)
 
 <ul>
   <li>It is now possible to do FP-style programming in Java, C++, Python, JavaScript, etc.</li>
-  <li>All of these languages now fully support higher-order functions with Currying, etc.</li>
+  <li>All of these languages support higher-order functions with Currying, etc.</li>
   <li>But, there is not necessarily good library support or integration</li>
   <li>Also, to “really do” FP you need immutable data structures and variables
     <ul>
@@ -212,6 +214,7 @@ printfn "The area of the square is %f" (getArea square)
   <li><a href="http://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html">Here is a tutorial</a></li>
   <li>Currying in Java, somewhat painfully: <a href="https://gist.github.com/timyates/7674005">Gist currying example</a>. For that example here is the <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html">Function</a> and <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/BiFunction.html">BiFunction</a> type.</li>
   <li>Use <code>final</code> to declare variables immutable in Java - use it!</li>
+  <li>There are no immutable data structures in the Java standard library unfortunately</li>
 </ul>
 
 <p>Terminology aside: <em>closure</em></p>
@@ -225,11 +228,12 @@ printfn "The area of the square is %f" (getArea square)
 <pre><code class="language-ocaml"># let f = (fun x -&gt; fun y -&gt; x + y) 4;;
 val f : int -&gt; int = &lt;fun&gt; (* f is at runtime the closure &lt;fun y code, {x |-&gt; 4}&gt; *)
 # f 3;;
-- : int = 7   &lt;/pre&gt;
+- : int = 7
 </code></pre>
 
-<pre><code>Note how `x` is a function parameter and is remembered in spite of function returning, means `x` needs to be _copied_ into the closure.
-</code></pre>
+<ul>
+  <li>Note how <code>x</code> is a function parameter and is remembered in spite of function returning, means <code>x</code> needs to be <em>copied</em> into the closure.</li>
+</ul>
 
 <h3 id="fp-in-c">FP in C++</h3>
 
@@ -246,7 +250,7 @@ val f : int -&gt; int = &lt;fun&gt; (* f is at runtime the closure &lt;fun y cod
   <li>C++-14 adds <a href="http://en.wikipedia.org/wiki/C++14#Generic_lambdas">generic lambdas</a> which look like the polymorphic types of OCaml/Java but are really just fancy macros.</li>
 </ul>
 
-<h2 id="fp-in-python">FP In Python</h2>
+<h3 id="fp-in-python">FP In Python</h3>
 
 <ul>
   <li>Python “already has” FP including closures and Currying.</li>
@@ -279,7 +283,7 @@ plusfour = add(4)
   <li>Python is weak on immutable variables, there is no <code>const</code>/<code>final</code>
     <ul>
       <li>but the tuples and <code>frozenset</code> are immutable data structures</li>
-      <li>and Python 3.8 now has <code>final</code></li>
+      <li>and Python 3.8 finally has <code>final</code></li>
     </ul>
   </li>
 </ul>
