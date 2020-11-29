@@ -11,11 +11,10 @@ The Functional Programming Language Universe
     - ML school: static types, type inference, polymorphism, pattern matching (OCaml, Standard ML, Haskell, F#, etc)
     - Lisp school: dynamically typed (Lisp, Scheme, Clojure, etc)
 
-### OCaml
+### OCaml and Standard ML
 
-Of course we have to mention OCaml!  
-
-Standard ML is another variant of ML but is not so popular any more.
+* Of course we have to include OCaml!  
+* Standard ML is another variant of ML which has limited popularity these days
 
 ### F#
 
@@ -56,7 +55,7 @@ printfn "The area of the square is %f" (getArea square)
   - You can convert `.rs` to `.ml` and vice-versa very cleanly and it also translates to JavaScript for browser code
   - The [Overview](https://reasonml.github.io/docs/en/overview) provides a glimpse of the syntax
     - it is not hard to see how it is a minor variation on OCaml
-  - We will play with [this live demo](https://reasonml.github.io/en/try) which shows code in all three languages at once
+  - We will play with [this cool live demo](https://reasonml.github.io/en/try) which shows code in all three languages at once
 
 #### ReasonReact
 
