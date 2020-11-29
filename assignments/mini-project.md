@@ -48,16 +48,27 @@ Here are some high-level requirements for the mini-projects.
 
 ### Some concrete ideas to get the juices flowing
 
-Foremost, you should aim to make an app in an area that interests you, so start there.
+Here are three concrete clusters.
 
-Here are some rough directions to get the juices flowing
+#### Async and web related
+
+* Web crawler using Async, e.g. for word counting
+* Command-line web API usage using Async
+* RESTFul API collator/processor - see e.g. [Rapid API](https://rapidapi.com) for APIs available
 
 * Simple website
-* RESTFul API collator/processor - see e.g. [Rapid API](https://rapidapi.com) for APIs available
-* Web crawler
 * RSS feed
-* Command-line web API usage
+
+#### Simple command-line app with persistence
+* A command-line minesweeper application with persistence
 * To-do or scheduling or memo command-line app
+* Other simple terminal-based game
+
+#### Scientific / Machine Learning
+For those with some background in this area
+
+* A simple machine learning app using PyTorch or Tensorflow and possibly graphing it in Owl.  [Jane Street Article](https://blog.janestreet.com/deep-learning-experiments-in-ocaml/)
+
 
 ### Submissions
 
