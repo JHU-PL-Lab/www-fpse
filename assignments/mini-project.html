@@ -69,31 +69,101 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>All the code must be in OCaml obviously (excepting small bits of glue code)</li>
-  <li>You should use the course libraries – <code>Core</code>, <code>Async</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
+  <li>You should use the standard course libraries – <code>Core</code>, <code>Async</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
   <li>You are encouraged to partner up although there is no requirement to; effort will be scaled accordingly (i.e. two people should have twice as much “stuff” in the end as one person).</li>
   <li>A very rough idea of the scope of the project is around 250-500 lines of code per person.</li>
   <li>There will be two official check-ins: there will be an in-class lab after Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 18th.</li>
 </ul>
 
-<h3 id="project-topic-thrusts">Project Topic Thrusts</h3>
+<h3 id="potential-project-topic-thrusts">Potential Project Topic Thrusts</h3>
 
 <ul>
   <li>You will need to make a standalone application as you did in assignments 2 and 4.</li>
-  <li>Given the time available, we suggest focusing one of the three following tracks.
-    <ol>
-      <li>Libraries: create an application using some of the powerful libraries (see list below).</li>
-      <li>Algorithm: stick to the class libraries but create a useful algorithm in the model of Assignment 4.</li>
-      <li>Monad: Re-write some standard algorithms in monadic style.</li>
-    </ol>
-  </li>
-  <li>Note the above tracks are not necessarily mutually exclusive.</li>
+  <li>Since there is limited time to conceive ideas we are putting forth three approaches to help focus your ideas.</li>
 </ul>
 
-<h3 id="specific-topic-areas-and-associated-libraries">Specific Topic Areas and Associated Libraries</h3>
+<h4 id="1-a-simple-command-line-app-with-persistence">1. A simple command-line app with persistence</h4>
+<ul>
+  <li>The idea here is to make some application where all the interaction is via the command line.</li>
+  <li>Persistent data across command invocations could be saved in a file using the <code>Stdio</code> library.</li>
+  <li>This path is the most straightforward of the three choices.</li>
+  <li>
+    <p>Here are some examples include</p>
+  </li>
+  <li>A minesweeper game (not just the board calculation done in class, the whole multi-move game).  Here is a (made-up) representation:
+    <pre><code class="language-sh">$ ./mine.exe init 5x4 # initialize a new game, 5x4 board
+-----
+-----
+-----
+-----
+$ ./mine.exe move 0,3
+-----
+-----
+12---
+ 1---
+$ ./mine.exe move 2,2
+BOOM!
+-----
+-----
+12*--
+ 1---
+$ # etc
+</code></pre>
+    <p>For Minesweeper we already presented several versions in class so it would have to have a good set of additional features; it would probably be better to just pick some other game.  See <a href="https://www.chiark.greenend.org.uk/~sgtatham/puzzles/">Simon Tatham’s Puzzle Collection</a> for a bunch of good ideas with running demos.</p>
+  </li>
+  <li>Another idea is a To-do or scheduling or memo command-line app</li>
+  <li>For all command-line apps some ways to beef them up once the basic app is working include
+    <ol>
+      <li>Refactoring your code to use monads</li>
+      <li>Replace the command line with a web server interface a la <code>Cohttp_async</code> mentioned below which could be invoked on the command line by <code>curl</code>
+        <pre><code class="language-sh">$ curl http://localhost/mine/move?1,1
+</code></pre>
+      </li>
+      <li>In addition to 2., write a JavaScript front-end to put a UI on your app.  Obviously you would need to be familiar with JavaScript web programming already if you chose this.</li>
+      <li>Replace the file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>
+      <li>Rather than using yoru own ad-hoc format for data in the file or database, make your own JSON representation and use <code>yojson</code> to convert back and forth.</li>
+    </ol>
+  </li>
+</ul>
+
+<h4 id="1-async-and-web-related">1. Async and web related</h4>
+<p>The combination of Asynch and <code>Cohttp_async</code> libraries allow for both web server and web client applications.  See below for links to the libraries.</p>
+
+<p>Here are some concrete ideas.</p>
+<ul>
+  <li>Some of the extensions suggested above involved writing a web server interface for your app, you could instead make that your only focus and skip the command-line version</li>
+  <li>Another approach is to write a command line app which would access, process, and present data from an existing RESTFul API collator/processor
+    <ul>
+      <li>see e.g. <a href="https://rapidapi.com">Rapid API</a> for a large list of APIs available</li>
+      <li>Some free APIs there include data for shopping, weather, recipes, COVID, etc etc</li>
+      <li>One concrete idea could be to grab both historical weather and COVID data for a location using two different RESTful APIs and compute the correlation between temperature and new COVID cases five days later</li>
+      <li>etc etc etc.</li>
+    </ul>
+  </li>
+  <li>You could write a web crawler app
+    <ul>
+      <li>starting from a URL grab it and all contained URL (up to some breadth and depth limit)</li>
+      <li>Then, compute some aspects on the pages, e.g. count how many lines of code, etc</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="scientific--machine-learning">Scientific / Machine Learning</h4>
+
+<p>This approach is for those with some background in this area.</p>
+
+<ul>
+  <li>A simple machine learning app using PyTorch or TensorFlow and possibly graphing it in Owl; see below for links to the OCaml libraries</li>
+  <li>Here is a <a href="https://blog.janestreet.com/deep-learning-experiments-in-ocaml/">Jane Street Article</a> on use of TensorFlow within OCaml.</li>
+</ul>
+
+<h3 id="libraries-catalog">Libraries Catalog</h3>
+<p>Here is a list of well-maintained libraries we recommend using for the above approaches, as well as some lists you can find other libraries on.</p>
 
 <h4 id="web-based">Web-based</h4>
 
 <ul>
+  <li>Since web-based applications may have delayed response or may fail, you should use the <code>Async</code> library for any web client or server app.</li>
   <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_async</code></a> for both web client (API reading / crawling) and server applications.</li>
   <li>See <a href="https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3">Real World OCaml Chapter 15</a> for an example of how to perform http requests with <code>Cohttp_async</code>.</li>
   <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
@@ -103,13 +173,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="persistence">Persistence</h4>
 
 <ul>
-  <li>Make a command-line application which persists data in either a file or database.</li>
+  <li>For simple persistence you can just read and write from a file, via the <code>Stdio</code> Jane Street library.</li>
   <li>If you are familiar with databases, the <a href="https://github.com/mmottl/sqlite3-ocaml">sqlite3-ocaml</a> and <a href="https://mmottl.github.io/postgresql-ocaml/">postgresql-ocaml</a> bindings should work for accessing SQLite or Postgres databases from within OCaml.</li>
 </ul>
 
 <h4 id="data-processing">Data Processing</h4>
 <ul>
   <li><a href="https://ocaml.xyz/book/">Owl</a> is a very well-documented numerical processing library.</li>
+  <li><a href="https://github.com/LaurentMazare/ocaml-torch">ocaml-torch</a> PyTorch bindings for OCaml</li>
+  <li><a href="https://github.com/LaurentMazare/tensorflow-ocaml">tensorflow-ocaml</a> TensorFlow bindings for OCaml</li>
   <li><a href="https://github.com/zshipko/ocaml-bimage">ocaml-bimage</a> is an image processing library.</li>
 </ul>
 
@@ -123,36 +195,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li><a href="https://github.com/ocaml-community/awesome-ocaml">Awesome OCaml</a> is another such list.</li>
-</ul>
-
-<h3 id="some-concrete-ideas-to-get-the-juices-flowing">Some concrete ideas to get the juices flowing</h3>
-
-<p>Here are three concrete clusters.</p>
-
-<h4 id="async-and-web-related">Async and web related</h4>
-
-<ul>
-  <li>Web crawler using Async, e.g. for word counting</li>
-  <li>Command-line web API usage using Async</li>
-  <li>
-    <p>RESTFul API collator/processor - see e.g. <a href="https://rapidapi.com">Rapid API</a> for APIs available</p>
-  </li>
-  <li>Simple website</li>
-  <li>RSS feed</li>
-</ul>
-
-<h4 id="simple-command-line-app-with-persistence">Simple command-line app with persistence</h4>
-<ul>
-  <li>A command-line minesweeper application with persistence</li>
-  <li>To-do or scheduling or memo command-line app</li>
-  <li>Other simple terminal-based game</li>
-</ul>
-
-<h4 id="scientific--machine-learning">Scientific / Machine Learning</h4>
-<p>For those with some background in this area</p>
-
-<ul>
-  <li>A simple machine learning app using PyTorch or Tensorflow and possibly graphing it in Owl.  <a href="https://blog.janestreet.com/deep-learning-experiments-in-ocaml/">Jane Street Article</a></li>
 </ul>
 
 <h3 id="submissions">Submissions</h3>
