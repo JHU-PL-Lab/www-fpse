@@ -115,12 +115,16 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * There will be two submission points in Gradescope, one for the initial design and one for the final code
 * The initial design submission must include
   1. An overview of the purpose of the project
-  2. A proposed list of libraries you plan on using
+  2. A list of libraries you plan on using
   3. Commented module type declarations which will provide you with an initial specification to code to
-  4. It may also include any sketches or other information which will make it easier to understand your mini-project.
+    - You can obviously change this later and don't need every single detail filled out
+    - But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.
+  4. Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.
+  5. You may also include any sketches or other information which will make it easier to understand your mini-project.
 * The final submission will in addition include 
   0. All of the code of course!
   1. It should include a dune file which successfuly builds your project
   2. It should include a `Readme.md` at the top outlining how to build and run the project.  If any other `opam` installs are needed outside of the offical course list, describe them in your `Readme.md`.
   3. You will also need to include a test suite with good coverage.
 * We will put up two submission points in Gradescope for you to upload your zipped hierarchies for the Design and Final submissions.  Please include all the source files needed to build the project but no binary or built files.
+* If you are working with a team-mate, make sure the submission is marked as such.  Only one person on the team needs to upload the submission.
