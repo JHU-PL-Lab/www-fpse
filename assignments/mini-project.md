@@ -24,7 +24,7 @@ Here are some high-level requirements for the mini-projects.
 * This path is the most straightforward of the three choices.
 * Here are some examples include
 
-* A minesweeper game (not just the board calculation done in class, the whole multi-move game).  Here is a (made-up) representation:
+* A minesweeper game (not just the board calculation done in class, the whole multi-move game).  Here is a mock of such a game:
 ```sh
 $ ./mine.exe init 5x4 # initialize a new game, 5x4 board
 -----
@@ -55,12 +55,13 @@ For Minesweeper we already presented several versions in class so it would have 
   ```
   3. In addition to 2., write a JavaScript front-end to put a UI on your app.  Obviously you would need to be familiar with JavaScript web programming already if you chose this.
   4. Replace the file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
-  5. Rather than using yoru own ad-hoc format for data in the file or database, make your own JSON representation and use `yojson` to convert back and forth.
+  5. Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use `yojson` to convert back and forth.  
+    - You probably want to do this from the beginning in fact, it will be easier.
 
-#### 1. Async and web related
-The combination of Asynch and `Cohttp_async` libraries allow for both web server and web client applications.  See below for links to the libraries.
+#### 2. Async and web related
+The combination of the `Async` and `Cohttp_async` libraries allow for both web server and web client applications.  See below for links to the libraries.
 
-Here are some concrete ideas.
+Here are some concrete project ideas.
 * Some of the extensions suggested above involved writing a web server interface for your app, you could instead make that your only focus and skip the command-line version
 * Another approach is to write a command line app which would access, process, and present data from an existing RESTFul API collator/processor 
    - see e.g. [Rapid API](https://rapidapi.com) for a large list of APIs available
@@ -71,7 +72,7 @@ Here are some concrete ideas.
     - starting from a URL grab it and all contained URL (up to some breadth and depth limit)
     - Then, compute some aspects on the pages, e.g. count how many lines of code, etc
 
-#### Scientific / Machine Learning
+#### 3. Scientific / Machine Learning
 
 This approach is for those with some background in this area.
 
@@ -85,9 +86,10 @@ Here is a list of well-maintained libraries we recommend using for the above app
 #### Web-based
 
 * Since web-based applications may have delayed response or may fail, you should use the `Async` library for any web client or server app.
+  - See the [async lecture notes](../lazy-async.html#async) and [Real World OCaml Chapter 15](https://dev.realworldocaml.org/concurrent-programming.html) for more information on using `Async`.
 * We recommend the simple [`Cohttp_async`](https://github.com/mirage/ocaml-cohttp) for both web client (API reading / crawling) and server applications.
 * See [Real World OCaml Chapter 15](https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3) for an example of how to perform http requests with `Cohttp_async`.
-* `Cohttp` also supports lightweight web server development.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.
+* `Cohttp` also supports lightweight web server development.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.  (This tutorial uses the `lwt` bindings, it will need some minor modification to use `async`)
 * Write a browser app in OCaml, and compile it to JavaScript to run in the browser via [`js_of_ocaml`](https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview).
 
 #### Persistence
@@ -119,8 +121,9 @@ Here is a list of well-maintained libraries we recommend using for the above app
   3. Commented module type declarations which will provide you with an initial specification to code to
     - You can obviously change this later and don't need every single detail filled out
     - But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.
-  4. Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.
-  5. You may also include any sketches or other information which will make it easier to understand your mini-project.
+  4. Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.
+  5. Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.
+  6. You may also include any other information which will make it easier to understand your mini-project.
 * The final submission will in addition include 
   0. All of the code of course!
   1. It should include a dune file which successfuly builds your project

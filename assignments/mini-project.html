@@ -90,7 +90,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>
     <p>Here are some examples include</p>
   </li>
-  <li>A minesweeper game (not just the board calculation done in class, the whole multi-move game).  Here is a (made-up) representation:
+  <li>A minesweeper game (not just the board calculation done in class, the whole multi-move game).  Here is a mock of such a game:
     <pre><code class="language-sh">$ ./mine.exe init 5x4 # initialize a new game, 5x4 board
 -----
 -----
@@ -121,15 +121,19 @@ $ # etc
       </li>
       <li>In addition to 2., write a JavaScript front-end to put a UI on your app.  Obviously you would need to be familiar with JavaScript web programming already if you chose this.</li>
       <li>Replace the file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>
-      <li>Rather than using yoru own ad-hoc format for data in the file or database, make your own JSON representation and use <code>yojson</code> to convert back and forth.</li>
+      <li>Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use <code>yojson</code> to convert back and forth.
+        <ul>
+          <li>You probably want to do this from the beginning in fact, it will be easier.</li>
+        </ul>
+      </li>
     </ol>
   </li>
 </ul>
 
-<h4 id="1-async-and-web-related">1. Async and web related</h4>
-<p>The combination of Asynch and <code>Cohttp_async</code> libraries allow for both web server and web client applications.  See below for links to the libraries.</p>
+<h4 id="2-async-and-web-related">2. Async and web related</h4>
+<p>The combination of the <code>Async</code> and <code>Cohttp_async</code> libraries allow for both web server and web client applications.  See below for links to the libraries.</p>
 
-<p>Here are some concrete ideas.</p>
+<p>Here are some concrete project ideas.</p>
 <ul>
   <li>Some of the extensions suggested above involved writing a web server interface for your app, you could instead make that your only focus and skip the command-line version</li>
   <li>Another approach is to write a command line app which would access, process, and present data from an existing RESTFul API collator/processor
@@ -148,7 +152,7 @@ $ # etc
   </li>
 </ul>
 
-<h4 id="scientific--machine-learning">Scientific / Machine Learning</h4>
+<h4 id="3-scientific--machine-learning">3. Scientific / Machine Learning</h4>
 
 <p>This approach is for those with some background in this area.</p>
 
@@ -163,10 +167,14 @@ $ # etc
 <h4 id="web-based">Web-based</h4>
 
 <ul>
-  <li>Since web-based applications may have delayed response or may fail, you should use the <code>Async</code> library for any web client or server app.</li>
+  <li>Since web-based applications may have delayed response or may fail, you should use the <code>Async</code> library for any web client or server app.
+    <ul>
+      <li>See the <a href="../lazy-async.html#async">async lecture notes</a> and <a href="https://dev.realworldocaml.org/concurrent-programming.html">Real World OCaml Chapter 15</a> for more information on using <code>Async</code>.</li>
+    </ul>
+  </li>
   <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_async</code></a> for both web client (API reading / crawling) and server applications.</li>
   <li>See <a href="https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3">Real World OCaml Chapter 15</a> for an example of how to perform http requests with <code>Cohttp_async</code>.</li>
-  <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
+  <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.  (This tutorial uses the <code>lwt</code> bindings, it will need some minor modification to use <code>async</code>)</li>
   <li>Write a browser app in OCaml, and compile it to JavaScript to run in the browser via <a href="https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview"><code>js_of_ocaml</code></a>.</li>
 </ul>
 
@@ -211,8 +219,9 @@ $ # etc
           <li>But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.</li>
         </ul>
       </li>
+      <li>Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.</li>
       <li>Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.</li>
-      <li>You may also include any sketches or other information which will make it easier to understand your mini-project.</li>
+      <li>You may also include any other information which will make it easier to understand your mini-project.</li>
     </ol>
   </li>
   <li>The final submission will in addition include
