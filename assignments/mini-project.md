@@ -89,7 +89,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
   - See the [async lecture notes](../lazy-async.html#async) and [Real World OCaml Chapter 15](https://dev.realworldocaml.org/concurrent-programming.html) for more information on using `Async`.
 * We recommend the simple [`Cohttp_async`](https://github.com/mirage/ocaml-cohttp) for both web client (API reading / crawling) and server applications.
 * See [Real World OCaml Chapter 15](https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3) for an example of how to perform http requests with `Cohttp_async`.
-* `Cohttp` also supports lightweight web server development.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.  (This tutorial uses the `lwt` bindings, it will need some minor modification to use `async`)
+* `Cohttp` also supports lightweight web server development.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.  (This tutorial uses the `lwt` bindings; see the [Cohttp async examples](https://github.com/mirage/ocaml-cohttp/tree/master/examples/async) for `async` versions)
 * Write a browser app in OCaml, and compile it to JavaScript to run in the browser via [`js_of_ocaml`](https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview).
 
 #### Persistence
@@ -123,7 +123,8 @@ Here is a list of well-maintained libraries we recommend using for the above app
     - But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.
   4. Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.
   5. Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.
-  6. You may also include any other information which will make it easier to understand your mini-project.
+  6. (**new**) Also include a brief list of what order you will implement features, as we discussed in Wednesday's class.
+  7. You may also include any other information which will make it easier to understand your mini-project.
 * The final submission will in addition include 
   0. All of the code of course!
   1. It should include a dune file which successfuly builds your project

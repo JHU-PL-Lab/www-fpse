@@ -174,7 +174,7 @@ $ # etc
   </li>
   <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_async</code></a> for both web client (API reading / crawling) and server applications.</li>
   <li>See <a href="https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3">Real World OCaml Chapter 15</a> for an example of how to perform http requests with <code>Cohttp_async</code>.</li>
-  <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.  (This tutorial uses the <code>lwt</code> bindings, it will need some minor modification to use <code>async</code>)</li>
+  <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.  (This tutorial uses the <code>lwt</code> bindings; see the <a href="https://github.com/mirage/ocaml-cohttp/tree/master/examples/async">Cohttp async examples</a> for <code>async</code> versions)</li>
   <li>Write a browser app in OCaml, and compile it to JavaScript to run in the browser via <a href="https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview"><code>js_of_ocaml</code></a>.</li>
 </ul>
 
@@ -221,6 +221,7 @@ $ # etc
       </li>
       <li>Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.</li>
       <li>Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.</li>
+      <li>(<strong>new</strong>) Also include a brief list of what order you will implement features, as we discussed in Wednesday’s class.</li>
       <li>You may also include any other information which will make it easier to understand your mini-project.</li>
     </ol>
   </li>
