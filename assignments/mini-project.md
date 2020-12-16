@@ -125,6 +125,13 @@ Here is a list of well-maintained libraries we recommend using for the above app
   5. Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.
   6. (**new**) Also include a brief list of what order you will implement features, as we discussed in Wednesday's class.
   7. You may also include any other information which will make it easier to understand your mini-project.
+* For the demo you should be prepared to 
+  1. Demo the project showing all the functionality
+  2. We may ask questions during this and perhaps ask you to try additional cases
+  3. Code review: take us through your code, we will be commenting as we go.  
+     - Make sure to describe your use of libraries; if you are using a novel library we may not know, give a brief overview of it.
+  4. Build and test: build your project and tests, and then review your test suite.
+
 * The final submission will in addition include 
   0. All of the code of course!
   1. It should include a dune file which successfuly builds your project
