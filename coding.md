@@ -117,3 +117,10 @@ to install the relevant OCaml packages. Here are some handy Atom keymaps for com
 ### Coding Style
 
 * The [FPSE Style Guide](http://pl.cs.jhu.edu/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from HW 2 on.
+
+### Other Resources
+
+* [Cornell cs3110 book](https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/) is related to this course and was one of the main inspirations along with Real World OCaml.
+* The [OCamlverse Ecosystem page](https://ocamlverse.github.io/content/ecosystem.html) lists many libraries available.
+   - Note that some libraries in the list are not particularly up-to-date or reliable or well-documented.  They are roughly sorted though so start with the ones at the top of a given list.
+* [Awesome OCaml](https://github.com/ocaml-community/awesome-ocaml) is another libraries list.

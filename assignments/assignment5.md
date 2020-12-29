@@ -1,6 +1,6 @@
 Assignment 5: The Monad Workbook
 --------------------------------
-For this assignment you will be answering many small questions to help ease you into understanding the challenging topic of monads.
+For this assignment you will be answering many small questions to help ease you into understanding the challenging topic of monads. 
 
 * Answer the code and written questions in [this zip file](assignment5.zip) for your assignment.  Download and unzip it in a fresh directory/folder that you made (we will suppose you are putting it in a directory `assignment5` in the below).  
 * Like assignment 1-4, we are giving you a skeleton to fill in.  Your answers will go in the file  `.../assignment5/src/monads.ml`.
