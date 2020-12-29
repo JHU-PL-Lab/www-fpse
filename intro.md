@@ -2,7 +2,7 @@
 
 ## Course Outline
 
-See the [Syllabus](syllabus.html)
+See the [Dateline](dateline.html)
 
 ## What is Functional Programming (FP)?
 

@@ -4,9 +4,7 @@
 
 Lectures will be 1:30-2:45 on Mondays and Wednesdays in Zoom. The Zoom room will be posted on Piazza (see below for how to get on that).  Lectures will be recorded and the Panopto page for those recordings will also be posted in Piazza.
 
-See the [Dateline](dateline.html) for the schedule. Since this is the first time the class is offered we will be filling in the dateline as we go.
-
-The [Syllabus](syllabus.html) contains a rough idea of what will be covered.
+See the [Dateline](dateline.html) for the schedule and the topics that will be covered.
 
 ### Gradescope
 

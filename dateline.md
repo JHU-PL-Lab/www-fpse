@@ -1,6 +1,6 @@
 ## DATELINE
 
-We will fill in this dateline as we go based on the topics covered on the indicated day.  The [Syllabus](syllabus.html) contains the general plan we are following.
+We will fill in this dateline as we go based on the topics covered on the indicated day. 
 
 Lecture material and assigments are under the indicated links.
 
