@@ -28,12 +28,6 @@ Once you have `opam` and `ocaml` 4.10.0 installed, run the following `opam` comm
 
     opam install merlin ocp-indent user-setup menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async ppx_deriving_yojson
 
-And there is currently a glitch with a library so if the above fails with an error about `ppx_string`, run the command
-
-    opam pin add ppx_string --dev
-
-and then try the previous command again.
-
 
 Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file `~/.ocamlinit` to add the lines below (note `opam` probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
 ```ocaml
