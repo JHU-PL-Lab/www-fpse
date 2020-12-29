@@ -26,7 +26,7 @@ We require that you use the [OPAM packaging system](https://opam.ocaml.org) for 
 
 Once you have `opam` and `ocaml` 4.10.0 installed, run the following `opam` command to install additional necessary packages for the class:
 
-    opam install merlin ocp-indent user-setup menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async ppx_deriving_yojson
+    opam install merlin ocp-indent user-setup menhir utop ppx_deriving core bisect_ppx ounit2 async ppx_deriving_yojson
 
 
 Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file `~/.ocamlinit` to add the lines below (note `opam` probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
@@ -73,7 +73,7 @@ Here are all the tools we will be using.  You are required to have a build for w
 The above tools will be our "bread and butter", we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.
 
 * [Bisect](https://github.com/aantron/bisect_ppx) will be used for code coverage.
-* [QCheck](https://github.com/c-cube/qcheck) is a fuzz tester / automated test generator for OCaml.
+* [base_quickcheck](https://opensource.janestreet.com/base_quickcheck/) is a fuzz tester / automated test generator for OCaml.
 * [Async](https://opensource.janestreet.com/async/) is a non-preempting asychronous threads library.
 
 
@@ -101,7 +101,7 @@ to install the relevant OCaml packages. Here are some handy Atom keymaps for com
 
 **vim**: If you use `vim`, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell command `opam user-setup install` after doing the above  default `opam` install to set up syntax highlighting, tab completion, displaying types, etc. See [here](https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt) for some dense documentation.
 
-**emacs**: See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.  Note you will need to also `opam install tuareg` to get emacs to work, and follow the instructions the install generates.
+**emacs**: See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.  Note you will need to also `opam install tuareg` to get emacs to work, and follow the instructions the install prints out.
 
 ### Real World OCaml
 
@@ -116,5 +116,6 @@ to install the relevant OCaml packages. Here are some handy Atom keymaps for com
 
 * [Cornell cs3110 book](https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/) is related to this course and was one of the main inspirations along with Real World OCaml.
 * The [OCamlverse Ecosystem page](https://ocamlverse.github.io/content/ecosystem.html) lists many libraries available.
-   - Note that some libraries in the list are not particularly up-to-date or reliable or well-documented.  They are roughly sorted though so start with the ones at the top of a given list.
-* [Awesome OCaml](https://github.com/ocaml-community/awesome-ocaml) is another libraries list.
+   - Note that the libraries in the list are not necessarily up-to-date or reliable or well-documented.  They are roughly sorted by how reliable they are though so start with the ones at the top of a given list.
+* [Awesome OCaml](https://github.com/ocaml-community/awesome-ocaml) is another list of libraries, tutorials, etc.
+* [Exercism OCaml Track](https://exercism.io/tracks/ocaml/exercises) has a large set of programming problems to solve which have solutions by many other programmers as well.  We will reference some of these examples in lecture.

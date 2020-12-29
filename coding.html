@@ -95,7 +95,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Once you have <code>opam</code> and <code>ocaml</code> 4.10.0 installed, run the following <code>opam</code> command to install additional necessary packages for the class:</p>
 
-<pre><code>opam install merlin ocp-indent user-setup menhir utop ppx_deriving core bisect_ppx ounit2 qcheck async ppx_deriving_yojson
+<pre><code>opam install merlin ocp-indent user-setup menhir utop ppx_deriving core bisect_ppx ounit2 async ppx_deriving_yojson
 </code></pre>
 
 <p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file <code>~/.ocamlinit</code> to add the lines below (note <code>opam</code> probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  <code>topfind</code> really should be built-in, it allows you to load libraries.  The <code>require</code> command is one thing <code>topfind</code> adds, here it is loading the <code>Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code>Core</code> as they are improved versions.</p>
@@ -151,7 +151,7 @@ open Core;;
 
 <ul>
   <li><a href="https://github.com/aantron/bisect_ppx">Bisect</a> will be used for code coverage.</li>
-  <li><a href="https://github.com/c-cube/qcheck">QCheck</a> is a fuzz tester / automated test generator for OCaml.</li>
+  <li><a href="https://opensource.janestreet.com/base_quickcheck/">base_quickcheck</a> is a fuzz tester / automated test generator for OCaml.</li>
   <li><a href="https://opensource.janestreet.com/async/">Async</a> is a non-preempting asychronous threads library.</li>
 </ul>
 
@@ -181,7 +181,7 @@ Atom is very good with OCaml, but is unfortunately being slowly phased out after
 
 <p><strong>vim</strong>: If you use <code>vim</code>, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell command <code>opam user-setup install</code> after doing the above  default <code>opam</code> install to set up syntax highlighting, tab completion, displaying types, etc. See <a href="https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt">here</a> for some dense documentation.</p>
 
-<p><strong>emacs</strong>: See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.  Note you will need to also <code>opam install tuareg</code> to get emacs to work, and follow the instructions the install generates.</p>
+<p><strong>emacs</strong>: See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.  Note you will need to also <code>opam install tuareg</code> to get emacs to work, and follow the instructions the install prints out.</p>
 
 <h3 id="real-world-ocaml">Real World OCaml</h3>
 
@@ -202,10 +202,11 @@ Atom is very good with OCaml, but is unfortunately being slowly phased out after
   <li><a href="https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/">Cornell cs3110 book</a> is related to this course and was one of the main inspirations along with Real World OCaml.</li>
   <li>The <a href="https://ocamlverse.github.io/content/ecosystem.html">OCamlverse Ecosystem page</a> lists many libraries available.
     <ul>
-      <li>Note that some libraries in the list are not particularly up-to-date or reliable or well-documented.  They are roughly sorted though so start with the ones at the top of a given list.</li>
+      <li>Note that the libraries in the list are not necessarily up-to-date or reliable or well-documented.  They are roughly sorted by how reliable they are though so start with the ones at the top of a given list.</li>
     </ul>
   </li>
-  <li><a href="https://github.com/ocaml-community/awesome-ocaml">Awesome OCaml</a> is another libraries list.</li>
+  <li><a href="https://github.com/ocaml-community/awesome-ocaml">Awesome OCaml</a> is another list of libraries, tutorials, etc.</li>
+  <li><a href="https://exercism.io/tracks/ocaml/exercises">Exercism OCaml Track</a> has a large set of programming problems to solve which have solutions by many other programmers as well.  We will reference some of these examples in lecture.</li>
 </ul>
       
           </section>
