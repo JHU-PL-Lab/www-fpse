@@ -112,10 +112,15 @@ to install the relevant OCaml packages. Here are some handy Atom keymaps for com
 
 * The [FPSE Style Guide](http://pl.cs.jhu.edu/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from HW 2 on.
 
+### Example Worked Exercises
+
+* [Exercism OCaml Track](https://exercism.io/tracks/ocaml/exercises) has a large set of programming problems to solve which have solutions by many other programmers as well.  We will reference some of these examples in lecture.
+* [Learn OCaml](https://ocaml-sf.org/learn-ocaml-public/#activity%3Dexercises) has a large number of exercises to solve.  The [solutions are online](https://github.com/ocaml-sf/learn-ocaml-corpus/tree/master/exercises).
+
 ### Other Resources
 
 * [Cornell cs3110 book](https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/) is related to this course and was one of the main inspirations along with Real World OCaml.
 * The [OCamlverse Ecosystem page](https://ocamlverse.github.io/content/ecosystem.html) lists many libraries available.
    - Note that the libraries in the list are not necessarily up-to-date or reliable or well-documented.  They are roughly sorted by how reliable they are though so start with the ones at the top of a given list.
 * [Awesome OCaml](https://github.com/ocaml-community/awesome-ocaml) is another list of libraries, tutorials, etc.
-* [Exercism OCaml Track](https://exercism.io/tracks/ocaml/exercises) has a large set of programming problems to solve which have solutions by many other programmers as well.  We will reference some of these examples in lecture.
+
