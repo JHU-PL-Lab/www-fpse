@@ -1,8 +1,10 @@
 ## Logistics
 
-### Class Schedule
+### Lecture Schedule
 
 Lectures will be 1:30-2:45 on Mondays and Wednesdays in Zoom. The Zoom room will be posted on Piazza (see below for how to get on that).  Lectures will be recorded and the Panopto page for those recordings will also be posted in Piazza.
+
+### Syllabus
 
 See the [Dateline](dateline.html) for the schedule and the topics that will be covered.
 
@@ -20,7 +22,7 @@ All assignments are linked from the [dateline](dateline.html). They will all be 
 
 ### Project
 
-There will be an independent project at the end of the course worth around three homeworks.
+There will be a small independent project at the end of the course worth around three homeworks.
 
 ### Collaboration
 
@@ -38,4 +40,4 @@ See the [Contact](contact.html) page.
 
 ### Exams
 
-There will be no exams per se, but the tentative plan is to have a final coding homework which must be done completely independently.	
+There will be no exams.
