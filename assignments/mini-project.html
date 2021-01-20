@@ -38,7 +38,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <nav id="nav">
        <ul>
           <li><a href="/fpse/logistics.html">Logistics</a></li>
-          <li><a href="/fpse/syllabus.html">Syllabus</a></li>
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
           <li><a href="/fpse/assignments/">Assignments</a>
@@ -91,24 +90,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <p>Here are some examples include</p>
   </li>
   <li>A minesweeper game (not just the board calculation done in class, the whole multi-move game).  Here is a mock of such a game:
-    <pre><code class="language-sh">$ ./mine.exe init 5x4 # initialize a new game, 5x4 board
------
------
------
------
-$ ./mine.exe move 0,3
------
------
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>./mine.exe init 5x4 <span class="c"># initialize a new game, 5x4 board</span>
+<span class="nt">-----</span>
+<span class="nt">-----</span>
+<span class="nt">-----</span>
+<span class="nt">-----</span>
+<span class="nv">$ </span>./mine.exe move 0,3
+<span class="nt">-----</span>
+<span class="nt">-----</span>
 12---
  1---
-$ ./mine.exe move 2,2
+<span class="nv">$ </span>./mine.exe move 2,2
 BOOM!
------
------
-12*--
+<span class="nt">-----</span>
+<span class="nt">-----</span>
+12<span class="k">*</span><span class="nt">--</span>
  1---
-$ # etc
-</code></pre>
+<span class="nv">$ </span><span class="c"># etc</span>
+</code></pre></div>    </div>
     <p>For Minesweeper we already presented several versions in class so it would have to have a good set of additional features; it would probably be better to just pick some other game.  See <a href="https://www.chiark.greenend.org.uk/~sgtatham/puzzles/">Simon Tatham’s Puzzle Collection</a> for a bunch of good ideas with running demos.</p>
   </li>
   <li>Another idea is a To-do or scheduling or memo command-line app</li>
@@ -116,8 +115,8 @@ $ # etc
     <ol>
       <li>Refactoring your code to use monads</li>
       <li>Replace the command line with a web server interface a la <code>Cohttp_async</code> mentioned below which could be invoked on the command line by <code>curl</code>
-        <pre><code class="language-sh">$ curl http://localhost/mine/move?1,1
-</code></pre>
+        <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl http://localhost/mine/move?1,1
+</code></pre></div>        </div>
       </li>
       <li>In addition to 2., write a JavaScript front-end to put a UI on your app.  Obviously you would need to be familiar with JavaScript web programming already if you chose this.</li>
       <li>Replace the file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>

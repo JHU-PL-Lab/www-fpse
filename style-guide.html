@@ -101,19 +101,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <p>Speaking of exceptions, they are used frequently in OCaml code, but they often make debugging difficult when they’re thrown from deep within the code structure.  Especially for larger programs use <code>option</code> or <code>result</code> values, and handle errors locallly.</p>
   </li>
   <li>Excessive nesting of conditionals or match statements should be avoided; it causes confusion and bugs (especially if parentheses aren’t used).  In particular, when matching on nested data structures (e.g. variants that contain other variants), it’s often clearer to match on the entire data structure all at once instead of matching each layer.  For instance, the following:
-    <pre><code class="language-ocaml"> match x with
- | Ok (Some y) -&gt; (* ... *)
- | Ok (None) -&gt;  (* ... *)
- | Error msg -&gt; (* ... *)
-</code></pre>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
+ <span class="o">|</span> <span class="nc">Ok</span> <span class="p">(</span><span class="nc">Some</span> <span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
+ <span class="o">|</span> <span class="nc">Ok</span> <span class="p">(</span><span class="nc">None</span><span class="p">)</span> <span class="o">-&gt;</span>  <span class="c">(* ... *)</span>
+ <span class="o">|</span> <span class="nc">Error</span> <span class="n">msg</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
+</code></pre></div>    </div>
     <p>is more concise than</p>
-    <pre><code class="language-ocaml"> match x with
- | Ok z -&gt;
-   match z with
-   | Some y -&gt; (* ... *)
-   | Non -&gt; (* ... *)
- | Error msg -&gt; (* ... *)
-</code></pre>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
+ <span class="o">|</span> <span class="nc">Ok</span> <span class="n">z</span> <span class="o">-&gt;</span>
+   <span class="k">match</span> <span class="n">z</span> <span class="k">with</span>
+   <span class="o">|</span> <span class="nc">Some</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
+   <span class="o">|</span> <span class="nc">Non</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
+ <span class="o">|</span> <span class="nc">Error</span> <span class="n">msg</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Use libraries like <code>Core</code> whenever possible instead of “rolling your own.”  At the end of the day, it’s not worth it to re-invent the wheel when there’s correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.  The only exceptions are 1) when we tell you not to use a certain library for pedagogical purposes and 2) when literally no library exists for your specific task.</p>
@@ -147,26 +147,26 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li><code>let ... in ...</code> expressions.  Nested <code>let ... in ...</code> blocks should not be indented, but variable definitions should if they are placed on a new line.
-    <pre><code class="language-ocaml">  let short_string = "s" in
-  let long_string = 
-    "This is a very long string so it is indented and on a new line."
-  in
-  short_string ^ " " ^ long_string
-</code></pre>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">let</span> <span class="n">short_string</span> <span class="o">=</span> <span class="s2">"s"</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="n">long_string</span> <span class="o">=</span> 
+    <span class="s2">"This is a very long string so it is indented and on a new line."</span>
+  <span class="k">in</span>
+  <span class="n">short_string</span> <span class="o">^</span> <span class="s2">" "</span> <span class="o">^</span> <span class="n">long_string</span>
+</code></pre></div>    </div>
   </li>
   <li><code>match</code> (and <code>with</code>) statements.  The patterns themselves align with the <code>match</code> keyword, while the inner expressions are indented if they are on a new line.
-    <pre><code class="language-ocaml">  match x with
-  | Some _ -&gt; 0
-  | None -&gt;
-    failwith "This is a long string, so we put it on a new line and indented it."
-</code></pre>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">Some</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="mi">0</span>
+  <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span>
+    <span class="n">failwith</span> <span class="s2">"This is a long string, so we put it on a new line and indented it."</span>
+</code></pre></div>    </div>
   </li>
   <li><code>if ... then ... else ...</code> expressions.  The conditional branches (if they’re on a new line) should be idented, but the keyword <code>else</code> should not be.
-    <pre><code class="language-ocaml">  if x then
-    0 + 1 * 2
-  else
-    3 + 4
-</code></pre>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">if</span> <span class="n">x</span> <span class="k">then</span>
+    <span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">2</span>
+  <span class="k">else</span>
+    <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span>
+</code></pre></div>    </div>
   </li>
 </ul>
 

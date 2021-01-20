@@ -119,24 +119,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Example: a simple transactional store in pseudocode</li>
 </ul>
 
-<pre><code class="language-ocaml">module Transactional_store = struct
-    type store = (* The type of the heap data here *)
-    (* In the monad type, pass two stores, one in-use one saved *)
-    type 'a t = store * store -&gt; 'a * store * store 
-    let bind (x : 'a t) ~(f: 'a -&gt; 'b t) : 'b t =
-      fun (s : store * store) -&gt; let (x', s1', s2') = x s in f x' (s1', s2')
-    let return (x : 'a) : 'a t = fun ss -&gt; (x, ss)
-    let set (v : data) =
-      fun (s1, s2) -&gt; ((),store_put s1 v,s2) (* update s1, pass along s2 *)
-    let get () =
-      fun (s1, s2) -&gt; (store_get s1,s1,s2) (* fetch data from s1 *)
-    let save () = 
-      fun (s1, s2) -&gt; ((),s1,s1) (* save the current store *)
-    let rollback () = 
-      fun (s1, s2) -&gt; ((),s2,s2) (* toss s1, rollback to the saved store s2 *)
-  end
-end
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Transactional_store</span> <span class="o">=</span> <span class="k">struct</span>
+    <span class="k">type</span> <span class="n">store</span> <span class="o">=</span> <span class="c">(* The type of the heap data here *)</span>
+    <span class="c">(* In the monad type, pass two stores, one in-use one saved *)</span>
+    <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span> 
+    <span class="k">let</span> <span class="n">bind</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span> <span class="o">=</span>
+      <span class="k">fun</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">let</span> <span class="p">(</span><span class="n">x'</span><span class="o">,</span> <span class="n">s1'</span><span class="o">,</span> <span class="n">s2'</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="n">s</span> <span class="k">in</span> <span class="n">f</span> <span class="n">x'</span> <span class="p">(</span><span class="n">s1'</span><span class="o">,</span> <span class="n">s2'</span><span class="p">)</span>
+    <span class="k">let</span> <span class="n">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">fun</span> <span class="n">ss</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span> <span class="n">ss</span><span class="p">)</span>
+    <span class="k">let</span> <span class="n">set</span> <span class="p">(</span><span class="n">v</span> <span class="o">:</span> <span class="n">data</span><span class="p">)</span> <span class="o">=</span>
+      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span><span class="o">,</span><span class="n">store_put</span> <span class="n">s1</span> <span class="n">v</span><span class="o">,</span><span class="n">s2</span><span class="p">)</span> <span class="c">(* update s1, pass along s2 *)</span>
+    <span class="k">let</span> <span class="n">get</span> <span class="bp">()</span> <span class="o">=</span>
+      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">store_get</span> <span class="n">s1</span><span class="o">,</span><span class="n">s1</span><span class="o">,</span><span class="n">s2</span><span class="p">)</span> <span class="c">(* fetch data from s1 *)</span>
+    <span class="k">let</span> <span class="n">save</span> <span class="bp">()</span> <span class="o">=</span> 
+      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span><span class="o">,</span><span class="n">s1</span><span class="o">,</span><span class="n">s1</span><span class="p">)</span> <span class="c">(* save the current store *)</span>
+    <span class="k">let</span> <span class="n">rollback</span> <span class="bp">()</span> <span class="o">=</span> 
+      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span><span class="o">,</span><span class="n">s2</span><span class="o">,</span><span class="n">s2</span><span class="p">)</span> <span class="c">(* toss s1, rollback to the saved store s2 *)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
 
 <ul>
   <li>If the <code>store</code> in the above is say a Map, the <code>s1</code> and <code>s2</code> maps should be “nearly all shared” on average.</li>
@@ -179,8 +179,8 @@ end
   <li>Could use mutable store, but could also do the “state monad thing”
     <ul>
       <li>pass in and return the store in the memoized function
-        <pre><code class="language-ocaml">fib : int -&gt; (int,int,..) Map.t -&gt; (int * (int,int,..) Map.t)
-</code></pre>
+        <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fib</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">int</span><span class="o">,</span><span class="kt">int</span><span class="o">,..</span><span class="p">)</span> <span class="nn">Map</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="p">(</span><span class="kt">int</span><span class="o">,</span><span class="kt">int</span><span class="o">,..</span><span class="p">)</span> <span class="nn">Map</span><span class="p">.</span><span class="n">t</span><span class="p">)</span>
+</code></pre></div>        </div>
       </li>
       <li>Requires monadic state threading and store itself will be less efficient</li>
     </ul>
@@ -213,8 +213,8 @@ end
     </ul>
   </li>
   <li>In fact, there is a deeper connection: the Continuation monad, with type
-    <pre><code class="language-ocaml">type 'a t = ('a -&gt; answer) -&gt; answer
-</code></pre>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">answer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">answer</span>
+</code></pre></div>    </div>
     <ul>
       <li>we will not explore this monad in detail</li>
     </ul>

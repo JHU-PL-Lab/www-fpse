@@ -99,11 +99,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre>
 
 <p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file <code>~/.ocamlinit</code> to add the lines below (note <code>opam</code> probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  <code>topfind</code> really should be built-in, it allows you to load libraries.  The <code>require</code> command is one thing <code>topfind</code> adds, here it is loading the <code>Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code>Core</code> as they are improved versions.</p>
-<pre><code class="language-ocaml">#use "topfind";;
-#thread;;
-#require "core.top";;
-open Core;;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">use</span> <span class="s2">"topfind"</span><span class="p">;;</span>
+<span class="o">#</span><span class="n">thread</span><span class="p">;;</span>
+<span class="o">#</span><span class="n">require</span> <span class="s2">"core.top"</span><span class="p">;;</span>
+<span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span>
+</code></pre></div></div>
 
 <h3 id="ocaml-documentation">OCaml Documentation</h3>
 
