@@ -78,6 +78,8 @@ let rec fib : int stream =
 
 ## Asynchronous Programming
 
+## Note in 2021 we will not be covering the `Async` library, the below is old.
+
 Concurrency is needed for two main reasons
  1. You want to run things in parallel for speed gain (multi-core, cluster, etc)
  2. You are waiting for a result from an I/O action

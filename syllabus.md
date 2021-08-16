@@ -47,6 +47,7 @@ This is the preliminary list of proposed lecture topics and readings. See the [d
 * The monad laws
 * Using the exception monad: syntactic sugar, examples
 * More monads and their uses: I/O, state, nondeterminism
+* Asynchronous programming with Lwt
 
 ### The mother of all effects (MOAF): resumable exceptions
 * Multicore OCaml's `effect` and `continue`/`discontinue`
@@ -55,6 +56,7 @@ This is the preliminary list of proposed lecture topics and readings. See the [d
 
 ### Multicore Programming
 * Multicore OCaml threads, channels, async/await, etc.
+
 ## OCaml Tools and miscelanea 
 (Smaller topics injected as tangents or for self-study)
 

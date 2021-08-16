@@ -339,7 +339,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/encoding-effects.ml">Encoding Effects III</a></div>
+            <div align="left" class="body"><a href="lecture/resumable-exceptions.ml">Resumable Exceptions</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -356,7 +356,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="examples/mine_monadic.ml">Monads in Practice</a></div>
+            <div align="left" class="body"><a href="lecture/async.html">Asynchronous Programming</a></div>
           </td>	
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -373,7 +373,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a></div>
+            <div align="left" class="body"><a href="lecture/parallel.html">Parallel programming</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">A5</div>
@@ -390,7 +390,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/lazy-async.html">Laziness and Asynchrony</a></div>
+            <div align="left" class="body"><a href="lecture/lazy.html">Laziness</a>, <a href="lecture/efficiency.html">Efficiency</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
