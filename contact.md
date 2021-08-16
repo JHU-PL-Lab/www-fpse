@@ -6,7 +6,7 @@ Please Send private questions for instructors as a private post to Staff.  To co
 **Professor** Scott Smith
 **email** [scott@cs.jhu.edu](mailto:scott@cs.jhu.edu)
 
-We are fortunate to have two course alums and two PhD students with lots of OCaml knowledge.
+For Course Assistants we are fortunate to have two course alums and two PhD students with lots of OCaml knowledge.
 
 **Head Course Assistant** Zach Zhou, **email** zzhou43 --at-- jhu.edu
 **Course Assistant** Alison Lee
