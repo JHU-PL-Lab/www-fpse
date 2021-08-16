@@ -339,7 +339,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/resumable-exceptions.ml">Resumable Exceptions</a></div>
+            <div align="left" class="body"><a href="lecture/algebraic-effects.html">Algebraic Effects</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -520,7 +520,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
 	<tr> 
           <td width="8%"> 
-            <div align="center" class="body">Dec 18</div>
+            <div align="center" class="body">Dec 17</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Fri</div>

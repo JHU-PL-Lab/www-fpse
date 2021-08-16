@@ -1,4 +1,0 @@
-(library
-(name cool_school)
-(modules cool_school)
-(libraries core))
