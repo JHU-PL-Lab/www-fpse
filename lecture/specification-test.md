@@ -402,7 +402,7 @@ We will check how well my tests of the simple set example covered the code using
   2. Shrinkers, `Quickcheck.Strinker` - if a failing case is discovered, make it smaller
   3. Runner, `Quickcheck.test` etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.
 
-* We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](examples/quickcheck_examples.ml)
+* We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](../examples/quickcheck_examples.ml)
 
 * [Base_quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/base_quickcheck/Base_quickcheck/index.html)
 * [Quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Quickcheck/index.html)
