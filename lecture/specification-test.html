@@ -41,7 +41,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
           <li><a href="/fpse/assignments/">Assignments</a>
-          <li><a href="https://tba.tba">Q&A</a></li>
+          <li><a href="https://campuswire.com/c/G2FCCFD2B/feed">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -587,54 +587,11 @@ OUnit <a href="https://gildor478.github.io/ounit/ounit2/index.html">Overview doc
     </ol>
   </li>
   <li>
-    <p>We will look at several examples of the <code>Base_quickcheck</code> library in action in <a href="examples/quickcheck_examples.ml">quickcheck_examples.ml</a></p>
+    <p>We will look at several examples of the <code>Base_quickcheck</code> library in action in <a href="../examples/quickcheck_examples.ml">quickcheck_examples.ml</a></p>
   </li>
   <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base_quickcheck/Base_quickcheck/index.html">Base_quickcheck docs</a></li>
   <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Quickcheck/index.html">Quickcheck docs</a></li>
 </ul>
-
-<h3 id="qcheck-for-random-testing-old---we-decided-to-use-jane-streets-quickcheck-not-qcheck">QCheck for random testing (OLD - we decided to use Jane Street’s Quickcheck not QCheck)</h3>
-
-<ul>
-  <li>The <code>QCheck</code> library lets you easily write random tests</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"qcheck"</span><span class="p">;;</span>
-<span class="o">#</span> <span class="k">let</span> <span class="n">test</span> <span class="o">=</span>
-  <span class="nn">QCheck</span><span class="p">.</span><span class="nn">Test</span><span class="p">.</span><span class="n">make</span> <span class="o">~</span><span class="n">count</span><span class="o">:</span><span class="mi">1000</span> <span class="o">~</span><span class="n">name</span><span class="o">:</span><span class="s2">"list_rev_is_involutive"</span>
-   <span class="nn">QCheck</span><span class="p">.(</span><span class="kt">list</span> <span class="n">small_nat</span><span class="p">)</span>
-   <span class="p">(</span><span class="k">fun</span> <span class="n">l</span> <span class="o">-&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">equal</span> <span class="p">(</span><span class="o">=</span><span class="p">)</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">l</span><span class="p">))</span> <span class="n">l</span><span class="p">);;</span>
-<span class="o">#</span> <span class="nn">QCheck</span><span class="p">.</span><span class="nn">Test</span><span class="p">.</span><span class="n">check_exn</span> <span class="n">test</span><span class="p">;;</span>
-</code></pre></div></div>
-<ul>
-  <li>The novel bit is the <code>QCheck.(list small_nat)</code></li>
-  <li>
-    <p>This is specifying that the parameter <code>l</code> on the tests will get passed random lists of small natural numbers (i.e. non-negative <code>int</code>s)</p>
-  </li>
-  <li>OK lets make a bad reverse and repeat.</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">bad_rev</span> <span class="n">l</span> <span class="o">=</span> <span class="k">match</span> <span class="n">l</span> <span class="k">with</span> <span class="mi">1</span><span class="o">::</span><span class="n">xs</span> <span class="o">-&gt;</span> <span class="bp">[]</span> <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">l</span><span class="p">;;</span>
-<span class="o">...</span> <span class="p">(</span><span class="n">re</span><span class="o">-</span><span class="n">enter</span> <span class="n">test</span> <span class="n">above</span> <span class="n">using</span> <span class="n">bad_rev</span><span class="p">)</span> <span class="o">...</span>
-<span class="o">#</span> <span class="nn">QCheck</span><span class="p">.</span><span class="nn">Test</span><span class="p">.</span><span class="n">check_exn</span> <span class="n">test</span><span class="p">;;</span>
-<span class="nc">Exception</span><span class="o">:</span>
-<span class="n">test</span> <span class="nt">`list_rev_is_involutive</span><span class="err">`</span> <span class="n">failed</span> <span class="n">on</span> <span class="err">≥</span> <span class="mi">1</span> <span class="n">cases</span><span class="o">:</span>
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">(</span><span class="n">after</span> <span class="mi">9</span> <span class="n">shrink</span> <span class="n">steps</span><span class="p">)</span>
-</code></pre></div></div>
-
-<ul>
-  <li>this is reporting that it found the error.</li>
-</ul>
-
-<h3 id="the-details">The details</h3>
-
-<ul>
-  <li>We will take a run through the <a href="https://github.com/c-cube/qcheck">QCheck documentation</a></li>
-  <li>It covers how to make random data in your own type, e.g. random trees</li>
-  <li>It also covers how to package these up into your OUnit suite</li>
-  <li>The full API is <a href="https://c-cube.github.io/qcheck/0.15/qcheck-core/QCheck/index.html">here</a></li>
-</ul>
-
       
           </section>
         </div>

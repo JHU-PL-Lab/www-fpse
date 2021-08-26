@@ -406,39 +406,3 @@ We will check how well my tests of the simple set example covered the code using
 
 * [Base_quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/base_quickcheck/Base_quickcheck/index.html)
 * [Quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Quickcheck/index.html)
-
-### QCheck for random testing (OLD - we decided to use Jane Street's Quickcheck not QCheck)
-
-* The `QCheck` library lets you easily write random tests
-
-```ocaml
-# #require "qcheck";;
-# let test =
-  QCheck.Test.make ~count:1000 ~name:"list_rev_is_involutive"
-   QCheck.(list small_nat)
-   (fun l -> List.equal (=) (List.rev (List.rev l)) l);;
-# QCheck.Test.check_exn test;;
-```
-* The novel bit is the `QCheck.(list small_nat)`
-* This is specifying that the parameter `l` on the tests will get passed random lists of small natural numbers (i.e. non-negative `int`s)
-
-* OK lets make a bad reverse and repeat.
-
-```ocaml
-let bad_rev l = match l with 1::xs -> [] | _ -> List.rev l;;
-... (re-enter test above using bad_rev) ...
-# QCheck.Test.check_exn test;;
-Exception:
-test `list_rev_is_involutive` failed on ≥ 1 cases:
-[1] (after 9 shrink steps)
-```
-
-- this is reporting that it found the error.
-
-### The details
-
-* We will take a run through the [QCheck documentation](https://github.com/c-cube/qcheck)
-* It covers how to make random data in your own type, e.g. random trees
-* It also covers how to package these up into your OUnit suite
-* The full API is [here](https://c-cube.github.io/qcheck/0.15/qcheck-core/QCheck/index.html)
-

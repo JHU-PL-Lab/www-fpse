@@ -14,7 +14,7 @@ See the [Dateline](dateline.html) for the schedule and the topics that will be c
 
 ### Q&A board
 
-We will be using a Q&A board for online discussions. You will need to register for The [FPSE Q&A board Page](TBA) (Not set up yet!) so you can receive course announcements and discuss the material with other students.
+We will be using a Q&A board for online discussions. You will need to register for The [FPSE Campuswire Q&A](https://campuswire.com/c/G2FCCFD2B/feed) so you can receive course announcements and discuss the material with other students.
 
 ### Assignments
 

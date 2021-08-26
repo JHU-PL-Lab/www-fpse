@@ -57,10 +57,9 @@ print_string hw
 * Add line `(libraries core)` to dune file to fix -- all library dependencies must be listed in the dune file
 * Compile and run
 
-### Exploring Basic Data in the top loop
+### Exploring Basic Data in utop
 
 * We will be running many small incremental programs in lecture - best done in the top loop.
-* We will always use the `utop` top loop, not the older `ocaml`
 * All the following are typed as input into `utop` with `;;` ending input.
 
  
@@ -100,7 +99,7 @@ squared 4;; (* to call a function -- separate arguments with S P A C E S *)
 ```
  *  OCaml has no `return` statement; value of the whole body-expression is what gets returned
  *  Type is automatically **inferred** and printed as domain `->` range
- *  OCaml functions in fact always take only one argument - !  multiple arguments can be encoded by a trick (later)
+ *  OCaml functions in fact always take only one argument - !  multiple arguments can be encoded (covered later)
 
 #### Fibonacci series example - `0 1 1 2 3 5 8 13 ...` 
 
@@ -115,6 +114,14 @@ let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
 fib 10;; (* get the 10th Fibonacci number *)
 ```
 
+Nested conditionals as above are generally avoided in OCaml since they are not super readable.  For example here is an easier to read `fib` using pattern match notation we will cover in detail later:
+
+```ocaml
+let rec fib = function 
+  | 0 -> 0 
+  | 1 -> 1 
+  | n -> fib (n - 1) + fib (n - 2);;
+```
 #### Anonymous functions basics
 
 * Key advantage of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.
@@ -167,7 +174,7 @@ Some 5;;
 - : int option = Some 5
 ```
 
-* all this does is "wrap" the 5 in the `Some` tag
+* All this does is "wrap" the 5 in the `Some` tag
 
 ```ocaml
 None;;
@@ -208,7 +215,7 @@ Error: This expression has type int but an expression was expected of type
 - The `then` and `else` branches must return the same type, here they do not.
 - The `int` and `int option` types have no overlap of members!  Generally true across OCaml.
 
-#### Pattern matching first example
+#### Using pattern matching to solve this
 
 Here is a real solution to the above issue:
 ```ocaml

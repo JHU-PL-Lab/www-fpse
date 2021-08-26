@@ -38,7 +38,7 @@ open Core;;
 ```
 
 ### OCaml Documentation
-
+[ocaml.org](https://ocaml.org) is the central repository of OCaml information.
 #### The OCaml Manual
 
 The OCaml manual is [here](https://ocaml.org/manual/).
@@ -104,25 +104,19 @@ to install the relevant OCaml packages. Here are some handy Atom keymaps for com
 
 **emacs**: See vim.  Confession: I still use emacs a bit but am trying to wean myself.  35-year-old habits die hard.  Note you will need to also `opam install tuareg` to get emacs to work, and follow the instructions the install prints out.
 
-### Real World OCaml
+### Books
 
-* The [Real World OCaml](https://dev.realworldocaml.org/index.html) book has recently been updated to a new edition.
-* It documents many of the extensions we will be using, `Base`/`Core` libraries in particular, and we will be referencing several of the chapters for various lecture topics.
+* The [Real World OCaml](https://dev.realworldocaml.org/index.html) book has a good overlap with what we will cover, and can be used as a supplementary resource.
+   - It documents many of the extensions we will be using, `Base`/`Core` libraries in particular
+* [Cornell cs3110 book](https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/) is the online text for a related course at Cornell.
 
 ### Coding Style
 
 * The [FPSE Style Guide](http://pl.cs.jhu.edu/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from HW 2 on.
 
 ### Example Worked Exercises
+One of the best ways to learn to write elegant OCaml is to study well-written OCaml code.
 
 * [Exercism OCaml Track](https://exercism.io/tracks/ocaml/exercises) has a large set of programming problems to solve which have solutions by many other programmers as well.  We will reference some of these examples in lecture.
 * [99 problems](https://ocaml.org/learn/tutorials/99problems.html) solves 99 basic OCaml tasks.
 * [Learn OCaml](https://ocaml-sf.org/learn-ocaml-public/#activity%3Dexercises) has a large number of exercises to solve.  The [solutions are online](https://github.com/ocaml-sf/learn-ocaml-corpus/tree/master/exercises).
-
-### Other Resources
-
-* [Cornell cs3110 book](https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/) is related to this course and was one of the inspirations along with Real World OCaml.
-* The [OCamlverse Ecosystem page](https://ocamlverse.github.io/content/ecosystem.html) lists many libraries available.
-   - Note that the libraries in the list are not necessarily up-to-date or reliable or well-documented.  They are roughly sorted by how reliable they are though so start with the ones at the top of a given list.
-* [Awesome OCaml](https://github.com/ocaml-community/awesome-ocaml) is another list of libraries, tutorials, etc.
-

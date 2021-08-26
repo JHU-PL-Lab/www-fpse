@@ -46,7 +46,7 @@ This is the preliminary list of proposed lecture topics and readings. See the [d
 * Officially encoding exceptions: the exception monad
 * The monad laws
 * Using the exception monad: syntactic sugar, examples
-* More monads and their uses: I/O, state, nondeterminism
+* More monads and their uses: I/O, state
 * Asynchronous programming with Lwt
 
 ### Algebraic Effects (aka the mother of all effects)
