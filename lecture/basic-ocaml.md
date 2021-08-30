@@ -47,7 +47,7 @@ print_string hw
 ```
 * This is the **build file**, specifying how to compile/test/run the program.
 * Now, type `dune build` to compile a standalone program like we did above but letting `dune` invoke the compiler.
-* Then, run with `dune exec ./helloworld`
+* Then, run with `dune exec ./helloworld.exe`
 
 #### Adding a Library
 
