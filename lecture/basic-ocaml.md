@@ -22,7 +22,7 @@ let hw = "hello"^" world"
 
 #### The compile/run system
 
-* The above is the **top loop** aka **read-eval-print** view of OCaml.  You probably know this from Python/Javascript/shell/etc.
+* The above is the **top loop** aka **read-eval-print** view of OCaml.  You should know this from Python/Javascript/shell/etc.
 * Let us now do the compile/run view of C/C++/Java/etc.
 * In OCaml we really want to live in **both worlds**
 
@@ -37,7 +37,7 @@ print_string hw
 
 #### Building and running with Dune
 
-* `dune` is the modern `Makefile` equivalent for OCaml.
+* `dune` is the modern `make`/`Makefile` equivalent for OCaml.
 * In same directory, add a file `dune`:
 ```scheme
 (executable
@@ -94,11 +94,11 @@ true || false;;
 
 To declare a function `squared` with `x` its one parameter.  `return` is  implicit.
 ```ocaml
-let squared x = x * x;; 
+let squared x = x * x;; (* returns     val squared : int -> int = <fun>     *)
 squared 4;; (* to call a function -- separate arguments with S P A C E S *)
 ```
  *  OCaml has no `return` statement; value of the whole body-expression is what gets returned
- *  Type is automatically **inferred** and printed as domain `->` range
+ *  Type is automatically **inferred** and printed as domain `->` range; `int -> int` here.
  *  OCaml functions in fact always take only one argument - !  multiple arguments can be encoded (covered later)
 
 #### Fibonacci series example - `0 1 1 2 3 5 8 13 ...` 
@@ -111,10 +111,10 @@ let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
   else if n = 1 then 1
   else fib (n - 1) + fib (n - 2);; (* notice again everything is an expression, no "return" *)
 
-fib 10;; (* get the 10th Fibonacci number *)
+fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)
 ```
 
-Nested conditionals as above are generally avoided in OCaml since they are not super readable.  For example here is an easier to read `fib` using pattern match notation we will cover in detail later:
+Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read `fib` using pattern match notation similar to Java/C `switch` you may have seen before that we will cover in detail later:
 
 ```ocaml
 let rec fib = function 
@@ -125,7 +125,7 @@ let rec fib = function
 #### Anonymous functions basics
 
 * Key advantage of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.
-* Much of this course will be showing how this is useful, we are just getting started now
+* Much of this course will be showing how this is useful
 
 ```ocaml
 let add1 x = x + 1;; (* a normal add1 definition *)
@@ -159,12 +159,13 @@ add3 (3 * 2);;
 add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - application binds tighter than * *)
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)
 ```
+
 * `=` is also a 2-argument function; it is somewhat strange in our `Core` OCaml on non-ints:
 ```ocaml
 3.4 = 4.2;; (* errors, = only works on ints with the Core library in use *)
 Float.(=) 3.3 4.4;; (* Solution: use the Float module's = function for floats *)
 ```
-
+* Why this apparent ugliness?  Pay a price here but reap rewards later of having the right notion of `=`.
 ### Simple Structured Data Types: Option and Result
 
 * Before getting into "bigger" data types and how to declare our own, let's use one of the simplest structured data types, the built-in `option` type.
@@ -214,8 +215,9 @@ Error: This expression has type int but an expression was expected of type
 ```
 - The `then` and `else` branches must return the same type, here they do not.
 - The `int` and `int option` types have no overlap of members!  Generally true across OCaml.
+- In many PLs there is a `null` or similar value that can sneak in to a type, but no such sneaking in OCaml.
 
-#### Using pattern matching to solve this
+#### Using pattern matching to use `nice_div`
 
 Here is a real solution to the above issue:
 ```ocaml

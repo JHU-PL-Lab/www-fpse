@@ -13,8 +13,8 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
 - You will then need to run some terminal commands to set up the basics:
     1.  `opam init` to initialize OPAM;
     2.  `opam switch create 4.12.0` (this will take awhile) to build OCaml version 4.12.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this `switch` to make sure OPAM is aware of the latest version);
-	3.  `eval (opam env)` to let your shell know where the OPAM files are; and
-    4.  Also add the very same line, `eval (opam env)`, to your`.profile`/`.bashrc` shell init file as you would need to do that in every new terminal window otherwise. (for `.zshrc` on macs, use ``eval `opam env` `` instead)
+	3.  `eval (opam env)` to let your shell know where the OPAM files are (use ``eval `opam env` `` instead if you are using `zsh` on a Mac); and
+    4.  Also add the very same line, `eval (opam env)`, to your`.profile`/`.bashrc` shell init file as you would need to do that in every new terminal window otherwise. (for `.zshrc` on macs, add line ``eval `opam env` `` instead)
     
 
 -   Windows Windows Windows.. the OCaml toolchain is unfortunately not good in straight Windows.
@@ -48,14 +48,17 @@ The OCaml manual is [here](https://ocaml.org/manual/).
   * [locally abstract types](https://ocaml.org/manual/locallyabstract.html),
   * [First-class modules](https://ocaml.org/manual/firstclassmodules.html), and
   * [GADT's](https://ocaml.org/manual/gadts.html).
-* Part III of the manual documents the tools, we will not be using much of this because third parties have improved on many of the tools and we will instead use those versions.  See below in the Tools list where we give "our" list of tools.
-* Part IV describes the standard libraries; as with the tool we will primarily use Jane Street's `Base`/`Core` which replaces these with more modern versions so we will generally be ignoring this Part. 
+* Part III of the manual documents the tools, we will not be using much of this because third parties have improved on many of the tools and we will instead use those improved versions.  See below in the Tools list where we give "our" list of tools.
+* Part IV describes the standard libraries; as with the tools we will primarily use Jane Street's `Base`/`Core` which replaces these with more modern versions so we will generally be ignoring this Part. 
 
 #### Base and Core
 `Core` is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a "more modern" version of lists, sets, hash tables, etc, with lots of little improvements in many places.  `Core` is an extension of `Base` which is in fact what we will mainly be using.
 
-* [Core documentation](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core/index.html) is not particularly readable as `Core` extends `Core_kernel` which extends `Base` and most times you probably just want the `Base` version so I would suggest starting there: [Base Documentation](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/index.html).
+* [Core documentation](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core/index.html) is not particularly readable as `Core` extends [`Core_kernel`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/index.html) which in turn extends `Base` and most times you probably just want the `Base` version so I would suggest starting there.
+* [Base Documentation](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/index.html) - start here for most common data structures.
+* [Core_kernel Documentation](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/index.html) - occasionally you may need some of the extensions on `Base` here, but not very often.
 * The [Real World OCaml](https://dev.realworldocaml.org/index.html) book gives tutorial introductions to many of the `Core`/`Base` features.
+* Important note: if you use a search engine to look up e.g. "OCaml Set" to see how the OCaml Set module is defined you will likely not get the `Core` version and it can be very confusing.  Even if you add `Base` or `Core` as keywords to the search you will usually get an outdated version.  So, bookmark the above!
 
 ### The FPSE OCaml Toolbox
 
@@ -76,11 +79,11 @@ The above tools will be our "bread and butter", we will be using them on many as
 * [base_quickcheck](https://opensource.janestreet.com/base_quickcheck/) is a fuzz tester / automated test generator for OCaml.
 * [Async](https://opensource.janestreet.com/async/) is a non-preempting asychronous threads library.
 * [Domains and Effects](https://github.com/ocaml-multicore/domainslib) are another approach to coroutines and asynchronous programming
-* [Multicore OCaml](https://github.com/ocaml-multicore/ocaml-multicore) for parallel programming.
+* [Multicore OCaml](https://github.com/ocaml-multicore/ocaml-multicore) will be used for parallel programming.
 
 ### Development Environments for OCaml
 
-We recommend VSCode since it has OCaml-specific features such as syntax highliting, auto-indent, and lint analysis to make the coding process much smoother.
+We recommend VSCode since it has OCaml-specific features such as syntax highlighting, auto-indent, and lint analysis to make the coding process much smoother.
 
 **[Visual Studio Code](https://code.visualstudio.com)**: 
 VSCode has very good OCaml support and is the "officially recommended editor". Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml and this extension will show up; install it. You can also easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
@@ -106,13 +109,13 @@ to install the relevant OCaml packages. Here are some handy Atom keymaps for com
 
 ### Books
 
-* The [Real World OCaml](https://dev.realworldocaml.org/index.html) book has a good overlap with what we will cover, and can be used as a supplementary resource.
+* The [Real World OCaml](https://dev.realworldocaml.org/index.html) book has a fairly good overlap with what we will cover, and can be used as a supplementary resource.
    - It documents many of the extensions we will be using, `Base`/`Core` libraries in particular
-* [Cornell cs3110 book](https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/) is the online text for a related course at Cornell.
+* [Cornell cs3110 book](https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/) is the online text for a somewhat-related course at Cornell.
 
 ### Coding Style
 
-* The [FPSE Style Guide](http://pl.cs.jhu.edu/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from HW 2 on.
+* The [FPSE Style Guide](http://pl.cs.jhu.edu/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 2 on.
 
 ### Example Worked Exercises
 One of the best ways to learn to write elegant OCaml is to study well-written OCaml code.

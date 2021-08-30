@@ -7,8 +7,8 @@ See the [Dateline](../dateline.html)
 ## What is Functional Programming (FP)?
 
 * It is a style of programming where functions are the centerpiece
-* A key dimension is functions-as-data: functions can be passed and returned
-* It emphasizes immutability: data structures that cannot be changed after being created
+* A key dimension is functions-as-data: functions can be passed to and returned from functions
+* It emphasizes *immutability*: data structures that cannot be changed after being created
 * Mathematical functions are implicitly immutable so FP aligns much more closely with math
   - It is much easier to write completely correct programs in an FP style for that reason
 
@@ -60,17 +60,17 @@ Thesis:
 * Imperative wins for low-level code: underlying machine instructions are in the imperative domain, will run faster.
 * O-O wins for super large apps with fairly shallow logic: UI's, many apps, etc.
 * Functional wins for complex algorithms with deep inner logic, and also for data manipulation focus
- - Gets too confusing with mutation, and better composition of functions makes code easier to understand.
+  - Gets too confusing with mutation, and better composition of functions makes code easier to understand.
 * Of course this choice is never made in a vacuum: existing codebases and libraries, programmer experience, etc. 
  
 ### Typed Functional vs Untyped Functional
 
-* OK we arm-wrestled over OO vs FP, now we get to arm-wrestle in FP over whether types are good (OCaml, Haskell, etc) or bad (Scheme, Clojure, (Python, JavaScript))
+* OK we arm-wrestled over OO vs FP, now we get to arm-wrestle in FP over whether types are good (OCaml, Haskell, etc) or bad (Scheme, Clojure, Python, JavaScript)
 * We are clearly in the "types are good" camp here but there are trade offs
-  - With types we have *type-directed programming*: often once all the type errors are fixed the code just works.
+  - With types we have *type-directed programming*: often once all the type errors are fixed the code often just works.
     - this is because types are lightweight invariants on program behavior
   - The downside is types can get in the way both in terms of code maintenance and in terms of expressiveness.
 
 ### Which Typed Functional Language? ML vs Haskell
-* The final wrestling match in the typed FP world is which typed FP is your favorite. 
+* The final wrestling match in the typed FP world is which typed FP is your favorite.   People have strong feelings.
 * I was "born and raised" in the ML camp so we are in ML.

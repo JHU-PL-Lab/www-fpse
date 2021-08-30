@@ -79,8 +79,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ol>
       <li><code>opam init</code> to initialize OPAM;</li>
       <li><code>opam switch create 4.12.0</code> (this will take awhile) to build OCaml version 4.12.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to <code>opam update</code> before this <code>switch</code> to make sure OPAM is aware of the latest version);</li>
-      <li><code>eval (opam env)</code> to let your shell know where the OPAM files are; and</li>
-      <li>Also add the very same line, <code>eval (opam env)</code>, to your<code>.profile</code>/<code>.bashrc</code> shell init file as you would need to do that in every new terminal window otherwise. (for <code>.zshrc</code> on macs, use <code>eval `opam env`</code> instead)</li>
+      <li><code>eval (opam env)</code> to let your shell know where the OPAM files are (use <code>eval `opam env`</code> instead if you are using <code>zsh</code> on a Mac); and</li>
+      <li>Also add the very same line, <code>eval (opam env)</code>, to your<code>.profile</code>/<code>.bashrc</code> shell init file as you would need to do that in every new terminal window otherwise. (for <code>.zshrc</code> on macs, add line <code>eval `opam env`</code> instead)</li>
     </ol>
   </li>
   <li>Windows Windows Windows.. the OCaml toolchain is unfortunately not good in straight Windows.
@@ -120,16 +120,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li><a href="https://ocaml.org/manual/gadts.html">GADT’s</a>.</li>
     </ul>
   </li>
-  <li>Part III of the manual documents the tools, we will not be using much of this because third parties have improved on many of the tools and we will instead use those versions.  See below in the Tools list where we give “our” list of tools.</li>
-  <li>Part IV describes the standard libraries; as with the tool we will primarily use Jane Street’s <code>Base</code>/<code>Core</code> which replaces these with more modern versions so we will generally be ignoring this Part.</li>
+  <li>Part III of the manual documents the tools, we will not be using much of this because third parties have improved on many of the tools and we will instead use those improved versions.  See below in the Tools list where we give “our” list of tools.</li>
+  <li>Part IV describes the standard libraries; as with the tools we will primarily use Jane Street’s <code>Base</code>/<code>Core</code> which replaces these with more modern versions so we will generally be ignoring this Part.</li>
 </ul>
 
 <h4 id="base-and-core">Base and Core</h4>
 <p><code>Core</code> is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a “more modern” version of lists, sets, hash tables, etc, with lots of little improvements in many places.  <code>Core</code> is an extension of <code>Base</code> which is in fact what we will mainly be using.</p>
 
 <ul>
-  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core/index.html">Core documentation</a> is not particularly readable as <code>Core</code> extends <code>Core_kernel</code> which extends <code>Base</code> and most times you probably just want the <code>Base</code> version so I would suggest starting there: <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/index.html">Base Documentation</a>.</li>
+  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core/index.html">Core documentation</a> is not particularly readable as <code>Core</code> extends <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/index.html"><code>Core_kernel</code></a> which in turn extends <code>Base</code> and most times you probably just want the <code>Base</code> version so I would suggest starting there.</li>
+  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/index.html">Base Documentation</a> - start here for most common data structures.</li>
+  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/index.html">Core_kernel Documentation</a> - occasionally you may need some of the extensions on <code>Base</code> here, but not very often.</li>
   <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book gives tutorial introductions to many of the <code>Core</code>/<code>Base</code> features.</li>
+  <li>Important note: if you use a search engine to look up e.g. “OCaml Set” to see how the OCaml Set module is defined you will likely not get the <code>Core</code> version and it can be very confusing.  Even if you add <code>Base</code> or <code>Core</code> as keywords to the search you will usually get an outdated version.  So, bookmark the above!</li>
 </ul>
 
 <h3 id="the-fpse-ocaml-toolbox">The FPSE OCaml Toolbox</h3>
@@ -154,12 +157,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><a href="https://opensource.janestreet.com/base_quickcheck/">base_quickcheck</a> is a fuzz tester / automated test generator for OCaml.</li>
   <li><a href="https://opensource.janestreet.com/async/">Async</a> is a non-preempting asychronous threads library.</li>
   <li><a href="https://github.com/ocaml-multicore/domainslib">Domains and Effects</a> are another approach to coroutines and asynchronous programming</li>
-  <li><a href="https://github.com/ocaml-multicore/ocaml-multicore">Multicore OCaml</a> for parallel programming.</li>
+  <li><a href="https://github.com/ocaml-multicore/ocaml-multicore">Multicore OCaml</a> will be used for parallel programming.</li>
 </ul>
 
 <h3 id="development-environments-for-ocaml">Development Environments for OCaml</h3>
 
-<p>We recommend VSCode since it has OCaml-specific features such as syntax highliting, auto-indent, and lint analysis to make the coding process much smoother.</p>
+<p>We recommend VSCode since it has OCaml-specific features such as syntax highlighting, auto-indent, and lint analysis to make the coding process much smoother.</p>
 
 <p><strong><a href="https://code.visualstudio.com">Visual Studio Code</a></strong>: <br />
 VSCode has very good OCaml support and is the “officially recommended editor”. Install the <strong>OCaml and Reason IDE</strong> extension to get syntax highlighting, type information, etc: from the <code>View</code> menu select <code>Extensions</code>, then type in OCaml and this extension will show up; install it. You can also easily run a <code>utop</code> shell from within VSCode, just open up a shell from the <code>Terminal</code> menu and type <code>utop</code>.</p>
@@ -188,18 +191,18 @@ Atom is unfortunately being slowly phased out after Microsoft bought Github.  So
 <h3 id="books">Books</h3>
 
 <ul>
-  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book has a good overlap with what we will cover, and can be used as a supplementary resource.
+  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book has a fairly good overlap with what we will cover, and can be used as a supplementary resource.
     <ul>
       <li>It documents many of the extensions we will be using, <code>Base</code>/<code>Core</code> libraries in particular</li>
     </ul>
   </li>
-  <li><a href="https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/">Cornell cs3110 book</a> is the online text for a related course at Cornell.</li>
+  <li><a href="https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/">Cornell cs3110 book</a> is the online text for a somewhat-related course at Cornell.</li>
 </ul>
 
 <h3 id="coding-style">Coding Style</h3>
 
 <ul>
-  <li>The <a href="http://pl.cs.jhu.edu/fpse/style-guide.html">FPSE Style Guide</a> is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from HW 2 on.</li>
+  <li>The <a href="http://pl.cs.jhu.edu/fpse/style-guide.html">FPSE Style Guide</a> is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 2 on.</li>
 </ul>
 
 <h3 id="example-worked-exercises">Example Worked Exercises</h3>

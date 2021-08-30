@@ -94,7 +94,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="the-compilerun-system">The compile/run system</h4>
 
 <ul>
-  <li>The above is the <strong>top loop</strong> aka <strong>read-eval-print</strong> view of OCaml.  You probably know this from Python/Javascript/shell/etc.</li>
+  <li>The above is the <strong>top loop</strong> aka <strong>read-eval-print</strong> view of OCaml.  You should know this from Python/Javascript/shell/etc.</li>
   <li>Let us now do the compile/run view of C/C++/Java/etc.</li>
   <li>
     <p>In OCaml we really want to live in <strong>both worlds</strong></p>
@@ -111,7 +111,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="building-and-running-with-dune">Building and running with Dune</h4>
 
 <ul>
-  <li><code>dune</code> is the modern <code>Makefile</code> equivalent for OCaml.</li>
+  <li><code>dune</code> is the modern <code>make</code>/<code>Makefile</code> equivalent for OCaml.</li>
   <li>In same directory, add a file <code>dune</code>:
     <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>
 <span class="p">(</span><span class="nf">name</span> <span class="nv">helloworld</span><span class="p">)</span>
@@ -188,10 +188,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="k">else</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">then</span> <span class="mi">1</span>
   <span class="k">else</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);;</span> <span class="c">(* notice again everything is an expression, no "return" *)</span>
 
-<span class="n">fib</span> <span class="mi">10</span><span class="p">;;</span> <span class="c">(* get the 10th Fibonacci number *)</span>
+<span class="n">fib</span> <span class="mi">10</span><span class="p">;;</span> <span class="c">(* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)</span>
 </code></pre></div></div>
 
-<p>Nested conditionals as above are generally avoided in OCaml since they are not super readable.  For example here is an easier to read <code>fib</code> using pattern match notation we will cover in detail later:</p>
+<p>Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read <code>fib</code> using pattern match notation similar to Java/C <code>switch</code> you may have seen before that we will cover in detail later:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="o">=</span> <span class="k">function</span> 
   <span class="o">|</span> <span class="mi">0</span> <span class="o">-&gt;</span> <span class="mi">0</span> 
@@ -202,7 +202,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Key advantage of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.</li>
-  <li>Much of this course will be showing how this is useful, we are just getting started now</li>
+  <li>Much of this course will be showing how this is useful</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add1</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* a normal add1 definition *)</span>
@@ -236,17 +236,16 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <span class="n">add3</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* NOT the previous - this is the same as (add3 3) * 2 - application binds tighter than * *)</span>
 <span class="n">add3</span> <span class="o">@@</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)</span>
 </code></pre></div></div>
+
 <ul>
   <li><code>=</code> is also a 2-argument function; it is somewhat strange in our <code>Core</code> OCaml on non-ints:
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span><span class="o">.</span><span class="mi">4</span> <span class="o">=</span> <span class="mi">4</span><span class="o">.</span><span class="mi">2</span><span class="p">;;</span> <span class="c">(* errors, = only works on ints with the Core library in use *)</span>
 <span class="nn">Float</span><span class="p">.(</span><span class="o">=</span><span class="p">)</span> <span class="mi">3</span><span class="o">.</span><span class="mi">3</span> <span class="mi">4</span><span class="o">.</span><span class="mi">4</span><span class="p">;;</span> <span class="c">(* Solution: use the Float module's = function for floats *)</span>
 </code></pre></div>    </div>
   </li>
-</ul>
-
-<h3 id="simple-structured-data-types-option-and-result">Simple Structured Data Types: Option and Result</h3>
-
-<ul>
+  <li>Why this apparent ugliness?  Pay a price here but reap rewards later of having the right notion of <code>=</code>.
+    <h3 id="simple-structured-data-types-option-and-result">Simple Structured Data Types: Option and Result</h3>
+  </li>
   <li>Before getting into “bigger” data types and how to declare our own, let’s use one of the simplest structured data types, the built-in <code>option</code> type.</li>
 </ul>
 
