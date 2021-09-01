@@ -114,7 +114,7 @@ let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
 fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)
 ```
 
-Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read `fib` using pattern match notation similar to Java/C `switch` you may have seen before that we will cover in detail later:
+Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read `fib` using pattern match notation similar to Java/C `switch` which we will cover in detail later:
 
 ```ocaml
 let rec fib = function 
@@ -122,14 +122,15 @@ let rec fib = function
   | 1 -> 1 
   | n -> fib (n - 1) + fib (n - 2);;
 ```
-#### Anonymous functions basics
+#### Anonymous (aka un-named) functions
 
-* Key advantage of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.
+* Key feature of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.
 * Much of this course will be showing how this is useful
 
 ```ocaml
 let add1 x = x + 1;; (* a normal add1 definition *)
-let anon_add1 = (function x -> x + 1);; (* equivalent anonymous version; "x" is argument here *)
+add1 3;;
+let anon_add1 = (function x -> x + 1);; (* equivalent to above; "x" is argument here *)
 anon_add1 3;;
 (anon_add1 4) + 7;; 
 ((function x -> x + 1) 4) + 7;; (* can inline anonymous function definition *)
@@ -183,6 +184,7 @@ None;;
 ```
 
  * Notice these are both in the `option` type .. either you have `Some` data or you have `None`.
+ * `option` is similar to how you can have null or non-null objects in other languages, but it is explicit here.
  * These kinds of types with the capital-letter-named tags are called **variants** in OCaml; each tag wraps a different variant.
  * The `option` type is very useful; here is a super simple example.
 
@@ -215,7 +217,7 @@ Error: This expression has type int but an expression was expected of type
 ```
 - The `then` and `else` branches must return the same type, here they do not.
 - The `int` and `int option` types have no overlap of members!  Generally true across OCaml.
-- In many PLs there is a `null` or similar value that can sneak in to a type, but no such sneaking in OCaml.
+- `null` or similar value can sneak in to a type in other languages, but no such sneaking in OCaml.
 
 #### Using pattern matching to use `nice_div`
 
@@ -294,50 +296,55 @@ z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
 #### Destructing Lists with pattern matching
 
 * Before writing real programs here is a simple example of pattern matching on a list.
-* This function gets the head, the first element.
+* This function gets the tail, the list without the first element.
 
 ```ocaml
-let hd l =
+let tl_exn l =
   match l with
-  |  [] -> Error "empty list has no head"
-  |  x :: xs -> Ok x (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
+  |  [] -> invalid_arg "empty lists have no tail"
+  |  x :: xs -> Ok xs  (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
 ;;
-hd [1;2;3];;
-hd [];;
+let l = [1;2;3];; 
+let l' = tl_exn l;;
+l;; (* IMPORTANT: lists are immutable, l didn't change!! *)
+let l'' =  tl_exn l' (* So to get tail of tail, take tail of l' not 2 x tail of l!  THREAD the state! *)
+tl_exn [];; (* Raise an exception if the list had no tail *)
 ```
 
-* We are returning `Ok/Error` here because the list could have had no head if it was empty.
-* Here is an alternate way to do this with a side effect
+* An alternative to avoid the exception effect is to return `Ok/Error`:
 
 ```ocaml
-let hd_exn l =
+let tl l =
   match l with
-  |  [] -> invalid_arg "empty lists have no head"
-  |  x :: xs -> Ok x (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
+  |  [] -> Error "empty list has no tail"
+  |  x :: xs -> Ok xs
 ;;
-hd [1;2;3];;
-hd [];;
+let l = [1;2;3];; 
+let l' = tl l;;
+tl [];;
+let l'' = tl l' (* Oops this fails!  As in the div example above need to case on `Ok/Error` *)
 ```
 
 * Lists are not random access like arrays; if you want to get the nth element, you need to work for it.
 
 ```ocaml
-let rec nth l n =
+let rec nth_exn l n =
   match l with
-  |  [] -> failwith "no nth element in this list"
-  |  x :: xs -> if n = 0 then x else nth xs (n-1)
+  |  [] -> invalid_arg "there is no nth element in this list"
+  |  x :: xs -> if n = 0 then x else nth_exn xs (n-1)
 ;;
-nth [33;22;11] 1;;
-nth [33;22;11] 3;;
+nth_exn [33;22;11] 1;;
+nth_exn [33;22;11] 3;;
 ```
 
-Fortunately many common operations are in the `List` module in the `Core` library:
+Fortunately many common operations are already in the `List` module in the `Core` library:
 
 ```ocaml
 # List.nth [1;2;3] 2;;
 - : int option = Some 3
 ```
-(This library uses the `option` type instead of raising an exception like we did)
-
+* This library uses the `option` type instead of raising an exception like we did
+* `List.nth_exn` raises an exception like ours does.  Both versions are useful.
+* Note on the HW you can use libraries on some questions but not others, read instructions.
 
 
