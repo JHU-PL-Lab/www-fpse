@@ -87,12 +87,17 @@ The above tools will be our "bread and butter", we will be using them on many as
 
 We recommend VSCode since it has OCaml-specific features such as syntax highlighting, auto-indent, and lint analysis to make the coding process much smoother.
 
-**[Visual Studio Code](https://code.visualstudio.com)**: 
-VSCode has very good OCaml support and is the "officially recommended editor". Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml and this extension will show up; install it. You can also easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
+**[Visual Studio Code](https://code.visualstudio.com)**
 
-If you are on Windows and using WSL2, to run Visual Studio "in WSL2 space" so you get OCaml syntax highlighting and other nice features see [this blog post](https://code.visualstudio.com/blogs/2019/09/03/wsl2) for how you can set it up.
+* VSCode has very good OCaml support and is the "officially recommended editor". 
 
-[**Atom**](https://atom.io): 
+* Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml and this extension will show up; install it. You can also easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
+
+* Alternatively, there is a newer extension which has more features that you could try in place of Reason IDE.  To install it, first run `opam install ocaml-lsp-server` from your shell, then select **OCaml Platform** from the list when you search on OCaml as above.  This version was buggy in past years but may be stable enough now.
+
+* If you are on Windows and using WSL2, to run Visual Studio "in WSL2 space" so you get OCaml syntax highlighting and other nice features see [this blog post](https://code.visualstudio.com/blogs/2019/09/03/wsl2) for how you can set it up.
+
+[**Atom**](https://atom.io)
 Atom is unfortunately being slowly phased out after Microsoft bought Github.  So, it is probably a good time to switch from Atom to VSCode if you have not already.  To use Atom with OCaml install the `atom` and `apm` shell commands (see the **Atom..Install Shell Commands** menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command `Window: Install Shell Commands`). With those commands installed, type into a terminal
 
         apm install language-ocaml linter ocaml-indent ocaml-merlin
