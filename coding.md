@@ -21,7 +21,6 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
     -   If you are running a recent Windows install, we recommend installing [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/) which once you have set up will allow you to follow the Linux Ubuntu install instructions to get `opam`. 
        - Note that your Ubuntu needs the C compiler and tools for the `opam` install to work; the following Linux shell command will get you those: `sudo apt install make m4 gcc unzip`.
        - [More WSL2 for OCaml tips here](https://www.cs.princeton.edu/courses/archive/fall20/cos326/WindowsSemiNative.php).  
-       - To run Visual Studio "in WSL2" so you get syntax highlighting and other nice features, see [this blog post](https://code.visualstudio.com/blogs/2019/09/03/wsl2) for some tips.
     -   Option 2 is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, [here is one of them](https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098).  Once your virtual Linux box is set up, you can follow the `opam` Linux install instructions.
 
 
@@ -90,6 +89,8 @@ We recommend VSCode since it has OCaml-specific features such as syntax highligh
 
 **[Visual Studio Code](https://code.visualstudio.com)**: 
 VSCode has very good OCaml support and is the "officially recommended editor". Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml and this extension will show up; install it. You can also easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
+
+If you are on Windows and using WSL2, to run Visual Studio "in WSL2 space" so you get OCaml syntax highlighting and other nice features see [this blog post](https://code.visualstudio.com/blogs/2019/09/03/wsl2) for how you can set it up.
 
 [**Atom**](https://atom.io): 
 Atom is unfortunately being slowly phased out after Microsoft bought Github.  So, it is probably a good time to switch from Atom to VSCode if you have not already.  To use Atom with OCaml install the `atom` and `apm` shell commands (see the **Atom..Install Shell Commands** menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command `Window: Install Shell Commands`). With those commands installed, type into a terminal

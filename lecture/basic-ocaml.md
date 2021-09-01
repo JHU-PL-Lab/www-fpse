@@ -1,5 +1,6 @@
 ## Introduction to OCaml
 
+(see the file [basic-ocaml.ml](basic-ocaml.ml) if you want all of the ml examples in this file extracted out)
 ### Installing
 
  * See [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) for install instructions and lots of other information.  
