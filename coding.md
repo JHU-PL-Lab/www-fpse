@@ -89,11 +89,13 @@ We recommend VSCode since it has OCaml-specific features such as syntax highligh
 
 **[Visual Studio Code](https://code.visualstudio.com)**
 
-* VSCode has very good OCaml support and is the "officially recommended editor". 
+VSCode has very good OCaml support and is the "officially recommended editor". 
 
-* Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml and this extension will show up; install it. You can also easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
+* Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml in the search box and this extension will show up; install it. 
 
-* Alternatively, there is a newer extension which has more features that you could try in place of Reason IDE.  To install it, first run `opam install ocaml-lsp-server` from your shell, then select **OCaml Platform** from the list when you search on OCaml as above.  This version was buggy in past years but may be stable enough now.
+* Alternatively, there is a newer extension which has more features that you could try in place of Reason IDE.  To install it, first run `opam install ocaml-lsp-server` from your shell, then select **OCaml Platform** from the list instead of OCaml and Reason IDE when you search for extensions in VSCode as above.  This version was buggy in past years but may be stable enough now.
+
+* You can easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
 
 * If you are on Windows and using WSL2, to run Visual Studio "in WSL2 space" so you get OCaml syntax highlighting and other nice features see [this blog post](https://code.visualstudio.com/blogs/2019/09/03/wsl2) for how you can set it up.
 
