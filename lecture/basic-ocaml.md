@@ -263,8 +263,8 @@ div_exn 3 4;;
 * Note that the built-in `/` also raises an exception.
 * Exceptions are side effects though, we want to minimize their usage to avoid error-at-a-distance.
 * The above examples show how exceptional conditions can either be handled via exceptions or in the return value; 
-   - the latter is the C approach but also the monadic approach as we will learn
-   - a key dimension of this course is the side effect vs direct trade-off
+   - A key dimension of this course is this side effect vs direct trade-off
+   - Many bugs, security leaks, etc are due to ignorance of side effects; the `Error/Ok` approach keeps them "in your face" as a programmer
 
 ### Lists
 
@@ -300,6 +300,19 @@ z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
 let hd l =
   match l with
   |  [] -> Error "empty list has no head"
+  |  x :: xs -> Ok x (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
+;;
+hd [1;2;3];;
+hd [];;
+```
+
+* We are returning `Ok/Error` here because the list could have had no head if it was empty.
+* Here is an alternate way to do this with a side effect
+
+```ocaml
+let hd_exn l =
+  match l with
+  |  [] -> invalid_arg "empty lists have no head"
   |  x :: xs -> Ok x (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
 ;;
 hd [1;2;3];;
