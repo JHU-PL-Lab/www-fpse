@@ -168,15 +168,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p><strong><a href="https://code.visualstudio.com">Visual Studio Code</a></strong></p>
 
+<p>VSCode has very good OCaml support and is the “officially recommended editor”.</p>
+
 <ul>
   <li>
-    <p>VSCode has very good OCaml support and is the “officially recommended editor”.</p>
+    <p>Install the <strong>OCaml and Reason IDE</strong> extension to get syntax highlighting, type information, etc: from the <code>View</code> menu select <code>Extensions</code>, then type in OCaml in the search box and this extension will show up; install it.</p>
   </li>
   <li>
-    <p>Install the <strong>OCaml and Reason IDE</strong> extension to get syntax highlighting, type information, etc: from the <code>View</code> menu select <code>Extensions</code>, then type in OCaml and this extension will show up; install it. You can also easily run a <code>utop</code> shell from within VSCode, just open up a shell from the <code>Terminal</code> menu and type <code>utop</code>.</p>
+    <p>Alternatively, there is a newer extension which has more features that you could try in place of Reason IDE.  To install it, first run <code>opam install ocaml-lsp-server</code> from your shell, then select <strong>OCaml Platform</strong> from the list instead of OCaml and Reason IDE when you search for extensions in VSCode as above.  This version was buggy in past years but may be stable enough now.</p>
   </li>
   <li>
-    <p>Alternatively, there is a newer extension which has more features that you could try in place of Reason IDE.  To install it, first run <code>opam install ocaml-lsp-server</code> from your shell, then select <strong>OCaml Platform</strong> from the list when you search on OCaml as above.  This version was buggy in past years but may be stable enough now.</p>
+    <p>You can easily run a <code>utop</code> shell from within VSCode, just open up a shell from the <code>Terminal</code> menu and type <code>utop</code>.</p>
   </li>
   <li>
     <p>If you are on Windows and using WSL2, to run Visual Studio “in WSL2 space” so you get OCaml syntax highlighting and other nice features see <a href="https://code.visualstudio.com/blogs/2019/09/03/wsl2">this blog post</a> for how you can set it up.</p>
