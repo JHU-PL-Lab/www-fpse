@@ -86,6 +86,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Windows Windows Windows.. the OCaml toolchain is unfortunately not good in straight Windows.
     <ul>
       <li>If you are running a recent Windows install, we recommend installing <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL 2</a> which once you have set up will allow you to follow the Linux Ubuntu install instructions to get <code>opam</code>.</li>
+      <li>Note that your Ubuntu needs the C compiler and tools for the <code>opam</code> install to work; the following Linux shell command will get you those: <code>sudo apt install make m4 gcc unzip</code>.</li>
+      <li><a href="https://www.cs.princeton.edu/courses/archive/fall20/cos326/WindowsSemiNative.php">More WSL2 for OCaml tips here</a>.</li>
       <li>Option 2 is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, <a href="https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098">here is one of them</a>.  Once your virtual Linux box is set up, you can follow the <code>opam</code> Linux install instructions.</li>
     </ul>
   </li>
@@ -164,10 +166,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>We recommend VSCode since it has OCaml-specific features such as syntax highlighting, auto-indent, and lint analysis to make the coding process much smoother.</p>
 
-<p><strong><a href="https://code.visualstudio.com">Visual Studio Code</a></strong>: <br />
-VSCode has very good OCaml support and is the “officially recommended editor”. Install the <strong>OCaml and Reason IDE</strong> extension to get syntax highlighting, type information, etc: from the <code>View</code> menu select <code>Extensions</code>, then type in OCaml and this extension will show up; install it. You can also easily run a <code>utop</code> shell from within VSCode, just open up a shell from the <code>Terminal</code> menu and type <code>utop</code>.</p>
+<p><strong><a href="https://code.visualstudio.com">Visual Studio Code</a></strong></p>
 
-<p><a href="https://atom.io"><strong>Atom</strong></a>: <br />
+<ul>
+  <li>
+    <p>VSCode has very good OCaml support and is the “officially recommended editor”.</p>
+  </li>
+  <li>
+    <p>Install the <strong>OCaml and Reason IDE</strong> extension to get syntax highlighting, type information, etc: from the <code>View</code> menu select <code>Extensions</code>, then type in OCaml and this extension will show up; install it. You can also easily run a <code>utop</code> shell from within VSCode, just open up a shell from the <code>Terminal</code> menu and type <code>utop</code>.</p>
+  </li>
+  <li>
+    <p>Alternatively, there is a newer extension which has more features that you could try in place of Reason IDE.  To install it, first run <code>opam install ocaml-lsp-server</code> from your shell, then select <strong>OCaml Platform</strong> from the list when you search on OCaml as above.  This version was buggy in past years but may be stable enough now.</p>
+  </li>
+  <li>
+    <p>If you are on Windows and using WSL2, to run Visual Studio “in WSL2 space” so you get OCaml syntax highlighting and other nice features see <a href="https://code.visualstudio.com/blogs/2019/09/03/wsl2">this blog post</a> for how you can set it up.</p>
+  </li>
+</ul>
+
+<p><a href="https://atom.io"><strong>Atom</strong></a><br />
 Atom is unfortunately being slowly phased out after Microsoft bought Github.  So, it is probably a good time to switch from Atom to VSCode if you have not already.  To use Atom with OCaml install the <code>atom</code> and <code>apm</code> shell commands (see the <strong>Atom..Install Shell Commands</strong> menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command <code>Window: Install Shell Commands</code>). With those commands installed, type into a terminal</p>
 
 <pre><code>    apm install language-ocaml linter ocaml-indent ocaml-merlin

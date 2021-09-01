@@ -61,6 +61,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h2 id="introduction-to-ocaml">Introduction to OCaml</h2>
 
+<p>(see the file <a href="basic-ocaml.ml">basic-ocaml.ml</a> if you want all of the ml examples in this file extracted out)</p>
 <h3 id="installing">Installing</h3>
 
 <ul>
@@ -121,7 +122,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.</li>
   <li>Now, type <code>dune build</code> to compile a standalone program like we did above but letting <code>dune</code> invoke the compiler.</li>
-  <li>Then, run with <code>dune exec ./helloworld</code></li>
+  <li>Then, run with <code>dune exec ./helloworld.exe</code></li>
 </ul>
 
 <h4 id="adding-a-library">Adding a Library</h4>
@@ -170,12 +171,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="simple-functions-on-integers">Simple functions on integers</h4>
 
 <p>To declare a function <code>squared</code> with <code>x</code> its one parameter.  <code>return</code> is  implicit.</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">squared</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;;</span> 
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">squared</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;;</span> <span class="c">(* returns     val squared : int -&gt; int = &lt;fun&gt;     *)</span>
 <span class="n">squared</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* to call a function -- separate arguments with S P A C E S *)</span>
 </code></pre></div></div>
 <ul>
   <li>OCaml has no <code>return</code> statement; value of the whole body-expression is what gets returned</li>
-  <li>Type is automatically <strong>inferred</strong> and printed as domain <code>-&gt;</code> range</li>
+  <li>Type is automatically <strong>inferred</strong> and printed as domain <code>-&gt;</code> range; <code>int -&gt; int</code> here.</li>
   <li>OCaml functions in fact always take only one argument - !  multiple arguments can be encoded (covered later)</li>
 </ul>
 
@@ -191,22 +192,23 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">fib</span> <span class="mi">10</span><span class="p">;;</span> <span class="c">(* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)</span>
 </code></pre></div></div>
 
-<p>Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read <code>fib</code> using pattern match notation similar to Java/C <code>switch</code> you may have seen before that we will cover in detail later:</p>
+<p>Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read <code>fib</code> using pattern match notation similar to Java/C <code>switch</code> which we will cover in detail later:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="o">=</span> <span class="k">function</span> 
   <span class="o">|</span> <span class="mi">0</span> <span class="o">-&gt;</span> <span class="mi">0</span> 
   <span class="o">|</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="mi">1</span> 
   <span class="o">|</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);;</span>
 </code></pre></div></div>
-<h4 id="anonymous-functions-basics">Anonymous functions basics</h4>
+<h4 id="anonymous-aka-un-named-functions">Anonymous (aka un-named) functions</h4>
 
 <ul>
-  <li>Key advantage of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.</li>
+  <li>Key feature of FP: functions are just expressions; put them in variables, pass and return from other functions, etc.</li>
   <li>Much of this course will be showing how this is useful</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add1</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* a normal add1 definition *)</span>
-<span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* equivalent anonymous version; "x" is argument here *)</span>
+<span class="n">add1</span> <span class="mi">3</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* equivalent to above; "x" is argument here *)</span>
 <span class="n">anon_add1</span> <span class="mi">3</span><span class="p">;;</span>
 <span class="p">(</span><span class="n">anon_add1</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> 
 <span class="p">((</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(* can inline anonymous function definition *)</span>
@@ -263,6 +265,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 
 <ul>
   <li>Notice these are both in the <code>option</code> type .. either you have <code>Some</code> data or you have <code>None</code>.</li>
+  <li><code>option</code> is similar to how you can have null or non-null objects in other languages, but it is explicit here.</li>
   <li>These kinds of types with the capital-letter-named tags are called <strong>variants</strong> in OCaml; each tag wraps a different variant.</li>
   <li>The <code>option</code> type is very useful; here is a super simple example.</li>
 </ul>
@@ -294,9 +297,10 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <ul>
   <li>The <code>then</code> and <code>else</code> branches must return the same type, here they do not.</li>
   <li>The <code>int</code> and <code>int option</code> types have no overlap of members!  Generally true across OCaml.</li>
+  <li><code>null</code> or similar value can sneak in to a type in other languages, but no such sneaking in OCaml.</li>
 </ul>
 
-<h4 id="using-pattern-matching-to-solve-this">Using pattern matching to solve this</h4>
+<h4 id="using-pattern-matching-to-use-nice_div">Using pattern matching to use <code>nice_div</code></h4>
 
 <p>Here is a real solution to the above issue:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">match</span> <span class="p">(</span><span class="n">nice_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="k">with</span> 
@@ -347,8 +351,8 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
   <li>Exceptions are side effects though, we want to minimize their usage to avoid error-at-a-distance.</li>
   <li>The above examples show how exceptional conditions can either be handled via exceptions or in the return value;
     <ul>
-      <li>the latter is the C approach but also the monadic approach as we will learn</li>
-      <li>a key dimension of this course is the side effect vs direct trade-off</li>
+      <li>A key dimension of this course is this side effect vs direct trade-off</li>
+      <li>Many bugs, security leaks, etc are due to ignorance of side effects; the <code>Error/Ok</code> approach keeps them “in your face” as a programmer</li>
     </ul>
   </li>
 </ul>
@@ -382,37 +386,59 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 
 <ul>
   <li>Before writing real programs here is a simple example of pattern matching on a list.</li>
-  <li>This function gets the head, the first element.</li>
+  <li>This function gets the tail, the list without the first element.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">hd</span> <span class="n">l</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl_exn</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
-  <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"empty list has no head"</span>
-  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="n">x</span> <span class="c">(* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)</span>
+  <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">invalid_arg</span> <span class="s2">"empty lists have no tail"</span>
+  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="n">xs</span>  <span class="c">(* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)</span>
 <span class="p">;;</span>
-<span class="n">hd</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span>
-<span class="n">hd</span> <span class="bp">[]</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> 
+<span class="k">let</span> <span class="n">l'</span> <span class="o">=</span> <span class="n">tl_exn</span> <span class="n">l</span><span class="p">;;</span>
+<span class="n">l</span><span class="p">;;</span> <span class="c">(* IMPORTANT: lists are immutable, l didn't change!! *)</span>
+<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span>  <span class="n">tl_exn</span> <span class="n">l'</span> <span class="c">(* So to get tail of tail, take tail of l' not 2 x tail of l!  THREAD the state! *)</span>
+<span class="n">tl_exn</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* Raise an exception if the list had no tail *)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>An alternative to avoid the exception effect is to return <code>Ok/Error</code>:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
+  <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"empty list has no tail"</span>
+  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="n">xs</span>
+<span class="p">;;</span>
+<span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> 
+<span class="k">let</span> <span class="n">l'</span> <span class="o">=</span> <span class="n">tl</span> <span class="n">l</span><span class="p">;;</span>
+<span class="n">tl</span> <span class="bp">[]</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span> <span class="n">tl</span> <span class="n">l'</span> <span class="c">(* Oops this fails!  As in the div example above need to case on `Ok/Error` *)</span>
 </code></pre></div></div>
 
 <ul>
   <li>Lists are not random access like arrays; if you want to get the nth element, you need to work for it.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">nth</span> <span class="n">l</span> <span class="n">n</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">nth_exn</span> <span class="n">l</span> <span class="n">n</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
-  <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"no nth element in this list"</span>
-  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="n">x</span> <span class="k">else</span> <span class="n">nth</span> <span class="n">xs</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+  <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">invalid_arg</span> <span class="s2">"there is no nth element in this list"</span>
+  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="n">x</span> <span class="k">else</span> <span class="n">nth_exn</span> <span class="n">xs</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 <span class="p">;;</span>
-<span class="n">nth</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">1</span><span class="p">;;</span>
-<span class="n">nth</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">3</span><span class="p">;;</span>
+<span class="n">nth_exn</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">1</span><span class="p">;;</span>
+<span class="n">nth_exn</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">3</span><span class="p">;;</span>
 </code></pre></div></div>
 
-<p>Fortunately many common operations are in the <code>List</code> module in the <code>Core</code> library:</p>
+<p>Fortunately many common operations are already in the <code>List</code> module in the <code>Core</code> library:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="mi">2</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">3</span>
 </code></pre></div></div>
-<p>(This library uses the <code>option</code> type instead of raising an exception like we did)</p>
+<ul>
+  <li>This library uses the <code>option</code> type instead of raising an exception like we did</li>
+  <li><code>List.nth_exn</code> raises an exception like ours does.  Both versions are useful.</li>
+  <li>Note on the HW you can use libraries on some questions but not others, read instructions.</li>
+</ul>
 
       
           </section>
