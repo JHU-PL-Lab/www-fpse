@@ -168,6 +168,7 @@ add3 @@ 3 * 2;; (* LIKE the original - @@ is like the " " for application but bi
 Float.(=) 3.3 4.4;; (* Solution: use the Float module's = function for floats *)
 ```
 * Why this apparent ugliness?  Pay a price here but reap rewards later of having the right notion of `=`.
+
 ### Simple Structured Data Types: Option and Result
 
 * Before getting into "bigger" data types and how to declare our own, let's use one of the simplest structured data types, the built-in `option` type.
