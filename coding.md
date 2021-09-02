@@ -97,7 +97,7 @@ VSCode has very good OCaml support and is the "officially recommended editor".
 
 * You can easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
 
-* If you are on Windows and using WSL2, to run Visual Studio "in WSL2 space" so you get OCaml syntax highlighting and other nice features see [this blog post](https://code.visualstudio.com/blogs/2019/09/03/wsl2) for how you can set it up.
+* If you are on Windows and using WSL2, to run Visual Studio "in WSL2 space" so you get OCaml syntax highlighting and other nice features; see [this blog post](https://code.visualstudio.com/blogs/2019/09/03/wsl2) for how you can set it up.
 
 [**Atom**](https://atom.io)
 Atom is unfortunately being slowly phased out after Microsoft bought Github.  So, it is probably a good time to switch from Atom to VSCode if you have not already.  To use Atom with OCaml install the `atom` and `apm` shell commands (see the **Atom..Install Shell Commands** menu option on Macs, or type shift-command-p(⇧⌘P) and then in the box type command `Window: Install Shell Commands`). With those commands installed, type into a terminal
