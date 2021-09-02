@@ -23,8 +23,8 @@ Here is a reminder of some resources at your disposal.
     - Note that `Core` overrides some of these including the comparison operations which only work on `int`s.  To perform `=`, `<` or the like on e.g. floats you need to write `Float.(=) 3.2 4.7` for example to check for equality on `3.2` and `4.7`, and similarly for `<` etc.  To see what is actually loaded look at the [Base](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/index.html) documentation and scroll down.
 - You can use `Core`'s `List` module functions for the Part II questions we indicate; those functions are generally described under the `Base` docs which is a subset of `Core`, [here](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html).
 -   You are strongly encouraged to work with other people on the assignment. You just need to list the names of people you worked with. However remember that you should submit your own write up of the answers. **Copying of solutions is not allowed**. For the full collaboration policy see [here](../integrity.shtml).
--   Come to office hours to get help from Prof and CAs.  Office hours are posted on Piazza.
--   Use Piazza for online help and question clarification.  There is also a tool to find teammates on Piazza, feel free to use that to find some coding partners.
+-   Come to office hours to get help from Prof and CAs.  Office hours are posted on Campuswire.
+-   Use Campuswire for online help and question clarification.
 
 ### Coding Methods
 - There are two ways you can test your code in OCaml, (1) you can use the top loop (`utop`) to informally run some tests on it, and (2) you can run the `dune test` script from directory `..../assignment1/` which runs all of the small suite of tests in the file `tests/tests.ml` and reports the results. 
