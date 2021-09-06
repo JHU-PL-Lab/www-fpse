@@ -13,8 +13,8 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
 - You will then need to run some terminal commands to set up the basics:
     1.  `opam init` to initialize OPAM;
     2.  `opam switch create 4.12.0` (this will take awhile) to build OCaml version 4.12.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this `switch` to make sure OPAM is aware of the latest version);
-	3.  `eval (opam env)` to let your shell know where the OPAM files are (use ``eval `opam env` `` instead if you are using `zsh` on a Mac); and
-    4.  Also add the very same line, `eval (opam env)`, to your`.profile`/`.bashrc` shell init file as you would need to do that in every new terminal window otherwise. (for `.zshrc` on macs, add line ``eval `opam env` `` instead)
+	3.  `eval $(opam env)` to let your shell know where the OPAM files are (use ``eval `opam env` `` instead if you are using `zsh` on a Mac); and
+    4.  Also add the very same line, `eval $(opam env)`, to your`.profile`/`.bashrc` shell init file as you would need to do that in every new terminal window otherwise. (for `.zshrc` on macs, add line ``eval `opam env` `` instead)
     
 
 -   Windows Windows Windows.. the OCaml toolchain is unfortunately not good in straight Windows.

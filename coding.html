@@ -79,8 +79,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ol>
       <li><code>opam init</code> to initialize OPAM;</li>
       <li><code>opam switch create 4.12.0</code> (this will take awhile) to build OCaml version 4.12.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to <code>opam update</code> before this <code>switch</code> to make sure OPAM is aware of the latest version);</li>
-      <li><code>eval (opam env)</code> to let your shell know where the OPAM files are (use <code>eval `opam env`</code> instead if you are using <code>zsh</code> on a Mac); and</li>
-      <li>Also add the very same line, <code>eval (opam env)</code>, to your<code>.profile</code>/<code>.bashrc</code> shell init file as you would need to do that in every new terminal window otherwise. (for <code>.zshrc</code> on macs, add line <code>eval `opam env`</code> instead)</li>
+      <li><code>eval $(opam env)</code> to let your shell know where the OPAM files are (use <code>eval `opam env`</code> instead if you are using <code>zsh</code> on a Mac); and</li>
+      <li>Also add the very same line, <code>eval $(opam env)</code>, to your<code>.profile</code>/<code>.bashrc</code> shell init file as you would need to do that in every new terminal window otherwise. (for <code>.zshrc</code> on macs, add line <code>eval `opam env`</code> instead)</li>
     </ol>
   </li>
   <li>Windows Windows Windows.. the OCaml toolchain is unfortunately not good in straight Windows.
