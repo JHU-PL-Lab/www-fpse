@@ -73,17 +73,17 @@ List.append [1;2] [3;4];; (* Usually the infix @ syntax is used for append *)
 
 ```ocaml
 # List.length;;
-- : 'a list -> int = &lt;fun>
+- : 'a list -> int = <fun>
 # List.is_empty;;
-- : 'a list -> bool = &lt;fun>
+- : 'a list -> bool = <fun>
 # List.last_exn;;
-- : 'a list -> 'a = &lt;fun>
+- : 'a list -> 'a = <fun>
 # List.join;;
-- : 'a list list -> 'a list = &lt;fun>
+- : 'a list list -> 'a list = <fun>
 # List.append;;
-- : 'a list -> 'a list -> 'a list = &lt;fun>
+- : 'a list -> 'a list -> 'a list = <fun>
 # List.map;;  (* We will do this one below, but type gives it away *)
-- : 'a list -> f:('a -> 'b) -> 'b list = &lt;fun>
+- : 'a list -> f:('a -> 'b) -> 'b list = <fun>
 ```
 
 * We coded `nth` and `rev` before, here is one more, `join`:
@@ -121,7 +121,7 @@ split_in_half [2;3;4;5;99];;
 let all_front_back_pairs l = 
   let front, back = split_in_half l in 
     List.cartesian_product front back;; (* observe how let can itself pattern match pairs *)
-val all_front_back_pairs : 'a list -> ('a * 'a) list = &lt;fun>
+val all_front_back_pairs : 'a list -> ('a * 'a) list = <fun>
 # all_front_back_pairs [1;2;3;4;5;6];;
 - : (int * int) list =
 [(1, 4); (1, 5); (1, 6); (2, 4); (2, 5); (2, 6); (3, 4); (3, 5); (3, 6)]
@@ -280,13 +280,13 @@ remove_negatives  [1;-1;2;-2;0];;
 Let us use `filter` to write a function determining if a list has any negative elements:
 
 ```ocaml
-let has_negs l = not (l |> List.filter ~f:(fun x -> x &lt; 0) |> List.is_empty);;
+let has_negs l = not (l |> List.filter ~f:(fun x -> x < 0) |> List.is_empty);;
 ```
  * The example shows the power of pipelining, it is easier to see the processing order with `|>`
  * This is a common operation so there is a library function for it as well: does there *exist* any element in the list where predicate holds?
 
 ```ocaml
-let has_negs l = List.exists ~f:(fun x -> x &lt; 0) l;;
+let has_negs l = List.exists ~f:(fun x -> x < 0) l;;
 ```
 Similarly, `List.for_all` checks if it holds for *all* elements.
 
