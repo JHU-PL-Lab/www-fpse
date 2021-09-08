@@ -1,6 +1,7 @@
 ## List programming
 * First we will do a few more recursive functions over lists
 * Then we will show how the `Core.List` library functions allow a great many (most?) operations to be written without recursion
+* This is *combinator programming*, solve a task by composing operations on a few standard combinators ("combiners")
 
 #### Reversing a list
 
@@ -56,6 +57,7 @@ zero_negs [1;-2;3];;
 * Let us [peek at the documentation for `Base.List`](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html) to see what is available; we will cover a few of them now.
 
 #### Some simple but very handy `List` library functions
+
 ```ocaml
 List.length ["d";"ss";"qwqw"];;
 List.is_empty [];;
@@ -68,6 +70,7 @@ List.append [1;2] [3;4];; (* Usually the infix @ syntax is used for append *)
 * The types of the functions are additional hints to their purpose, get used to reading them
 * Much of the time when you mis-use a function you will get a type error
 * Recall that `'a list` etc is a polymorhic aka generic type, `'a` can be *any* type
+
 ```ocaml
 # List.length;;
 - : 'a list -> int = &lt;fun>
@@ -153,6 +156,7 @@ Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
 * `((int * int) list) List.Or_unequal_lengths.t` is the proper parentheses.
 * `List.Or_unequal_lengths.t` is referring to the type `t` found in the `List.Or_unequal_lengths` module (a small module within the `List` module)
 * We can use the `#show_type` directive in the top loop to see what `t` actually is:
+
 ```ocaml
 # #show_type List.Or_unequal_lengths.t;;
 type nonrec 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
@@ -212,12 +216,14 @@ let curry f = fun x -> fun y -> f (x, y);;
 let uncurry f = fun (x, y) -> f x y;;
 ```
 Observe the types themselves in fact fully define their behavior:
+
 ```ocaml
 curry : ('a * 'b -> 'c) -> 'a -> 'b -> 'c
 uncurry : ('a -> 'b -> 'c) -> 'a * 'b -> 'c
 ```
 
 We can now use them to build `zip_pair` directly:
+
 ```ocaml
 let zip_pair  = uncurry @@ List.zip_exn;;
 ```
@@ -225,6 +231,7 @@ let zip_pair  = uncurry @@ List.zip_exn;;
 #### One last higher-order function: compose
 
 Composition function g o f: take two functions, return their composition
+
 ```ocaml
 let compose g f = (fun x -> g (f x));;
 compose (fun x -> x+3) (fun x -> x*2) 10;;
@@ -259,10 +266,12 @@ List.filter [1;-1;2;-2;0] (fun x -> x >= 0);;
 
 * Cool, we can "glue in" any checking function (boolean-returning, i.e. a *predicate*) and `List.filter` will do the rest
 * Observe `List.filter` has type `'a list -> f:('a -> bool) -> 'a list` -- the `f` is a *named argument*, we can put args out of order if we give name via `~f:` syntax:
+
 ```ocaml
 List.filter ~f:(fun x -> x >= 0) [1;-1;2;-2;0];;
 ```
 * And, since OCaml functions are Curried we can leave off the list argument to make a generic remove-negatives function.
+
 ```ocaml
 let remove_negatives = List.filter ~f:(fun x -> x >= 0);;
 remove_negatives  [1;-1;2;-2;0];;
@@ -318,6 +327,7 @@ let exists ~f l =  (* Note the ~f is **declaring** a named argument f, we were o
 ```
 
 * `List.fold_left` aka `List.fold` (use the latter syntax generally) puts the `~init` on the left:
+
 ```ocaml
 # List.fold ~f:(||) ~init:false [true; false];; (* this is false || (true || false), the FIRST false is the ~init *)
 - : bool = true

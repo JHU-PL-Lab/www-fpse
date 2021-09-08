@@ -63,6 +63,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>First we will do a few more recursive functions over lists</li>
   <li>Then we will show how the <code>Core.List</code> library functions allow a great many (most?) operations to be written without recursion</li>
+  <li>This is <em>combinator programming</em>, solve a task by composing operations on a few standard combinators (“combiners”)</li>
 </ul>
 
 <h4 id="reversing-a-list">Reversing a list</h4>
@@ -133,6 +134,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h4 id="some-simple-but-very-handy-list-library-functions">Some simple but very handy <code>List</code> library functions</h4>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="p">[</span><span class="s2">"d"</span><span class="p">;</span><span class="s2">"ss"</span><span class="p">;</span><span class="s2">"qwqw"</span><span class="p">];;</span>
 <span class="nn">List</span><span class="p">.</span><span class="n">is_empty</span> <span class="bp">[]</span><span class="p">;;</span>
 <span class="nn">List</span><span class="p">.</span><span class="n">last_exn</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> <span class="c">(* get last element; raises an exception if list is empty *)</span>
@@ -144,29 +146,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>The types of the functions are additional hints to their purpose, get used to reading them</li>
   <li>Much of the time when you mis-use a function you will get a type error</li>
-  <li>Recall that <code>'a list</code> etc is a polymorhic aka generic type, <code>'a</code> can be <em>any</em> type<br />
-```ocaml
-    <h1 id="listlength">List.length;;</h1>
-  </li>
-  <li>: ‘a list -&gt; int = &lt;fun&gt;
-    <h1 id="listis_empty">List.is_empty;;</h1>
-  </li>
-  <li>: ‘a list -&gt; bool = &lt;fun&gt;
-    <h1 id="listlast_exn">List.last_exn;;</h1>
-  </li>
-  <li>: ‘a list -&gt; ‘a = &lt;fun&gt;
-    <h1 id="listjoin">List.join;;</h1>
-  </li>
-  <li>: ‘a list list -&gt; ‘a list = &lt;fun&gt;
-    <h1 id="listappend">List.append;;</h1>
-  </li>
-  <li>: ‘a list -&gt; ‘a list -&gt; ‘a list = &lt;fun&gt;
-    <h1 id="listmap---we-will-do-this-one-below-but-type-gives-it-away-">List.map;;  (* We will do this one below, but type gives it away *)</h1>
-  </li>
-  <li>
-    <p>: ‘a list -&gt; f:(‘a -&gt; ‘b) -&gt; ‘b list = &lt;fun&gt;<br />
-```</p>
-  </li>
+  <li>Recall that <code>'a list</code> etc is a polymorhic aka generic type, <code>'a</code> can be <em>any</em> type</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">is_empty</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">last_exn</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">join</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">append</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span><span class="p">;;</span>  <span class="c">(* We will do this one below, but type gives it away *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<ul>
   <li>We coded <code>nth</code> and <code>rev</code> before, here is one more, <code>join</code>:</li>
 </ul>
 
@@ -247,11 +244,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>This type and value are hard to read, let us take a crack at it.</li>
   <li><code>((int * int) list) List.Or_unequal_lengths.t</code> is the proper parentheses.</li>
   <li><code>List.Or_unequal_lengths.t</code> is referring to the type <code>t</code> found in the <code>List.Or_unequal_lengths</code> module (a small module within the <code>List</code> module)</li>
-  <li>We can use the <code>#show_type</code> directive in the top loop to see what <code>t</code> actually is:
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span><span class="p">;;</span>
+  <li>We can use the <code>#show_type</code> directive in the top loop to see what <code>t</code> actually is:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span><span class="p">;;</span>
 <span class="k">type</span> <span class="k">nonrec</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nc">Ok</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">|</span> <span class="nc">Unequal_lengths</span>
-</code></pre></div>    </div>
-  </li>
+</code></pre></div></div>
+<ul>
   <li>This means the value is either <code>Ok(..)</code> or <code>Unequal_lenghts</code>, very similar to <code>result</code></li>
   <li>The latter case is for zipping lists of different lengths:</li>
 </ul>
@@ -314,17 +313,20 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">let</span> <span class="n">uncurry</span> <span class="n">f</span> <span class="o">=</span> <span class="k">fun</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">x</span> <span class="n">y</span><span class="p">;;</span>
 </code></pre></div></div>
 <p>Observe the types themselves in fact fully define their behavior:</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">curry</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">c</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">c</span>
 <span class="n">uncurry</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">c</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">c</span>
 </code></pre></div></div>
 
 <p>We can now use them to build <code>zip_pair</code> directly:</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">zip_pair</span>  <span class="o">=</span> <span class="n">uncurry</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <h4 id="one-last-higher-order-function-compose">One last higher-order function: compose</h4>
 
 <p>Composition function g o f: take two functions, return their composition</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">compose</span> <span class="n">g</span> <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">g</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">));;</span>
 <span class="n">compose</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="mi">10</span><span class="p">;;</span>
 </code></pre></div></div>
@@ -359,16 +361,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Cool, we can “glue in” any checking function (boolean-returning, i.e. a <em>predicate</em>) and <code>List.filter</code> will do the rest</li>
-  <li>Observe <code>List.filter</code> has type <code>'a list -&gt; f:('a -&gt; bool) -&gt; 'a list</code> – the <code>f</code> is a <em>named argument</em>, we can put args out of order if we give name via <code>~f:</code> syntax:
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>And, since OCaml functions are Curried we can leave off the list argument to make a generic remove-negatives function.
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">remove_negatives</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">);;</span>
-<span class="n">remove_negatives</span>  <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
-</code></pre></div>    </div>
-  </li>
+  <li>Observe <code>List.filter</code> has type <code>'a list -&gt; f:('a -&gt; bool) -&gt; 'a list</code> – the <code>f</code> is a <em>named argument</em>, we can put args out of order if we give name via <code>~f:</code> syntax:</li>
 </ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
+</code></pre></div></div>
+<ul>
+  <li>And, since OCaml functions are Curried we can leave off the list argument to make a generic remove-negatives function.</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">remove_negatives</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">);;</span>
+<span class="n">remove_negatives</span>  <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
+</code></pre></div></div>
 
 <p>Let us use <code>filter</code> to write a function determining if a list has any negative elements:</p>
 
@@ -423,14 +427,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li><code>List.fold_left</code> aka <code>List.fold</code> (use the latter syntax generally) puts the <code>~init</code> on the left:<br />
-```ocaml
-    <h1 id="listfold-f-initfalse-true-false--this-is-false--true--false-the-first-false-is-the-init-">List.fold ~f:(||) ~init:false [true; false];; (* this is false || (true || false), the FIRST false is the ~init *)</h1>
-  </li>
-  <li>
-    <p>: bool = true<br />
-```</p>
-  </li>
+  <li><code>List.fold_left</code> aka <code>List.fold</code> (use the latter syntax generally) puts the <code>~init</code> on the left:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">||</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">false</span> <span class="p">[</span><span class="bp">true</span><span class="p">;</span> <span class="bp">false</span><span class="p">];;</span> <span class="c">(* this is false || (true || false), the FIRST false is the ~init *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">true</span>
+</code></pre></div></div>
+
+<ul>
   <li>Note that in this case folding left or right gives the same answer;
     <ul>
       <li>that is because <code>||</code> is <em>commutative and associative</em>, so e.g. <code>true || (false || (false) = false || (true || false)</code>.</li>
