@@ -69,7 +69,7 @@ List.append [1;2] [3;4];; (* Usually the infix @ syntax is used for append *)
 
 * The types of the functions are additional hints to their purpose, get used to reading them
 * Much of the time when you mis-use a function you will get a type error
-* Recall that `'a list` etc is a polymorhic aka generic type, `'a` can be *any* type
+* Recall that `'a list` etc is a polymorphic aka generic type, `'a` can be *any* type
 
 ```ocaml
 # List.length;;
@@ -82,15 +82,15 @@ List.append [1;2] [3;4];; (* Usually the infix @ syntax is used for append *)
 - : 'a list list -> 'a list = <fun>
 # List.append;;
 - : 'a list -> 'a list -> 'a list = <fun>
-# List.map;;  (* We will do this one below, but type gives it away *)
+# List.map;;  (* We will do this one below; type gives away what it does *)
 - : 'a list -> f:('a -> 'b) -> 'b list = <fun>
 ```
 
 * We coded `nth` and `rev` before, here is one more, `join`:
 
 ```ocaml
-let rec join l = match l with
-  | [] -> [] (* "joining together a lists of no-lists is an empty list" *)
+let rec join (l: 'a list list) = match l with
+  | [] -> [] (* "joining together a list of no-lists is an empty list" *)
   | l :: ls -> l @ join ls (* " by induction assume (join ls) will turn list-of-lists to single list" *)
 ```
 
@@ -116,6 +116,7 @@ split_in_half [2;3;4;5;99];;
 ```
 
 * Now, using the `List.cartesian_product` function we can make all possible pairs of (front,back) elements
+  - (Also observe how these OCaml combinators have overlap with math combinators we already knew)
 
 ```ocaml
 let all_front_back_pairs l = 
@@ -144,7 +145,7 @@ List.unzip @@ all_front_back_pairs [1;2;3;4;5;6];;
 * The data is fed into first function, output of first function fed as input to second, etc
 * This is exactly what the shell `|` does with standard input / standard output.
 
-* `List.zip` is the opposite of unzip:
+* `List.zip` is the opposite of unzip: take two lists and make a single list pairing elements
 
 ```ocaml
 List.zip [1;2;3] [4;5;6];;
@@ -155,6 +156,7 @@ Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
 * This type and value are hard to read, let us take a crack at it.
 * `((int * int) list) List.Or_unequal_lengths.t` is the proper parentheses.
 * `List.Or_unequal_lengths.t` is referring to the type `t` found in the `List.Or_unequal_lengths` module (a small module within the `List` module)
+  - one of the great things about modules is they can also contain types (like C .h files but more principled)
 * We can use the `#show_type` directive in the top loop to see what `t` actually is:
 
 ```ocaml
@@ -171,7 +173,7 @@ Core.List.Or_unequal_lengths.Unequal_lengths
 ```
 
 * In the original same-length case we got the result from the first clause in this type, `Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]`.
-* They should have just used the `result` type here, these values and types are ugly!!
+* They should have just used the existing `result` type here, these values and types are ugly!!
 * Note `List.zip_exn` will just raise an exception for unequal-length lists, avoiding all of this wrapper ugliness
     - but in larger programs we really want to avoid exceptions at a distance so it is often worth the suffering
 
@@ -207,7 +209,7 @@ zip_pair @@ List.unzip [(1, 3); (2, 4)];;
 * This conversion is called *uncurrying* (curried to pair/triple/etc form) or *currying* (putting it into curried form)
 
 #### Curry/Uncurry are themselves functions
-* We can even write functions which generically convert between these two forms - !
+* We can even write combinators which generically convert between these two forms - !
 * `curry`   - takes in uncurried 2-arg function and returns a curried version
 * `uncurry` - takes in curried 2-arg function and returns an non-curried version
 
@@ -222,7 +224,7 @@ curry : ('a * 'b -> 'c) -> 'a -> 'b -> 'c
 uncurry : ('a -> 'b -> 'c) -> 'a * 'b -> 'c
 ```
 
-We can now use them to build `zip_pair` directly:
+We can now use our new combinator to build `zip_pair` directly:
 
 ```ocaml
 let zip_pair  = uncurry @@ List.zip_exn;;
@@ -280,7 +282,7 @@ remove_negatives  [1;-1;2;-2;0];;
 Let us use `filter` to write a function determining if a list has any negative elements:
 
 ```ocaml
-let has_negs l = not (l |> List.filter ~f:(fun x -> x < 0) |> List.is_empty);;
+let has_negs l = l |> List.filter ~f:(fun x -> x < 0) |> List.is_empty |> not;;
 ```
  * The example shows the power of pipelining, it is easier to see the processing order with `|>`
  * This is a common operation so there is a library function for it as well: does there *exist* any element in the list where predicate holds?
@@ -324,6 +326,15 @@ let exists ~f l =  (* Note the ~f is **declaring** a named argument f, we were o
 ```ocaml
 # List.fold_right ~f:(||) ~init:false [true; false];; (* this is true || (false || (false)), the final false the ~init *)
 - : bool = true
+```
+
+Here is simple code for `fold_right` to better understand it:
+
+```ocaml
+let rec fold_right ~f l ~init =
+  match l with
+    [] -> init
+  | x::xs -> f a (fold_right ~f xs ~init)
 ```
 
 * `List.fold_left` aka `List.fold` (use the latter syntax generally) puts the `~init` on the left:
