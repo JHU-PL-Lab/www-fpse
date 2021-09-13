@@ -71,7 +71,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>The <code>option</code> and <code>result</code> types we have been using are simple forms of <em>variant types</em></li>
   <li>Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the sort</li>
-  <li>They are related to <code>union</code> types in C or <code>enums</code> in Java, but are more safe and more general</li>
+  <li>They are related to <code>union</code> types in C or <code>enums</code> in Java, but are more safe than C and more general than Java</li>
   <li>Like OCaml lists and tuples they are by default immutable</li>
 </ul>
 
@@ -119,14 +119,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>No data item?  leave off the <code>of</code>.</li>
-  <li>Multiple data items in a single variant clause?  Wrap with a tuple:</li>
+  <li>Multiple data items in a single variant clause?  Wrap with a tuple (or record once we cover them):</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">complex</span> <span class="o">=</span> <span class="nc">CZero</span> <span class="o">|</span> <span class="nc">Nonzero</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">*</span> <span class="kt">float</span><span class="p">;;</span>
 
 <span class="k">let</span> <span class="n">com</span> <span class="o">=</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span>
 <span class="k">let</span> <span class="n">zer</span> <span class="o">=</span> <span class="nc">CZero</span><span class="p">;;</span>
-<span class="k">let</span> <span class="n">annoyance</span> <span class="o">=</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span> <span class="c">(* common parsing error here; use @@ instead of " " *)</span>
+<span class="k">let</span> <span class="n">ocaml_annoyance</span> <span class="o">=</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span> <span class="c">(* this is a parsing error; use @@ instead of " " *)</span>
 </code></pre></div></div>
 
 <h4 id="an-example-of-variants-plus-list-libraries">An Example of Variants plus List. libraries</h4>
@@ -135,7 +135,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Here is a small Hamming distance calculator for DNA.</li>
   <li>Observe the <code>[@@deriving eq]</code>, this is a <em>macro</em> (called a “ppx extension” in OCaml)</li>
   <li>It automatically generates a function <code>equal_nucleotide</code> (<code>equal_the-types-name-here</code> in general)</li>
-  <li>You will need to use this with <code>Core</code> since <code>=</code> will not work on <code>nucleotide</code>s.</li>
+  <li>You will need to use this with <code>Core</code> since regular <code>=</code> will not work on <code>nucleotide</code>s.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Example derived from 
@@ -149,14 +149,26 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">left</span><span class="o">,</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">right</span> <span class="k">with</span>
   <span class="o">|</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span> <span class="k">when</span> <span class="n">x</span> <span class="o">&lt;&gt;</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"left and right strands must be of equal length"</span> <span class="c">(* "when" allows additional constraints *)</span>
   <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">not</span> <span class="p">(</span><span class="n">equal_nucleotide</span> <span class="n">a</span> <span class="n">b</span><span class="p">))</span> <span class="c">(* _ is wild card match *)</span>
-                                      <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="n">left</span> <span class="n">right</span><span class="p">)))</span> <span class="c">(* We already know this never fails - OK to _exn *)</span>
+             <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="n">left</span> <span class="n">right</span><span class="p">)))</span> <span class="c">(* We already know this never fails - OK to _exn *)</span>
 
 <span class="k">let</span> <span class="n">hamm_example</span> <span class="o">=</span> <span class="n">hamming_distance</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">C</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">T</span><span class="p">;</span><span class="nc">T</span><span class="p">]</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">C</span><span class="p">;</span><span class="nc">T</span><span class="p">]</span>
 </code></pre></div></div>
 
+<p>All the parens above are hard to read, lets use a pipe instead:</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">hamming_distance</span> <span class="n">left</span> <span class="n">right</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">left</span><span class="o">,</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">right</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span> <span class="k">when</span> <span class="n">x</span> <span class="o">&lt;&gt;</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"left and right strands must be of equal length"</span> <span class="c">(* "when" allows additional constraints *)</span>
+  <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="n">left</span> <span class="n">right</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">not</span> <span class="p">(</span><span class="n">equal_nucleotide</span> <span class="n">a</span> <span class="n">b</span><span class="p">))</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Note one downside of the <code>Ok/Error</code> kind of thing in place of exceptions is if we didn’t use <code>List.zip_exn</code> we would have to carry it down the pipe</li>
+  <li>But there are other functions which can make this cleaner.</li>
+</ul>
+
 <h4 id="parametric-variant-types">Parametric variant types</h4>
 
-<p>Here is the system’s declaration of the <code>option</code> type – the <code>#show_type</code> top loop directive will print it:</p>
+<p>Here is the system’s declaration of the <code>option</code> type – the <code>#show_type</code> top loop directive (or just <code>#show</code>) will print it:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="n">option</span><span class="p">;;</span>
 <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span> <span class="o">|</span> <span class="nc">Some</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span>
 </code></pre></div></div>
@@ -180,7 +192,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="recursive-data-structures">Recursive data structures</h4>
 <ul>
-  <li>A common use of variant types: self-referential ones</li>
+  <li>A common use of variant types: self-referential data structures</li>
   <li>Functional programming is fantastic for computing over tree-structured data</li>
   <li>Recursive types can refer to themselves in their own definition
     <ul>

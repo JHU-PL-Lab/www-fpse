@@ -35,7 +35,7 @@ List.append [1;2] [3;4];; (* Usually the infix @ syntax is used for append *)
 - : 'a list -> f:('a -> 'b) -> 'b list = <fun>
 
 let rec join (l: 'a list list) = match l with
-  | [] -> [] (* "joining together a lists of no-lists is an empty list" *)
+  | [] -> [] (* "joining together a list of no-lists is an empty list" *)
   | l :: ls -> l @ join ls (* " by induction assume (join ls) will turn list-of-lists to single list" *)
 
 # (1,2.,"3");;
@@ -105,7 +105,7 @@ List.filter ~f:(fun x -> x >= 0) [1;-1;2;-2;0];;
 let remove_negatives = List.filter ~f:(fun x -> x >= 0);;
 remove_negatives  [1;-1;2;-2;0];;
 
-let has_negs l = not (l |> List.filter ~f:(fun x -> x < 0) |> List.is_empty);;
+let has_negs l = l |> List.filter ~f:(fun x -> x < 0) |> List.is_empty |> not;;
 
 let has_negs l = List.exists ~f:(fun x -> x < 0) l;;
 
@@ -115,7 +115,7 @@ let has_negs l = List.exists ~f:(fun x -> x < 0) l;;
 - : bool list = [true; false; true; false; true]
 List.map ~f:(fun (x,y) -> x + y) [(1,2);(3,4)];; (* turns list of number pairs into list of their sums *)
 
-let exists ~(f : 'a) (l : 'a -> 'b) =  (* Note the ~f is **declaring** a named argument f, we were only using pre-declared ones above *)
+let exists ~f l =  (* Note the ~f is **declaring** a named argument f, we were only using pre-declared ones above *)
   let bool_result_list = List.map ~f:f l in
   List.fold_right bool_result_list ~f:(||) ~init:false;;
 # exists ~f:(fun x -> x >= 0) [-1;-2];;
@@ -125,6 +125,11 @@ let exists ~(f : 'a) (l : 'a -> 'b) =  (* Note the ~f is **declaring** a named a
 
 # List.fold_right ~f:(||) ~init:false [true; false];; (* this is true || (false || (false)), the final false the ~init *)
 - : bool = true
+
+let rec fold_right ~f l ~init =
+  match l with
+    [] -> init
+  | x::xs -> f x (fold_right ~f xs ~init) (* note argument `~f` is shorthand for `~f:f` *)
 
 # List.fold ~f:(||) ~init:false [true; false];; (* this is false || (true || false), the FIRST false is the ~init *)
 - : bool = true

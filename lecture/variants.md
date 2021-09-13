@@ -7,7 +7,7 @@
 ### Variants
 * The `option` and `result` types we have been using are simple forms of *variant types*
 * Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the sort
-* They are related to `union` types in C or `enums` in Java, but are more safe and more general
+* They are related to `union` types in C or `enums` in Java, but are more safe than C and more general than Java
 * Like OCaml lists and tuples they are by default immutable
 
 Example variant type for doing mixed arithmetic (integers and floats)
@@ -51,14 +51,14 @@ ff_add (Fixed 123) (Floating 3.14159);;
 ```
 
 * No data item?  leave off the `of`.
-* Multiple data items in a single variant clause?  Wrap with a tuple:
+* Multiple data items in a single variant clause?  Wrap with a tuple (or record once we cover them):
 
 ```ocaml
 type complex = CZero | Nonzero of float * float;;
 
 let com = Nonzero(3.2,11.2);;
 let zer = CZero;;
-let annoyance = Fn.id Nonzero(3.2,11.2);; (* common parsing error here; use @@ instead of " " *)
+let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing error; use @@ instead of " " *)
 ```
 
 #### An Example of Variants plus List. libraries
@@ -66,7 +66,7 @@ let annoyance = Fn.id Nonzero(3.2,11.2);; (* common parsing error here; use @@ i
 * Here is a small Hamming distance calculator for DNA.
 * Observe the `[@@deriving eq]`, this is a *macro* (called a "ppx extension" in OCaml) 
 * It automatically generates a function `equal_nucleotide` (`equal_the-types-name-here` in general)
-* You will need to use this with `Core` since `=` will not work on `nucleotide`s.
+* You will need to use this with `Core` since regular `=` will not work on `nucleotide`s.
 
 ```ocaml
 (* Example derived from 
@@ -80,14 +80,25 @@ let hamming_distance left right =
   match List.length left, List.length right with
   | x, y when x <> y -> Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
   | _ -> Ok (List.length (List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) (* _ is wild card match *)
-                                      (List.zip_exn left right))) (* We already know this never fails - OK to _exn *)
+             (List.zip_exn left right))) (* We already know this never fails - OK to _exn *)
 
 let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
 ```
 
+All the parens above are hard to read, lets use a pipe instead:
+```ocaml
+let hamming_distance left right =
+  match List.length left, List.length right with
+  | x, y when x <> y -> Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
+  | _ -> Ok (List.zip_exn left right |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) |> List.length)
+```
+
+ * Note one downside of the `Ok/Error` kind of thing in place of exceptions is if we didn't use `List.zip_exn` we would have to carry it down the pipe
+ * But there are other functions which can make this cleaner.
+
 #### Parametric variant types
 
-Here is the system's declaration of the `option` type -- the `#show_type` top loop directive will print it:
+Here is the system's declaration of the `option` type -- the `#show_type` top loop directive (or just `#show`) will print it:
 ```ocaml
 # #show_type option;;
 type 'a option = None | Some of 'a
@@ -108,7 +119,7 @@ type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
  * Observe `Ok(4) : (int, 'a) result` and `Error("bad") : ('a, string) result`
 
 #### Recursive data structures 
-  - A common use of variant types: self-referential ones
+  - A common use of variant types: self-referential data structures
   - Functional programming is fantastic for computing over tree-structured data
   - Recursive types can refer to themselves in their own definition
      - similar in spirit to how C structs can be recursive (but, no pointers needed here)

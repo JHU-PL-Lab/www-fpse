@@ -1,0 +1,166 @@
+type ff_num = Fixed of int | Floating of float;;  (* read "|" as "or" *)
+
+Fixed(5);; (* tag 5 as a Fixed *)
+Floating 4.0;; (* tag 4.0 as a Floating *)
+
+let ff_as_int x =
+    match x with
+    | Fixed n -> n    (* variants fit well into pattern matching syntax *)
+    | Floating z -> int_of_float z;;
+
+ff_as_int (Fixed 5);;
+
+let ff_add n1 n2 =
+   match n1, n2 with    (* note use of pair here to parallel-match on two variables  *)
+     | Fixed i1, Fixed i2 -> Fixed (i1 + i2)
+     | Fixed i1, Floating f2 ->  Floating(float i1 +. f2) (* need to coerce *)
+     | Floating f1, Fixed i2 -> Floating(f1 +. float i2)  (* ditto *)
+     | Floating f1, Floating f2 -> Floating(f1 +. f2)
+;;
+
+ff_add (Fixed 123) (Floating 3.14159);;
+
+type complex = CZero | Nonzero of float * float;;
+
+let com = Nonzero(3.2,11.2);;
+let zer = CZero;;
+let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing error; use @@ instead of " " *)
+
+(* Example derived from 
+   https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
+   This code needs a #require "ppx_deriving.eq";; in top loop to load ppx extension for @@deriving eq 
+   Or, in a dune file it will need   (preprocess (pps ppx_deriving.eq)) added to the library decl *)
+
+type nucleotide = A | C | G | T [@@deriving eq]
+
+let hamming_distance left right =
+  match List.length left, List.length right with
+  | x, y when x <> y -> Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
+  | _ -> Ok (List.length (List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) (* _ is wild card match *)
+             (List.zip_exn left right))) (* We already know this never fails - OK to _exn *)
+
+let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
+
+let hamming_distance left right =
+  match List.length left, List.length right with
+  | x, y when x <> y -> Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
+  | _ -> Ok (List.zip_exn left right |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) |> List.length)
+
+# #show_type option;;
+type 'a option = None | Some of 'a
+
+# #show_type result;;
+type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
+
+type 'a homebrew_list = Mt | Cons of 'a * 'a homebrew_list;;
+let hb_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to [3;5;7] *)
+
+let rec map ml ~f:f =
+  match ml with
+    | Mt -> Mt
+    | Cons(hd,tl) -> Cons(f hd,map tl ~f)
+
+let map_eg = map hb_eg ~f:(fun x -> x -1)
+
+# #show_type list;;
+type 'a list = [] | (::) of 'a * 'a list
+
+type 'a bin_tree = Leaf | Node of 'a * 'a bin_tree * 'a bin_tree
+
+let bt0 = Node("whack!",Leaf, Leaf);;
+let bt1 = Node("fiddly ",
+            Node("backer ",
+               Leaf,
+               Node("crack ",
+                  Leaf,
+                  Leaf)),
+            bt0);;
+
+let bt2 = Node("fiddly ",
+            Node("backer ",
+               Leaf,
+               Node("crack ",
+                  Leaf,
+                  Leaf)),
+            bt0);;
+(* Type error, like list, must have uniform type: *)
+Node("fiddly",Node(0,Leaf,Leaf),Leaf);;
+
+let rec add_gobble binstringtree =
+   match binstringtree with
+   | Leaf -> Leaf
+   | Node(y, left, right) ->
+       Node(y^"gobble",add_gobble left,add_gobble right)
+
+let rec map tree ~f =
+   match tree with
+   | Leaf -> Leaf
+   | Node(y, left, right) ->
+       Node(f y,map ~f left,map ~f right)
+
+(* using tree map to make a non-recursive add_gobble *)
+let add_gobble tree = map ~f:(fun s -> s ^ "gobble") tree
+
+let rec fold tree ~f ~leaf =
+   match tree with
+   | Leaf -> leaf
+   | Node(y, left, right) ->
+       f y (fold ~f ~leaf left) (fold ~f ~leaf right)
+
+(* using tree fold *)
+let int_summate tree = fold ~f:(fun y -> fun ls -> fun rs-> y + ls + rs) ~leaf:0 tree;;
+let bt = Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
+int_summate bt;;
+(* fold can also do map-like operations - the folder can return a tree *)
+let bump_nodes tree = fold ~f:(fun y -> fun ls -> fun rs-> Node(y+1,ls,rs)) ~leaf:Leaf tree;;
+
+let rec insert_int x bt =
+   match bt with
+   | Leaf -> Node(x, Leaf, Leaf)
+   | Node(y, left, right) ->
+       if x <= y then Node(y, insert_int x left, right)
+       else Node(y, left, insert_int x right)
+;;
+
+let bt' = insert_int 4 bt;;
+let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent insert *)
+
+List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* pass string's comparison function as argument *)
+(* insight into OCaml expected behavior for compare: *)
+# String.compare "Ahh" "Ahh";; )(* =  returns 0*)
+- : int = 0
+# String.compare "Ahh" "Bee";; (* < returns -1 *)
+- : int = -1
+# String.compare "Ahh" "Ack";; (* > returns 1 *)
+- : int = 1
+
+let rec insert x bt compare =
+   match bt with
+   | Leaf -> Node(x, Leaf, Leaf)
+   | Node(y, left, right) ->
+       if (compare x y) <= 0 then Node(y, insert x left compare, right)
+       else Node(y, left, insert x right compare)
+;;
+let bt' = insert 4 bt (Int.compare);;
+
+# `Zinger(3);;
+- : [> `Zinger of int ] = `Zinger 3
+
+# [`Zinger 3; `Zanger "hi"];;
+- : [> `Zanger of string | `Zinger of int ] list = [`Zinger 3; `Zanger "hi"]
+
+# let zing_zang z = 
+match z with
+| `Zinger n -> "zing! "^(Int.to_string n)
+| `Zanger s -> "zang! "^s
+val zing_zang : [< `Zanger of string | `Zinger of int ] -> string = <fun>
+
+# zing_zang @@ `Zanger "wow";;
+- : string = "zang! wow"
+# zing_zang @@ `Zuber 1.2;;
+Line 1, characters 13-23:
+Error: This expression has type [> `Zuber of float ]
+       but an expression was expected of type
+         [< `Zanger of string | `Zinger of int ]
+       The second variant type does not allow tag(s) `Zuber
+

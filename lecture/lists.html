@@ -357,7 +357,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="p">)]</span>
 </code></pre></div></div>
 
-<h4 id="list-functions-which-take-function-arguments"><code>List</code> functions which take function arguments</h4>
+<h4 id="list-module-functions-which-take-function-arguments"><code>List</code> module functions which take function arguments</h4>
 
 <ul>
   <li>So far we have done the “easier” functions in <code>List</code>; the real meat are the functions taking other functions</li>
@@ -411,7 +411,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="folding">Folding</h4>
 
 <ul>
-  <li>Observe the <code>for_all</code> and <code>exists</code> functions can be viewed as just mapping over the predicate like in the previous, and inserting an “and” (for all) or an “or” (exists) between each list element.</li>
+  <li>Observe the <code>for_all</code> and <code>exists</code> functions can be viewed as something like mapping over the predicate like in the previous, and inserting an “and” (for all) or an “or” (exists) between each list element.</li>
   <li>The <code>fold</code> library functions do exactly that.  Here for example is <code>List.fold_right</code> at work</li>
 </ul>
 
@@ -425,7 +425,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>The <code>~f</code>  parameter is the operation to put between list elements, disjunction <code>||</code> in this example;</li>
+  <li>The <code>~f</code>  parameter is the binary operation to put between list elements, disjunction <code>||</code> in this example;</li>
   <li>The <code>~init</code> is needed because <code>||</code> is a binary operator so an initial value is needed to fold</li>
   <li>For <code>fold_right</code> the <code>~init</code> is on the <strong>right</strong>, that is why it is called a “fold right”:</li>
 </ul>
@@ -439,7 +439,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">~</span><span class="n">init</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
     <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
-  <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">a</span> <span class="p">(</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="n">xs</span> <span class="o">~</span><span class="n">init</span><span class="p">)</span>
+  <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">x</span> <span class="p">(</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="n">xs</span> <span class="o">~</span><span class="n">init</span><span class="p">)</span> <span class="c">(* note argument `~f` is shorthand for `~f:f` *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -456,8 +456,38 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>that is because <code>||</code> is <em>commutative and associative</em>, so e.g. <code>true || (false || (false) = false || (true || false)</code>.</li>
     </ul>
   </li>
-  <li>But e.g. <code>List.fold ~f:(-) ~init:0 [1;2;3]</code> is <code>-6</code> and <code>List.fold_right ~f:(-) ~init:0 [1;2;3]</code> is <code>2</code></li>
-  <li>Folding left is preferred, it is tail recursive and can be optimized (more on this later)</li>
+  <li>But e.g. <code>List.fold ~f:(-) ~init:0 [1;2]</code> is <code>(0-1)-2</code> is -3<code> and </code>List.fold_right ~f:(-) ~init:0 [1;2]<code> is </code>(1-2)-0<code> is </code>-1`</li>
+  <li>All things equal folding left is preferred, it is <em>tail recursive</em> and can be optimized</li>
+</ul>
+
+<p>Code for <code>fold</code> aka <code>fold_left</code>:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold</span> <span class="n">l</span> <span class="o">~</span><span class="n">init</span> <span class="o">~</span><span class="n">f</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
+    <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
+  <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span> <span class="o">-&gt;</span> <span class="n">fold</span> <span class="n">xs</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="p">(</span><span class="n">f</span> <span class="n">init</span> <span class="n">x</span><span class="p">)</span> <span class="o">~</span><span class="n">f</span> <span class="c">(* working from left side, pass *down* the accumulated result *)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Note that the first parameter to f is the accumulated value passed <em>down</em> and the second parameter is the current list value</li>
+  <li>Guess what this does then: <code>List.fold [1;2;3] ~init:0 ~f:(fun x -&gt; fun y -&gt; x + 1);;</code></li>
+</ul>
+
+<p>The documention is helpful as well:</p>
+<ul>
+  <li><code>fold [e1;...;en] ~init ~f</code> returns <code>f (... f (f (f init e1) e2) e3 ...) en</code></li>
+  <li><code>fold_right [a1; ...; an] ~f ~init:b</code> returns <code>f a1 (f a2 (... (f an b) ...))</code>.</li>
+  <li>Also notice that the arguents to <code>f</code> are not symmetric, the individual items <code>e</code> are the second parameter in <code>fold</code> and the <code>a</code>’s are first in <code>fold_right</code>.</li>
+  <li>The other argument is called the <em>accumulator</em>, it is the result thus far.</li>
+</ul>
+
+<p>Efficiency of <code>fold</code>:</p>
+<ul>
+  <li>Observe how the value of the function is what is directly returned from the recursion</li>
+  <li>Such a function is <em>tail recursive</em></li>
+  <li>The compiler doesn’t need to use a call stack for such functions since nothing happens upon return</li>
+  <li>Important when lists get really long that you don’t use stack unless required.</li>
+  <li>More later on this.</li>
 </ul>
 
 <h4 id="fold_until"><code>fold_until</code></h4>
