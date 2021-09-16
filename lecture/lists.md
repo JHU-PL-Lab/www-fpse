@@ -346,7 +346,7 @@ let rec fold_right ~f l ~init =
 
 * Note that in this case folding left or right gives the same answer; 
     - that is because `||` is *commutative and associative*, so e.g. `true || (false || (false) = false || (true || false)`.
-* But e.g. `List.fold ~f:(-) ~init:0 [1;2]` is `(0-1)-2` is -3` and `List.fold_right ~f:(-) ~init:0 [1;2]` is `(1-2)-0` is `-1` 
+* But e.g. `List.fold ~f:(-) ~init:0 [1;2]` is `(0-1)-2` is `-3` and `List.fold_right ~f:(-) ~init:0 [1;2]` is `(1-2)-0` is `-1` 
 * All things equal folding left is preferred, it is *tail recursive* and can be optimized
 
 Code for `fold` aka `fold_left`:

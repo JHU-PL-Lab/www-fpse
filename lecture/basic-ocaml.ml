@@ -1,7 +1,6 @@
-open Core;;
-let hw = "hello"^" world";;
+let hw = "hello"^" world"
 
-print_string hw;;
+print_string hw
 
 3 + 4;;
 let x = 3 + 4;; (* give the value a name via let keyword. *)

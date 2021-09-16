@@ -18,7 +18,7 @@ let rattoint r =
    {num = n; denom = d} -> n / d;;
 ```
 
-Only one pattern matched so can again inline pattern in functions and lets
+Only one pattern matched so can again inline pattern in `fun`ctions and `let`s
 ```ocaml
 let rattoint {num = n; denom = d}  =  n / d;;
 ```
@@ -73,7 +73,7 @@ let numerator {num}  = num;;
 * More punning.. if you can also *use* variables with the right names as a pun
 
 ```ocaml
-let make_ratio num denom = {num;denom};;
+let make_ratio num denom = {num; denom};;
 make_ratio 1 2;;
 ```
 

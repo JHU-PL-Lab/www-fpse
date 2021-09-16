@@ -18,34 +18,30 @@ The contents of the file `simple_set.ml` in the above is the following:
 open Core
 
 type 'a t = 'a list
-
 let emptyset : 'a t = []
-
-let add (x : 'a) (s : 'a t) = (x :: s)
-
-let rec remove (x : 'a) (s: 'a t) (equal : 'a -> 'a -> bool) =
+let add (x : 'a) (s : 'a t) : 'a t = (x :: s)
+let rec remove (x : 'a) (s: 'a t) (equal : 'a -> 'a -> bool) : 'a t =
   match s with
   | [] -> failwith "item is not in set"
   | hd :: tl ->
     if equal hd x then tl
     else hd :: remove x tl equal
-
-let rec contains (x: 'a) (s: 'a t) (equal : 'a -> 'a -> bool) =
+let rec contains (x: 'a) (s: 'a t) (equal : 'a -> 'a -> bool) : bool =
   match s with
   | [] -> false
   | hd :: tl ->
     if equal x hd then true else contains x tl equal
+
 ```
-* This is just a set implemented as a list; it is in fact a multiset
+* The above code defines module `Simple_set` since it is in the file `simple_set.ml`
+* Modules are just collections of top-level definable things (things you could type into top loop)
+* This particular module is just a set implemented as a list; it is in fact a multiset
 * The line `type 'a t = 'a list` is a *type abbreviation*, `'a t` is a synonym for `'a list`
 * Naming a type just `t` is the standard for "the" underlying type of a module
     - When outsiders use this module the type will be `Simple_set.t`, read "Simple set's type"
     - `Core` extensively uses this convention in libraries
 * Notice how the functions needing `=` we have to pass it in explicitly to be polymorphic
     - In `Core.Set` there is in fact a much better solution but involves fancier modules which we cover later
-* Notice also that we declare types on the function parameters for readability, "`x : t`"
-    - "Can let them be inferred at first but paste in the inferred ones later"
-
 #### Building the library
 
 This file can be built as a library module with the dune file
@@ -129,7 +125,6 @@ Here is what we need to add to the `dune` file along with the above to build the
   (modules set_main)
 )
 ```
-
 
 * We will now inspect `set_main.ml` in VSCode so we can use the tool tips to check out various types
 

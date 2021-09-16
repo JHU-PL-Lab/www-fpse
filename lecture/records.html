@@ -79,7 +79,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
    <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">/</span> <span class="n">d</span><span class="p">;;</span>
 </code></pre></div></div>
 
-<p>Only one pattern matched so can again inline pattern in functions and lets</p>
+<p>Only one pattern matched so can again inline pattern in <code>fun</code>ctions and <code>let</code>s</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rattoint</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d</span><span class="p">}</span>  <span class="o">=</span>  <span class="n">n</span> <span class="o">/</span> <span class="n">d</span><span class="p">;;</span>
 </code></pre></div></div>
 
@@ -132,7 +132,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>More punning.. if you can also <em>use</em> variables with the right names as a pun</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">make_ratio</span> <span class="n">num</span> <span class="n">denom</span> <span class="o">=</span> <span class="p">{</span><span class="n">num</span><span class="p">;</span><span class="n">denom</span><span class="p">};;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">make_ratio</span> <span class="n">num</span> <span class="n">denom</span> <span class="o">=</span> <span class="p">{</span><span class="n">num</span><span class="p">;</span> <span class="n">denom</span><span class="p">};;</span>
 <span class="n">make_ratio</span> <span class="mi">1</span> <span class="mi">2</span><span class="p">;;</span>
 </code></pre></div></div>
 

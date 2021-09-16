@@ -83,26 +83,25 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span>
 
 <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span>
-
 <span class="k">let</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">[]</span>
-
-<span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span>
-
-<span class="k">let</span> <span class="k">rec</span> <span class="n">remove</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">equal</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">=</span>
+<span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span>
+<span class="k">let</span> <span class="k">rec</span> <span class="n">remove</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">equal</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"item is not in set"</span>
   <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
     <span class="k">if</span> <span class="n">equal</span> <span class="n">hd</span> <span class="n">x</span> <span class="k">then</span> <span class="n">tl</span>
     <span class="k">else</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">remove</span> <span class="n">x</span> <span class="n">tl</span> <span class="n">equal</span>
-
-<span class="k">let</span> <span class="k">rec</span> <span class="n">contains</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">equal</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">=</span>
+<span class="k">let</span> <span class="k">rec</span> <span class="n">contains</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">equal</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">false</span>
   <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
     <span class="k">if</span> <span class="n">equal</span> <span class="n">x</span> <span class="n">hd</span> <span class="k">then</span> <span class="bp">true</span> <span class="k">else</span> <span class="n">contains</span> <span class="n">x</span> <span class="n">tl</span> <span class="n">equal</span>
+
 </code></pre></div></div>
 <ul>
-  <li>This is just a set implemented as a list; it is in fact a multiset</li>
+  <li>The above code defines module <code>Simple_set</code> since it is in the file <code>simple_set.ml</code></li>
+  <li>Modules are just collections of top-level definable things (things you could type into top loop)</li>
+  <li>This particular module is just a set implemented as a list; it is in fact a multiset</li>
   <li>The line <code>type 'a t = 'a list</code> is a <em>type abbreviation</em>, <code>'a t</code> is a synonym for <code>'a list</code></li>
   <li>Naming a type just <code>t</code> is the standard for “the” underlying type of a module
     <ul>
@@ -112,17 +111,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Notice how the functions needing <code>=</code> we have to pass it in explicitly to be polymorphic
     <ul>
-      <li>In <code>Core.Set</code> there is in fact a much better solution but involves fancier modules which we cover later</li>
-    </ul>
-  </li>
-  <li>Notice also that we declare types on the function parameters for readability, “<code>x : t</code>”
-    <ul>
-      <li>“Can let them be inferred at first but paste in the inferred ones later”</li>
+      <li>In <code>Core.Set</code> there is in fact a much better solution but involves fancier modules which we cover later
+        <h4 id="building-the-library">Building the library</h4>
+      </li>
     </ul>
   </li>
 </ul>
-
-<h4 id="building-the-library">Building the library</h4>
 
 <p>This file can be built as a library module with the dune file</p>
 

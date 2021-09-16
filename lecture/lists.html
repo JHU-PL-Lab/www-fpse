@@ -456,7 +456,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>that is because <code>||</code> is <em>commutative and associative</em>, so e.g. <code>true || (false || (false) = false || (true || false)</code>.</li>
     </ul>
   </li>
-  <li>But e.g. <code>List.fold ~f:(-) ~init:0 [1;2]</code> is <code>(0-1)-2</code> is -3<code> and </code>List.fold_right ~f:(-) ~init:0 [1;2]<code> is </code>(1-2)-0<code> is </code>-1`</li>
+  <li>But e.g. <code>List.fold ~f:(-) ~init:0 [1;2]</code> is <code>(0-1)-2</code> is <code>-3</code> and <code>List.fold_right ~f:(-) ~init:0 [1;2]</code> is <code>(1-2)-0</code> is <code>-1</code></li>
   <li>All things equal folding left is preferred, it is <em>tail recursive</em> and can be optimized</li>
 </ul>
 

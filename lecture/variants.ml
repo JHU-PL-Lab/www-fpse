@@ -28,12 +28,12 @@ let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing error; use 
 
 (* Example derived from 
    https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
-   This code needs a #require "ppx_deriving.eq";; in top loop to load ppx extension for @@deriving eq 
+   This code needs a #require "ppx_jane";; in top loop to load ppx extension for @@deriving equal 
    Or, in a dune file it will need   (preprocess (pps ppx_deriving.eq)) added to the library decl *)
 
-type nucleotide = A | C | G | T [@@deriving eq]
+type nucleotide = A | C | G | T [@@deriving equal]
 
-let hamming_distance left right =
+let hamming_distance (left : 'a list) (right : 'a list) : ((int, string) result)=
   match List.length left, List.length right with
   | x, y when x <> y -> Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
   | _ -> Ok (List.length (List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) (* _ is wild card match *)
@@ -41,10 +41,13 @@ let hamming_distance left right =
 
 let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
 
-let hamming_distance left right =
+let hamming_distance (left : 'a list) (right : 'a list) : ((int, string) result)=
   match List.length left, List.length right with
   | x, y when x <> y -> Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
-  | _ -> Ok (List.zip_exn left right |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) |> List.length)
+  | _ -> List.zip_exn left right 
+      |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) 
+      |> List.length 
+      |> fun x -> Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
 
 # #show_type option;;
 type 'a option = None | Some of 'a
@@ -53,14 +56,14 @@ type 'a option = None | Some of 'a
 type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
 
 type 'a homebrew_list = Mt | Cons of 'a * 'a homebrew_list;;
-let hb_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to [3;5;7] *)
+let hb_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
 
-let rec map ml ~f:f =
+let rec homebrew_map (ml : 'a homebrew_list) ~(f : 'a -> 'b) : ('b homebrew_list) =
   match ml with
     | Mt -> Mt
-    | Cons(hd,tl) -> Cons(f hd,map tl ~f)
+    | Cons(hd,tl) -> Cons(f hd,homebrew_map tl ~f)
 
-let map_eg = map hb_eg ~f:(fun x -> x -1)
+let map_eg = homebrew_map hb_eg ~f:(fun x -> x - 1)
 
 # #show_type list;;
 type 'a list = [] | (::) of 'a * 'a list
@@ -92,7 +95,7 @@ let rec add_gobble binstringtree =
    | Node(y, left, right) ->
        Node(y^"gobble",add_gobble left,add_gobble right)
 
-let rec map tree ~f =
+let rec map (tree : 'a bin_tree) ~(f : 'a -> 'b) : ('b bin_tree) =
    match tree with
    | Leaf -> Leaf
    | Node(y, left, right) ->
@@ -101,20 +104,20 @@ let rec map tree ~f =
 (* using tree map to make a non-recursive add_gobble *)
 let add_gobble tree = map ~f:(fun s -> s ^ "gobble") tree
 
-let rec fold tree ~f ~leaf =
+let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'b -> 'b -> 'b) ~(leaf : 'b) : 'b =
    match tree with
    | Leaf -> leaf
    | Node(y, left, right) ->
        f y (fold ~f ~leaf left) (fold ~f ~leaf right)
 
 (* using tree fold *)
-let int_summate tree = fold ~f:(fun y -> fun ls -> fun rs-> y + ls + rs) ~leaf:0 tree;;
+let int_summate tree = fold ~f:(fun y -> fun ls -> fun rs -> y + ls + rs) ~leaf:0 tree;;
 let bt = Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
 int_summate bt;;
 (* fold can also do map-like operations - the folder can return a tree *)
 let bump_nodes tree = fold ~f:(fun y -> fun ls -> fun rs-> Node(y+1,ls,rs)) ~leaf:Leaf tree;;
 
-let rec insert_int x bt =
+let rec insert_int (x : 'a) (bt : 'a bin_tree) : ('a bin_tree) =
    match bt with
    | Leaf -> Node(x, Leaf, Leaf)
    | Node(y, left, right) ->
@@ -127,7 +130,7 @@ let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent 
 
 List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* pass string's comparison function as argument *)
 (* insight into OCaml expected behavior for compare: *)
-# String.compare "Ahh" "Ahh";; )(* =  returns 0*)
+# String.compare "Ahh" "Ahh";; )(* =  returns 0 *)
 - : int = 0
 # String.compare "Ahh" "Bee";; (* < returns -1 *)
 - : int = -1
