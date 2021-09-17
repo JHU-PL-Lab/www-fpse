@@ -1,8 +1,6 @@
 Assignment 2: Variants, records, modules and executables
 --------------------------------------------------------------
 
-# DRAFT, assignment is not yet complete.  Hit refresh when you come back.
-
 For this assignment you will be writing a binary tree and dictionary library,
 and a standalone executable extracting some simple information from a file tree.
 
