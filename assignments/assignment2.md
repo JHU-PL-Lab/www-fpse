@@ -18,9 +18,11 @@ There are two Parts to the assignment.  In order to help you ease into it we wil
 ### Resources
 Here are a few additional resources to keep in mind to help with this assignment.
 
-* For Section 3 we in particular recommend adding the library [`ppx_deriving_yojson` (click for docs)](https://github.com/ocaml-ppx/ppx_deriving_yojson), see the files for details.  This library uses the polymorphic form of variants briefly covered at the end of the [variants lecture](../variants.html).
 * In this assignment we are giving you the `Treedict` module signature in the form of the file `treedict.mli`.  This is the "type" of the module, and you need to construct all the things in the module.  See the [Basic Modules](../basic-modules.html) lecture for more information on this, and there is a [set-example.zip](../examples/set-example.zip) example there which shows how this works if it is unclear.
-* We recommend you use [`Core.Sys`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core__/Core_sys/index.html) and [`Stdio`](https://ocaml.janestreet.com/ocaml-core/latest/doc/stdio/Stdio/index.html) libraries in Section 3.
+
+
+* For Part II we recommend adding the library [`ppx_deriving_yojson` (click for docs)](https://github.com/ocaml-ppx/ppx_deriving_yojson), see the files for details.  This library uses the polymorphic form of variants briefly covered at the end of the [variants lecture](../variants.html).
+* We recommend you use [`Core.Sys`](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core__/Core_sys/index.html) and [`Stdio`](https://ocaml.janestreet.com/ocaml-core/latest/doc/stdio/Stdio/index.html) libraries in Part II.
 
 ### Submission and Grading
 * We will follow the same protocol for Gradescope submission as with Assignment 1
