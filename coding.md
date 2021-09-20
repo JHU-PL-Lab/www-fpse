@@ -28,7 +28,7 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
 
 Once you have `opam` and `ocaml` 4.12.0 installed, run the following `opam` command to install additional necessary packages for the class:
 
-    opam install merlin utop ppx_deriving core bisect_ppx ounit2 async ppx_deriving_yojson
+    opam install merlin utop ppx_deriving core bisect_ppx ounit2 async ppx_deriving_yojson ocaml-lsp-server ocamlformat ocamlformat-rpc
 
 
 Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file `~/.ocamlinit` to add the lines below (note `opam` probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
@@ -91,9 +91,9 @@ We recommend VSCode since it has OCaml-specific features such as syntax highligh
 
 VSCode has very good OCaml support and is the "officially recommended editor". 
 
-* Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml in the search box and this extension will show up; install it. 
+* We have decided to switch the primary recommendation for OCaml support in VSCode to **OCaml Platform**.   To install it, first run `opam install ocaml-lsp-server` from your shell.  Then from the `View` menu select `Extensions`, then type in OCaml in the search box and this extension will show up: select **OCaml Platform** from the list.
 
-* Alternatively, there is a newer extension which has more features that you could try in place of Reason IDE.  To install it, first run `opam install ocaml-lsp-server` from your shell, then select **OCaml Platform** from the list instead of OCaml and Reason IDE when you search for extensions in VSCode as above.  This version was buggy in past years but may be stable enough now.
+* (Deprecated this extension, the previous one is now preferred.  If you have it installed just disable it within VSCode and install the above) Install the **OCaml and Reason IDE** extension to get syntax highlighting, type information, etc: from the `View` menu select `Extensions`, then type in OCaml in the search box and this extension will show up; install it. 
 
 * You can easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
 

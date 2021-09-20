@@ -61,7 +61,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h1 id="ocaml-style-guide-for-functional-programming-in-software-engineering">OCaml Style Guide for Functional Programming in Software Engineering</h1>
 
-<p>Author: Kelvin Qian</p>
+<p>Author: Kelvin Qian (with updates by Scott Smith)</p>
 
 <h2 id="preface">Preface</h2>
 
@@ -118,7 +118,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>
     <p>Use libraries like <code>Core</code> whenever possible instead of “rolling your own.”  At the end of the day, it’s not worth it to re-invent the wheel when there’s correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.  The only exceptions are 1) when we tell you not to use a certain library for pedagogical purposes and 2) when literally no library exists for your specific task.</p>
   </li>
-  <li>In general, you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are useful.  Use them judiciously; don’t shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  Also for some homework problems you will be required to avoid mutation.</li>
+  <li>Generally you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are useful.  Use them judiciously; don’t shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  Also for some homework problems you will be required to avoid mutation.</li>
 </ol>
 
 <h2 id="naming-conventions">Naming Conventions</h2>
@@ -143,7 +143,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h2 id="indentation">Indentation</h2>
 
-<p>In this course you will be <strong>required</strong> to use ocp-indent, which is an auto-indenter program that you should’ve installed via opam.  The convention dictated by ocp-indent mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don’t use tabs for indentation!)  To make ocp-indent format your code in VSCode, use <code>option-shift-F</code> on Mac or <code>alt-shift-F</code> on Windows.  The following examples show how ocp-indent indents common OCaml expressions:</p>
+<p>In this course you will be required to use and automatic code formatter, either <code>ocamlformat</code> or <code>ocp-indent</code>.  Depending on what editor you are using one other the other may be the preferred option.  The convention dictated by these formatters mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don’t use tabs for indentation!)</p>
+
+<p>If you are using OCaml Platform, issue the <code>opam</code> install commands <code>opam install ocamlformat</code> and <code>opam install ocamlformat-rpc</code>.  Additionally, for some idiotic reason you must have an <code>.ocamlformat</code> file at the base of the project; from the shell you can do <code>touch .ocamlformat</code> to make such an empty file.</p>
+
+<p>To automatically format your code in VSCode, use <code>option-shift-F</code> on Mac or <code>alt-shift-F</code> on Windows.  The following examples show how these tools indent common OCaml expressions:</p>
 
 <ul>
   <li><code>let ... in ...</code> expressions.  Nested <code>let ... in ...</code> blocks should not be indented, but variable definitions should if they are placed on a new line.
@@ -172,7 +176,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>As a side note, notice how the <code>if</code> and <code>then</code> keywords are on the same line, while the <code>else</code> keyword is on its own line.  In if-statements, predicate variables or expressions (in this case <code>x</code>) should be short, but branches can be (reasonably) long.</p>
 
-<p>One thing to point out is that it’s bad form to over-indent. ocp-indent should fix any cases of over-indentation, but just remember that this:<br />
+<p>One thing to point out is that it’s bad form to over-indent. These tools should fix any cases of over-indentation, but just remember that this:<br />
     <code>ocaml
     let rec map fn lst =
             match lst with
@@ -240,19 +244,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <p>On the other hand, <em>do</em> use parentheses around tuples: while writing <code>x, y, z</code> is legal OCaml syntax, you should write <code>(x, y, z)</code> to clearly indicate that the value is a tuple.  (That said, you are free to omit parentheses around a tuple when you are <em>immediately</em> destructuring that tuple, e.g. in let or match statements like <code>let x, y = tuple_fn 0 in ...</code> or <code>match x, y with 0, 0 -&gt; ...</code>.)</p>
   </li>
   <li>
+    <p>Use <code>@@</code> or <code>begin ... end</code> syntax to control too many parentheses.</p>
+  </li>
+  <li>
     <p><code>match ... with ...</code> is not the only pattern matching syntax around; you can perform destructuring using <code>let</code> bindings if there’s only one case to match. <code>let</code> destructuring is often more concise than using <code>match ... with ...</code>.  For anonymous functions you can also directly pattern match in what was the argument position if you use the <code>function</code> keyword: <code>function [] -&gt; [] | x :: xs -&gt; xs</code>.</p>
   </li>
   <li>
-    <p>Instead of parentheses, you can use <code>@@</code> or <code>begin ... end</code> syntax to make your code cleaner.</p>
+    <p>Use <code>|&gt;</code> liberally, since it makes a “pipeline” of function operations easier to intuitively understand as an assembly line.</p>
   </li>
   <li>
-    <p>Use <code>|&gt;</code> liberally, since it makes a “pipeline” of function operations easier to understand at a glance.</p>
-  </li>
-  <li>
-    <p>Tuples should be short and simple.  Do not write tuples with many elements.  A ten-element tuple should instead be a record with named fields.</p>
-  </li>
-  <li>
-    <p>Following the above point, each record field should be defined on a new line.  (The same also applies to lists, but only if the list entries are complex and/or have long names).</p>
+    <p>Tuples should be short and simple.  Do not write tuples with many elements.  A five-element tuple should instead be a record with named fields.</p>
   </li>
   <li>
     <p>Take advantage of label punning.  For labeled arguments, <code>my_fun ~compare x y</code> is more concise than <code>my_fun ~compare:compare x y</code>.  For record labels, <code>let {num, denom} = rational</code> is a more concise version of <code>let {num=num, denom=denom} = rational</code>.</p>

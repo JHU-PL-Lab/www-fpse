@@ -1,6 +1,6 @@
 # OCaml Style Guide for Functional Programming in Software Engineering
 
-Author: Kelvin Qian
+Author: Kelvin Qian (with updates by Scott Smith)
 
 ## Preface
 
@@ -49,7 +49,7 @@ This document would not have been made possible without the input of the whole F
 
 9. Use libraries like `Core` whenever possible instead of "rolling your own."  At the end of the day, it's not worth it to re-invent the wheel when there's correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.  The only exceptions are 1) when we tell you not to use a certain library for pedagogical purposes and 2) when literally no library exists for your specific task.
 
-10. In general, you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are useful.  Use them judiciously; don't shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  Also for some homework problems you will be required to avoid mutation.
+10. Generally you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are useful.  Use them judiciously; don't shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  Also for some homework problems you will be required to avoid mutation.
 
 ## Naming Conventions
 
@@ -65,7 +65,11 @@ This document would not have been made possible without the input of the whole F
 
 ## Indentation
 
-In this course you will be **required** to use ocp-indent, which is an auto-indenter program that you should've installed via opam.  The convention dictated by ocp-indent mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don't use tabs for indentation!)  To make ocp-indent format your code in VSCode, use `option-shift-F` on Mac or `alt-shift-F` on Windows.  The following examples show how ocp-indent indents common OCaml expressions:
+In this course you will be required to use and automatic code formatter, either `ocamlformat` or `ocp-indent`.  Depending on what editor you are using one other the other may be the preferred option.  The convention dictated by these formatters mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don't use tabs for indentation!)  
+
+If you are using OCaml Platform, issue the `opam` install commands `opam install ocamlformat` and `opam install ocamlformat-rpc`.  Additionally, for some idiotic reason you must have an `.ocamlformat` file at the base of the project; from the shell you can do `touch .ocamlformat` to make such an empty file.
+
+To automatically format your code in VSCode, use `option-shift-F` on Mac or `alt-shift-F` on Windows.  The following examples show how these tools indent common OCaml expressions:
 
 - `let ... in ...` expressions.  Nested `let ... in ...` blocks should not be indented, but variable definitions should if they are placed on a new line.
     ```ocaml
@@ -94,7 +98,7 @@ In this course you will be **required** to use ocp-indent, which is an auto-inde
 
 As a side note, notice how the `if` and `then` keywords are on the same line, while the `else` keyword is on its own line.  In if-statements, predicate variables or expressions (in this case `x`) should be short, but branches can be (reasonably) long.
 
-One thing to point out is that it's bad form to over-indent. ocp-indent should fix any cases of over-indentation, but just remember that this:
+One thing to point out is that it's bad form to over-indent. These tools should fix any cases of over-indentation, but just remember that this:
     ```ocaml
     let rec map fn lst =
             match lst with
@@ -143,16 +147,14 @@ One thing to point out is that it's bad form to over-indent. ocp-indent should f
 
 1. On the other hand, _do_ use parentheses around tuples: while writing `x, y, z` is legal OCaml syntax, you should write `(x, y, z)` to clearly indicate that the value is a tuple.  (That said, you are free to omit parentheses around a tuple when you are _immediately_ destructuring that tuple, e.g. in let or match statements like `let x, y = tuple_fn 0 in ...` or `match x, y with 0, 0 -> ...`.)
 
-2. `match ... with ...` is not the only pattern matching syntax around; you can perform destructuring using `let` bindings if there's only one case to match. `let` destructuring is often more concise than using `match ... with ...`.  For anonymous functions you can also directly pattern match in what was the argument position if you use the `function` keyword: `function [] -> [] | x :: xs -> xs`.
+2. Use `@@` or `begin ... end` syntax to control too many parentheses.
 
-3. Instead of parentheses, you can use `@@` or `begin ... end` syntax to make your code cleaner.
+3. `match ... with ...` is not the only pattern matching syntax around; you can perform destructuring using `let` bindings if there's only one case to match. `let` destructuring is often more concise than using `match ... with ...`.  For anonymous functions you can also directly pattern match in what was the argument position if you use the `function` keyword: `function [] -> [] | x :: xs -> xs`.
 
-4. Use `|>` liberally, since it makes a "pipeline" of function operations easier to understand at a glance.
+4. Use `|>` liberally, since it makes a "pipeline" of function operations easier to intuitively understand as an assembly line.
 
-5. Tuples should be short and simple.  Do not write tuples with many elements.  A ten-element tuple should instead be a record with named fields.
+5. Tuples should be short and simple.  Do not write tuples with many elements.  A five-element tuple should instead be a record with named fields.
 
-6. Following the above point, each record field should be defined on a new line.  (The same also applies to lists, but only if the list entries are complex and/or have long names).
+6. Take advantage of label punning.  For labeled arguments, `my_fun ~compare x y` is more concise than `my_fun ~compare:compare x y`.  For record labels, `let {num, denom} = rational` is a more concise version of `let {num=num, denom=denom} = rational`.
 
-7. Take advantage of label punning.  For labeled arguments, `my_fun ~compare x y` is more concise than `my_fun ~compare:compare x y`.  For record labels, `let {num, denom} = rational` is a more concise version of `let {num=num, denom=denom} = rational`.
-
-8. If you have large records, use the `with` keyword if you only need to update a few values.  Do not rewrite all fifteen of your record fields!
+7. If you have large records, use the `with` keyword if you only need to update a few values.  Do not rewrite all fifteen of your record fields!
