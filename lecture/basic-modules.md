@@ -37,6 +37,7 @@ let rec contains (x: 'a) (s: 'a t) (equal : 'a -> 'a -> bool) : bool =
 * Modules are just collections of top-level definable things (things you could type into top loop)
 * This particular module is just a set implemented as a list; it is in fact a multiset
 * The line `type 'a t = 'a list` is a *type abbreviation*, `'a t` is a synonym for `'a list`
+   - below we will show how to *hide* the fact that it is a list.
 * Naming a type just `t` is the standard for "the" underlying type of a module
     - When outsiders use this module the type will be `Simple_set.t`, read "Simple set's type"
     - `Core` extensively uses this convention in libraries
@@ -44,7 +45,7 @@ let rec contains (x: 'a) (s: 'a t) (equal : 'a -> 'a -> bool) : bool =
     - In `Core.Set` there is in fact a much better solution but involves fancier modules which we cover later
 #### Building the library
 
-This file can be built as a library module with the dune file
+This file can be built as a library module with the dune file in `src/dune` (remember to execute `dune` from the project top-level, it automatically finds the build files in subdirectories)
 
 ```scheme
 (library
@@ -71,7 +72,7 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 #### Other ways to load a module into the top loop besides `dune utop`
 
 * If you type `#use "simple_set.ml";;` it is just like copy/pasting the code of the file in -- you won't get a module.
-* If you want to "paste a file in the top loop as a module", there is a command for that however:
+* If you want to "paste a file in the top loop as a module", there is a command for that:
   `#mod_use "simple_set.ml";;`
 * And if that was not enough there is one more method: you can `#use_output "dune top"`
   - this runs the shell command `dune top` and pastes the output into the top loop; that `dune` command generates byte code files and then spits out a bunch of `#load` commands to load all the libraries as well as your code.

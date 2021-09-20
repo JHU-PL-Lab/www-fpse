@@ -70,7 +70,7 @@ fun (x : ratio) -> x.num;; (* x is declared a ratio, avoiding previous shadowing
 ```ocaml
 let numerator {num}  = num;;
 ```
-* More punning.. if you can also *use* variables with the right names as a pun
+* Multiple punning.. pun both on parameters and in record creation
 
 ```ocaml
 let make_ratio num denom = {num; denom};;

@@ -102,7 +102,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The above code defines module <code>Simple_set</code> since it is in the file <code>simple_set.ml</code></li>
   <li>Modules are just collections of top-level definable things (things you could type into top loop)</li>
   <li>This particular module is just a set implemented as a list; it is in fact a multiset</li>
-  <li>The line <code>type 'a t = 'a list</code> is a <em>type abbreviation</em>, <code>'a t</code> is a synonym for <code>'a list</code></li>
+  <li>The line <code>type 'a t = 'a list</code> is a <em>type abbreviation</em>, <code>'a t</code> is a synonym for <code>'a list</code>
+    <ul>
+      <li>below we will show how to <em>hide</em> the fact that it is a list.</li>
+    </ul>
+  </li>
   <li>Naming a type just <code>t</code> is the standard for “the” underlying type of a module
     <ul>
       <li>When outsiders use this module the type will be <code>Simple_set.t</code>, read “Simple set’s type”</li>
@@ -118,7 +122,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<p>This file can be built as a library module with the dune file</p>
+<p>This file can be built as a library module with the dune file in <code>src/dune</code> (remember to execute <code>dune</code> from the project top-level, it automatically finds the build files in subdirectories)</p>
 
 <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">library</span>
  <span class="p">(</span><span class="nf">name</span> <span class="nv">simple_set</span><span class="p">)</span>
@@ -146,7 +150,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>If you type <code>#use "simple_set.ml";;</code> it is just like copy/pasting the code of the file in – you won’t get a module.</li>
-  <li>If you want to “paste a file in the top loop as a module”, there is a command for that however:<br />
+  <li>If you want to “paste a file in the top loop as a module”, there is a command for that:<br />
 <code>#mod_use "simple_set.ml";;</code></li>
   <li>And if that was not enough there is one more method: you can <code>#use_output "dune top"</code>
     <ul>

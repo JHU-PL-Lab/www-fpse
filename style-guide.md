@@ -26,11 +26,11 @@ This document would not have been made possible without the input of the whole F
 
 5. Give descriptive names to your variables, (non-anonymous) functions, variants, etc.  We know what `add2` does, but what the heck does `foo` do?  (You might get away with it for local variables or when using `x` and `y` in mathematical functions, but even then some description can be useful, e.g. `counter` instead of `c`.)
 
-6. Pattern matching is your friend in OCaml, and you should use it extensively to match on cases and destructure data structures.  For example, when you're destructuring lists, you should use the `::` pattern match syntax instead of `List.hd` and `List.tl`, which run the risk of throwing exceptions on empty lists.
+6. Pattern matching is your friend in OCaml, and you should use it extensively to match on cases and destructure data structures.  Pattern match on a pair rather than nesting patterns, use `with` to add side-conditions if needed, etc.
 
-7. Speaking of exceptions, they are used frequently in OCaml code, but they often make debugging difficult when they're thrown from deep within the code structure.  Especially for larger programs use `option` or `result` values, and handle errors locallly.
+7. Speaking of exceptions, they are used frequently in OCaml code, but they can make debugging difficult when they're thrown from deep within the code structure.  Especially for larger programs use `option` or `result` values, and handle errors locally.
 
-8. Excessive nesting of conditionals or match statements should be avoided; it causes confusion and bugs (especially if parentheses aren't used).  In particular, when matching on nested data structures (e.g. variants that contain other variants), it's often clearer to match on the entire data structure all at once instead of matching each layer.  For instance, the following:
+8. Excessive nesting of conditionals or match statements should be avoided; it causes confusion and bugs (especially if parentheses aren't used).  In particular, when matching on nested data structures (e.g. variants that contain other variants), it's usually clearer to match on the entire data structure at once instead of matching each layer.  For instance, the following:
     ```ocaml
     match x with
     | Ok (Some y) -> (* ... *)
@@ -49,7 +49,7 @@ This document would not have been made possible without the input of the whole F
 
 9. Use libraries like `Core` whenever possible instead of "rolling your own."  At the end of the day, it's not worth it to re-invent the wheel when there's correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.  The only exceptions are 1) when we tell you not to use a certain library for pedagogical purposes and 2) when literally no library exists for your specific task.
 
-10. Generally you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are useful.  Use them judiciously; don't shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  Also for some homework problems you will be required to avoid mutation.
+10. Generally you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are important.  Use them judiciously; don't shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  For some homework problems you will be required to avoid mutation.
 
 ## Naming Conventions
 
