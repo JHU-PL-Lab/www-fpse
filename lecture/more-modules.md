@@ -2,20 +2,17 @@
 
 ### Tangent-ish: `ppx_jane` and `deriving`
 
-* We briefly hit on `[@@deriving eq]` syntax in the [Variants lecture](variants.html)
-    - append to `type` declaration to get an `equal` function for free on our type.
-* Here cover the Jane Street `ppx_jane` version of `[@@deriving ...]`
-* Recall our genome type declaration with added `[@@deriving eq]` which made an `equal_nucleotide` function
-* For the Jane Street equivalent just say `[@@deriving equal]` instead of `[@@deriving eq]`
+* Recall `[@@deriving equal]` in the nucleotide example to get an `=` on that type:
 
 ```ocaml
 (* Needs #require "ppx_jane";; in top loop, 
-   and (preprocess (pps (ppx_jane))) in as part of the library declaration *)
-   (i.e. it is (library (name ..)  .. (preprocess ... )) - one of the library decl components)
+   and (preprocess (pps (ppx_jane))) in as part of the library declaration 
+   (i.e. it is (library (name ..)  .. (preprocess ... )) - one of the library decl components) *)
 # type nucleotide = A | C | G | T [@@deriving equal];;
 type nucleotide = A | C | G | T
 val equal_nucleotide : nucleotide -> nucleotide -> bool = fun
 ```
+
 * The `[@@zibbo...]` indicates the type declaration is processed by the macro named `ppx_zibbo`
 * The `equal` is a parameter to the macro, here it is which `deriving` extension is added
 * The `[@@deriving equal]` in particular causes an `equal_nucleotide` function to be automatically generated
@@ -44,6 +41,7 @@ val equal_n_queue : n_queue -> n_queue -> bool = fun
  - S-expressions are a general data format like JSON or XML, in fact they are the first such format
 * For some reason the `Core` libraries make heavy use of S-expressions instead of JSON - a mistake really.
 * It is not too hard to read S-expressions after a bit of staring
+
 ```ocaml
 # type nucleotide = A | C | G | T [@@deriving equal, sexp];;
 type nucleotide = A | C | G | T
@@ -59,6 +57,7 @@ val sexp_of_n_list : n_list -> Sexp.t = fun
 # sexp_of_n_list [A;G;G];;
 - : Sexp.t = (A G G) (* this is the "S-Expression" version of a list.. parens and spaces *)
 ```
+
 * `[@@deriving compare]` is analogous to `equal` except it makes a `compare` function instead of `equal`
 ```ocaml
 # type nucleotide = A | C | G | T [@@deriving compare];;

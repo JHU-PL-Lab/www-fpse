@@ -64,23 +64,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="tangent-ish-ppx_jane-and-deriving">Tangent-ish: <code>ppx_jane</code> and <code>deriving</code></h3>
 
 <ul>
-  <li>We briefly hit on <code>[@@deriving eq]</code> syntax in the <a href="variants.html">Variants lecture</a>
-    <ul>
-      <li>append to <code>type</code> declaration to get an <code>equal</code> function for free on our type.</li>
-    </ul>
-  </li>
-  <li>Here cover the Jane Street <code>ppx_jane</code> version of <code>[@@deriving ...]</code></li>
-  <li>Recall our genome type declaration with added <code>[@@deriving eq]</code> which made an <code>equal_nucleotide</code> function</li>
-  <li>For the Jane Street equivalent just say <code>[@@deriving equal]</code> instead of <code>[@@deriving eq]</code></li>
+  <li>Recall <code>[@@deriving equal]</code> in the nucleotide example to get an <code>=</code> on that type:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Needs #require "ppx_jane";; in top loop, 
-   and (preprocess (pps (ppx_jane))) in as part of the library declaration *)</span>
-   <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">e</span><span class="o">.</span> <span class="n">it</span> <span class="n">is</span> <span class="p">(</span><span class="n">library</span> <span class="p">(</span><span class="n">name</span> <span class="o">..</span><span class="p">)</span>  <span class="o">..</span> <span class="p">(</span><span class="n">preprocess</span> <span class="o">...</span> <span class="p">))</span> <span class="o">-</span> <span class="n">one</span> <span class="k">of</span> <span class="n">the</span> <span class="n">library</span> <span class="n">decl</span> <span class="n">components</span><span class="p">)</span>
+   and (preprocess (pps (ppx_jane))) in as part of the library declaration 
+   (i.e. it is (library (name ..)  .. (preprocess ... )) - one of the library decl components) *)</span>
 <span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
 <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
 <span class="k">val</span> <span class="n">equal_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
 </code></pre></div></div>
+
 <ul>
   <li>The <code>[@@zibbo...]</code> indicates the type declaration is processed by the macro named <code>ppx_zibbo</code></li>
   <li>The <code>equal</code> is a parameter to the macro, here it is which <code>deriving</code> extension is added</li>
@@ -115,23 +109,25 @@ val equal_n_queue : n_queue -&gt; n_queue -&gt; bool = fun<br />
   <li><code>sexp</code> generates S-expression printable representations of types which is handy for displaying data internals</li>
   <li>S-expressions are a general data format like JSON or XML, in fact they are the first such format</li>
   <li>For some reason the <code>Core</code> libraries make heavy use of S-expressions instead of JSON - a mistake really.</li>
-  <li>It is not too hard to read S-expressions after a bit of staring<br />
-```ocaml
-    <h1 id="type-nucleotide--a--c--g--t-deriving-equal-sexp">type nucleotide = A | C | G | T [@@deriving equal, sexp];;</h1>
-    <p>type nucleotide = A | C | G | T<br />
-val equal_nucleotide : nucleotide -&gt; nucleotide -&gt; bool = fun<br />
-val nucleotide_of_sexp : Sexp.t -&gt; nucleotide = fun<br />
-val sexp_of_nucleotide : nucleotide -&gt; Sexp.t = fun<br />
- type n_list = nucleotide list [@@deriving equal, sexp];;<br />
-type n_list = nucleotide list<br />
-type n_list = nucleotide list<br />
-val equal_n_list : n_list -&gt; n_list -&gt; bool = fun<br />
-val n_list_of_sexp : Sexp.t -&gt; n_list = fun<br />
-val sexp_of_n_list : n_list -&gt; Sexp.t = fun</p>
-    <h1 id="sexp_of_n_list-agg">sexp_of_n_list [A;G;G];;</h1>
-  </li>
-  <li>: Sexp.t = (A G G) (* this is the “S-Expression” version of a list.. parens and spaces *)<br />
-```</li>
+  <li>It is not too hard to read S-expressions after a bit of staring</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
+<span class="k">val</span> <span class="n">equal_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="k">val</span> <span class="n">nucleotide_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="k">val</span> <span class="n">sexp_of_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
+ <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
+<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
+<span class="k">val</span> <span class="n">equal_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="k">val</span> <span class="n">n_list_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="k">val</span> <span class="n">sexp_of_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="o">#</span> <span class="n">sexp_of_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">G</span><span class="p">];;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="nc">A</span> <span class="nc">G</span> <span class="nc">G</span><span class="p">)</span> <span class="c">(* this is the "S-Expression" version of a list.. parens and spaces *)</span>
+</code></pre></div></div>
+
+<ul>
   <li><code>[@@deriving compare]</code> is analogous to <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code><br />
 ```ocaml
     <h1 id="type-nucleotide--a--c--g--t-deriving-compare">type nucleotide = A | C | G | T [@@deriving compare];;</h1>
