@@ -85,19 +85,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="composing-deriving-equal">Composing <code>deriving equal</code></h4>
 
 <ul>
-  <li>If we have an <code>xyy_equal</code> function on component types, <code>deriving</code> can derive <code>equal</code> for a type built from those components:<br />
-```ocaml
-    <h1 id="type-n_list--nucleotide-list-deriving-equal">type n_list = nucleotide list [@@deriving equal];;</h1>
-    <p>type n_list = nucleotide list<br />
-val equal_n_list : n_list -&gt; n_list -&gt; bool = fun</p>
-    <h1 id="equal_n_list-aaa-aga">equal_n_list [A;A;A] [A;G;A];;</h1>
-  </li>
-  <li>: bool = false
-    <h1 id="type-n_queue--nucleotide-queuet-deriving-equal">type n_queue = nucleotide Queue.t [@@deriving equal];;</h1>
-    <p>type n_queue = nucleotide Core_kernel.Queue.t<br />
-val equal_n_queue : n_queue -&gt; n_queue -&gt; bool = fun<br />
-```</p>
-  </li>
+  <li>If we have an <code>xyy_equal</code> function on component types, <code>deriving</code> can derive <code>equal</code> for a type built from those components:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
+<span class="k">val</span> <span class="n">equal_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="o">#</span> <span class="n">equal_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">]</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">A</span><span class="p">];;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span>
+<span class="o">#</span> <span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Queue</span><span class="p">.</span><span class="n">t</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Core_kernel</span><span class="p">.</span><span class="nn">Queue</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">equal_n_queue</span> <span class="o">:</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
+</code></pre></div></div>
+<ul>
   <li>Notice that the <code>Core</code> libraries are designed to play well as they have <code>List.equal</code>, <code>Queue.equal</code> built in</li>
   <li>Generally for a component type that is the <code>t</code> of a module, the name looked for is <code>My_module.equal</code> instead of <code>t_equal</code></li>
   <li>Similarly, if we are making our own module with its carrier type <code>t</code> it will also generate <code>My_module.equal</code> if we use <code>[@@deriving equal]</code></li>
@@ -128,17 +128,18 @@ val equal_n_queue : n_queue -&gt; n_queue -&gt; bool = fun<br />
 </code></pre></div></div>
 
 <ul>
-  <li><code>[@@deriving compare]</code> is analogous to <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code><br />
-```ocaml
-    <h1 id="type-nucleotide--a--c--g--t-deriving-compare">type nucleotide = A | C | G | T [@@deriving compare];;</h1>
-    <p>type nucleotide = A | C | G | T<br />
-val compare_nucleotide : nucleotide -&gt; nucleotide -&gt; int = fun</p>
-    <h1 id="compare_nucleotide-a-c">compare_nucleotide A C;;</h1>
-  </li>
-  <li>: int = -1<br />
-utop # compare_nucleotide C A;;</li>
-  <li>: int = 1<br />
-```</li>
+  <li><code>[@@deriving compare]</code> is analogous to <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code></li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
+<span class="k">val</span> <span class="n">compare_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="o">#</span> <span class="n">compare_nucleotide</span> <span class="nc">A</span> <span class="nc">C</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="n">utop</span> <span class="o">#</span> <span class="n">compare_nucleotide</span> <span class="nc">C</span> <span class="nc">A</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">1</span>
+</code></pre></div></div>
+<ul>
   <li><code>Core</code> does have some libraries for dealing with JSON as well fortunately.</li>
   <li>For the homework there is a to/from JSON format function you can add to any type</li>
   <li>this will save wear and tear on your fingers, no need to convert.</li>

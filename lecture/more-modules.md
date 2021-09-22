@@ -21,6 +21,7 @@ val equal_nucleotide : nucleotide -> nucleotide -> bool = fun
 #### Composing `deriving equal`
 
 * If we have an `xyy_equal` function on component types, `deriving` can derive `equal` for a type built from those components:
+
 ```ocaml
 # type n_list = nucleotide list [@@deriving equal];;
 type n_list = nucleotide list
@@ -59,6 +60,7 @@ val sexp_of_n_list : n_list -> Sexp.t = fun
 ```
 
 * `[@@deriving compare]` is analogous to `equal` except it makes a `compare` function instead of `equal`
+
 ```ocaml
 # type nucleotide = A | C | G | T [@@deriving compare];;
 type nucleotide = A | C | G | T
