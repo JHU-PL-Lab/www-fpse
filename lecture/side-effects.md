@@ -8,8 +8,9 @@ Side effects of OCaml include
 * Mutatable state - *changing* the contents of a memory location intead of making a new one
     - Three built-in sorts in OCaml: references, mutable record fields, and arrays.
     - Plus many libraries: `Stack` etc
-* Exceptions (we saw a bit of this already, `failwith "ill-formed"`)
-* Input/output (in basic modules lecture we looked at file input and results printing for example) 
+* Exceptions (we saw a bit of this already, `failwith "ill-formed"` etc)
+* Input/output (in basic modules lecture we looked at file input and results printing for example)
+* Concurrency and parallelism (will cover later)
 
 ### State
  * Variables in OCaml are *still* not directly mutable

@@ -32,7 +32,7 @@ Please make sure to consult the course [Academic Integrity Policy](integrity.htm
 
 #### Late HW Policy
 
-You will be given the same number of "late days" as there are assignments. For each assigment you can use up to three of your late days quota, each one allowing you to submit the assignment one day later. **The quantum of lateness is the day, so if you are 15 seconds late that counts as a day late.** If you have a cold or flu you can use the late days for such absences; if you have an extended excused absence contact instructors on Campuswire and we can work something out.
+You will be given the same number of "late days" as there are assignment submission deadlines (around 9 total based on the planned dateline; if Part I and Part II are on different due dates they each give one late day). For each deadline you can use up to three of your late days quota, each one allowing you to submit the assignment one day later.  **The quantum of lateness is the day, so if you are 15 seconds late that counts as a day late.** If you have a cold or flu you can use the late days for such absences; if you have an extended excused absence contact instructors on Campuswire and we can work something out.
 
 ### Office hours
 

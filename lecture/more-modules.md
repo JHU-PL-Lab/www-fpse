@@ -10,7 +10,7 @@
    (i.e. it is (library (name ..)  .. (preprocess ... )) - one of the library decl components) *)
 # type nucleotide = A | C | G | T [@@deriving equal];;
 type nucleotide = A | C | G | T
-val equal_nucleotide : nucleotide -> nucleotide -> bool = fun
+val equal_nucleotide : nucleotide -> nucleotide -> bool = <fun>
 ```
 
 * The `[@@zibbo...]` indicates the type declaration is processed by the macro named `ppx_zibbo`
@@ -70,8 +70,9 @@ val compare_nucleotide : nucleotide -> nucleotide -> int = fun
 utop # compare_nucleotide C A;;
 - : int = 1
 ```
-* `Core` does have some libraries for dealing with JSON as well fortunately.
-* For the homework there is a to/from JSON format function you can add to any type
+* `Core` does not have libraries for dealing with JSON unfortunately.
+* But, someone else has made such a macro library, `ppx_deriving_yojson` which works with the `yojson` library to do something like what `deriving sexp` above did.
+* With these libraries you can trivially define a to/from JSON format function on any type
  - this will save wear and tear on your fingers, no need to convert.
 
 ```ocaml
@@ -80,18 +81,18 @@ utop # compare_nucleotide C A;;
 type nucleotide = A | C | G | T
 val nucleotide_to_yojson : nucleotide -> Yojson.Safe.t = fun
 val nucleotide_of_yojson :
-  Yojson.Safe.t -> nucleotide Ppx_deriving_yojson_runtime.error_or = fun
+  Yojson.Safe.t -> nucleotide Ppx_deriving_yojson_runtime.error_or = <fun>
+# nucleotide_to_yojson A;;
+- : Yojson.Safe.t = `List [`String "A"] (* This is an OCaml inferred variant type *)
 ```
 
+**Aside**: `ppx_deriving_yojson` is not currently compatible with `ppx_jane` so if you want to derive equality and comparisons along with `yojson` you need to use `#require "ppx_deriving.eq";; / [@@deriving eq]` and `#require "ppx_deriving.ord";; / [@@deriving ord]` in place of the `equal/compare` deriving in `ppx_jane`. 
 ## Defining Modules in the top loop
 
 * We will now cover how you can define modules in the top loop.
-* The main reason we are covering this is it will help us understand nested modules and functors
-     - generally the file-based method of defining a module we have done thus far is how modules are defined.
-
-* Basic idea to input a module in top-loop: write `module My_module = struct ... end` with file in the `..
-* `struct` stands for structure, modules used to be called that in OCaml; view a struct as = to a module.
-* Modules are by default not expressions, so we normally can't define with `let`
+* The main reason we are covering this is it will help us understand nested modules and functors, even when in files
+* Basic idea to input a module in top-loop: write `module My_module = struct ... end` with file contents inserted into the ".." part
+* `struct` stands for structure, modules used to be called that in OCaml; view a `struct` as a synonym of a module.
 * Simple set example put in top-loop syntax:
 
 ```ocaml
@@ -126,12 +127,12 @@ module Simple_set :
 
 * Notice how it infers a module type (aka signature -- `sig` at the start is for signature)
 * We can also declare module types and explicitly declare along with the module
-* Use `module type Type_name_here = ... type here ...` to declare module types:
+* Use `module type Type_name_here = ... type here ...` to declare module types (`.mli` file equivalents):
 
 ```ocaml
 module type Simple_set = (* module and module type namespaces are distinct, can re-use name *)
   sig
-    type 'a t
+    type 'a t (* Do some type hiding here *)
     val emptyset : 'a t
     val add : 'a -> 'a t -> 'a t
     val remove : 'a -> 'a t -> ('a -> 'a -> bool) -> 'a t
@@ -148,10 +149,8 @@ and it will define the module with the above signature on it
 
 ## Nested modules
 
-* OK generally we will use file-defined modules, why this detour into how to define them in top loop?
-* Answer: the real use of the above syntax is it also lets us define *modules within modules* in files
-   - which is in fact very useful
-* We are using many of those already, e.g. `Core.List.map` means `List` is just a module inside `Core`.
+* Lets define *modules within modules*, which are very useful
+* We are using many nested modules already, e.g. `Core.List.map` means `List` is just a module inside `Core`.
 * Modules nest exactly as you would expect, just write a `module My_module = struct .. end` declaration
  within a (file-based *or* top-loop-defined) module
 * Here is an example 
@@ -160,7 +159,7 @@ and it will define the module with the above signature on it
 ```ocaml
 module Super_simple_core = struct
 
-  module Simple_set = struct (* insert above code here ... *) end
+  module Simple_set = Simple_set (* previously typed in above *)
 
   module List = Core.List (* just borrow Core's list for our Super_simple_core *)
 end
@@ -171,12 +170,10 @@ end
 * Functors are simply parametric modules, i.e. functions from modules to modules
 * They let us define a generic code library to which we can plug in some concrete code
     - in other words, just like what higher-order functions do except for modules
-* Like modules they are also "top-level-definable" only in basic OCaml
-  - they are not expressions
-
 #### Simple Functors Example
 
-* Lets fix the problem of the `equal` function needed as a parameter to `remove` and `contains` on our `Simple_set` module.
+* Lets use a functor to fix the problem of the `equal` function needed as a parameter to `remove` and `contains` on our `Simple_set` module.
+* (Note the `Core` libraries also do this for `Core.Set` for example)
 
 ```ocaml
 module type Eq = sig 
@@ -204,38 +201,10 @@ let rec contains (x: M.t) (s: t) =
 end
 ```
 
-* Notice how the type that was polymorphic, `'a` in the original `Simple_set`, is `M.t` here -- we are
-taking the type from the `Eq` module -- that is the type we need, the type over the `equal` operation. 
-* To use the functor, just define a specific module by applying the functor to a module that has a type `t` and a function `equal : t -> t-> bool`.
-
-* Alternate syntax for functors - anonymous form like with expression's "`function x -> ...`"
-
-```ocaml
-module Simple_set_functor = functor (M : Eq) -> struct  (stuff above ...) end
-```
-* (Can also make higher-order functors: pass and return functors from functors)
-
-#### Types of functors
-
-* Functors also have types, OCaml inferred a type for `Simple_set_functor` but we can also declare it:
-
-```ocaml
-# module type SSF = functor (M : Eq) ->
-    sig
-      type t = M.t list
-      val emptyset : t
-      val add : M.t -> t -> t
-      val remove : M.t -> t -> t
-      val contains : M.t -> t -> bool
-    end;;
-```
-* Observe the type is generally `functor (M : Module_type) -> sig ... end`
-* Notice how the argument module `M` occurs in the result type since it has types in it
- - Such a type is called a *dependent type*
-
+* Notice how the type that was polymorphic, `'a` in the original `Simple_set`, is `M.t` here -- we are taking the type from the `Eq` module, that is the type we need. 
 ### Using functors
 
-* Pass a module to a functor to make a module specializing the parameter to what was passed
+* Pass a module to a functor to make a new module
 * In other words, just like a function but on modules
 
 ```ocaml
@@ -249,11 +218,11 @@ module String_set :
     val contains : string -> t -> bool
   end
 ```
-* Note that we passed in a `String` module where the parameter had the `Eq` module type
-* `String.t` is the underlying type of the string, and `String.equal` exists as an equality operation on strings, so `String` matches the `Eq` module type
+* Note that we passed in a `String` module where the parameter had the `Eq` module type - why did this work?
+* Answer: `String.t` is the underlying type of the string, and `String.equal` exists as an equality operation on strings, so `String` matches the `Eq` module type
  - (`utop` command `#show_module String` will dump the full module if you want to verify `t` and `equal` are there)
 * Note `String` also has a whole **ton** of other functions, types, etc
-  - but like with subclasses or Java interfaces you match if you have "at least" the stuff needed.
+  - but like with subclasses or Java interfaces you match a `sig` if you have "at least" the stuff needed.
 * Here is one way you can test if a module matches a module type:
 
 ```ocaml
@@ -263,7 +232,7 @@ module String2 : Eq
 module String2 : Eq
 ```
  - This declares a new module `String2` which is `String` matched against the `Eq` type.
- - Note that `String2` is restricted to *only* have `t`/`equal` with this declaration (`String` of course keeps everything, no mutuation!)
+ - Note that `String2` is restricted to *only* have `t`/`equal` with this declaration
 
 * Here is how we could instantiate the `Simple_set_functor` with our own data type
 
@@ -286,6 +255,44 @@ module Nuc_set :
 * (also note that we used `[@@deriving equal]` to make the `equal` for free)
   - (and note it is given the name `Nucleotide.equal` and not `Nucleotide.equal_nucleotide`, since it is in a module and is the type `t` there)
 
+#### Types of functors
+
+* Functors also have types; OCaml inferred a type for `Simple_set_functor` above but we can also declare it:
+
+```ocaml
+# module type SSF = functor (M : Eq) ->
+    sig
+      type t = M.t list
+      val emptyset : t
+      val add : M.t -> t -> t
+      val remove : M.t -> t -> t
+      val contains : M.t -> t -> bool
+    end;;
+```
+* Observe the type is generally `functor (M : Module_type) -> sig ... end`
+* Notice how the argument module `M` occurs in the result type since it has types in it
+ - Such a type is called a *dependent type*
+
+### Type Hiding
+
+* The above implemetation of our simple set functor does not hide the fact that the underlying implementation is lists
+* Recall the goal of "abstract data types (ADTS)" is for programmers to avoid exposing implementations 
+* But, hiding is harder here than in the non-functor version: once we supply the `=` we have also fixed the type.  So e.g. `emptyset` is not polymorphic, it cannot be type `'a t` any more.
+* One solution is to hide the type completely in the functor type:
+
+```ocaml
+module type SSF_hidden = functor (M : Eq) ->
+    sig
+      type t (* hide the type completely, no longer 'a t *)
+      val emptyset : t
+      val add : M.t -> t -> t
+      val remove : M.t -> t -> t
+      val contains : M.t -> t -> bool
+    end;;
+    module Simple_set_functor_hidden = (Simple_set_functor : SSF_hidden)
+    module String_set_hidden = Simple_set_functor_hidden(String);;
+    ```
+
 ### `Core`'s Set, Map, Hash table, etc
 
 * The `Core` advanced data structures support something similar to what we did above
@@ -298,7 +305,7 @@ module FloatMap :
   sig ... end
 ```
 
-* Note it requires a bit more than just the type and comparison to be in `Float` for this to work
+* Note it requires a bit more than just the type and comparison to be in `Float` for this to work with `Core`
  - to/from S-expression conversions needed; use `[@@deriving compare, sexp]` on your own type:
 
 ```ocaml
@@ -378,7 +385,6 @@ type 'a intpairmaptree =
   - The advantage of this code is you don't need to make a new module for every type you use it at
   - Imagine if for every `List` type we had to make an `IntList`, `StringList` etc module - painful!
   - (`List` itself avoids this problem by not being comparison-friendly, we had to pass in `compare` to `List.sort` for example)
-
 
 ### A few other module features: `include` and `with`
 
@@ -477,7 +483,7 @@ module type Pair_unhidden =
   - `Stack` and `Queue` as we previously discussed (which don't need `Make`/`compare`), plus `Hash_queue`, `Hash_set`, `Hashtbl` (mutable hashed queue/set/map),  `Linked_queue`,  `Bag` (a multi-set)
 
 ### Tangent:  Summary of Important Directives for `utop`
-* `show_val` - shows the type of a value
+* `#show_val` - shows the type of a value
 * `#show_type` - expands a type definition (if it has an expansion)
 * `#show_module` - shows all the elements inside a particular module *or functor*
 * `#show_module_type` - as previous but for module types
