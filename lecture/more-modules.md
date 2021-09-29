@@ -1,6 +1,6 @@
 ## More Modules and Libraries
 
-### Tangent-ish: `ppx_jane` and `deriving`
+### Tangent: `ppx_jane` and `deriving`
 
 * Recall `[@@deriving equal]` in the nucleotide example to get an `=` on that type:
 
@@ -25,12 +25,12 @@ val equal_nucleotide : nucleotide -> nucleotide -> bool = <fun>
 ```ocaml
 # type n_list = nucleotide list [@@deriving equal];;
 type n_list = nucleotide list
-val equal_n_list : n_list -> n_list -> bool = fun
+val equal_n_list : n_list -> n_list -> bool = <fun>
 # equal_n_list [A;A;A] [A;G;A];;
 - : bool = false
 # type n_queue = nucleotide Queue.t [@@deriving equal];;
 type n_queue = nucleotide Core_kernel.Queue.t
-val equal_n_queue : n_queue -> n_queue -> bool = fun
+val equal_n_queue : n_queue -> n_queue -> bool = <fun>
 ```
 * Notice that the `Core` libraries are designed to play well as they have `List.equal`, `Queue.equal` built in
 * Generally for a component type that is the `t` of a module, the name looked for is `My_module.equal` instead of `t_equal`
@@ -40,8 +40,6 @@ val equal_n_queue : n_queue -> n_queue -> bool = fun
 
 * `sexp` generates S-expression printable representations of types which is handy for displaying data internals 
  - S-expressions are a general data format like JSON or XML, in fact they are the first such format
-* For some reason the `Core` libraries make heavy use of S-expressions instead of JSON - a mistake really.
-* It is not too hard to read S-expressions after a bit of staring
 
 ```ocaml
 # type nucleotide = A | C | G | T [@@deriving equal, sexp];;
@@ -90,7 +88,7 @@ val nucleotide_of_yojson :
 ## Defining Modules in the top loop
 
 * We will now cover how you can define modules in the top loop.
-* The main reason we are covering this is it will help us understand nested modules and functors, even when in files
+* The main reason we are covering this is it will help us understand nested modules and functors (functions on modules), even when in files
 * Basic idea to input a module in top-loop: write `module My_module = struct ... end` with file contents inserted into the ".." part
 * `struct` stands for structure, modules used to be called that in OCaml; view a `struct` as a synonym of a module.
 * Simple set example put in top-loop syntax:
@@ -149,7 +147,7 @@ and it will define the module with the above signature on it
 
 ## Nested modules
 
-* Lets define *modules within modules*, which are very useful
+* Lets define *modules within modules*, which are very useful when libraries / applications are larger
 * We are using many nested modules already, e.g. `Core.List.map` means `List` is just a module inside `Core`.
 * Modules nest exactly as you would expect, just write a `module My_module = struct .. end` declaration
  within a (file-based *or* top-loop-defined) module
@@ -158,24 +156,26 @@ and it will define the module with the above signature on it
 
 ```ocaml
 module Super_simple_core = struct
-
   module Simple_set = Simple_set (* previously typed in above *)
-
   module List = Core.List (* just borrow Core's list for our Super_simple_core *)
 end
 ```
 
-### Basic Functors
+### Functors
 
 * Functors are simply parametric modules, i.e. functions from modules to modules
 * They let us define a generic code library to which we can plug in some concrete code
     - in other words, just like what higher-order functions do except for modules
+* Note that you don't want to make every dependent module a parameter, instead use the normal convention in most PLs of referencing one module in another
+   - `dune` automatically makes referenced libraries available
+* Functors are needed when the parameter module can be more than one thing.
 #### Simple Functors Example
 
 * Lets use a functor to fix the problem of the `equal` function needed as a parameter to `remove` and `contains` on our `Simple_set` module.
 * (Note the `Core` libraries also do this for `Core.Set` for example)
 
 ```ocaml
+(* The following module type is "some data type plus = on it" *)
 module type Eq = sig 
 type t
 val equal: t -> t -> bool 
@@ -201,11 +201,13 @@ let rec contains (x: M.t) (s: t) =
 end
 ```
 
-* Notice how the type that was polymorphic, `'a` in the original `Simple_set`, is `M.t` here -- we are taking the type from the `Eq` module, that is the type we need. 
+* Notice how the type that was polymorphic, `'a` in the original `Simple_set`, is `M.t` here -- we are taking the type from the `Eq` module, that is the type we need.
+    - In general there are many such programming patterns where types are treated more like data in OCaml -- adds to the power.
+* This is a great example of the usefulness of functors - many different possible types and their equivalences could be supplied with different `M`'s.
 ### Using functors
 
 * Pass a module to a functor to make a new module
-* In other words, just like a function but on modules
+* In other words, just like function application but on modules
 
 ```ocaml
 # module String_set = Simple_set_functor(String);;
@@ -234,7 +236,8 @@ module String2 : Eq
  - This declares a new module `String2` which is `String` matched against the `Eq` type.
  - Note that `String2` is restricted to *only* have `t`/`equal` with this declaration
 
-* Here is how we could instantiate the `Simple_set_functor` with our own data type
+### Instantiating functors with our own custom type
+Here is how we could instantiate the `Simple_set_functor` with our own data type
 
 ```ocaml
 # #require "ppx_jane";;
@@ -291,7 +294,7 @@ module type SSF_hidden = functor (M : Eq) ->
     end;;
     module Simple_set_functor_hidden = (Simple_set_functor : SSF_hidden)
     module String_set_hidden = Simple_set_functor_hidden(String);;
-    ```
+```
 
 ### `Core`'s Set, Map, Hash table, etc
 
@@ -412,19 +415,21 @@ module type Size_set =
 
 #### `with`
 
-* `with` is needed when you have a module type with an abstract `type` in it (so values in the type will be `<abstr>` to outsiders) 
- - **but** you need to see the concrete type.
-
-* Example: here is a type of modules which contain pairs (a non-useful but small example)
-* Note we want this to be generic over any type of pair so we let `l` and `r` be undefined
-* But, the downside is we are going to also make them `<abstr>` by doing this which is not always what we want...
+* `with` is sometimes needed when you have a module type with an abstract `type t` (just the type name, no explicit definition)
+ - Sometimes you made it just `type t` not to hide it like we did in `simple_set.mli`, but because **we didn't know it** - it is a generic type.
+ - This is common in functor parameter module types in particular, e.g. our `Eq` above has a `type t` which is intended to be generic, not hidden.
+ - Above everything worked fine because `t` was only a parameter, but if the functor result module type had a `type t` in it, it would be hidden and that might not be desired.
+ 
+* Example: here is a type of modules which contain pairs (a toy example)
+* We want this to be generic over any type of pair so we let `l` and `r` be undefined
 ```ocaml
-module type Pair_hidden = 
+module type Pair = 
   sig
     type l
     type r
-    val left : (l * r) -> l
-    val right : (l * r) -> r
+    type t = l * r
+    val left : t -> l
+    val right : t -> r
   end;;
 ```
 OK lets make a concrete example of the above on `int` and `string`
@@ -432,42 +437,47 @@ OK lets make a concrete example of the above on `int` and `string`
 module Pair = struct 
  type l = int
  type r = string
+ type t = l * r
  let left ((l:l), (r:r)) = l
  let right ((l:l), (r:r)) = r
 end;;
 ```
 Now the problem is if we put the above signature on the module, we hid too much!
 ```ocaml
-# module Matched_pair = (Pair : Pair_hidden);;
-module Matched_pair : Pair_hidden
+# module Matched_pair = (Pair : Pair);;
+module Matched_pair : Pair
 # Matched_pair.left (4,"hi");;
 Line 1, characters 19-20:
 Error: This expression has type int but an expression was expected of type
          Matched_pair.l
+# Pair.left(4,"hi");; (* problem was the module type Pair *)
+- : int = 4
 ```
 
-The solution is you can instantiate abstract types in module types by `with`:
+The solution is you can specialize abstract types in module types via `with`:
 
 ```ocaml
-# module Matched_pair = (Pair : Pair_hidden with type l = int with type r = string);;
+# module Matched_pair = (Pair : Pair with type l = int with type r = string);;
 module Matched_pair :
   sig
     type l = int
     type r = string
+    type t = l * r
     val left : l * r -> l
     val right : l * r -> r
   end
 # Matched_pair.left (4,"hi");;
 - : int = 4
 ```
-Usually `with` is inlined like above, but it is just defining a new module type:
+Usually `with` is inlined like above, but it is just shorthand for defining a new module type:
 
 ```ocaml
-# module type Pair_unhidden = Pair_hidden with type l = int with type r = string;;
-module type Pair_unhidden =
+# module type Pair_int_string = Pair with type l = int with type r = string;;
+module type Pair_int_string =
   sig
     type l = int
     type r = string
+    type t = l * r
     val left : l * r -> l
     val right : l * r -> r
   end
@@ -476,7 +486,7 @@ module type Pair_unhidden =
 ### Other Data Structures in `Core`
 
 * `Core` has complete implementations of many classic data structures, many of which are built similarly with functor like `Map.Make`
-* Be careful on imperative vs functional, difference is not well-documented or consistently-named
+* Be careful on imperative vs functional, look carefully to see which it is
 * Functional data structures in `Core`:
   - `Set`, `Map`, `Doubly_linked` (list), `Fqueue`, `Fdeque` (functional (double-ended) queue)
 * Imperative data structures:

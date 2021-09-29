@@ -8,9 +8,19 @@ let empty = Map.empty(module Int) (* new syntax: first-class module Int *)
 
 (* Map.t has three type parameters: key type, value type, 
    and a nonce (witness) for the comparison function used for the key.
-   Here we use key = int, value = string list.*)
+   Here we use key = int, value = string list.
+   More on comparator_witness later; it is defined for all built-in types *)
 
 type t = (int, string list, Int.comparator_witness) Map.t
+
+
+
+(* ***************************************************** *)
+(* Everything from here on down is the same as school.ml *)
+(* but using Map.add etc instead of IntMap.add etc       *)
+(* ***************************************************** *)
+
+
 
 (**  Add a student stud in grade grade to school database 
      Map.add_multi assumes values are lists and conses to key's list
