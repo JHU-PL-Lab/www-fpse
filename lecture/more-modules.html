@@ -489,9 +489,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="larger-example-using-coremap">Larger Example Using Core.Map</h3>
 <ul>
   <li>We will go over the code of <a href="../examples/school.ml">school.ml</a>, simple code that uses a <code>Core.Map</code>.</li>
-  <li>Note that there is a fancier way than <code>Map.Make</code> using advanced features we have not covered yet: <em>first-class modules</em>.
+  <li>Note that there is a fancier way than <code>Map.Make</code> using advanced features we will cover in detail later: <em>first-class modules</em>.
     <ul>
-      <li>We will peek at <a href="../examples/cool_school.ml">cool_school.ml</a> which re-writes the <code>school.ml</code> example to use first-class modules</li>
+      <li>We will look at <a href="../examples/cool_school.ml">cool_school.ml</a> which re-writes the <code>school.ml</code> example to use first-class modules</li>
       <li>The advantage of this code is you don’t need to make a new module for every type you use it at</li>
       <li>Imagine if for every <code>List</code> type we had to make an <code>IntList</code>, <code>StringList</code> etc module - painful!</li>
       <li>(<code>List</code> itself avoids this problem by not being comparison-friendly, we had to pass in <code>compare</code> to <code>List.sort</code> for example)</li>
@@ -620,8 +620,8 @@ Error: This expression has type int but an expression was expected of type<br />
   <li><code>#show</code> - the above four condensed into one command</li>
   <li><code>#require</code> - loads a library (does not <code>open</code> it, just loads the module)</li>
   <li><code>#use "afile.ml"</code> - loads code file as if it was copied and pasted into the top loop.</li>
-  <li><code>#mod_use</code> - like <code>#use</code> but loads the file like it was a module (name of file as a module name)</li>
-  <li><code>#load "blah.cmo"</code>, <code>#load "blahlib.cma"</code> - load a compiled binary or library file.</li>
+  <li><code>#mod_use</code> - like <code>#use</code> but loads the file like it was a module (i.e. like we typed <code>module Filename = struct ... contents of filename.ml ... end</code>)</li>
+  <li><code>#load "blah.cmo"</code>, <code>#load "blahlib.cma"</code> etc - load a compiled binary or library file (only the <code>.cmo/a</code> versions, the bytecode compiler).</li>
   <li><code>#use_output "dune top"</code> - run a command and assume output is top loop input commands.
     <ul>
       <li>The particular argument <code>dune top</code> here generates top loop commands to load the current project.</li>

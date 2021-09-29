@@ -3,7 +3,8 @@
 
 open Core
 
-(* The Make functor in the Map module specializes maps to Ints in this case *)
+(* The Make functor in the Map module specializes maps to Ints in this case 
+   See https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Map/index.html for the Map module API.  *)
 
 module IntMap = Map.Make(Int)
 
@@ -39,30 +40,30 @@ type t = (string list) IntMap.t
 *)
 
 (* The empty school *)
-let empty = IntMap.empty
+let (empty : t) = IntMap.empty
 
 (**  Add a student stud in grade grade to school database 
      Map.add_multi assumes values are lists and conses to key's list
      or, creates a new key and singleton list if key not present. **)
-let add grade stud (school : t) =  IntMap.add_multi school ~key:grade ~data:(stud)
+let add grade stud (school : t) : t =  IntMap.add_multi school ~key:grade ~data:(stud)
 
 (** 
   Sorting using a fold over the map.
   `sort` below will alphabetically sort the students in each grade.
   Folding over a map is like folding over a list but you get both key and value
 *)
-let sort (school : t) = 
+let sort (school : t) : t = 
   IntMap.fold school
     ~init:empty 
     ~f:(fun ~key -> fun ~data -> fun scl -> IntMap.add_exn scl ~key ~data:(List.sort data ~compare:(String.compare) ))
 
 (** Note that Map.map is a better way; it maps over the values only, keeping key structure intact *)
-let sort_better_with_map (school : t) = 
+let sort_better_with_map (school : t) : t = 
   IntMap.map school
     ~f:(fun data -> (List.sort data ~compare:(String.compare) ))
 
-let roster school = school |> sort |> IntMap.data |> List.concat
+let roster (school : t) = school |> sort |> IntMap.data |> List.concat
 (** Auxiliary function to dump data structure *)
-let dump school = school |> IntMap.to_alist 
+let dump (school : t) = school |> IntMap.to_alist 
 (*** Simple test *)
 let test_school = empty |> add 2 "Ku" |> add 3 "Lu" |> add 9 "Mu" |> add 9 "Pupu"  |> add 9 "Apu"
