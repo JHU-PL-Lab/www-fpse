@@ -84,5 +84,5 @@ let are_balanced_functional s =
 let summate_til_zero s =
   List.fold_until s ~init:0
     ~f:(fun acc i ->
-      match (i, acc) with 0, sum -> Stop sum | _, sum -> Continue (i + sum))
+      match i with 0 -> Stop acc | _ -> Continue (i + acc))
     ~finish:Fn.id

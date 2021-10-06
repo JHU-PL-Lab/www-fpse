@@ -1,16 +1,21 @@
 ## Specification
 
-* Let us step back from syntax and look at the bigger picture
+* Terminology
+   - Specification: *what* the program should do
+   - Implementation: *how* it does it
 
-* Specification: *what* the program should do
-* Implementation: *how* it does it
+* Let us step back and look at the bigger picture of specifying
 
-### Why specify?
+### Correctness
 
-* You have to have at least some idea what your goal is before you start coding
-* The more clear that goal is, the better chance you will make it
+* The high-level goal is to have software that is "correct"
+* But there are vastly different degrees of precision on what "correct" means
+   - Informal spec.: we had some vague idea of what the code should do, wrote it, iteratively addressed feedback of users
+   - Semi-formal spec.: Sat down with stakeholds, wrote out a specification document
+   - Rigorous spec.: Have an unambiguous mathematical notion of what correct behavior should be, write it out as the formal specification, make sure code meets it.
+* In practice all of these modes can be fruitful depending on the project and the component of the project.
 
-### Degrees of specification
+### Forms of specification
 
 * Requirements and Design documents: high-level informal descriptions of what the app should do
   - This is the classic form of specification in software engineering; far from code
@@ -23,27 +28,27 @@
   - e.g. *precondition* on a function that tree parameter is a binary tree (left values < right values)
   - e.g. *postcondition* that `List.sort` always returns a sorted list
   - e.g. *invariants* on data structures such as a `Set` implementation which uses an underlying always-sorted list.
-  - More general than tests, but not necessarily verified
+  - More general than tests, but not necessarily verified (do at least write tests to verify on lots of examples)
 * Verified assertions aka formal methods
   - after making the above logical assertions, *verify* the code meets the assertions
   - now this is mostly research, but becoming more mainstream
 
 ### Type-directed programming
 
-Fact: types outline the "shape" of the code you need to write and so serve as a "structural" spec.
+Fact: types outline the "shape" of the code you need to write and serve as a "structural" spec.
 
  * You have been doing type-directed programming, perhaps getting very annoyed whilst
    - With time the annoyance turns to thanks (we promise!)
- * Principle is: just to write code matching declared (or even inferred) type will get you well on the way to an implementation
+ * Principle is: just to write code matching declared type will get you well on the way to an implementation
    - type errors point to code errors to be fixed
    - when the last type error drops, the code will often directly work
 
 Review example: not bubbling up `option` or other wrapped results properly
 
 ```ocaml
-# let zadd l1 l2 = let l = List.zip l1 l2 in List.map ~f:(fun (x,y) -> x+y) l;;
+# let zadd (l1 : int list) (l2 : int list) : (int list) = let l = List.zip l1 l2 in List.map ~f:(fun (x,y) -> x+y) l;;
 Line 1, characters 74-75:
-Error: This expression has type ('a * 'b) list List.Or_unequal_lengths.t
+Error: This expression has type (int * int) list List.Or_unequal_lengths.t
        but an expression was expected of type 'c list
 ```
  - To solve this type error you will need to `match` on the result
@@ -138,7 +143,7 @@ end
 * Postcondition on `remove` for it returning set `s'`:  `not(contains x s')` - ??
   - No, this set data structure could be a multiset and this will not always hold!
   - If we had this postcondition on our spec we would know our implementation failed
-* Postcondition on `add x s`: for the resulting set `s'`, `contains x s'` is true
+* Postcondition on `add x s`: for the resulting set `s'`, `contains x s'` holds
 
 #### Assertions
 
@@ -150,6 +155,11 @@ let add (x : M.t) (s : t) =
   let s' = (x :: s) in assert (contains x s')
 ```
 * Good for development mode, but not after deployment (slows things down)
+* Often better to make tests that enforce assertions instead of using `assert`
+  - [`ppx_inline_tests`](https://github.com/janestreet/ppx_inline_test) is a library where you can write tests in-line with your code
+  - example: `let s_test = .. in let%test_unit "add adds" = assert (contains (add s_test x) x)`
+  - inline tests both document invariants and serve as tests: two-for-one!
+  - They also allow functions and data structures hidden in a module to be tested
 
 ### Data structure invariants
 
@@ -167,16 +177,15 @@ let add (x : M.t) (s : t) =
 let rec rev l = 
   match l with 
   | [] -> []
-  | x::xs -> let rxs = rev xs in assert(Poly.(List.rev xs = rev xs)); rxs @ [x]
+  | x::xs -> let rxs = rev xs in assert(Poly.(List.rev xs = rxs)); rxs @ [x]
 ```
- * This assertion should never fail.
- * Note however that we have to use the built-in `List.rev` to test our version - circular  
- * In general a big issue with specification is it is often hard to give a code-based definition of the spec.
+ * Note that we have to use the built-in `List.rev` to test our version - somewhat circular (note `Poly` quick-open lets `=` work on any type)
+ * In general a big issue with specification is it is often hard to give a code-based definition of the full spec.
  * So, our main focus is on *partial* specs, give sanity conditions and not complete property
 
 ### Invariants over folds etc
 
-* In re-implementing some of the common `List` functions with `fold`s it helps to see invariant
+* In re-implementing some of the common `List` functions with `fold`s it helps to think of the invariant
 * Folding left (`List.fold`):
    - Suppose we are at some arbitrary point processing the fold;
    - assume accumulation `a` has "the result of the task" for all elements to the left
@@ -185,35 +194,38 @@ let rec rev l =
 * Folding right: just flip the order the list is walked over in the above
 
 ```ocaml
-let length l = List.fold ~init:0 ~f:(fun a _ -> a+1) l
+(* invariant for length a: a is length of list up to here *)
+let length l = List.fold ~init:0 ~f:(fun a _ -> a+1) l 
+(* invariant for rev a: a is reverse of list up to here *)
 let rev l = List.fold ~init:[]  ~f:(fun a x -> x::a) l 
+(* invariant for map a: a is f applied to each element of list up to here *)
 let map ~f l = List.fold_right ~init:[]  ~f:(fun x a -> (f x)::a) l
+(* etc *)
 let filter ~f l = List.fold_right ~init:[] ~f:(fun x a -> if f x then x::a else a) l
 ```
 
-
 ### Formal Verification
 
-* We are not going to focus on this topic as it is not a part of mainstream software engineering (yet)
-* But it is getting there and will become more and more common through your careers
+* Formal verification is *proving* the invariants hold (e.g. that `rev` really reverses the list)
+* It is of only limited applicability now but will become more common through your careers
 * A simple view of what it is is the preconditions/postconditions/invariants/`asserts` above will be **verified** to always hold by a computer program.
-  - Like how a compiler verifies the type information but on a much grander scale.
-  - Goal is to do this over a full, not partial, spec.
+  - Like how a compiler verifies type declarations but on a much grander scale.
+  - Goal is to do this over a full, not partial, spec. (which of course may be near-impossible to write)
 
 ### Specification and Abstraction
 
 * The better a module is specified the less the users need to know about the underlying implementration
-* The built-in `Core.Map` etc types are examples where the users need to know nothing about the implementation
-* But they are a bit idealistic as "everyone knows" what an e.g. Map should do
-* Still, on your own libraries you can often abstract details behind a rich spec
-  - and it will make it a lot easier for users, they can just think about the spec view.
+* The built-in `Core.Map` etc modules are examples where the users need to know almost nothing about the implementation
+* Note that *documentation* of the specification in the interface is important; sometimes `Core` is weak there
+* On your own libraries you can do the same
+  - it will make it a lot easier for your users, they can just think about the spec. view.
 
 ## Testing
 
-* Testing wears two very different but both very useful hats:
-  1. Implementation-based: find bugs in code, for example when you change code make sure you didn't break it.
-  2. Specification-based: use tests to define and refine what the code should do
-* When testing, wear both hats!!
+* Testing wears two very different but very useful hats:
+  1. Specification-based: use tests to define and refine what the code should do
+  2. Implementation-based: find bugs in code, for example when you change code make sure you didn't break it.
+* Moral: when testing, wear both hats
   - Writing tests before fully coding the answer makes the tests serve as your "coding spec"
   - Adding tests for corner cases will flesh out the spec
   - Adding tests covering past bugs will make sure they are caught quickly next time
@@ -224,8 +236,8 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun x a -> if f x then x::a else 
 ### Standard categories of tests
 * **Unit testing**: what you have mainly done -- test the small pieces of the app
 * **Acceptance testing**: test the bigger pieces.  
-  - For example testing your `cloc.exe` on a certain fixed directory tree.
-* **Random testing** aka fuzz testing aka monkey testing aka property-based testing aka quickcheck: test on randomly generated inputs in some distribution
+  - For example testing your `histo.exe` on a certain fixed directory tree.
+* **Random testing** aka fuzz testing aka monkey testing aka property-based testing aka quickcheck: test on inputs generated randomly from a distribution
 
 ### Testing and coverage
 
@@ -233,7 +245,6 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun x a -> if f x then x::a else 
 * The simple idea of coverage: are there lines of your code that never get exercised by any of your tests?
 * Coverage tools let you easily check this.
 * We will show how the Bisect coverage tool can be used below
-
 
 ## OUnit2
 
@@ -246,7 +257,7 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun x a -> if f x then x::a else 
 open OUnit2
 open Simple_set
 
-let tests = "test suite for rev" >::: [
+let tests = "test suite for set" >::: [
   "empty"  >:: (fun _ -> assert_equal (emptyset) (emptyset));
   "3-elt"    >:: (fun _ -> assert_equal true (contains 5 (add 5 emptyset) (=)));
   "1-elt nested" >:: (fun _ -> assert_equal false (contains 5 (remove 5 (add 5 emptyset) (=))(=)));
@@ -260,7 +271,7 @@ let () = run_test_tt_main tests
 * Then, `OUnit2.run_test_tt_main tests` will run the suite `tests`
 
 #### How the tests run
-* The above `tests.ml` file is just defining an executable, like `cloc.ml/exe` on HW2
+* The above `tests.ml` file is just defining an executable, like `histo.exe` on HW2
 * Build and run the executable to run the tests
 * Here is the dune build file for the simple set tests for example:
 
@@ -280,7 +291,7 @@ let () = run_test_tt_main tests
 ```
 
 - The alias rule also runs the tests after building them
-* There in fact is a shorthand for the above in dune: replace `executable` with `test` and it makes an executable with the above alias to run tests:
+* We in fact use shorthand for the above in dune: replace `executable` with `test` and it makes an executable with the above alias to run tests:
 
 ```scheme
 (test
@@ -335,7 +346,7 @@ val make_rev_suite : 'a list list -> test = <fun>
 
 ```ocaml
 let s = make_rev_suite [[];[1;2;3];[2;44;2];[32;2;3;2;1]];;
-let () = run_test_tt_main s;; (* DON'T actually do this line, runs OK but crashes utop! *)
+let () = run_test_tt_main s;; (* DON'T actually do this line in utop, runs but crashes utop! *)
 ```
 
 * In general you can build an arbitrarily big tree of tests with suites of suites etc
@@ -378,11 +389,39 @@ OUnit [Overview docs](https://gildor478.github.io/ounit/ounit2/index.html) and [
 
 We will check how well my tests of the simple set example covered the code using Bisect
 
+## Testing executables
+* `OUnit` can be used to test executables: `OUnit2.assert_command` can run a shell command (e.g. your OCaml executable)
+* `dune` also contains an extension called `cram` which allows for output to be compared against expected output for a given input
+* It is very general, you just specify the shell command to run (can test non-OCaml just as easily)
+* We will super-briefly skim the [`cram` docs](https://dune.readthedocs.io/en/stable/tests.html#cram-tests)
+
+
 <a name = "quickcheck"></a>
 ## Base_quickcheck and Random Testing
 
 * Recall we previously discussed random testing: generate random data in a given type to test
 * We are now going to go into more details on how to do your own random testing
+
+### Big picture of random testing
+1. We need to be able to generate random data which is the parameters of the functions we wish to test
+  - Easy for first-order data, hard for functions; only do for the former
+2. We run the function on the random data
+3. We need to know if the test worked or not on the random data
+  - there can be a chicken vs egg issue here, in some cases it can be difficult to see if it worked
+  - so, some things are not amenable to random testing and other times only limited properties checked (e.g. no invariant assertion failures)
+### Using `Base_quickcheck`
+
+* `Base_quickcheck` contains three key algorithms:
+  1. Generators, `Quickcheck.Generator` - make random data of desired distribution in given type
+  2. Shrinkers, `Quickcheck.Shrinker` - if a failing case is discovered, try to make it smaller
+  3. Runner, `Quickcheck.test` etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.
+
+* We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](../examples/quickcheck_examples.ml)
+
+* [Base_quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/base_quickcheck/Base_quickcheck/index.html)
+* [Quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Quickcheck/index.html)
+
+
 
 ### Fuzz testing vs Random Testing
 
@@ -393,16 +432,3 @@ We will check how well my tests of the simple set example covered the code using
 * Industry fuzz testers do a lot more more than generate totally random data
   - They may be aware that the string input should fit a particular grammar, e.g. html
   - They may be combined with a coverage tool and work to find random data "covering" all the code
-
-
-### Base_quickcheck
-
-* Three key algorithms:
-  1. Generators, `Quickcheck.Generator` - make random data of desired distribution in given type
-  2. Shrinkers, `Quickcheck.Strinker` - if a failing case is discovered, make it smaller
-  3. Runner, `Quickcheck.test` etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.
-
-* We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](../examples/quickcheck_examples.ml)
-
-* [Base_quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/base_quickcheck/Base_quickcheck/index.html)
-* [Quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Quickcheck/index.html)

@@ -45,7 +45,7 @@ let (empty : t) = IntMap.empty
 (**  Add a student stud in grade grade to school database 
      Map.add_multi assumes values are lists and conses to key's list
      or, creates a new key and singleton list if key not present. **)
-let add grade stud (school : t) : t =  IntMap.add_multi school ~key:grade ~data:(stud)
+let add (grade : int) (stud : string) (school : t) : t =  IntMap.add_multi school ~key:grade ~data:(stud)
 
 (** 
   Sorting using a fold over the map.

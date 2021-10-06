@@ -8,7 +8,7 @@
 
 open Core
 (* Step 1 is you need a generator to make random data in a given type. *)
-(* For all the built-in types, My_builtin.quickcheck_generator is a nice default generator *)
+(* For all the built-in types, <Builtin_type>.quickcheck_generator is a nice default generator *)
 
 let rand_int =  
   let int_gen = (Int.quickcheck_generator) in
@@ -24,10 +24,14 @@ let rand_from (g : 'a Base_quickcheck.Generator.t) =
    Similar to how `List.equal` needs an `equal` on list contents *)
 let int_list_gen = List.quickcheck_generator Int.quickcheck_generator
 
+(* One random list *)
 let rand_list = rand_from int_list_gen
 
 (* Shorthand ppx notation *)
 let int_list_gen' = [%quickcheck.generator: int list]
+
+(* Lists with a narrower range of integers *)
+let int_list_gen'' = List.quickcheck_generator (Int.gen_incl (-100) 100)
 
 (* Similarly can compose two generators to generate a pair via Quickcheck.Generator.both *)
 let rand_list_pair = rand_from (Quickcheck.Generator.both int_list_gen int_list_gen)
