@@ -25,9 +25,9 @@ For each of the above, add your specifications as comments to your existing code
 ### Resources
 Here are a few resources to keep in mind to help with this assignment.
 
-* Make sure to review the [lecture notes on modules and functors](../lectures/more-modules.html) for Part I.  
+* Make sure to review the [lecture notes on modules and functors](../lecture/more-modules.html) for Part I.  
 * If you feel like you need more on the subtleties of information hiding in functors, the [Real World OCaml book chapter on functors](https://dev.realworldocaml.org/functors.html) may be worth looking at.
-* For part II this was covered in the [Specification and Testing Lecture](../lectures/specification-test.html); these notes also contain links to OUnit and Bisect documentation.
+* For part II this was covered in the [Specification and Testing Lecture](../lecture/specification-test.html); these notes also contain links to OUnit and Bisect documentation.
 
 ### Submission and Grading
 * As usual, run a final `dune clean; dune build` and then upload `_build/default/assignment3.zip` to Gradescope.  Note we will be giving you very little information in our report since you need to provide good coverage on your own and not rely on Gradescope.
