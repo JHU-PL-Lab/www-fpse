@@ -271,7 +271,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/specification-test.html#quickcheck">Random testing with Quickcheck</a></div>
+            <div align="left" class="body"><a href="assignments/project.html">Projects and Libraries</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -407,7 +407,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="assignments/project.html">Projects and Libraries</a></div>
+            <div align="left" class="body">TBA</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">Project</div>

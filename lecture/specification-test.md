@@ -273,7 +273,7 @@ let () = run_test_tt_main tests
 #### How the tests run
 * The above `tests.ml` file is just defining an executable, like `histo.exe` on HW2
 * Build and run the executable to run the tests
-* Here is the dune build file for the simple set tests for example:
+* Here a dune build file which would work for the simple set tests for example:
 
 ```scheme
 (executable
@@ -291,7 +291,7 @@ let () = run_test_tt_main tests
 ```
 
 - The alias rule also runs the tests after building them
-* We in fact use shorthand for the above in dune: replace `executable` with `test` and it makes an executable with the above alias to run tests:
+* We in fact use dune shorthand for the above: replace `executable` with `test` and it makes an executable with the above alias to run tests:
 
 ```scheme
 (test
@@ -398,11 +398,7 @@ We will check how well my tests of the simple set example covered the code using
 
 <a name = "quickcheck"></a>
 ## Base_quickcheck and Random Testing
-
-* Recall we previously discussed random testing: generate random data in a given type to test
-* We are now going to go into more details on how to do your own random testing
-
-### Big picture of random testing
+### The big picture of random testing
 1. We need to be able to generate random data which is the parameters of the functions we wish to test
   - Easy for first-order data, hard for functions; only do for the former
 2. We run the function on the random data

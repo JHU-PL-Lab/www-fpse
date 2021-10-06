@@ -428,7 +428,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>The above <code>tests.ml</code> file is just defining an executable, like <code>histo.exe</code> on HW2</li>
   <li>Build and run the executable to run the tests</li>
-  <li>Here is the dune build file for the simple set tests for example:</li>
+  <li>Here a dune build file which would work for the simple set tests for example:</li>
 </ul>
 
 <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>
@@ -447,7 +447,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>The alias rule also runs the tests after building them</li>
-  <li>We in fact use shorthand for the above in dune: replace <code>executable</code> with <code>test</code> and it makes an executable with the above alias to run tests:</li>
+  <li>We in fact use dune shorthand for the above: replace <code>executable</code> with <code>test</code> and it makes an executable with the above alias to run tests:</li>
 </ul>
 
 <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">test</span>
@@ -580,13 +580,7 @@ OUnit <a href="https://gildor478.github.io/ounit/ounit2/index.html">Overview doc
 
 <p><a name="quickcheck"></a></p>
 <h2 id="base_quickcheck-and-random-testing">Base_quickcheck and Random Testing</h2>
-
-<ul>
-  <li>Recall we previously discussed random testing: generate random data in a given type to test</li>
-  <li>We are now going to go into more details on how to do your own random testing</li>
-</ul>
-
-<h3 id="big-picture-of-random-testing">Big picture of random testing</h3>
+<h3 id="the-big-picture-of-random-testing">The big picture of random testing</h3>
 <ol>
   <li>We need to be able to generate random data which is the parameters of the functions we wish to test
     <ul>

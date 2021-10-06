@@ -10,7 +10,7 @@ There are two Parts to the assignment.  In order to help you ease into it we wil
 
 * [Use the this zip file](assignment2.zip) as the starting point for your assignment. 
 * Like assignment 1, we are giving you a skeleton to fill in.  Part I questions are in file `.../assignment2/src/treedict.mli` and your answers will go in the file  `.../assignment2/src/treedict.ml` (tree and dictionary library code). Part II answers will go in `.../assignment2/src/histo.ml`.
-* The only other file you will want to edit is `.../assignment2/tests/tests.ml` which contains some initial tests; these tests are *not complete at all* and you should add at least 20 tests which cover your functions reasonably well.
+* The only other file you will want to edit is `.../assignment2/tests/tests.ml` which contains some initial tests; these tests are *not complete at all* and you should add at least 20 tests which cover your functions reasonably well. (Note we did not structure the files in a way to allow you to test your histo auxiliary functions so testing on those is not required.)
 * We have made initial `dune` files which generally should work but you can add additional libraries if needed.
 
 ### Resources

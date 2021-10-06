@@ -1,4 +1,4 @@
-(* Quickcheck Examples
+(* Base_quickcheck Examples
    Requires:
    (libraries core)
    (preprocess (pps ppx_jane))
@@ -6,21 +6,27 @@
    And #require "ppx_jane" in top-loop
 *)
 
+(* `Base_quickcheck` is highly integrated with Core libraries which is why we use it *)
+
 open Core
+
 (* Step 1 is you need a generator to make random data in a given type. *)
-(* For all the built-in types, <Builtin_type>.quickcheck_generator is a nice default generator *)
+(* For all the built-in types, Core provides <Builtin_type>.quickcheck_generator, a default generator *)
 
 let rand_int =  
-  let int_gen = (Int.quickcheck_generator) in
+  let int_gen = Int.quickcheck_generator in
   (Quickcheck.random_value ~seed:`Nondeterministic int_gen)
 
-let rand_int' =  (Quickcheck.random_value ~seed:`Nondeterministic (Int.gen_incl (-100) 100))
+(* `Int.gen_incl` generates ints in a range *)  
+let rand_int' =  
+let int_gen = Int.gen_incl (-100) 100 in
+(Quickcheck.random_value ~seed:`Nondeterministic int_gen)
 
-(* A little function to test out various generators *)
+(* A little function to test out various generators: given a generator returns a random value *)
 let rand_from (g : 'a Base_quickcheck.Generator.t) = 
   (Quickcheck.random_value ~seed:`Nondeterministic g)
 
-(* Parameterizerd type generators need a generator for the parameter 
+(* Parameterized type generators need a generator for the parameter 
    Similar to how `List.equal` needs an `equal` on list contents *)
 let int_list_gen = List.quickcheck_generator Int.quickcheck_generator
 
@@ -43,10 +49,11 @@ let rand_list_pair = rand_from (Quickcheck.Generator.both int_list_gen int_list_
 (* Simple failure example based on https://github.com/realworldocaml/book/tree/master/book/testing) *)
 (* Replace `assert` with `OUnit2.assert_bool` and this code can be an OUnit test function. *)
 let () =
-  Quickcheck.test ~sexp_of:[%sexp_of: int]
+  Quickcheck.test ~sexp_of:[%sexp_of: int] (* optional sexp_of needed to see failure case if any *)
     (Int.gen_incl Int.min_value Int.max_value)
     ~f:(fun x -> assert(Sign.equal (Int.sign (Int.neg x)) (Sign.flip (Int.sign x))))
 
+(* Check to see if (reverse o reverse) is identity on all lists *)    
 let check_a_list_rev revver = 
   Quickcheck.test ~sexp_of:[%sexp_of: int list]
     int_list_gen
@@ -80,3 +87,7 @@ type int_tree =
 
 let atree = rand_from quickcheck_generator_int_tree
 
+(* Also Core has Map.quickcheck_generator, etc etc *)
+
+(* In general you can write your own generators if you want a unique distribution
+   But, the happy path is to use the built-in ones as above to make things worth the effort *)
