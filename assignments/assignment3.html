@@ -80,7 +80,7 @@ the Bisect code coverage tool which will verify you have good coverage with your
 <h3 id="part-ii">Part II</h3>
 <ul>
   <li>Your primary task in Part II is to write your own test suite which has good coverage of the code you wrote for part I.</li>
-  <li>You will need to incorporate the Bisect tool into your dune build file as was described in lecture, and use its output to improve the coverage of your test suite.</li>
+  <li>You will need to incorporate the Bisect tool into your dune build file as was described in lecture, and use its output to improve the coverage of your test suite.  Test coverage will be a component of your grade.</li>
   <li>Lastly you will need to write a special suite of tests which you will name “Invariant Checking” which asserts five <em>different</em> invariant properties holding on function defined in <code>abstraction.ml</code>.  We gave several examples of such propertes in lecture, for example <code>List.rev @@ List.rev l</code> is <code>l</code> for any list <code>l</code>.  Such properties are useful to verify with random testing, but here you need to just test each property on a few specific cases.</li>
 </ul>
 
@@ -90,9 +90,9 @@ the Bisect code coverage tool which will verify you have good coverage with your
 <p>Here are a few resources to keep in mind to help with this assignment.</p>
 
 <ul>
-  <li>Make sure to review the <a href="../more-modules.html">lecture notes on modules and functors</a> for Part I.</li>
+  <li>Make sure to review the <a href="../lectures/more-modules.html">lecture notes on modules and functors</a> for Part I.</li>
   <li>If you feel like you need more on the subtleties of information hiding in functors, the <a href="https://dev.realworldocaml.org/functors.html">Real World OCaml book chapter on functors</a> may be worth looking at.</li>
-  <li>For part II this was covered in the <a href="../specification-test.html">Specification and Testing Lecture</a>; these notes also contain links to OUnit and Bisect documentation.</li>
+  <li>For part II this was covered in the <a href="../lectures/specification-test.html">Specification and Testing Lecture</a>; these notes also contain links to OUnit and Bisect documentation.</li>
 </ul>
 
 <h3 id="submission-and-grading">Submission and Grading</h3>
