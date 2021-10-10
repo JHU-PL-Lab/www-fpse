@@ -13,10 +13,11 @@ As usual we will give two due dates for the two parts.
 ### The file structure
 
 * [Use the this zip file](assignment3.zip) for your assignment. 
-* Like assignment 1-2, we are giving you a skeleton to fill in.  Your Part I answers will go in the file  `assignment3/src/abstraction.ml` and Part II will mostly be in `assignment3/test/`.
+* Like assignment 1-2, we are giving you a skeleton to fill in.  Your Part I and II answers will go in the files  `assignment3/src/abstraction.ml` and `assignment3/test/`.
+* (**REVISED**) Part I consists of questions 1-3 and your own tests for those questions in `assignment3/test/tests.ml` as well as a `dune` file to run them.
+* (**REVISED**)  Part II consists of question 4, your own tests for that question, as well as making sure your overall coverage with `bisect` is good.
 
-### Part II
-* Your primary task in Part II is to write your own test suite which has good coverage of the code you wrote for part I.
+### Coverage and Invariants for Part II
 * You will need to incorporate the Bisect tool into your dune build file as was described in lecture, and use its output to improve the coverage of your test suite.  Test coverage will be a component of your grade.
 * Lastly you will need to write a special suite of tests which you will name "Invariant Checking" which asserts five *different* invariant properties holding on function defined in `abstraction.ml`.  We gave several examples of such propertes in lecture, for example `List.rev @@ List.rev l` is `l` for any list `l`.  Such properties are useful to verify with random testing, but here you need to just test each property on a few specific cases.
 
@@ -27,7 +28,7 @@ Here are a few resources to keep in mind to help with this assignment.
 
 * Make sure to review the [lecture notes on modules and functors](../lecture/more-modules.html) for Part I.  
 * If you feel like you need more on the subtleties of information hiding in functors, the [Real World OCaml book chapter on functors](https://dev.realworldocaml.org/functors.html) may be worth looking at.
-* For part II this was covered in the [Specification and Testing Lecture](../lecture/specification-test.html); these notes also contain links to OUnit and Bisect documentation.
+* For coverage in part II this was covered in the [Specification and Testing Lecture](../lecture/specification-test.html); these notes also contain links to OUnit and Bisect documentation.
 
 ### Submission and Grading
 * As usual, run a final `dune clean; dune build` and then upload `_build/default/assignment3.zip` to Gradescope.  Note we will be giving you very little information in our report since you need to provide good coverage on your own and not rely on Gradescope.
