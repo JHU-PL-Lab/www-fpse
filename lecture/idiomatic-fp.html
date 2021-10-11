@@ -80,40 +80,34 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
         </blockquote>
       </li>
       <li>Concise code means on a larger program more will fit in your brain’s working set</li>
-      <li>This focus on concision mirrors mathematicians who are obsessed with this in their writing</li>
-    </ul>
-    <ul>
-      <li>Perhaps in an unhealthy way sometimes</li>
     </ul>
   </li>
   <li>Modularity / focus of responsibility
     <ul>
-      <li>Make clear, strong divisions of responsibility between different modules and functions</li>
+      <li>Make clear divisions of responsibility between different modules and functions</li>
       <li>Attempt to make this factoring of responsibilities the most elegant which will aid in theme 1. above.</li>
-      <li>(This is also a theme of OO design, a similar principle applies there)</li>
     </ul>
   </li>
-  <li>Avoid side effects; it will help you achieve 1. and 2.
+  <li>Generally avoid side effects; it will help you achieve 1. and 2.
     <ul>
-      <li>Recall how pure functional code is referentially transparent, the behavior is all in the interface with no “hidden” effects.</li>
-      <li>Conversely, use side effects instead of standing on your head to make something functional</li>
+      <li>Recall how pure functional code is referentially transparent, the behavior is all in the interface with no “hidden” actions.</li>
       <li>Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on</li>
-      <li>Get your head into pipeline mode when writing functional code</li>
-      <li>If the pipeline metaphor is failing, add state</li>
     </ul>
     <ul>
-      <li>And if you are a beginning FPer, try three more times to get the pipeline view going</li>
+      <li>Aim for pipeline mode when writing functional code<br />
+     - If the pipeline metaphor is failing, add side effects</li>
     </ul>
   </li>
-  <li>Speed schmeed (much of the time)
+  <li>Speed
     <ul>
       <li>There is always a trade-off in programming between efficiency and elegance</li>
-      <li>Prioritize concision and modularity over running time and space</li>
-      <li><strong>unless</strong> speed matters (the point is, it often does not)</li>
+      <li>Much of the time it is possiuble to prioritize concision and modularity over running time and space</li>
+      <li><strong>But</strong>, sometimes speed really matters</li>
     </ul>
     <ul>
-      <li>If speed was so important, Python and JavaScript would not exist; they are ~5-10 times slower.</li>
-      <li>Do generally avoid high polynomial or exponential algorithms</li>
+      <li>When data sets get large or algorithms</li>
+      <li>Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority</li>
+      <li>Do generally avoid high polynomial or exponential algorithms unless uses are all small</li>
       <li>Also pay more attention when data sets get very large, even n vs n log n gets noticeable there.</li>
     </ul>
   </li>
@@ -132,11 +126,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="hide-it-behind-an-interface">Hide it behind an interface</h4>
 <ul>
-  <li>If a function is an auxiliary function to another function, define it in the body of the latter.</li>
-  <li>If a function is not local to a single function but is not used outside its module, leave it out of the module type which will hide it to module users</li>
+  <li>If a function is an auxiliary function to only one other function, define it in the body of the latter.
+    <ul>
+      <li>i.e. <code>let f x = let aux y = ..aux body.. in .. f body ..</code></li>
+    </ul>
+  </li>
+  <li>If a function is not local to a single function but is not used outside its module, leave it out of the module type (usually <code>.mli</code> file) which will hide it to module users</li>
   <li>Make a new module for a new data type, include operations on the type (only) in it
     <ul>
       <li>This is not just for generic data structures lke <code>Map</code>/<code>Set</code>, it is for app-specific data structures</li>
+      <li>Example: <code>ChessBoard</code> is a nontrivial data type for a chess game, make it its own module</li>
     </ul>
   </li>
   <li>Hide types <code>t</code> in module types if users don’t need to see the details
@@ -144,12 +143,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>But, open it up if needed for e.g. testing</li>
     </ul>
   </li>
-  <li>Write specifications (preconditions, postconditions, invariants)
-    <ul>
-      <li>Users can then program to the spec., not the implementation</li>
-    </ul>
-  </li>
-  <li>Replace imperative code with an equivalent functional implementation which has a clearer interface</li>
+  <li>Replace imperative code with an equivalent functional implementation with a clearer interface</li>
 </ul>
 
 <h4 id="have-a-focus-of-responsibility">Have a focus of responsibility</h4>
@@ -159,16 +153,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>A module should have a very clear focus of responsibility
     <ul>
       <li>Don’t add random stuff to module if it doesn’t fit with it’s summary purpose</li>
-      <li>If you need more in an existing module, make a new one and <code>include</code> the old one
-        <ul>
-          <li>Don’t just put the new additional functions in some random user-module</li>
-        </ul>
-      </li>
+      <li>If you need more from an existing module, make a new one and <code>include</code> the old one</li>
     </ul>
   </li>
 </ul>
 
 <h4 id="concision">Concision</h4>
+
+<p>(Some of this was already covered in the <a href="../style-guide.md">FPSE Style Guide</a>)</p>
+
 <ul>
   <li><strong>Combinize</strong>: replace recursion with <code>map</code>s, <code>fold</code>s and the like
     <ul>
@@ -176,23 +169,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>Use advanced pattern matching (<code>as</code>, <code>with</code>, deep patterns, partial record patterns, <code>_</code>, etc)</li>
-  <li>Use <code>|&gt;</code> in place of call sequences, use <code>@@</code> in place of parentheses</li>
+  <li>Use <code>|&gt;</code> in place of call sequences, and make your functions amenable to piping
+    <ul>
+      <li>Make sure to have the underlying pipe-type be the <em>first</em> unnamed parameter</li>
+      <li>Core solution: name most of the parameters in <code>List</code> etc (but not the list)</li>
+    </ul>
+  </li>
+  <li>Use <code>@@</code> in place of parentheses</li>
   <li>Inline simple <code>let</code> definitions to make code read as a concise sentence
     <ul>
       <li>Also a small function called only once or twice may read better inlined</li>
       <li>Conversely, make more <code>let</code> definitions if the code is too convoluted</li>
-    </ul>
-  </li>
-  <li>Avoid <code>long_variable_names_containing_too_much_detail</code>
-    <ul>
-      <li>Conversely, don’t use <code>x</code> <code>f</code> etc unless it is very local (in which case it is preferred)</li>
-      <li>Variables tend to have more local scope in FP compared to OO, shorter is better in FP</li>
-      <li>Declared function names on the other hand can be longer since their scope is broader</li>
-      <li>The general principle is there is a spectrum of local to global
-        <ul>
-          <li>The more local the shorter the name, the more global the longer the name</li>
-        </ul>
-      </li>
     </ul>
   </li>
 </ul>

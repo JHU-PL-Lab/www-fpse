@@ -12,25 +12,21 @@ This a major theme of the course; we have already covered some of this but let's
  - From the classic Strunk and White English writing guide:
      > A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts (**and, code should have no unnecessary constructs**).
  - Concise code means on a larger program more will fit in your brain's working set
- - This focus on concision mirrors mathematicians who are obsessed with this in their writing
-     - Perhaps in an unhealthy way sometimes
 2. Modularity / focus of responsibility
-  - Make clear, strong divisions of responsibility between different modules and functions
+  - Make clear divisions of responsibility between different modules and functions
   - Attempt to make this factoring of responsibilities the most elegant which will aid in theme 1. above.
-  - (This is also a theme of OO design, a similar principle applies there)
-3. Avoid side effects; it will help you achieve 1. and 2.
-  - Recall how pure functional code is referentially transparent, the behavior is all in the interface with no "hidden" effects.
-  - Conversely, use side effects instead of standing on your head to make something functional
+3. Generally avoid side effects; it will help you achieve 1. and 2.
+  - Recall how pure functional code is referentially transparent, the behavior is all in the interface with no "hidden" actions.
   - Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on
-  - Get your head into pipeline mode when writing functional code
-  - If the pipeline metaphor is failing, add state
-     - And if you are a beginning FPer, try three more times to get the pipeline view going
-4. Speed schmeed (much of the time)
+     - Aim for pipeline mode when writing functional code
+  - If the pipeline metaphor is failing, add side effects
+4. Speed
   - There is always a trade-off in programming between efficiency and elegance
-  - Prioritize concision and modularity over running time and space
-  - **unless** speed matters (the point is, it often does not)
-    - If speed was so important, Python and JavaScript would not exist; they are ~5-10 times slower.
-    - Do generally avoid high polynomial or exponential algorithms
+  - Much of the time it is possiuble to prioritize concision and modularity over running time and space
+  - **But**, sometimes speed really matters
+    - When data sets get large or algorithms
+    - Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority
+    - Do generally avoid high polynomial or exponential algorithms unless uses are all small
     - Also pay more attention when data sets get very large, even n vs n log n gets noticeable there.
 
 ### FP Idioms
@@ -43,38 +39,37 @@ Here is a list of idioms, many of which are review as we touched on them before
   - May also entail replacing specific types with generic types `'a` or functor parameter types `t`, `elt` etc
 
 #### Hide it behind an interface
-  - If a function is an auxiliary function to another function, define it in the body of the latter.
-  - If a function is not local to a single function but is not used outside its module, leave it out of the module type which will hide it to module users
+  - If a function is an auxiliary function to only one other function, define it in the body of the latter.
+     - i.e. `let f x = let aux y = ..aux body.. in .. f body ..`
+  - If a function is not local to a single function but is not used outside its module, leave it out of the module type (usually `.mli` file) which will hide it to module users
   - Make a new module for a new data type, include operations on the type (only) in it
      - This is not just for generic data structures lke `Map`/`Set`, it is for app-specific data structures
+     - Example: `ChessBoard` is a nontrivial data type for a chess game, make it its own module
   - Hide types `t` in module types if users don't need to see the details
     - But, open it up if needed for e.g. testing
-  - Write specifications (preconditions, postconditions, invariants)
-    - Users can then program to the spec., not the implementation
-  - Replace imperative code with an equivalent functional implementation which has a clearer interface
+  - Replace imperative code with an equivalent functional implementation with a clearer interface
 
 #### Have a focus of responsibility
   - Each function and module should have a clear focus that can be summarized in a sentence
   - Divide one function/module into two if it is doing two different things
   - A module should have a very clear focus of responsibility
     - Don't add random stuff to module if it doesn't fit with it's summary purpose
-    - If you need more in an existing module, make a new one and `include` the old one
-      - Don't just put the new additional functions in some random user-module
+    - If you need more from an existing module, make a new one and `include` the old one
 
 #### Concision
+
+(Some of this was already covered in the [FPSE Style Guide](../style-guide.md))
+
   - **Combinize**: replace recursion with `map`s, `fold`s and the like
     - and, for your own data structures write your own combinators and then use in place of `rec`
   - Use advanced pattern matching (`as`, `with`, deep patterns, partial record patterns, `_`, etc)
-  - Use `|>` in place of call sequences, use `@@` in place of parentheses
+  - Use `|>` in place of call sequences, and make your functions amenable to piping
+    - Make sure to have the underlying pipe-type be the *first* unnamed parameter
+    - Core solution: name most of the parameters in `List` etc (but not the list)
+  - Use `@@` in place of parentheses
   - Inline simple `let` definitions to make code read as a concise sentence
     - Also a small function called only once or twice may read better inlined
     - Conversely, make more `let` definitions if the code is too convoluted
-  - Avoid `long_variable_names_containing_too_much_detail`
-    - Conversely, don't use `x` `f` etc unless it is very local (in which case it is preferred)
-    - Variables tend to have more local scope in FP compared to OO, shorter is better in FP
-    - Declared function names on the other hand can be longer since their scope is broader
-    - The general principle is there is a spectrum of local to global
-      - The more local the shorter the name, the more global the longer the name
 
 
 ## Efficiency
