@@ -39,8 +39,18 @@ let is_field = Fn.non is_mine
 let from_string_list (l : string list) = 
   List.to_array (List.map l ~f:(fun s -> String.to_array s))
 
-(* Main calculation: annotate a board of mines *)
+let to_string_list (l : char Array_2d.t) : string list = 
+    failwith "TO DO"
+  
+  
+    (* Main calculation: annotate a board of mines *)
 
-let annotate (board: char Array_2d.t) = 
-  let count x y = Array_2d.adjacents board x y |> List.count ~f:(is_mine) in
-  Array_2d.map board ~f:(fun y x c -> if is_field c then (count x y |> to_char) else c)  
+let array_annotate (board: char Array_2d.t) = 
+  let count_nearby_mines x y = Array_2d.adjacents board x y |> List.count ~f:(is_mine) in
+  Array_2d.map board ~f:(fun y x c -> if is_field c then (count_nearby_mines x y |> to_char) else c)  
+
+let annotate (l : string list) =
+  l
+  |> from_string_list
+  |> array_annotate
+  |> to_string_list

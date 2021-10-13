@@ -1,4 +1,4 @@
-(* Final effects encoding topic: a larger monad example
+(* Finalcd . effects encoding topic: a larger monad example
    
    Question to answer: how does this work in practice?
    Method: let's re-code the Minesweeper app we looked at earlier using a state monad.
@@ -50,11 +50,11 @@ module Board = struct
     type 'a t = m -> ('a option) * m
     (* Bind here is a direct combination of option and state bind *)
     let bind (x : 'a t) ~(f: 'a -> 'b t) : 'b t =
-      fun (m : m) -> 
-      match x m with 
-      | (Some(x'),m') -> f x' m' 
-      | (None,m') -> (None,m')
-    let return (x : 'a) : 'a t = fun m -> (Some(x), m)
+      fun (b : m) -> 
+      match x b with 
+      | (Some(x'),b') -> f x' b' 
+      | (None,b') -> (None,b')
+    let return (x : 'a) : 'a t = fun (b : m) -> (Some(x), b)
     let map = `Define_using_bind
     (* inc increments the character at the x,y grid location 
        This code is not pretty due to list-of-strings grid representation *)
