@@ -25,22 +25,13 @@ module Board = struct
 (* get the (x,y) character on board b.
    Uses several functions in Option to properly deal with exceptional cases *)  
 
+  let get_boom (b: t) (x: int) (y: int): char  = 
+    List.nth_exn b y |> (fun row -> String.get row x);;
+
   let get (b: t) (x: int) (y: int): char option = 
-    List.nth b y |> 
+    List.nth b y |>
     Option.value_map ~default:None ~f:(fun row -> Option.try_with (fun () -> String.get row x))
 
-(* Alternate implementation of get using bind.
-   Fact: many functional programs wrap values as we saw with Error/Ok, Some/None, etc
-   Bind gives a way to sequence potentially wrapped values minimizing explicit unwrap/rewrap operations
-   In general these wrappers often form a monad (to be defined), and have several powerful uses
-
-   Option.bind 
-     1. automatically gets at underlying wrapped value for a `Some(astring)` 
-     2. automatically skips the function if `None` was returned, and just bubbles up `None`.
-
-   Option.return
-     1. promotes regular value back to the wrapped version (adds a `Some`)
-   *)
   let get' (b: t) (x: int) (y: int): char option = 
     Option.bind (List.nth b y) 
     ~f:(fun row -> Option.return(String.get row x))
@@ -77,6 +68,7 @@ let%bind row = List.nth b y in try_with(fun () -> String.get row x)
 
   let is_mine = Char.equal '*'
   let is_field = Fn.non is_mine
+  let is_field' c = not @@ is_mine c
 
   let map_field (b: t) ~(f: int -> int -> char -> char): t =
     List.mapi b ~f:(fun y r -> String.mapi r ~f:(fun x c -> if is_field c then f x y c else c)) 
