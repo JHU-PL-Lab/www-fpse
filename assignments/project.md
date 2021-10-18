@@ -1,30 +1,29 @@
-The FPSE Mini-Projects
+The FPSE Projects
 ---------------------
 
-For the final Assignment you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.  Given that there is a month for this assignment the scope will be scaled appropriately.
-
+For the final Assignment you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.  
 ### Requirements
-Here are some high-level requirements for the mini-projects.
+Here are some high-level requirements for the projects.
 
 * All the code must be in OCaml obviously (excepting small bits of glue code)
-* You should use the standard course libraries -- `Core`, `Async`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
-* You are encouraged to partner up although there is no requirement to; effort will be scaled accordingly (i.e. two people should have twice as much "stuff" in the end as one person).
-* A very rough idea of the scope of the project is around 250-500 lines of code per person.
-* There will be two official check-ins: there will be an in-class lab after Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 18th.
+* Use the standard course libraries -- `Core`, `Async`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
+* Project groups can be from 1-3 people, any of these three options is good.
+* A very rough idea of the scope of the project is around 500-1000 lines of code per person.
+* There will be two official check-ins: there will be a lab before Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 1Xth (insert our final day here -- 19th?).
 
 
 ### Potential Project Topic Thrusts
 
 * You will need to make a standalone application as you did in assignments 2 and 4.
-* Since there is limited time to conceive ideas we are putting forth three approaches to help focus your ideas.
+* Here are are three approaches to help focus your ideas.
 
-#### 1. A simple command-line app with persistence
+#### 1. A command-line app with persistence
 * The idea here is to make some application where all the interaction is via the command line.
 * Persistent data across command invocations could be saved in a file using the `Stdio` library.
 * This path is the most straightforward of the three choices.
-* Here are some examples include
+* Here are some simplistic examples, you would need more than these
 
-* A minesweeper game (not just the board calculation done in class, the whole multi-move game).  Here is a mock of such a game:
+* A minesweeper game.  Here is a mock of such a game:
 ```sh
 $ ./mine.exe init 5x4 # initialize a new game, 5x4 board
 -----
@@ -44,18 +43,17 @@ BOOM!
  1---
 $ # etc
 ```
-For Minesweeper we already presented several versions in class so it would have to have a good set of additional features; it would probably be better to just pick some other game.  See [Simon Tatham's Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/) for a bunch of good ideas with running demos.
+See [Simon Tatham's Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/) for a bunch of ideas for games with running demos.
 
 * Another idea is a To-do or scheduling or memo command-line app
 * For all command-line apps some ways to beef them up once the basic app is working include
-  1. Refactoring your code to use monads
-  2. Replace the command line with a web server interface a la `Cohttp_async` mentioned below which could be invoked on the command line by `curl`
+  1. Replace the command line with a web server interface a la `Cohttp_async` mentioned below which could be invoked on the command line by `curl`
   ```sh
   $ curl http://localhost/mine/move?1,1
   ```
-  3. In addition to 2., write a JavaScript front-end to put a UI on your app.  Obviously you would need to be familiar with JavaScript web programming already if you chose this.
-  4. Replace the file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
-  5. Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use `yojson` to convert back and forth.  
+  2. In addition to 2., write a JavaScript front-end to put a UI on your app.  Obviously you would need to be familiar with JavaScript web programming already if you chose this.
+  3. Replace the file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
+  4. Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use `yojson` to convert back and forth.  
     - You probably want to do this from the beginning in fact, it will be easier.
 
 #### 2. Async and web related
@@ -123,8 +121,8 @@ Here is a list of well-maintained libraries we recommend using for the above app
     - But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.
   4. Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.
   5. Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.
-  6. (**new**) Also include a brief list of what order you will implement features, as we discussed in Wednesday's class.
-  7. You may also include any other information which will make it easier to understand your mini-project.
+  6. Also include a brief list of what order you will implement features.
+  7. You may also include any other information which will make it easier to understand your project.
 * For the demo you should be prepared to 
   1. Demo the project showing all the functionality
   2. We may ask questions during this and perhaps ask you to try additional cases
