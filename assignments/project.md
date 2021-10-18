@@ -1,7 +1,7 @@
 The FPSE Projects
 ---------------------
 
-For the final Assignment you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.  
+For the projects you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.  
 ### Requirements
 Here are some high-level requirements for the projects.
 
@@ -9,13 +9,13 @@ Here are some high-level requirements for the projects.
 * Use the standard course libraries -- `Core`, `Async`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 1-3 people, any of these three options is good.
 * A very rough idea of the scope of the project is around 500-1000 lines of code per person.
-* There will be two official check-ins: there will be a lab before Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 1Xth (insert our final day here -- 19th?).
+* There will be two official check-ins: there will be a lab before Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 1Xth (insert our final exam day here -- 19th?).
 
 
 ### Potential Project Topic Thrusts
 
 * You will need to make a standalone application as you did in assignments 2 and 4.
-* Here are are three approaches to help focus your ideas.
+* Here are are three approaches to give some potential directions; feel free to do whatever you like though.
 
 #### 1. A command-line app with persistence
 * The idea here is to make some application where all the interaction is via the command line.
@@ -45,7 +45,6 @@ $ # etc
 ```
 See [Simon Tatham's Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/) for a bunch of ideas for games with running demos.
 
-* Another idea is a To-do or scheduling or memo command-line app
 * For all command-line apps some ways to beef them up once the basic app is working include
   1. Replace the command line with a web server interface a la `Cohttp_async` mentioned below which could be invoked on the command line by `curl`
   ```sh
@@ -54,7 +53,7 @@ See [Simon Tatham's Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtat
   2. In addition to 2., write a JavaScript front-end to put a UI on your app.  Obviously you would need to be familiar with JavaScript web programming already if you chose this.
   3. Replace the file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
   4. Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use `yojson` to convert back and forth.  
-    - You probably want to do this from the beginning in fact, it will be easier.
+    - You should do this from the beginning in fact, it will be easier and more robust.
 
 #### 2. Async and web related
 The combination of the `Async` and `Cohttp_async` libraries allow for both web server and web client applications.  See below for links to the libraries.
