@@ -15,7 +15,7 @@ Note that lecture material will be updated as topics are covered so consider the
           <td width="30%"> 
             <div align="left" class="heading">&nbsp;<strong>Lecture</strong></div>
           </td>
-            <td width="30%"> 
+            <td width="30%">
             <div align="center" class="heading"><strong>Assignment out</strong></div>
           </td>
           <td width="15%"> 
@@ -274,7 +274,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body"><a href="assignments/project.html">Projects and Libraries</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">Project</div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -390,7 +390,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/lazy.html">Laziness</a>, <a href="lecture/efficiency.html">Efficiency</a></div>
+            <div align="left" class="body">Project Lab Day<a href="lecture/lazy.html">Laziness</a>, <a href="lecture/efficiency.html">Efficiency</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -407,10 +407,10 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">TBA</div>
+            <div align="left" class="body"><a href="lecture/lazy.html">Laziness</a>, <a href="lecture/efficiency.html">Efficiency</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">Project</div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>

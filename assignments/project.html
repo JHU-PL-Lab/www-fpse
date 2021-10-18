@@ -59,37 +59,36 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
-    <h2 id="the-fpse-mini-projects">The FPSE Mini-Projects</h2>
+    <h2 id="the-fpse-projects">The FPSE Projects</h2>
 
-<p>For the final Assignment you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.  Given that there is a month for this assignment the scope will be scaled appropriately.</p>
-
+<p>For the projects you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.</p>
 <h3 id="requirements">Requirements</h3>
-<p>Here are some high-level requirements for the mini-projects.</p>
+<p>Here are some high-level requirements for the projects.</p>
 
 <ul>
   <li>All the code must be in OCaml obviously (excepting small bits of glue code)</li>
-  <li>You should use the standard course libraries – <code>Core</code>, <code>Async</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
-  <li>You are encouraged to partner up although there is no requirement to; effort will be scaled accordingly (i.e. two people should have twice as much “stuff” in the end as one person).</li>
-  <li>A very rough idea of the scope of the project is around 250-500 lines of code per person.</li>
-  <li>There will be two official check-ins: there will be an in-class lab after Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 18th.</li>
+  <li>Use the standard course libraries – <code>Core</code>, <code>Async</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
+  <li>Project groups can be from 1-3 people, any of these three options is good.</li>
+  <li>A very rough idea of the scope of the project is around 500-1000 lines of code per person.</li>
+  <li>There will be two official check-ins: there will be a lab before Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 1Xth (insert our final exam day here – 19th?).</li>
 </ul>
 
 <h3 id="potential-project-topic-thrusts">Potential Project Topic Thrusts</h3>
 
 <ul>
   <li>You will need to make a standalone application as you did in assignments 2 and 4.</li>
-  <li>Since there is limited time to conceive ideas we are putting forth three approaches to help focus your ideas.</li>
+  <li>Here are are three approaches to give some potential directions; feel free to do whatever you like though.</li>
 </ul>
 
-<h4 id="1-a-simple-command-line-app-with-persistence">1. A simple command-line app with persistence</h4>
+<h4 id="1-a-command-line-app-with-persistence">1. A command-line app with persistence</h4>
 <ul>
   <li>The idea here is to make some application where all the interaction is via the command line.</li>
   <li>Persistent data across command invocations could be saved in a file using the <code>Stdio</code> library.</li>
   <li>This path is the most straightforward of the three choices.</li>
   <li>
-    <p>Here are some examples include</p>
+    <p>Here are some simplistic examples, you would need more than these</p>
   </li>
-  <li>A minesweeper game (not just the board calculation done in class, the whole multi-move game).  Here is a mock of such a game:
+  <li>A minesweeper game.  Here is a mock of such a game:
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>./mine.exe init 5x4 <span class="c"># initialize a new game, 5x4 board</span>
 <span class="nt">-----</span>
 <span class="nt">-----</span>
@@ -108,12 +107,10 @@ BOOM!
  1---
 <span class="nv">$ </span><span class="c"># etc</span>
 </code></pre></div>    </div>
-    <p>For Minesweeper we already presented several versions in class so it would have to have a good set of additional features; it would probably be better to just pick some other game.  See <a href="https://www.chiark.greenend.org.uk/~sgtatham/puzzles/">Simon Tatham’s Puzzle Collection</a> for a bunch of good ideas with running demos.</p>
+    <p>See <a href="https://www.chiark.greenend.org.uk/~sgtatham/puzzles/">Simon Tatham’s Puzzle Collection</a> for a bunch of ideas for games with running demos.</p>
   </li>
-  <li>Another idea is a To-do or scheduling or memo command-line app</li>
   <li>For all command-line apps some ways to beef them up once the basic app is working include
     <ol>
-      <li>Refactoring your code to use monads</li>
       <li>Replace the command line with a web server interface a la <code>Cohttp_async</code> mentioned below which could be invoked on the command line by <code>curl</code>
         <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl http://localhost/mine/move?1,1
 </code></pre></div>        </div>
@@ -122,7 +119,7 @@ BOOM!
       <li>Replace the file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>
       <li>Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use <code>yojson</code> to convert back and forth.
         <ul>
-          <li>You probably want to do this from the beginning in fact, it will be easier.</li>
+          <li>You should do this from the beginning in fact, it will be easier and more robust.</li>
         </ul>
       </li>
     </ol>
@@ -137,7 +134,7 @@ BOOM!
   <li>Some of the extensions suggested above involved writing a web server interface for your app, you could instead make that your only focus and skip the command-line version</li>
   <li>Another approach is to write a command line app which would access, process, and present data from an existing RESTFul API collator/processor
     <ul>
-      <li>see e.g. <a href="https://rapidapi.com">Rapid API</a> for a large list of APIs available</li>
+      <li>see e.g. <a href="https://github.com/public-apis/public-apis">Public APIs</a> for a large list of APIs available</li>
       <li>Some free APIs there include data for shopping, weather, recipes, COVID, etc etc</li>
       <li>One concrete idea could be to grab both historical weather and COVID data for a location using two different RESTful APIs and compute the correlation between temperature and new COVID cases five days later</li>
       <li>etc etc etc.</li>
@@ -174,6 +171,7 @@ BOOM!
   <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_async</code></a> for both web client (API reading / crawling) and server applications.</li>
   <li>See <a href="https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3">Real World OCaml Chapter 15</a> for an example of how to perform http requests with <code>Cohttp_async</code>.</li>
   <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.  (This tutorial uses the <code>lwt</code> bindings; see the <a href="https://github.com/mirage/ocaml-cohttp/tree/master/examples/async">Cohttp async examples</a> for <code>async</code> versions)</li>
+  <li>Note that <code>Async</code> is not the most mature library; its competitor <code>Lwt</code> might be a better choice in some cases even though it is not as <code>Core</code>-compatible.  <code>Cohttp</code> uses <code>Lwt</code> by default.</li>
   <li>Write a browser app in OCaml, and compile it to JavaScript to run in the browser via <a href="https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview"><code>js_of_ocaml</code></a>.</li>
 </ul>
 
@@ -220,8 +218,8 @@ BOOM!
       </li>
       <li>Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.</li>
       <li>Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.</li>
-      <li>(<strong>new</strong>) Also include a brief list of what order you will implement features, as we discussed in Wednesday’s class.</li>
-      <li>You may also include any other information which will make it easier to understand your mini-project.</li>
+      <li>Also include a brief list of what order you will implement features.</li>
+      <li>You may also include any other information which will make it easier to understand your project.</li>
     </ol>
   </li>
   <li>For the demo you should be prepared to

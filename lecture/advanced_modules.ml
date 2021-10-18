@@ -114,13 +114,31 @@ struct
     Datum.equal (left p1) (left p2) && Datum.equal (right p1) (right p2)
 end
 
+(* Observe that the above type is a **dependent type**:  
+   the type of the returned module depends on `Datum.t` which is part
+   of the concrete module value passed in:
+
+  module Make_pair_smarter :
+  functor (Datum : Datum_i) ->
+    sig
+      type t = Datum.t (* type of result depends on module fed in *)
+      type lr
+      val create : t -> t -> lr
+      val left : lr -> t
+      val right : lr -> t
+      val equal : lr -> lr -> bool
+    end
+
+    -- dependent types generally allow many advanced coding patterns
+*)
 module String_pair_smarter = Make_pair_smarter(String)
 
 let pair_test = String_pair_smarter.create "hi" "ho"
+let left_test = String_pair_smarter.left pair_test
 
-(* Still the String_pair_smarter type is less than great, 
-   e.g. create : t -> t -> lr when it really is
-   create : string -> string -> lr
+(* Still the String_pair_smarter type might be less than great, 
+   e.g. create : t -> t -> lr in String_pair_smarter module type 
+   when it really is create : string -> string -> lr
 *)
 
 (* New syntax: destructive substitution to fix this *)
@@ -140,17 +158,18 @@ end
 
 module String_pair_smartest = Make_pair_smartest(String)
 
-(* Observe type of create in the above has no t in it at all *)
+(* Observe type of create in the sig of the above has no t in it at all *)
 
 (* ******************* *)
 (* First Class Modules *)
 (* ******************* *)
 
 
-(* Treat module as data (hyper-simple version) *)
-(* We sometimes need an explicit module type to get this to work *)
-(* (in general, the more advanced your types get the weaker the inference is) *)
+(* Treat modules as data values: let-define, put in lists, etc etc *)
+(* We often need an explicit module type to get this to work *)
+(* (in general, the more advanced the types get the weaker the inference is) *)
 
+(* The module type for String_pair_smartest above, needed for below *)
 module type Sps_i = 
 sig
   type lr = String_pair_smartest.lr
@@ -159,7 +178,7 @@ sig
   val right : lr -> string
   val equal : lr -> lr -> bool
 end
-(* puts a module in a cell - treats as data 
+(* Let us puts a module in a ref cell as a stupid example of modules-as-data
     "(module M : M_i)" is the syntax for turning regular module into first-class one *)
 
 let mcell  =  ref (module String_pair_smartest : Sps_i)
@@ -173,7 +192,7 @@ module M = (val !mcell)
 let _ : string = 
   let p = M.create "hi" "ho" in M.left p
 
-(* Can also locally unpack it *)
+(* Can also locally unpack it (can do this with any module) *)
 let _ : string = 
   let p = let (module M) = !mcell in M.create "hi" "ho" in M.left p;;
 
@@ -192,7 +211,7 @@ module Int_item : Item_i = struct
   let to_sexpr () = Int.sexp_of_t item
 end
 
-(* Let us make a function to make the above module for int i *)
+(* Let us write a function to make the above module for int i *)
 let make_int_item (i : int) = (module struct
   type t = Int.t
   let item = i
@@ -211,7 +230,7 @@ let item_list = [make_string_item "hi"; make_int_item 5]
 
 (* Inspect the type above, OCaml still sees a uniform list
    Observe that abstract types like t in module types are
-   "exists t"'s - each t underlyin in the list is different but 
+   "exists t"'s - each t underlying in the list is different but 
    OCaml just sees "exists a t" for each one and that is OK! 
    Only when types are 100% hidden are they "exists" 
    So, there is not a lot we can do with such data structures *)
@@ -219,7 +238,7 @@ let item_list = [make_string_item "hi"; make_int_item 5]
 let to_sexpr_items (il : (module Item_i) list)  = 
   List.map ~f:(fun it -> let (module M) = it in M.to_sexpr()) il
 
-(* This example is not useful, but there are many useful examples
+(* This example is not particularly useful, but there are many useful examples
    See e.g. https://dev.realworldocaml.org/first-class-modules.html 's query handling example *)
 
 
