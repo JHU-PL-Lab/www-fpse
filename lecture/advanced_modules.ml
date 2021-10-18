@@ -31,7 +31,7 @@ type 'a my_option = My_some of 'a | My_none
    - f : 'a -> 'a my_option is not the same as the above, it means for ALL 'a again.
 
    - Alternate notation OCaml didn't use but which would let the above make more sense:
-   type option('a) = Some of 'a | None -- 'a is clearly a PARAMETER here
+   type my_option('a) = Some of 'a | None -- 'a is clearly a PARAMETER here
    f : 'a -> option('a)  - 'a is a UNIVERSAL type passed to option which results in a type.
 
  * Type variables can be ALIASES
@@ -130,6 +130,8 @@ end
     end
 
     -- dependent types generally allow many advanced coding patterns
+
+    another e.g.: type t = x : int -> { y : int | x > y }
 *)
 module String_pair_smarter = Make_pair_smarter(String)
 
