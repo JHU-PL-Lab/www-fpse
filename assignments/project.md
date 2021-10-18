@@ -61,7 +61,7 @@ The combination of the `Async` and `Cohttp_async` libraries allow for both web s
 Here are some concrete project ideas.
 * Some of the extensions suggested above involved writing a web server interface for your app, you could instead make that your only focus and skip the command-line version
 * Another approach is to write a command line app which would access, process, and present data from an existing RESTFul API collator/processor 
-   - see e.g. [Rapid API](https://rapidapi.com) for a large list of APIs available
+   - see e.g. [Public APIs](https://github.com/public-apis/public-apis) for a large list of APIs available
    - Some free APIs there include data for shopping, weather, recipes, COVID, etc etc 
    - One concrete idea could be to grab both historical weather and COVID data for a location using two different RESTful APIs and compute the correlation between temperature and new COVID cases five days later
    - etc etc etc.
@@ -87,6 +87,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * We recommend the simple [`Cohttp_async`](https://github.com/mirage/ocaml-cohttp) for both web client (API reading / crawling) and server applications.
 * See [Real World OCaml Chapter 15](https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3) for an example of how to perform http requests with `Cohttp_async`.
 * `Cohttp` also supports lightweight web server development.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.  (This tutorial uses the `lwt` bindings; see the [Cohttp async examples](https://github.com/mirage/ocaml-cohttp/tree/master/examples/async) for `async` versions)
+* Note that `Async` is not the most mature library; its competitor `Lwt` might be a better choice in some cases even though it is not as `Core`-compatible.  `Cohttp` uses `Lwt` by default.
 * Write a browser app in OCaml, and compile it to JavaScript to run in the browser via [`js_of_ocaml`](https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview).
 
 #### Persistence
