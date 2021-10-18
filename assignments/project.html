@@ -1,0 +1,261 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://campuswire.com/c/G2FCCFD2B/feed">Q&A</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="the-fpse-mini-projects">The FPSE Mini-Projects</h2>
+
+<p>For the final Assignment you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.  Given that there is a month for this assignment the scope will be scaled appropriately.</p>
+
+<h3 id="requirements">Requirements</h3>
+<p>Here are some high-level requirements for the mini-projects.</p>
+
+<ul>
+  <li>All the code must be in OCaml obviously (excepting small bits of glue code)</li>
+  <li>You should use the standard course libraries – <code>Core</code>, <code>Async</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
+  <li>You are encouraged to partner up although there is no requirement to; effort will be scaled accordingly (i.e. two people should have twice as much “stuff” in the end as one person).</li>
+  <li>A very rough idea of the scope of the project is around 250-500 lines of code per person.</li>
+  <li>There will be two official check-ins: there will be an in-class lab after Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 18th.</li>
+</ul>
+
+<h3 id="potential-project-topic-thrusts">Potential Project Topic Thrusts</h3>
+
+<ul>
+  <li>You will need to make a standalone application as you did in assignments 2 and 4.</li>
+  <li>Since there is limited time to conceive ideas we are putting forth three approaches to help focus your ideas.</li>
+</ul>
+
+<h4 id="1-a-simple-command-line-app-with-persistence">1. A simple command-line app with persistence</h4>
+<ul>
+  <li>The idea here is to make some application where all the interaction is via the command line.</li>
+  <li>Persistent data across command invocations could be saved in a file using the <code>Stdio</code> library.</li>
+  <li>This path is the most straightforward of the three choices.</li>
+  <li>
+    <p>Here are some examples include</p>
+  </li>
+  <li>A minesweeper game (not just the board calculation done in class, the whole multi-move game).  Here is a mock of such a game:
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>./mine.exe init 5x4 <span class="c"># initialize a new game, 5x4 board</span>
+<span class="nt">-----</span>
+<span class="nt">-----</span>
+<span class="nt">-----</span>
+<span class="nt">-----</span>
+<span class="nv">$ </span>./mine.exe move 0,3
+<span class="nt">-----</span>
+<span class="nt">-----</span>
+12---
+ 1---
+<span class="nv">$ </span>./mine.exe move 2,2
+BOOM!
+<span class="nt">-----</span>
+<span class="nt">-----</span>
+12<span class="k">*</span><span class="nt">--</span>
+ 1---
+<span class="nv">$ </span><span class="c"># etc</span>
+</code></pre></div>    </div>
+    <p>For Minesweeper we already presented several versions in class so it would have to have a good set of additional features; it would probably be better to just pick some other game.  See <a href="https://www.chiark.greenend.org.uk/~sgtatham/puzzles/">Simon Tatham’s Puzzle Collection</a> for a bunch of good ideas with running demos.</p>
+  </li>
+  <li>Another idea is a To-do or scheduling or memo command-line app</li>
+  <li>For all command-line apps some ways to beef them up once the basic app is working include
+    <ol>
+      <li>Refactoring your code to use monads</li>
+      <li>Replace the command line with a web server interface a la <code>Cohttp_async</code> mentioned below which could be invoked on the command line by <code>curl</code>
+        <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>curl http://localhost/mine/move?1,1
+</code></pre></div>        </div>
+      </li>
+      <li>In addition to 2., write a JavaScript front-end to put a UI on your app.  Obviously you would need to be familiar with JavaScript web programming already if you chose this.</li>
+      <li>Replace the file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>
+      <li>Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use <code>yojson</code> to convert back and forth.
+        <ul>
+          <li>You probably want to do this from the beginning in fact, it will be easier.</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+</ul>
+
+<h4 id="2-async-and-web-related">2. Async and web related</h4>
+<p>The combination of the <code>Async</code> and <code>Cohttp_async</code> libraries allow for both web server and web client applications.  See below for links to the libraries.</p>
+
+<p>Here are some concrete project ideas.</p>
+<ul>
+  <li>Some of the extensions suggested above involved writing a web server interface for your app, you could instead make that your only focus and skip the command-line version</li>
+  <li>Another approach is to write a command line app which would access, process, and present data from an existing RESTFul API collator/processor
+    <ul>
+      <li>see e.g. <a href="https://rapidapi.com">Rapid API</a> for a large list of APIs available</li>
+      <li>Some free APIs there include data for shopping, weather, recipes, COVID, etc etc</li>
+      <li>One concrete idea could be to grab both historical weather and COVID data for a location using two different RESTful APIs and compute the correlation between temperature and new COVID cases five days later</li>
+      <li>etc etc etc.</li>
+    </ul>
+  </li>
+  <li>You could write a web crawler app
+    <ul>
+      <li>starting from a URL grab it and all contained URL (up to some breadth and depth limit)</li>
+      <li>Then, compute some aspects on the pages, e.g. count how many lines of code, etc</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="3-scientific--machine-learning">3. Scientific / Machine Learning</h4>
+
+<p>This approach is for those with some background in this area.</p>
+
+<ul>
+  <li>A simple machine learning app using PyTorch or TensorFlow and possibly graphing it in Owl; see below for links to the OCaml libraries</li>
+  <li>Here is a <a href="https://blog.janestreet.com/deep-learning-experiments-in-ocaml/">Jane Street Article</a> on use of TensorFlow within OCaml.</li>
+</ul>
+
+<h3 id="libraries-catalog">Libraries Catalog</h3>
+<p>Here is a list of well-maintained libraries we recommend using for the above approaches, as well as some lists you can find other libraries on.</p>
+
+<h4 id="web-based">Web-based</h4>
+
+<ul>
+  <li>Since web-based applications may have delayed response or may fail, you should use the <code>Async</code> library for any web client or server app.
+    <ul>
+      <li>See the <a href="../lazy-async.html#async">async lecture notes</a> and <a href="https://dev.realworldocaml.org/concurrent-programming.html">Real World OCaml Chapter 15</a> for more information on using <code>Async</code>.</li>
+    </ul>
+  </li>
+  <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_async</code></a> for both web client (API reading / crawling) and server applications.</li>
+  <li>See <a href="https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3">Real World OCaml Chapter 15</a> for an example of how to perform http requests with <code>Cohttp_async</code>.</li>
+  <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.  (This tutorial uses the <code>lwt</code> bindings; see the <a href="https://github.com/mirage/ocaml-cohttp/tree/master/examples/async">Cohttp async examples</a> for <code>async</code> versions)</li>
+  <li>Write a browser app in OCaml, and compile it to JavaScript to run in the browser via <a href="https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview"><code>js_of_ocaml</code></a>.</li>
+</ul>
+
+<h4 id="persistence">Persistence</h4>
+
+<ul>
+  <li>For simple persistence you can just read and write from a file, via the <code>Stdio</code> Jane Street library.</li>
+  <li>If you are familiar with databases, the <a href="https://github.com/mmottl/sqlite3-ocaml">sqlite3-ocaml</a> and <a href="https://mmottl.github.io/postgresql-ocaml/">postgresql-ocaml</a> bindings should work for accessing SQLite or Postgres databases from within OCaml.</li>
+</ul>
+
+<h4 id="data-processing">Data Processing</h4>
+<ul>
+  <li><a href="https://ocaml.xyz/book/">Owl</a> is a very well-documented numerical processing library.</li>
+  <li><a href="https://github.com/LaurentMazare/ocaml-torch">ocaml-torch</a> PyTorch bindings for OCaml</li>
+  <li><a href="https://github.com/LaurentMazare/tensorflow-ocaml">tensorflow-ocaml</a> TensorFlow bindings for OCaml</li>
+  <li><a href="https://github.com/zshipko/ocaml-bimage">ocaml-bimage</a> is an image processing library.</li>
+</ul>
+
+<h4 id="and-more">And more!</h4>
+
+<ul>
+  <li>There are many OCaml libraries as well as bindings to existing C etc libraries</li>
+  <li>The <a href="https://ocamlverse.github.io/content/ecosystem.html">OCamlverse Ecosystem page</a> lists many libraries available.
+    <ul>
+      <li>Note that some libraries in the list are not particularly up-to-date or reliable or well-documented.  They are roughly sorted though so start with the ones at the top of a given list.</li>
+    </ul>
+  </li>
+  <li><a href="https://github.com/ocaml-community/awesome-ocaml">Awesome OCaml</a> is another such list.</li>
+</ul>
+
+<h3 id="submissions">Submissions</h3>
+
+<ul>
+  <li>There will be two submission points in Gradescope, one for the initial design and one for the final code</li>
+  <li>The initial design submission must include
+    <ol>
+      <li>An overview of the purpose of the project</li>
+      <li>A list of libraries you plan on using</li>
+      <li>Commented module type declarations which will provide you with an initial specification to code to
+        <ul>
+          <li>You can obviously change this later and don’t need every single detail filled out</li>
+          <li>But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.</li>
+        </ul>
+      </li>
+      <li>Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.</li>
+      <li>Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.</li>
+      <li>(<strong>new</strong>) Also include a brief list of what order you will implement features, as we discussed in Wednesday’s class.</li>
+      <li>You may also include any other information which will make it easier to understand your mini-project.</li>
+    </ol>
+  </li>
+  <li>For the demo you should be prepared to
+    <ol>
+      <li>Demo the project showing all the functionality</li>
+      <li>We may ask questions during this and perhaps ask you to try additional cases</li>
+      <li>Code review: take us through your code, we will be commenting as we go.
+        <ul>
+          <li>Make sure to describe your use of libraries; if you are using a novel library we may not know, give a brief overview of it.</li>
+        </ul>
+      </li>
+      <li>Build and test: build your project and tests, and then review your test suite.</li>
+    </ol>
+  </li>
+  <li>The final submission will in addition include
+    <ol>
+      <li>All of the code of course!</li>
+      <li>It should include a dune file which successfuly builds your project</li>
+      <li>It should include a <code>Readme.md</code> at the top outlining how to build and run the project.  If any other <code>opam</code> installs are needed outside of the offical course list, describe them in your <code>Readme.md</code>.</li>
+      <li>You will also need to include a test suite with good coverage.</li>
+    </ol>
+  </li>
+  <li>We will put up two submission points in Gradescope for you to upload your zipped hierarchies for the Design and Final submissions.  Please include all the source files needed to build the project but no binary or built files.</li>
+  <li>If you are working with a team-mate, make sure the submission is marked as such.  Only one person on the team needs to upload the submission.</li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>
