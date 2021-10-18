@@ -70,13 +70,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Use the standard course libraries – <code>Core</code>, <code>Async</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 1-3 people, any of these three options is good.</li>
   <li>A very rough idea of the scope of the project is around 500-1000 lines of code per person.</li>
-  <li>There will be two official check-ins: there will be a lab before Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 1Xth (insert our final exam day here – 19th?).</li>
+  <li>There will be two official check-ins: there will be an in-class lab mid-November with a submission shortly after, and there will be a final demo and code submission on Dec 17th.</li>
 </ul>
 
 <h3 id="potential-project-topic-thrusts">Potential Project Topic Thrusts</h3>
 
 <ul>
-  <li>You will need to make a standalone application as you did in assignments 2 and 4.</li>
+  <li>You will need to make a standalone application as you did/will in assignments 2 and 4.</li>
   <li>Here are are three approaches to give some potential directions; feel free to do whatever you like though.</li>
 </ul>
 
@@ -171,7 +171,7 @@ BOOM!
   <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_async</code></a> for both web client (API reading / crawling) and server applications.</li>
   <li>See <a href="https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3">Real World OCaml Chapter 15</a> for an example of how to perform http requests with <code>Cohttp_async</code>.</li>
   <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.  (This tutorial uses the <code>lwt</code> bindings; see the <a href="https://github.com/mirage/ocaml-cohttp/tree/master/examples/async">Cohttp async examples</a> for <code>async</code> versions)</li>
-  <li>Note that <code>Async</code> is not the most mature library; its competitor <code>Lwt</code> might be a better choice in some cases even though it is not as <code>Core</code>-compatible.  <code>Cohttp</code> uses <code>Lwt</code> by default.</li>
+  <li>Note that <code>Async</code> is not the most mature library; its similar competitor <code>Lwt</code> might be a better choice in some cases even though it is not as <code>Core</code>-compatible.  <code>Cohttp</code> for example seems more reliable with <code>Lwt</code>.</li>
   <li>Write a browser app in OCaml, and compile it to JavaScript to run in the browser via <a href="https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview"><code>js_of_ocaml</code></a>.</li>
 </ul>
 

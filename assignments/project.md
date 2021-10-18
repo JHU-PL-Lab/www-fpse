@@ -9,12 +9,12 @@ Here are some high-level requirements for the projects.
 * Use the standard course libraries -- `Core`, `Async`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 1-3 people, any of these three options is good.
 * A very rough idea of the scope of the project is around 500-1000 lines of code per person.
-* There will be two official check-ins: there will be a lab before Thanksgiving with a submission shortly after, and there will be a final demo and code submission on Dec 1Xth (insert our final exam day here -- 19th?).
+* There will be two official check-ins: there will be an in-class lab mid-November with a submission shortly after, and there will be a final demo and code submission on Dec 17th.
 
 
 ### Potential Project Topic Thrusts
 
-* You will need to make a standalone application as you did in assignments 2 and 4.
+* You will need to make a standalone application as you did/will in assignments 2 and 4.
 * Here are are three approaches to give some potential directions; feel free to do whatever you like though.
 
 #### 1. A command-line app with persistence
@@ -87,7 +87,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * We recommend the simple [`Cohttp_async`](https://github.com/mirage/ocaml-cohttp) for both web client (API reading / crawling) and server applications.
 * See [Real World OCaml Chapter 15](https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3) for an example of how to perform http requests with `Cohttp_async`.
 * `Cohttp` also supports lightweight web server development.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.  (This tutorial uses the `lwt` bindings; see the [Cohttp async examples](https://github.com/mirage/ocaml-cohttp/tree/master/examples/async) for `async` versions)
-* Note that `Async` is not the most mature library; its competitor `Lwt` might be a better choice in some cases even though it is not as `Core`-compatible.  `Cohttp` uses `Lwt` by default.
+* Note that `Async` is not the most mature library; its similar competitor `Lwt` might be a better choice in some cases even though it is not as `Core`-compatible.  `Cohttp` for example seems more reliable with `Lwt`.
 * Write a browser app in OCaml, and compile it to JavaScript to run in the browser via [`js_of_ocaml`](https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview).
 
 #### Persistence

@@ -271,10 +271,10 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="assignments/project.html">Projects and Libraries</a></div>
+            <div align="left" class="body"><a href="assignments/project.html">Projects and Libraries</a>, <a href="lecture/advanced_modules.ml">Advanced Modules</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">Project</div>
+            <div align="center" class="body"><a href="assignments/project.html">Project</a></div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -390,7 +390,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Project Lab Day<a href="lecture/lazy.html">Laziness</a>, <a href="lecture/efficiency.html">Efficiency</a></div>
+            <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -413,7 +413,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">Project Designs</div>
           </td>
         </tr>
         <tr> 
@@ -492,7 +492,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Project Lab I</div>
+            <div align="left" class="body">TBA</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -509,7 +509,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Project Lab II</div>
+            <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -526,7 +526,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Fri</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;<strong>Projects Due</strong></div>
+            <div align="left" class="body">&nbsp;<strong>Project Demos</strong></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
