@@ -21,7 +21,7 @@ let thaw e = e ()
 thaw frozen_add;; (* 4+3 not computed until here *)
 ```
 
-* This encoding is in fact just "call by name", laziness means memoizing the result.
+* This simple encoding is in fact just "call by name", laziness means memoizing the result.
 
 
 #### The `Base.Lazy` module
@@ -42,15 +42,12 @@ Have a smiley day! (* this is printed only once, the 2nd force uses cached 5 val
 - : int = 10
 ```
 
-* Fact: laziness is just a "wrapper" on a computation
-* So: Lazy is in fact (yet) another monad - !
-  - We won't get into `Lazy.bind` etc here but lets make an infinite stream of fib's.
-
 ```ocaml
 open Core
 open Lazy
-type 'a stream = Cons of 'a * 'a stream Lazy.t (* List MUST be infinite *)
+type 'a stream = Cons of 'a * 'a stream Lazy.t (* List MUST be infinite - ! *)
 
+(* Programs making lazy lists look somewhat bizarre at first - doesn't this loop forever?!? *)
 let rec all_ones : int stream = Cons(1,lazy(all_ones))
 
 let rec ints n : int stream = Cons(n,lazy(ints (n+1)))
@@ -65,10 +62,13 @@ let rec nth (Cons(hd, tl) : 'a stream) (n : int) :'a =
 
 let rec fib : int stream = 
   let rec fib_rest (Cons(hd, tl) : int stream) : (int stream) = 
-   let Cons(hd',_) = force tl in
+   let Cons(hd',_) = force tl in (* Note can't pattern match on first-2 together due to force needed *)
     Cons (hd + hd', lazy(fib_rest (force tl))) in
   Cons(1, lazy(Cons(1, lazy(fib_rest fib))))
+
+nth fib 100;; (* clearly not exponential *)
 ```
+
 
 * One thing not clear from the code is that a `Lazy` will not be recomputed
 * Once the list is "unrolled" by one call it doesn't need to be "re-unrolled"

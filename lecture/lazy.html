@@ -95,7 +95,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>This encoding is in fact just “call by name”, laziness means memoizing the result.</li>
+  <li>This simple encoding is in fact just “call by name”, laziness means memoizing the result.</li>
 </ul>
 
 <h4 id="the-baselazy-module">The <code>Base.Lazy</code> module</h4>
@@ -117,19 +117,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">10</span>
 </code></pre></div></div>
 
-<ul>
-  <li>Fact: laziness is just a “wrapper” on a computation</li>
-  <li>So: Lazy is in fact (yet) another monad - !
-    <ul>
-      <li>We won’t get into <code>Lazy.bind</code> etc here but lets make an infinite stream of fib’s.</li>
-    </ul>
-  </li>
-</ul>
-
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span>
 <span class="k">open</span> <span class="nc">Lazy</span>
-<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Cons</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span> <span class="nn">Lazy</span><span class="p">.</span><span class="n">t</span> <span class="c">(* List MUST be infinite *)</span>
+<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Cons</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span> <span class="nn">Lazy</span><span class="p">.</span><span class="n">t</span> <span class="c">(* List MUST be infinite - ! *)</span>
 
+<span class="c">(* Programs making lazy lists look somewhat bizarre at first - doesn't this loop forever?!? *)</span>
 <span class="k">let</span> <span class="k">rec</span> <span class="n">all_ones</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Cons</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="k">lazy</span><span class="p">(</span><span class="n">all_ones</span><span class="p">))</span>
 
 <span class="k">let</span> <span class="k">rec</span> <span class="n">ints</span> <span class="n">n</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">n</span><span class="o">,</span><span class="k">lazy</span><span class="p">(</span><span class="n">ints</span> <span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
@@ -144,9 +136,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">stream</span> <span class="o">=</span> 
   <span class="k">let</span> <span class="k">rec</span> <span class="n">fib_rest</span> <span class="p">(</span><span class="nc">Cons</span><span class="p">(</span><span class="n">hd</span><span class="o">,</span> <span class="n">tl</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">stream</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="n">stream</span><span class="p">)</span> <span class="o">=</span> 
-   <span class="k">let</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">hd'</span><span class="o">,_</span><span class="p">)</span> <span class="o">=</span> <span class="n">force</span> <span class="n">tl</span> <span class="k">in</span>
+   <span class="k">let</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">hd'</span><span class="o">,_</span><span class="p">)</span> <span class="o">=</span> <span class="n">force</span> <span class="n">tl</span> <span class="k">in</span> <span class="c">(* Note can't pattern match on first-2 together due to force needed *)</span>
     <span class="nc">Cons</span> <span class="p">(</span><span class="n">hd</span> <span class="o">+</span> <span class="n">hd'</span><span class="o">,</span> <span class="k">lazy</span><span class="p">(</span><span class="n">fib_rest</span> <span class="p">(</span><span class="n">force</span> <span class="n">tl</span><span class="p">)))</span> <span class="k">in</span>
   <span class="nc">Cons</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="k">lazy</span><span class="p">(</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="k">lazy</span><span class="p">(</span><span class="n">fib_rest</span> <span class="n">fib</span><span class="p">))))</span>
+
+<span class="n">nth</span> <span class="n">fib</span> <span class="mi">100</span><span class="p">;;</span> <span class="c">(* clearly not exponential *)</span>
 </code></pre></div></div>
 
 <ul>

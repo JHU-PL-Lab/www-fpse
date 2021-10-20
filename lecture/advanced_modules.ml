@@ -283,21 +283,50 @@ end
 
 module PairMap = Map.Make(IntPair)
 
-(* Alternative method for creating Map's via first-class modules: *)
+(* Let us reconsider the first-class modules method for making Maps
+   now that we know the syntax
+*)
 
 let m = Map.empty (module String) (* make an empty module with string key *)
 
+(* Now can simply use Map.add etc, no need for our own module *)
 let added = m |> Map.add_exn ~key:"hello" ~data:3 |> Map.to_alist
 
-(* Notice how we can directly us Map.add etc not PairMap.add -- simpler 
-   Key observation: ∂nNeeded to use first-class modules to get it to work
+(* Note that above we had to put a module type on any defined module:
+   "let mcell  =  ref (module String_pair_smartest : Sps_i)" required the ": Sps_i" 
+   But here the type is in Map.empty's domain so we don't need to!
+   What is Map.empty's type?  Informally it is taking a module as argument
+   So, type of argument must be a module type (but in expression-land)
 
-   Let us try this trick on our own module IntPair: *)
+# #show Map.empty;;
+val empty : ('a, 'cmp) Map.comparator -> ('a, 'b, 'cmp) Map.t
+
+# #show_type Map.comparator;;
+type nonrec ('k, 'cmp) comparator =
+    (module Core_kernel__.Comparator.S with type comparator_witness = 'cmp and type t = 'k)
+
+-- notice how we can also put "module" on a module type to make it an expresion type - !
+
+Example:
+
+# let m : ((string,String.comparator_witness) Map.comparator) = (module String);;
+val m : (string, String.comparator_witness) Map.comparator = <module>
+
+Same idea but on previous Sps example:
+
+# let sps : (module Sps_i) = (module String_pair_smartest);;
+val sps : (module Sps_i) = <module>
+
+*)
+
+(* 
+
+   Let us try the above first-class module Map creation on our own module IntPair: *)
 
 let m = Map.empty (module IntPair)
 
 (* Gives an error, needs a comparator and a comparator_witness *)
-(* Here is the magical way to add those *)
+(* Solution: here is the somewhat-magical way to add those *)
 
 module IntPairCompar = struct
   module T = struct 
@@ -309,9 +338,10 @@ end
 
 let m = Map.empty (module IntPairCompar) (* Works now *)
 
-(* The above "include" pattern is clever - call all "your" stuff T, include it, 
-   and since it has a name you can now pass it to a functor which will build the comparators
-   keyword This_module could also solve this in a more OO style but this is OCaml *)
+(* The above "include" pattern is clever - call all "your" stuff T temporarily, include it, 
+   and since it has a name you can now pass it to a functor which will build  and
+   include the comparators.
+*)
 
 (* Observe the type of Maps are now `('a, 'b, 'cmp) Map_intf.Map.t`  
   'a is the key type
@@ -349,19 +379,43 @@ let r = IntPairCompar.comparator.sexp_of_t;; (* can access fields of private rec
 (* **** I/O ******* *)
 (* **************** *)
 
-(* If there is any time left we will briefly look at the I/O libraries in Core (i.e., Stdio)
+(* We will briefly look at the I/O libraries in Core (i.e., Stdio)
    See e.g. https://dev.realworldocaml.org/imperative-programming.html#file-io for description
-   They are mostly straightforward, but print format strings are somewhat odd. *)
+   They are mostly straightforward, but print format strings are "very special". *)
 
 let () = printf "%i is the number \n" 5;;
 
 (* The compiler is doing special things with the argument here, it is converting it into
-   a function which will do this particular output taking 5 as a parameter *)
+   a function which will do this particular output taking 5 as a parameter
+   
+   Why?? Printing is fully type-safe in OCaml, if you pass the wrong type of value
+    you will get a type error ! *)
 
-(* So, you can't just pass a string to printf *)
+(* So, you can't just pass a format string just as a string to printf *)
 let () = let s = "%i is the number \n" in printf s 5 (* type error *)
 
 (* The compiler is converting the string into a format type value for you *)
-open CamlinternalFormatBasics
-let fmt : ('a, 'b, 'c) format =  "%i is the number \n"
-let () = printf fmt 5;;
+open CamlinternalFormatBasics (* shorten what is printed *)
+
+(* Lets give the string above a format type *)
+let fmt : (int -> 'a, 'b, 'c) format =  "%i is the number \n"
+
+(* observe the first parameter is a function taking an int - that is extracted from the %i 
+  by the compiler.  Note the function will be inferred if we leave it out. *)
+let fmt2 : ('a, 'b, 'c) format =  "%i is the number \n"
+
+let () = printf fmt 5;; (* Finally we can pass the format string as a parameter *)
+
+let () = printf fmt "k";; (* Compile-time error: printing with `fmt` needs an int. *)
+
+(* Note that in general you can declare too-generic types and OCaml inference will refine *)
+let x : 'a = 6;; (* refines 'a to int *)
+
+let fmt3 : ('a, 'b, 'c) format =  "%i is the number %s is the string %s too \n";;
+
+let () = printf fmt3 4 "k" "l";; 
+
+(* Note printf is Out_channel.printf and there is also 
+  fprintf (print to any out_channel including network file etc; printf is (fprintf stdout)) 
+  sprintf (just "print" onto a string), 
+  eprintf (print to std error), etc *)
