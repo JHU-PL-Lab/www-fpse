@@ -112,8 +112,9 @@ Here is a list of well-maintained libraries we recommend using for the above app
 
 ### Submissions
 
-* There will be two submission points in Gradescope, one for the initial design and one for the final code
-* The initial design submission must include
+* There will be two submission points in Gradescope, one ungraded one for initial group and idea, one for the design, and one for the final code.  For each group only one person needs to submit.
+* The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus potential libraries.  Basically, the result of one initial brainstorming session.
+* The design submission must include
   1. An overview of the purpose of the project
   2. A list of libraries you plan on using
   3. Commented module type declarations which will provide you with an initial specification to code to
