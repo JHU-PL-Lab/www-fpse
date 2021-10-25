@@ -374,7 +374,6 @@ end
 
 let r = IntPairCompar.comparator.sexp_of_t;; (* can access fields of private record *)
 
-
 (* **************** *)
 (* **** I/O ******* *)
 (* **************** *)

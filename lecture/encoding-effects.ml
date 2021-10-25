@@ -9,7 +9,7 @@ open Core
 (*
   * We have seen so far the advantages of functional programming
   * But, sometimes it is a large handicap to not have side effects
-  * One middle ground is possible: *encode* effects using functional code only
+  * A middle ground is possible: *encode* effects using functional code only
     - we already saw a bit of this with the option type replacing exceptions
     - also the use of piping such as 
 *)
@@ -23,7 +23,7 @@ let _ : bool = Map.empty(module String)
      of what would normally be a mutable structure 
 
   * Idea: make a more structured encoding which is not informal like the above
-  * Think of it as defining a language-inside-a-language: "monad-land"
+  * Think of it as defining a macro language inside a language: "monad-land"
   * Will allow functional code to be written which "feels" close to effectful code
   * But it still will preserve the referential transparency etc in most places
   * The mathematical basis for this is a structure called a *monad*.
@@ -75,15 +75,15 @@ let ex l1 l2 =
 (* 
  * The key operation of a monad is `bind` 
  * For Option it already exists as Option.bind
- * Here is its code: 
+ * Here is its code for reference: 
  *)
 
 let bind (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) = 
   match opt with 
   | None -> None 
-  | Some v -> f v
+  | Some v -> f v;;
 
-let _ = bind (zip [1;2] [3;4]) ~f:(fun _ -> None)
+bind (zip [1;2] [3;4]) ~f:(function (l,r)::tl -> Some(l));;
 
 (* 
   * bind *sequences* two side effects
@@ -96,6 +96,9 @@ let _ = bind (zip [1;2] [3;4]) ~f:(fun _ -> None)
   * Using the macro, code can look more like regular code with implicit effects
   * We have pushed monad-land into hiding a bit
 *)
+
+let%bind (l,r)::tl = zip [1;2] [3;4] in Some(l);;
+
 
 (* 
  * Here is what Option.return is
@@ -146,37 +149,39 @@ let ex_bind_error l1 l2 =
 (* Equivalent pipe version syntax 
    * a >>= b is just an infix form of bind, it is nothing but bind a b
    * a >>| b is used when b is just a "normal" function which is not returning an option.
-   - encoding:  a >>| b is bind a (fun x -> return (f x))
+   - encodings:
+     --  a >>| b is      bind a (fun x -> return (b x))
+     --  a >>| b is also a >>= (fun x -> return(b x))
    - the additional "return" "lifts" f's result back into monad-land
-   * If you are just sequencing a bunch of function calls as above it reads better with pipes
+   - the types make this difference clear:
+     # (>>|);;
+     - : 'a option -> ('a -> 'b) -> 'b option = <fun>
+     # (>>=);;
+     - : 'a option -> ('a -> 'b option) -> 'b option = <fun>
+   * If you are just sequencing a bunch of function calls as above it reads better with these two pipes
 *)
 
 let ex_piped l1 l2 =
-  ((((zip l1 l2 
-      >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)))
-     >>= List.tl)
-    >>= List.hd)
-   >>= return)
-
-
-(* Here are some other versions that came up in lecture *)
-
-(* First, the last return is in fact not needed in either let%bind or piped version
-   as the previous 'a t typed value is all we need *)
-
-let ex_bind' l1 l2 =
-  bind (zip l1 l2) ~f:(fun l ->
-      let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
-      bind (List.tl m) ~f:(fun tail -> (List.hd tail)))
-
-let ex_piped' l1 l2 =
   zip l1 l2 
   >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
   >>= List.tl
   >>= List.hd
+  (* >>= return not needed at the end - it is a no-op *)
 
-(* A subtle point is that the pipe notation is associating the sequencing in a different
-   order.  
+  (* The above uses >>| when the result of the step is not in monad-land
+  and so the result needs to be put back there for the pipeline 
+  >>= is for the result that is in monad-land already. *)
+
+(* A subtle point is that the pipe notation is associating the sequencing in 
+a different  order.  Here is parens added to the above *)
+
+let ex_piped' l1 l2 =
+  (((zip l1 l2 
+  >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)))
+  >>= List.tl)
+  >>= List.hd)
+
+(*
    - We all know that a;(b;c) "is the same order as" (a;b);c (e.g. in OCaml they give same results)
    - for let, the rule is a bit more convoluted:
        let xa = a in let xb = b in c   is   let xc = (let xb = (let xa = a in b) in c)
@@ -186,31 +191,19 @@ let ex_piped' l1 l2 =
 
 *)
 
-(* Here we also see how the >>| is a map *)
-
+(* To show this let us turn the piped version into let%bind version: *)
 let ex_piped_expanded l1 l2 =
-  bind(bind (map (zip l1 l2) ~f:(List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))))
-         ~f: List.tl)
-    ~f: List.hd
-
-let ex_piped_expanded_percent l1 l2 =
   let%bind tail = 
     let%bind m = 
       let%map l = zip l1 l2 in List.fold l ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)) in
     List.tl m in
   List.hd tail
 
-(* And, the >>| is like >>= but the second computation (the ~f one) is expected to return a 
-   non-monadic value and >>| automatically lifts it to monad-land with a return 
-   Here we turn >>| into a normal monad-pipe >>= with explicit return to illustrate. *)
+(* Note let%map is the let% analogue of |>> *)
 
-let ex_piped'' l1 l2 =
-  zip l1 l2 
-  >>= fun l -> return(List.fold l ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)))
-  >>= List.tl
-  >>= List.hd
 
 (* 
+  * OK it is finally time for a "real" monad
   * Option extended to a more general Exception monad
   * This example also shows how we can define our own monads with Base.Monad.Make
 *)
@@ -247,7 +240,7 @@ module Exception = struct
       | None -> f () 
       | Some x -> Some x
   end
-  include T
+  include T (* The same naming trick used here as with Comparable *)
   include Monad.Make(T) (* Base.Monad functor to add lots of extra goodies *)
 end
 
