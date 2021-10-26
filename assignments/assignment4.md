@@ -11,8 +11,7 @@ You will also need to write tests with good coverage for exercises 1-6 in your P
 
 For Part II you will make a standalone app which uses the functions from part I.  Note if you need more library functions for your app, put them in `lib.ml`.
 
-You will need to continue to keep good unit test coverage on your library code.  note you do not need to make any acceptance tests for the executable itself, but
-you should test any auxiliary library functions which are amenable to unit testing.
+You will need to continue to keep good unit test coverage on your library code.  note you do not need to make any acceptance tests for the executable itself, but you should test any auxiliary library functions which are amenable to unit testing.
 
 In addition, for your exercise 6 sanitizer answer write a `Base_quickcheck` random test as one of your OUnit tests following the [Quickcheck lecture](../specification-test.html#quickcheck).  To partially verify the random test data follows the specification just perform sanity checks, e.g. verify there are no "%" etc in the output, and that no words in the input were dropped.
 
