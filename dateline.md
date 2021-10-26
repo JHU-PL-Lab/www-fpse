@@ -345,7 +345,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A4 PI</div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
         <tr> 
@@ -362,7 +362,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A4 PI</div>
           </td>
         </tr>
         <tr> 
@@ -379,7 +379,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body"><a href="assignments/assignment5.html">A5</a></div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A4 PII</div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
         <tr> 
@@ -396,7 +396,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A4 PII</div>
           </td>
         </tr>
         <tr> 
