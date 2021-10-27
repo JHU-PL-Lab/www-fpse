@@ -375,15 +375,15 @@ end
 
 open Ident
 open Ident.Let_syntax
-let oneplustwo' = 
+let oneplustwo = 
   let%bind onev = return 1 in 
   let%bind twov = return 2 in 
   return (onev + twov)
 
 
-(* **************************** *)
-(* Print / Output / Write / Log *)
-(* **************************** *)
+(* ******************************** *)
+(* Print / Output / Writer / Logger *)
+(* ******************************** *)
 
 (* 
 * There is a family of monads where the effect is "return more stuff on the side"
@@ -440,38 +440,48 @@ let oneplustwo_logged =
 
 (* 
  * All the monads up to now were "first order", the carrier type has no function types
- * Monads get *really* useful with higher-order monads, functions in the .t type
+ * Monads get *really* useful with higher-order monads, *functions* in the .t type
  * The simplest example is probably "Reader"
- * Don't think of it as "input", it is more like a global "environment" of values you get implicitly
+ * Don't think of it as "input", it is more like a "global "environment of values you get implicitly
  *)
 
 
 module Reader = struct
   module T = struct
     (* 
-   * In Logger above we *returned* extra goodies, here we are *passing in* extra goodies 
-   * Here we let the goodies be arbitrary, of type 'e for environment
+   * In Logger above we *returned* extra stuff, here we are *passing in* extra stuff 
+   * Here we let the stuff be arbitrary, of type 'e for environment
   *)
-    type ('a, 'e) t = ('e -> 'a)
-    (* bind needs t return a 'e -> 'a so it starts with fun e ->
-       This means it gets in the goodies e from its caller
-       bind's job is then to pass on the goodies to its two sequenced computations *)
+    type ('a, 'e) t = ('e -> 'a) (* as usual, 'a is the underlying data *)
+    (* bind needs to return a `'e -> 'a` so it starts with `fun e -> ...`
+       This means it gets in the envt e from its caller
+       bind's job is then to pass on the envt to its two sequenced computations *)
     let bind (m : ('a, 'e) t) ~(f : 'a -> ('b,'e) t) : ('b, 'e) t = 
-      fun (e : 'e) -> (f (m e) e) (* Pass the goodies e to m and f! *)
+      fun (e : 'e) -> (f (m e) e) (* Pass the envt e to m, and to f! *)
     let map = `Define_using_bind
-    let return (x : 'a) = fun (_: 'e) -> x (* not using the goodies here *)
-    let get () = fun (e : 'e) -> e (* since every monad elt gets goodies, grab here *)
+    let return (x : 'a) = fun (_: 'e) -> x (* not using the envt here *)
+    let get () = fun (e : 'e) -> e (* grab the envt here *)
     let run (m : ('a, 'e) t) (e : 'e) = m e
   end
   include T
   include Monad.Make2(T) (* Make2 is where there are *2* type parameters on t *)
 end
 
-(* A simple example *)
+(* Examples *)
 open Reader
 open Reader.Let_syntax
 
-(* Here is a simple environment type, think of it as the globals *)
+(* First let us replay the above 1+2 example
+   Observe how the let-defined value below is a function
+   -- it is waiting for the envt to get passed in. *)
+
+let oneplustwo_again = 
+  let%bind onev = return 1 in 
+  let%bind twov = return 2 in 
+  return (onev + twov)
+
+(* Now let us actually use the monad *)
+(* Here is a simple environment type, think of it as global constants *)
 type d = {
   name: string;
   age: int;
@@ -480,35 +490,37 @@ type d = {
 let is_retired = 
   let%bind r = get() in return (r.age > 65)
 
+(* again the above is just a function; need to run it to execute the code *)  
+
 let _ : bool = run is_retired {name = "Gobo"; age = 88}
 
-(* True Monads, mathematically speaking *)
+(* Monads, mathematically *)
 
 (* 
-  * To *really* be a monad you also need to satisfy some invariants.
-    - bind (return a) ~f  =  f a 
-    - bind a ~f:(fun x -> return x)  =  a
-    - bind a (fun x -> bind b ~f:(fun y -> c))  =  
-      bind (bind a ~f:(fun x -> b)) ~f:(fun y -> c)
+  * To *really* be a monad you need to satisfy some invariants:
+
+    1) bind (return a) ~f  =  f a 
+    2) bind a ~f:(fun x -> return x)  =  a
+    3) bind a (fun x -> bind b ~f:(fun y -> c))  =  
+       bind (bind a ~f:(fun x -> b)) ~f:(fun y -> c)
 
     equivalent let%bind versions:
-    - let%bind x = return(a) in f a  =  f a
-    - let%bind x = a in return(x)  =  a
-    - let%bind x = a in let%bind y = b in c =
-      let%bind y = (let%bind x = a in b) in c
+    1) let%bind x = return(a) in f a  =  f a
+    2) let%bind x = a in return(x)  =  a
+    3) let%bind x = a in let%bind y = b in c =
+       let%bind y = (let%bind x = a in b) in c
   * (Note "=" here means we can replace one with the other and notice no difference)
   * These are called the "Monad Laws"
-  * The last one is the trickiest but we hit on it above, it is associativity of bind
+  * The last one is the trickiest but we hit on it earlier, it is associativity of bind
   * The first two are mostly intuitive properties of injecting normal values into a monad
-  * Note how the laws are too strong (logically) to write as assert's, but can be tested on examples.
-  * We will look at the first two vis a vis Reader
+  * Note the laws are more invariants, and can be concretely be tested on examples.
+  * All of the monads we are doing here should "pass" any such invariant tests
 *)
 
-
-(* We in fact used all the monad laws on the initial example above.  
+(* We in fact used all the monad laws on the initial Option example above.  
    We will review that now. *)
 
-(* here is the first one we had above using let%bind *)   
+(* here is the version above we had that mostly used let%bind *)   
 let ex_initial l1 l2 =
     let%bind l = zip l1 l2 in 
     let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
@@ -516,7 +528,7 @@ let ex_initial l1 l2 =
     let%bind hd_tail = List.hd tail in
     return(hd_tail)
 
-(* The "let" (non-bind) here could be changed to a let%bind if we wrapped
+(* The "let m" (non-bind) here could be changed to a let%bind if we wrapped
   the defined value in a return -- this is using monad law 1) right-to-left. *)    
 let ex_first_law_applied l1 l2 =
     let%bind l = zip l1 l2 in 
@@ -526,7 +538,8 @@ let ex_first_law_applied l1 l2 =
     return(hd_tail)
   
 (* We also noticed that the last let%bind followed by return was 
-   just a no-op so we could have done the following which is monad law 2) *)    
+   just a no-op so we could have done the following which is 
+   using monad law 2) right-to-left *)    
 let ex_second_law_applied l1 l2 =
     let%bind l = zip l1 l2 in 
     let%bind m = return(List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc)) in
@@ -575,7 +588,7 @@ let ex_piped_version_of_previous l1 l2 =
 (* ***** *)
 
 (* Let us start with a simple version, the whole state is just one integer.
-   Just imagine that int was a `Map` for a more general state
+   Just imagine that int was a `Map` for a more general State (which we do below)
 *)
 
 module State_int = struct
