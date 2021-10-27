@@ -410,7 +410,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body"><div align="center" class="body"><a href="assignments/assignment5.html">A5</a></div>
+            <div align="center" class="body"><a href="assignments/assignment5.html">A5</a></div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">Project Designs</div>
