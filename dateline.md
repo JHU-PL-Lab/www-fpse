@@ -376,7 +376,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body"><a href="lecture/parallel.html">Parallel programming</a></div>
           </td>
           <td width="30%"> 
-            &nbsp;<div>
+            <div align="center" class="body">&nbsp;<div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
