@@ -599,7 +599,7 @@ module State_int = struct
     (* Let us now construct bind.
        1) Like Reader, the result is a fun i : int -> ... since we pass in i
        2) First we pass i to the first computation x
-       3) x returns a pair with a new state, i'
+       3) x returns a pair with a potentially **different** state, i'
        4) Now the key to being truly stateful is to thread that latest state on to f
     *)
     let bind (x : 'a t) ~(f: 'a -> 'b t) : 'b t =
@@ -609,8 +609,7 @@ module State_int = struct
     type 'a result = 'a * int
     (* Run needs to pass in an initial i, 0 *)
     let run (i : 'a t) : 'a result = i 0
-
-      let set (n : int) =
+    let set (n : int) =
       fun (_ : int) -> ((),n) (* return () as value, CHANGE state to n *)
     let get () =
       fun (n : int) -> (n,n) (* return the state n AND propagate n as state *)
