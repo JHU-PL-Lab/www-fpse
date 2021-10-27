@@ -376,7 +376,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body"><a href="lecture/parallel.html">Parallel programming</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body"><a href="assignments/assignment5.html">A5</a></div>
+            &nbsp;<div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -410,7 +410,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body"><div align="center" class="body"><a href="assignments/assignment5.html">A5</a></div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">Project Designs</div>
@@ -430,7 +430,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A5</div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
         <tr> 
@@ -515,7 +515,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A5</div>
           </td>
         </tr>
 	<tr> 
