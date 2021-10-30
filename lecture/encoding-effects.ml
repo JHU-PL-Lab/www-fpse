@@ -363,10 +363,10 @@ module Ident = struct
   module T = struct
       type 'a t = Wrapped of 'a (* Nothing but the 'a under the wrap *)
       let unwrap (Wrapped a) = a
-      let bind (a : 'a t) ~(f : 'a -> 'b t) = f (unwrap a)
-      let return (a : 'a) = Wrapped a
+      let bind (a : 'a t) ~(f : 'a -> 'b t) : 'b t = f (unwrap a)
+      let return (a : 'a) : 'a t = Wrapped a
       let map = `Custom (fun (a : 'a t)  ~(f : 'a -> 'b) -> Wrapped(f @@ unwrap a))
-      let run (a : 'a t) = unwrap a
+      let run (a : 'a t) : 'a = unwrap a
   end
 
   include T
@@ -425,11 +425,11 @@ let log_abs n =
 
 (* another simple example, add log messages to 1+2 example above *)
 let oneplustwo_logged = 
-  let%bind _ = log "Starting!" in
+  let%bind () = log "Starting!" in
   let%bind onev = return 1 in 
   let%bind twov = return 2 in 
   let%bind r = return (onev + twov) in
-  let%bind _ = log "Ending!" in
+  let%bind () = log "Ending!" in
   return(r)
 
 
@@ -460,7 +460,7 @@ module Reader = struct
       fun (e : 'e) -> (f (m e) e) (* Pass the envt e to m, and to f! *)
     let map = `Define_using_bind
     let return (x : 'a) = fun (_: 'e) -> x (* not using the envt here *)
-    let get () = fun (e : 'e) -> e (* grab the envt here *)
+    let get () : ('e, 'e) t = fun (e : 'e) -> e (* grab the envt here *)
     let run (m : ('a, 'e) t) (e : 'e) = m e
   end
   include T
@@ -603,7 +603,7 @@ module State_int = struct
        4) Now the key to being truly stateful is to thread that latest state on to f
     *)
     let bind (x : 'a t) ~(f: 'a -> 'b t) : 'b t =
-      fun (i : int) -> let (x', i') = x i in f x' i'
+      fun (i : int) -> let (x', i') = x i in (f x') i'
     let return (x : 'a) : 'a t = fun i -> (x, i)
     let map = `Define_using_bind
     type 'a result = 'a * int
@@ -634,6 +634,7 @@ let result = !r in result (* r implicitly has latest value *)
 (* Here is the same example in the State_int monad *)
 
 let simple_state () = 
+  (* let r = ref 0 is implicit - initial value at run time *)
   let%bind rv = get() in
   let%bind () = set(rv + 1) in
   let%bind result = get() in return(result)
