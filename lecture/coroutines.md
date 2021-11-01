@@ -91,17 +91,25 @@ let p1 = img_load url1 in
 let p2 = img_load url2 in
 (* We immediately get to this line, the above just kicks off the requests *)
 (* p1 and p2 are called "promises" for the actual values *)
-(* They are in fact monadic values, we will see that below *)
+(* They are the underlying monadic values, we will see that below *)
 (* .. we can do any other processing here .. *)
 (* When we finally need the results of the above we again use bind: *)
-let* loaded = Lwt.both p1 p2 in
+let* load1 = p1 in
+let* load2 = p2 in ...
 (* ... we will get here once both loads are finished -- promises fulfulled *)
 ```
 
-* The above is the high level idea of the use of coroutines
-* We will now fire up `Lwt` and get into the details
+* The monad behind the scenes has a data structure holding all the continuations
+  (the two image processing actions in this case)
+* It will call those continuations when the low-level URL load has completed
 
 ## `Lwt`
+
+
+
+* The above is some high level idea of the use of coroutines
+* We will now fire up `Lwt` and get into the details
+
 <a name="lwt"></a>
 
 To run `Lwt` you need to install it from the shell first:
@@ -121,7 +129,11 @@ And you might also want to do this to put the functions at the top level and to 
 # open Syntax;;
 ```
 
-We will now review [this `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html) for the details.
+We will now review 
+
+* [A simple starting guide](https://ocsigen.org/tuto/latest/manual/lwt)
+* [Some of the manual](https://ocsigen.org/lwt/latest/manual/manual)
+* [this `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html) which gets into how the internals work
 
 
 

@@ -188,19 +188,27 @@ A: Split such I/O actions in two:</p>
 <span class="k">let</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url2</span> <span class="k">in</span>
 <span class="c">(* We immediately get to this line, the above just kicks off the requests *)</span>
 <span class="c">(* p1 and p2 are called "promises" for the actual values *)</span>
-<span class="c">(* They are in fact monadic values, we will see that below *)</span>
+<span class="c">(* They are the underlying monadic values, we will see that below *)</span>
 <span class="c">(* .. we can do any other processing here .. *)</span>
 <span class="c">(* When we finally need the results of the above we again use bind: *)</span>
-<span class="k">let</span><span class="o">*</span> <span class="n">loaded</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">both</span> <span class="n">p1</span> <span class="n">p2</span> <span class="k">in</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">load1</span> <span class="o">=</span> <span class="n">p1</span> <span class="k">in</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">load2</span> <span class="o">=</span> <span class="n">p2</span> <span class="k">in</span> <span class="o">...</span>
 <span class="c">(* ... we will get here once both loads are finished -- promises fulfulled *)</span>
 </code></pre></div></div>
 
 <ul>
-  <li>The above is the high level idea of the use of coroutines</li>
-  <li>We will now fire up <code>Lwt</code> and get into the details</li>
+  <li>The monad behind the scenes has a data structure holding all the continuations<br />
+(the two image processing actions in this case)</li>
+  <li>It will call those continuations when the low-level URL load has completed</li>
 </ul>
 
 <h2 id="lwt"><code>Lwt</code></h2>
+
+<ul>
+  <li>The above is some high level idea of the use of coroutines</li>
+  <li>We will now fire up <code>Lwt</code> and get into the details</li>
+</ul>
+
 <p><a name="lwt"></a></p>
 
 <p>To run <code>Lwt</code> you need to install it from the shell first:</p>
@@ -217,7 +225,13 @@ A: Split such I/O actions in two:</p>
 <span class="o">#</span> <span class="k">open</span> <span class="nc">Syntax</span><span class="p">;;</span>
 </code></pre></div></div>
 
-<p>We will now review <a href="https://raphael-proust.github.io/code/lwt-part-1.html">this <code>Lwt</code> tutorial</a> for the details.</p>
+<p>We will now review</p>
+
+<ul>
+  <li><a href="https://ocsigen.org/tuto/latest/manual/lwt">A simple starting guide</a></li>
+  <li><a href="https://ocsigen.org/lwt/latest/manual/manual">Some of the manual</a></li>
+  <li><a href="https://raphael-proust.github.io/code/lwt-part-1.html">this <code>Lwt</code> tutorial</a> which gets into how the internals work</li>
+</ul>
 
 <p><a name="async"></a></p>
 
