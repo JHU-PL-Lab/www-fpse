@@ -163,12 +163,12 @@ A: Split such I/O actions in two:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
 <span class="n">bind</span> <span class="c">(* code to issue image request and pause *)</span> 
-     <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* code to run after this image loaded*)</span>
+     <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* processing code to run after this image loaded*)</span>
 </code></pre></div></div>
 <p>which is, in <code>let%bind</code> notation,</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
 <span class="k">let</span><span class="o">%</span><span class="n">bind</span> <span class="n">img</span> <span class="o">=</span> <span class="c">(* code to issue image request and pause *)</span> <span class="k">in</span>
-  <span class="c">(* code to run after this image loaded*)</span>
+  <span class="c">(* processing code to run after this image loaded*)</span>
 </code></pre></div></div>
 
 <p>(Note, <code>Lwt</code> uses <code>let*</code> instead of <code>let%bind</code>; <code>Async</code> uses <code>let%bind</code>)</p>
@@ -181,18 +181,24 @@ A: Split such I/O actions in two:</p>
 <h3 id="the-full-loading-task-here">The full loading task here</h3>
 <ul>
   <li>Suppose for simplicity there are only two images.</li>
-  <li>We eventually need to wait for these loads to finish, here is how roughly.</li>
+  <li>We eventually need to wait for these loads to finish, here is how.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url1</span> <span class="k">in</span>
 <span class="k">let</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url2</span> <span class="k">in</span>
 <span class="c">(* We immediately get to this line, the above just kicks off the requests *)</span>
 <span class="c">(* p1 and p2 are called "promises" for the actual values *)</span>
+<span class="c">(* They are in fact monadic values, we will see that below *)</span>
 <span class="c">(* .. we can do any other processing here .. *)</span>
 <span class="c">(* When we finally need the results of the above we again use bind: *)</span>
 <span class="k">let</span><span class="o">*</span> <span class="n">loaded</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">both</span> <span class="n">p1</span> <span class="n">p2</span> <span class="k">in</span>
 <span class="c">(* ... we will get here once both loads are finished -- promises fulfulled *)</span>
 </code></pre></div></div>
+
+<ul>
+  <li>The above is the high level idea of the use of coroutines</li>
+  <li>We will now fire up <code>Lwt</code> and get into the details</li>
+</ul>
 
 <h2 id="lwt"><code>Lwt</code></h2>
 <p><a name="lwt"></a></p>

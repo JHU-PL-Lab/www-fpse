@@ -68,13 +68,13 @@ Monad-think on the above:
 ```ocaml
 let img_load url =
 bind (* code to issue image request and pause *) 
-     (fun img -> (* code to run after this image loaded*)
+     (fun img -> (* processing code to run after this image loaded*)
 ```
 which is, in `let%bind` notation,
 ```ocaml
 let img_load url =
 let%bind img = (* code to issue image request and pause *) in
-  (* code to run after this image loaded*)
+  (* processing code to run after this image loaded*)
 ```
 
 (Note, `Lwt` uses `let*` instead of `let%bind`; `Async` uses `let%bind`)
@@ -84,18 +84,22 @@ let%bind img = (* code to issue image request and pause *) in
 
 ### The full loading task here
  * Suppose for simplicity there are only two images.
- * We eventually need to wait for these loads to finish, here is how roughly.
+ * We eventually need to wait for these loads to finish, here is how.
 
 ```ocaml
 let p1 = img_load url1 in
 let p2 = img_load url2 in
 (* We immediately get to this line, the above just kicks off the requests *)
 (* p1 and p2 are called "promises" for the actual values *)
+(* They are in fact monadic values, we will see that below *)
 (* .. we can do any other processing here .. *)
 (* When we finally need the results of the above we again use bind: *)
 let* loaded = Lwt.both p1 p2 in
 (* ... we will get here once both loads are finished -- promises fulfulled *)
 ```
+
+* The above is the high level idea of the use of coroutines
+* We will now fire up `Lwt` and get into the details
 
 ## `Lwt`
 <a name="lwt"></a>
