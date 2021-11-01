@@ -1,5 +1,5 @@
 
-## Asynchronous Programming
+## Coroutines for Asynchronous Concurrent Programming
 
 Concurrency is needed for two main reasons
  1. You want to run things in parallel for speed gain (multi-core, cluster, etc)
@@ -8,23 +8,124 @@ Concurrency is needed for two main reasons
      - (Sometimes also awaiting for internal actions such as time-outs)
 
 In OCaml
-  * Concurrency for speed gain is a work in progress, look for a release in a year or two
-  * Concurrency to support asynchronous waiting: `Async` library (which is based on the `Lwt` library)
+  * Concurrency for speed gain is a work in progress: **multi-core OCaml**
+    - Should be released in a year or so
+    - We plan on covering parts of the beta
+  * Concurrency to support asynchronous waiting: The `Lwt` and `Async` libraries
 
-Local concurrency for speed
- * This is usually done via *threads*
- * fork off another computation with its own runtime stack etc but share the heap
- * But, threads are notoriously difficult to debug
+
+ * Local concurrency for speed is usually done via *threads*
+   - fork off another computation with its own runtime stack etc but share the heap
+ * But, threads are notoriously difficult to debug due to number of interleavings
    - 100's of patches have been added to help (channels, monitors, locks, ownership types, etc etc etc) but still hard
- * So, better to use a simpler system focused on waiting for I/O if that is all you really need
+ * So, often better to use a simpler system focused on waiting for I/O if that is all you really need
+ * Key difference is no preemption - routine runs un-interrupted until it *chooses* to "yield"/"pause".
+ * Means that computations are still *deterministic*, much easier to debug!
+ * Such an approach is known as *coroutines*
+
+### Coroutines in different languages
+
+Coroutines are found in most modern PLs
+* Python has the built-in [asyncio library](https://docs.python.org/3/library/asyncio-task.html)
+* JavaScript has built-in `async/await` syntax
+* All other commonly-used languages have some third-party library
+
+In OCaml there are currently two competing libraries
+* `Async` - a Jane Street library, very compatible with `Core` but not widely used so fewer other libraries use it.
+* `Lwt` - the standard library for coroutines in OCaml.
+* We will cover `Lwt` primarily since you will likely have the most success with it on your projects.
+* They are more or less the same in principle
+
+### Principles of Coroutines
+
+* The key use of coroutines is for I/O operations which may block
+* *and*, they are not required to be run in a dependent sequence.
+  - For example if you need to read one file and write a tranform to another file and that is it, there is no concurrency, no need for coroutines.
+  - But if there are some independent actions or events they are very useful, it will allow the actions to proceed concurrently in the OS layer.
+
+#### Motivating the Need
+
+* Suppose you want to read a bunch of images from different places on the Internet.
+* You can process them in the order they show up, no need to wait for all the images to come in
+* Also (**key**), if one load is slow don't block all the subsequent loads
+  - kick them all off at the start, then process as they come in.
+* There could also be some sequencing requirements as well
+  - e.g. once all images are in and processed or timed out, a collage is created.
+  - (note that implicit in the "timed out" is a timer which can abort some loads as well)
+
+#### Idea of the implementation
+
+Q: How do we allow these loads to happen concurrently without fork/threads/parallelism?
+A: Split such I/O actions in two:
+  1. Issue image request and `pause`
+  2. Package up the processing code (the *continuation*) which will run when the load completes as a function
+  3. Run the function when the load is done.
+
+It might seem awkward to package up the continuation as a function but we already did that!
+
+Monad-think on the above:
+
+```ocaml
+let img_load url =
+bind (* code to issue image request and pause *) 
+     (fun img -> (* code to run after this image loaded*)
+```
+which is, in `let%bind` notation,
+```ocaml
+let img_load url =
+let%bind img = (* code to issue image request and pause *) in
+  (* code to run after this image loaded*)
+```
+
+(Note, `Lwt` uses `let*` instead of `let%bind`; `Async` uses `let%bind`)
+
+* Observe how `bind` is naturally making the continuation a function
+* So we will be using `bind` a lot when writing coroutine code in OCaml
+
+### The full loading task here
+ * Suppose for simplicity there are only two images.
+ * We eventually need to wait for these loads to finish, here is how roughly.
+
+```ocaml
+let p1 = img_load url1 in
+let p2 = img_load url2 in
+(* We immediately get to this line, the above just kicks off the requests *)
+(* p1 and p2 are called "promises" for the actual values *)
+(* .. we can do any other processing here .. *)
+(* When we finally need the results of the above we again use bind: *)
+let* loaded = Lwt.both p1 p2 in
+(* ... we will get here once both loads are finished -- promises fulfulled *)
+```
+
+## `Lwt`
+<a name="lwt"></a>
+
+To run `Lwt` you need to install it from the shell first:
+
+```sh
+opam install lwt
+```
+
+Then in `utop` do
+```ocaml
+#require "lwt";;
+```
+
+And you might also want to do this to put the functions at the top level and to enable `let*`.
+```ocaml
+# open Lwt;;
+# open Syntax;;
+```
+
+We will now review [this `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html) for the details.
+
+
 
 <a name="async"></a>
 
-## Note in 2021 we will not be covering the `Async` library, the notes below are outdated.
+## `Async`
 
-## We will instead cover `Lwt` and the `async`/`await` of Multicore OCaml.
-
-### `Async`
+Here are some notes on `Async` which we don't plan on covering in lecture.
 
  * `Async` is another Jane Street library
  * It is based on the notion of a *promise*

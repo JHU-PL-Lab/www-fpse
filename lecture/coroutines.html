@@ -60,7 +60,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
     
-<h2 id="asynchronous-programming">Asynchronous Programming</h2>
+<h2 id="coroutines-for-asynchronous-concurrent-programming">Coroutines for Asynchronous Concurrent Programming</h2>
 
 <p>Concurrency is needed for two main reasons</p>
 <ol>
@@ -75,29 +75,149 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>In OCaml</p>
 <ul>
-  <li>Concurrency for speed gain is a work in progress, look for a release in a year or two</li>
-  <li>Concurrency to support asynchronous waiting: <code>Async</code> library (which is based on the <code>Lwt</code> library)</li>
-</ul>
-
-<p>Local concurrency for speed</p>
-<ul>
-  <li>This is usually done via <em>threads</em></li>
-  <li>fork off another computation with its own runtime stack etc but share the heap</li>
-  <li>But, threads are notoriously difficult to debug
+  <li>Concurrency for speed gain is a work in progress: <strong>multi-core OCaml</strong>
+    <ul>
+      <li>Should be released in a year or so</li>
+      <li>We plan on covering parts of the beta</li>
+    </ul>
+  </li>
+  <li>
+    <p>Concurrency to support asynchronous waiting: The <code>Lwt</code> and <code>Async</code> libraries</p>
+  </li>
+  <li>Local concurrency for speed is usually done via <em>threads</em>
+    <ul>
+      <li>fork off another computation with its own runtime stack etc but share the heap</li>
+    </ul>
+  </li>
+  <li>But, threads are notoriously difficult to debug due to number of interleavings
     <ul>
       <li>100’s of patches have been added to help (channels, monitors, locks, ownership types, etc etc etc) but still hard</li>
     </ul>
   </li>
-  <li>So, better to use a simpler system focused on waiting for I/O if that is all you really need</li>
+  <li>So, often better to use a simpler system focused on waiting for I/O if that is all you really need</li>
+  <li>Key difference is no preemption - routine runs un-interrupted until it <em>chooses</em> to “yield”/”pause”.</li>
+  <li>Means that computations are still <em>deterministic</em>, much easier to debug!</li>
+  <li>Such an approach is known as <em>coroutines</em></li>
 </ul>
+
+<h3 id="coroutines-in-different-languages">Coroutines in different languages</h3>
+
+<p>Coroutines are found in most modern PLs</p>
+<ul>
+  <li>Python has the built-in <a href="https://docs.python.org/3/library/asyncio-task.html">asyncio library</a></li>
+  <li>JavaScript has built-in <code>async/await</code> syntax</li>
+  <li>All other commonly-used languages have some third-party library</li>
+</ul>
+
+<p>In OCaml there are currently two competing libraries</p>
+<ul>
+  <li><code>Async</code> - a Jane Street library, very compatible with <code>Core</code> but not widely used so fewer other libraries use it.</li>
+  <li><code>Lwt</code> - the standard library for coroutines in OCaml.</li>
+  <li>We will cover <code>Lwt</code> primarily since you will likely have the most success with it on your projects.</li>
+  <li>They are more or less the same in principle</li>
+</ul>
+
+<h3 id="principles-of-coroutines">Principles of Coroutines</h3>
+
+<ul>
+  <li>The key use of coroutines is for I/O operations which may block</li>
+  <li><em>and</em>, they are not required to be run in a dependent sequence.
+    <ul>
+      <li>For example if you need to read one file and write a tranform to another file and that is it, there is no concurrency, no need for coroutines.</li>
+      <li>But if there are some independent actions or events they are very useful, it will allow the actions to proceed concurrently in the OS layer.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="motivating-the-need">Motivating the Need</h4>
+
+<ul>
+  <li>Suppose you want to read a bunch of images from different places on the Internet.</li>
+  <li>You can process them in the order they show up, no need to wait for all the images to come in</li>
+  <li>Also (<strong>key</strong>), if one load is slow don’t block all the subsequent loads
+    <ul>
+      <li>kick them all off at the start, then process as they come in.</li>
+    </ul>
+  </li>
+  <li>There could also be some sequencing requirements as well
+    <ul>
+      <li>e.g. once all images are in and processed or timed out, a collage is created.</li>
+      <li>(note that implicit in the “timed out” is a timer which can abort some loads as well)</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="idea-of-the-implementation">Idea of the implementation</h4>
+
+<p>Q: How do we allow these loads to happen concurrently without fork/threads/parallelism?<br />
+A: Split such I/O actions in two:</p>
+<ol>
+  <li>Issue image request and <code>pause</code></li>
+  <li>Package up the processing code (the <em>continuation</em>) which will run when the load completes as a function</li>
+  <li>Run the function when the load is done.</li>
+</ol>
+
+<p>It might seem awkward to package up the continuation as a function but we already did that!</p>
+
+<p>Monad-think on the above:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
+<span class="n">bind</span> <span class="c">(* code to issue image request and pause *)</span> 
+     <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* code to run after this image loaded*)</span>
+</code></pre></div></div>
+<p>which is, in <code>let%bind</code> notation,</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
+<span class="k">let</span><span class="o">%</span><span class="n">bind</span> <span class="n">img</span> <span class="o">=</span> <span class="c">(* code to issue image request and pause *)</span> <span class="k">in</span>
+  <span class="c">(* code to run after this image loaded*)</span>
+</code></pre></div></div>
+
+<p>(Note, <code>Lwt</code> uses <code>let*</code> instead of <code>let%bind</code>; <code>Async</code> uses <code>let%bind</code>)</p>
+
+<ul>
+  <li>Observe how <code>bind</code> is naturally making the continuation a function</li>
+  <li>So we will be using <code>bind</code> a lot when writing coroutine code in OCaml</li>
+</ul>
+
+<h3 id="the-full-loading-task-here">The full loading task here</h3>
+<ul>
+  <li>Suppose for simplicity there are only two images.</li>
+  <li>We eventually need to wait for these loads to finish, here is how roughly.</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url1</span> <span class="k">in</span>
+<span class="k">let</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url2</span> <span class="k">in</span>
+<span class="c">(* We immediately get to this line, the above just kicks off the requests *)</span>
+<span class="c">(* p1 and p2 are called "promises" for the actual values *)</span>
+<span class="c">(* .. we can do any other processing here .. *)</span>
+<span class="c">(* When we finally need the results of the above we again use bind: *)</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">loaded</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">both</span> <span class="n">p1</span> <span class="n">p2</span> <span class="k">in</span>
+<span class="c">(* ... we will get here once both loads are finished -- promises fulfulled *)</span>
+</code></pre></div></div>
+
+<h2 id="lwt"><code>Lwt</code></h2>
+<p><a name="lwt"></a></p>
+
+<p>To run <code>Lwt</code> you need to install it from the shell first:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam <span class="nb">install </span>lwt
+</code></pre></div></div>
+
+<p>Then in <code>utop</code> do</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">require</span> <span class="s2">"lwt"</span><span class="p">;;</span>
+</code></pre></div></div>
+
+<p>And you might also want to do this to put the functions at the top level and to enable <code>let*</code>.</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">open</span> <span class="nc">Lwt</span><span class="p">;;</span>
+<span class="o">#</span> <span class="k">open</span> <span class="nc">Syntax</span><span class="p">;;</span>
+</code></pre></div></div>
+
+<p>We will now review <a href="https://raphael-proust.github.io/code/lwt-part-1.html">this <code>Lwt</code> tutorial</a> for the details.</p>
 
 <p><a name="async"></a></p>
 
-<h2 id="note-in-2021-we-will-not-be-covering-the-async-library-the-notes-below-are-outdated">Note in 2021 we will not be covering the <code>Async</code> library, the notes below are outdated.</h2>
+<h2 id="async"><code>Async</code></h2>
 
-<h2 id="we-will-instead-cover-lwt-and-the-asyncawait-of-multicore-ocaml">We will instead cover <code>Lwt</code> and the <code>async</code>/<code>await</code> of Multicore OCaml.</h2>
-
-<h3 id="async"><code>Async</code></h3>
+<p>Here are some notes on <code>Async</code> which we don’t plan on covering in lecture.</p>
 
 <ul>
   <li><code>Async</code> is another Jane Street library</li>
