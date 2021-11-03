@@ -1,3 +1,0 @@
-## Algebraic Effects
-
-TO DO
