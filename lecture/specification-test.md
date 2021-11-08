@@ -386,6 +386,7 @@ OUnit [Overview docs](https://gildor478.github.io/ounit/ounit2/index.html) and [
 * Shell command `bisect-ppx-report html` generates a pretty report showing which lines hit
   - open `_coverage/index.html` in your browser to see the report
 * See [Bisect docs](https://github.com/aantron/bisect_ppx) for more details
+* Note that if you have lines of code that you know should not be run (e.g. invariants that should not fail) you can put `[@@@coverage off]` on them.
 
 We will check how well my tests of the simple set example covered the code using Bisect
 

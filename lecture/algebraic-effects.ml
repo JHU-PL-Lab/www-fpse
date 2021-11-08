@@ -1,7 +1,8 @@
 (* Algebraic Effects 
    aka resumable exceptions
    aka (more precisely) *one-shot* resumable exceptions 
-   aka The mother of all side effects 
+   aka The mother of all side effects
+   aka better-than-monad-ism (no bind macro layer like monads)
 
    We are going to call these resumable exceptions since that is all they are.
    
@@ -36,6 +37,9 @@ All of the code in this file will work in 4.12.0+domains+effects only.
 *)
 
 effect Div_failure : int -> int (* read "effect" as "resumable_exception" *)
+
+(* int -> here is what you pass up for raise
+   -> int is what comes back for resumption *)
 
 (* Let's redefine integer division so we can keep things going if we
    divide by zero. *)
@@ -98,7 +102,7 @@ let _ = recover_div_bad [100;2;4];;  (* No go -- throws error *)
 
 (* Encoding state with resumable exceptions 
 
-We will be coverin a simplified version of  https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/solved/state2.ml code below.
+We will be covering a simplified version of  https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/solved/state2.ml code below.
 
 The idea of the encoding is as follows:
 
@@ -121,7 +125,7 @@ end
 
 module State (S : sig type t end) : STATE with type t = S.t = struct
   type t = S.t
-  effect Get : t
+  effect Get : t (* nothing up, only a t down *)
   let get () = perform Get
   effect Put : t -> unit
   let put v = perform (Put v)
@@ -148,6 +152,17 @@ end
 
 *)
 module IS = State (struct type t = int end)
+
+let super_simple () : unit = ()
+
+let _ = IS.run super_simple 0
+
+let sorta_simple () : unit =
+  let open IS in
+  assert (0 = get ());
+
+let _ = IS.run sorta_simple 0
+
 
 let simple () : unit =
   let open IS in
@@ -181,6 +196,11 @@ let _ = IS.run (fun () -> SS.run foo "") 0
 
 See https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/cooperative.ml for simple independent runs
 
-See https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/solved/async_await.ml for the whole deal with promises etc.
+ - the key insight here is to make a queue of the paused computations
+   - the continuation is a first-class value, make a Q of them
+ - async f puts the current computation on hold on Q, runs f
+ - yield () puts current computation on hold on Q, runs top-of-Q
+
+See https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/solved/async_await.ml for full coroutines with promises etc.
 
 *)

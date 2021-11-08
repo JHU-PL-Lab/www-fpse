@@ -373,7 +373,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/parallel.html">Parallel programming</a></div>
+            <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -407,7 +407,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a></div>
+            <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body"><a href="assignments/assignment5.html">A5</a></div>
@@ -424,7 +424,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/fp-universe.html">The FP Universe</a>; <a href="">TBA</a></div>
+            <div align="left" class="body"><a href="lecture/fp-universe.html">The FP Universe</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -475,7 +475,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/fp-universe.html">The FP Universe</a>; <a href="TBA">TBA</a></div>
+            <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -492,7 +492,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">TBA</div>
+            <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
