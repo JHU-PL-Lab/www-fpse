@@ -71,53 +71,84 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h3 id="case-study-monadic-minesweeper">Case Study: Monadic Minesweeper</h3>
+<h3 id="functional-lists">Functional lists</h3>
+<p>Let us review the most common OCaml data structure, <code>'a list</code>.</p>
 
 <ul>
-  <li>Let us analyze the complexity of different implementations of Minesweeper.</li>
+  <li><code>hd</code> and <code>tl</code> are O(1)</li>
+  <li><code>List.nth</code> is O(n) – lists are not random access</li>
+  <li><code>append l1 l2</code> is O(<code>length l1</code>) - cons each <code>l1</code> elt onto <code>l2</code> one by one</li>
+</ul>
+
+<p>Remember that sub-lists are shared since they are immutable</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="o">...</span> <span class="n">n</span><span class="p">]</span> <span class="k">in</span>
+<span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="mi">0</span>    <span class="o">::</span> <span class="n">l1</span> <span class="k">in</span>
+<span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">::</span> <span class="n">l1</span> <span class="k">in</span> <span class="o">..</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code>l2</code> and <code>l3</code> share <code>l1</code> and all the above is O(1)</li>
+  <li>if lists were mutable such sharing would not usually be possible!</li>
+  <li>In general this shows there is a trade-off in that in some cases functional wins
+    <ul>
+      <li>more on this below
+        <h3 id="case-study-monadic-minesweeper">Case Study: Monadic Minesweeper</h3>
+      </li>
+    </ul>
+  </li>
+  <li>Let us analyze the complexity of different implementations of the imperative Minesweeper.</li>
   <li>Assume a grid of n elements (a square-root n by square-root n grid)</li>
+</ul>
+
+<p>Our imperative implementation using a 2D array (<a href="../examples/mine_array.ml">this one</a>)</p>
+<ul>
+  <li>O(1) for each inc operation so O(n) in total.</li>
 </ul>
 
 <p>Hypothetic monadic state version</p>
 <ul>
   <li>Take the imperative 2D array version, implement as state monad on list-of-strings (<a href="../examples/mine_monadic.ml">code in fact is here</a>)</li>
-  <li>Each grid square increment will take O(n) since the whole grid has to be rebuilt with one change</li>
+  <li>Each grid square increment will take O(n) since the whole grid has to be rebuilt with one change
+    <ul>
+      <li>can in fact share rhs of parts not incremented (as in append above) but means 1/2 n = O(n)</li>
+    </ul>
+  </li>
   <li>O(n) inc’s are performed total so it will be O(n^2).</li>
 </ul>
 
 <p>Alternative monad implementation as a Core.Map from keys (i,j) to characters:</p>
 <ul>
-  <li>lookup and increment will be O(log n) since Core.Map is implemented as a balanced search tree
+  <li>lookup and increment will be O(log n) on average since Core.Map is implemented as a balanced search tree
     <ul>
       <li>one change to a Map’s tree is only log n because only one path in tree is changed, rest can be re-used</li>
+      <li>(yes, one path down a binary tree is only 1/(log n)-th of the tree nodes, and the sub-trees can be reused)</li>
     </ul>
   </li>
   <li>So total time is O(n log n)</li>
 </ul>
 
-<p>Regular imperative implementation using a 2D array</p>
-<ul>
-  <li>O(1) for each inc operation so O(n) in total.</li>
-</ul>
-
 <p>Conclusion</p>
 <ul>
   <li>For Minesweeper, O(n^2) is in fact fine as the grids are always “tiny” in a CPU sense</li>
-  <li>But clearly in your “big data” app such a penalty could be intolerable
-    <h3 id="when-fp-wins">When FP wins</h3>
-  </li>
-  <li>Some algorithms are in fact better in the FP world</li>
+  <li>But clearly in your “big data” app such a penalty could be intolerable</li>
+  <li>In general there are some results indicating it should be possible to “only” pay a log n penalty on any data structure if one is clever.</li>
+  <li>But, sometimes you need to get out the imperative <code>Array</code> and <code>Hashset</code> etc in OCaml.</li>
 </ul>
 
-<h4 id="many-related-worlds-algorithms">Many Related Worlds Algorithms</h4>
+<h4 id="when-fp-wins-many-related-worlds-algorithms">When FP wins: Many Related Worlds Algorithms</h4>
 <ul>
-  <li>Portions of immutable data structures can be shared without conflict</li>
+  <li>Portions of immutable data structures can be shared without conflict
+    <ul>
+      <li>alluded to in the list sharing example above</li>
+    </ul>
+  </li>
   <li>So if an algorithm has many related stores in it the FP version can be superior</li>
-  <li>Example: a simple transactional store monad in pseudocode</li>
+  <li>Example: a simple transactional store monad (here is pseudocode)</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Transactional_store</span> <span class="o">=</span> <span class="k">struct</span>
-    <span class="k">type</span> <span class="n">store</span> <span class="o">=</span> <span class="c">(* The type of the heap data here *)</span>
+    <span class="k">type</span> <span class="n">store</span> <span class="o">=</span> <span class="c">(* The type of the heap data here, say it is a Map *)</span>
     <span class="c">(* In the monad type, pass two stores, one in-use one saved *)</span>
     <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span> 
     <span class="k">let</span> <span class="n">bind</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span> <span class="o">=</span>
@@ -147,15 +178,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>If we know there are no side effects, any independent computation can be done in parallel</li>
   <li>Common example: <code>List.map</code> and other <code>.map</code>’s can apply <code>f</code> in parallel</li>
-  <li>Multiple function arguments can be evaluated in parallel</li>
-  <li>And more: referential transparency in general makes parallelism much easier</li>
-  <li>Multicore OCaml is in beta, but will be released soon.</li>
+  <li>Multiple function arguments can be evaluated in parallel if they contain no effects</li>
+  <li>… Referential transparency in general makes parallelism much easier</li>
+  <li>Multicore OCaml is in beta, and will be released soon.</li>
 </ul>
 
-<h3 id="writing-more-efficient-fp">Writing more efficient FP</h3>
+<h3 id="writing-more-efficient-functions">Writing more efficient functions</h3>
 
 <ul>
-  <li>We already covered some of this with the tail recursion topic
+  <li>We already covered some of this with tail recursion
     <ul>
       <li>tail recursion principle: if the last action in a function is a recursive call, compiler can optimize away the call stack</li>
     </ul>
@@ -168,10 +199,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>If a function has no side effects it can easily be <em>memoized</em>
     <ul>
-      <li>given a fixed input, the output is always the same</li>
-      <li>so, keep a history of past input -&gt; output pairs and look up input in table first</li>
+      <li>we saw in HW, took exponential fibbonicci to linear</li>
+      <li>in general works when there are no effects in the function (and, we have an <code>=</code> defined on the arguments)</li>
+      <li>As you know, implement by keeping a history of past input -&gt; output pairs and look up input in table first</li>
       <li>if the function is expensive and is often invoked on the same argument it will be very effective</li>
-      <li>example of fibbonici from your assignment: exponential to linear</li>
     </ul>
   </li>
   <li>Note that memoization implicitly needs a store for this past history</li>
@@ -182,11 +213,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h3 id="tail-recursion-hacks">Tail recursion hacks</h3>
+<h3 id="coding-with-tail-recursion">Coding with tail recursion</h3>
 
 <ul>
   <li>As we discussed earlier in the <a href="idiomatic-fp.html#tail-recursion">idiomatic fp topic</a>, left fold is tail-recursive whereas right fold is not</li>
-  <li>The problem is it is somewhat random whether a given algorithm is tail-recursive or not</li>
+  <li>In general it is somewhat random whether a given algorithm is tail-recursive or not</li>
   <li>But, we can re-factor many algorithms to be tail recursive</li>
   <li>A classic technique for this is <em>continuation passing style</em> aka CPS</li>
 </ul>
@@ -196,15 +227,41 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Idea: pass the “rest of the computation” as an additional argument <code>c</code> to a function</li>
   <li>The last line of the function will be <code>c(..)</code> – call <code>c</code>.</li>
-  <li>If <code>c</code> is the current function itself, it will be a tail call - efficient!</li>
-  <li>We also saw continuations in <code>Lwt</code> where the “callback code” after an I/O operation was a function invoked later.
+  <li>If <code>c</code> is the current function itself, it will be a tail call - efficient!
     <ul>
-      <li>and in Algebraic Effects world we had explicit <code>'a continuation</code> types</li>
+      <li>in general, if a whole series of calls is in CPS, no stack is needed.</li>
     </ul>
   </li>
   <li>See file <a href="../examples/continuation-trees.ml">continuation-trees.ml</a> for how to code tree fold using CPS.</li>
 </ul>
 
+<h4 id="cps-and-coroutines">CPS and coroutines</h4>
+
+<ul>
+  <li>We also saw continuations in <code>Lwt</code> where the “callback code” after an I/O operation was a function invoked later:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Hello,"</span> <span class="k">in</span>
+<span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"world!"</span> <span class="k">in</span>
+<span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
+</code></pre></div></div>
+
+<p>is really</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bind</span><span class="p">(</span><span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Hello,"</span><span class="p">)</span> 
+    <span class="p">(</span><span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="n">bind</span><span class="p">(</span><span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"world!"</span><span class="p">)</span> 
+                   <span class="p">(</span><span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>– each of the 2nd arguments to bind is “the rest of the work”, the continuation.</p>
+
+<ul>
+  <li>In Algebraic Effects world we had explicit <code>'a continuation</code> types: the system packed up all the “rest of the work” code for us
+    <ul>
+      <li>they are not <em>encoded</em> as functions there, the continuations are <em>built-in</em></li>
+    </ul>
+  </li>
+</ul>
       
           </section>
         </div>
