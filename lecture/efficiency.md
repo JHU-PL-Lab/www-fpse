@@ -24,10 +24,8 @@ Regular imperative implementation using a 2D array
 * O(1) for each inc operation so O(n) in total.
 
 Conclusion
-* For Minesweeper, O(n^2) is in fact fine as billion-by-billion grids are not used
+* For Minesweeper, O(n^2) is in fact fine as the grids are always "tiny" in a CPU sense
 * But clearly in your "big data" app such a penalty could be intolerable
-* It is in general a waste of power .. more greenhouse gases
-
 ### When FP wins
 
 * Some algorithms are in fact better in the FP world
@@ -35,7 +33,7 @@ Conclusion
 #### Many Related Worlds Algorithms
 * Portions of immutable data structures can be shared without conflict
 * So if an algorithm has many related stores in it the FP version can be superior
-* Example: a simple transactional store in pseudocode
+* Example: a simple transactional store monad in pseudocode
 
 ```ocaml
 module Transactional_store = struct
@@ -60,14 +58,15 @@ end
 * If the `store` in the above is say a Map, the `s1` and `s2` maps should be "nearly all shared" on average.
 * So, copying and memory use minimized.
 * The real benefit comes when there are `n` stores `s1`, ..., `sn` with sharing
-
+* Real World OCaml has a similar example comparing an [(immutable) Map vs a (mutable) Hashtable](https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables) 
 
 #### FP and paralellism
 
 * If we know there are no side effects, any independent computation can be done in parallel
 * Common example: `List.map` and other `.map`'s can apply `f` in parallel
 * Multiple function arguments can be evaluated in parallel
-* etc..
+* And more: referential transparency in general makes parallelism much easier
+* Multicore OCaml is in beta, but will be released soon.
 
 
 ### Writing more efficient FP
@@ -87,11 +86,6 @@ end
 * Note that memoization implicitly needs a store for this past history
 * Could use mutable store, but could also do the "state monad thing"
   - pass in and return the store in the memoized function
-```ocaml
-fib : int -> (int,int,..) Map.t -> (int * (int,int,..) Map.t)
-```
-  - Requires monadic state threading and store itself will be less efficient
-
 
 ### Tail recursion hacks
 
@@ -105,16 +99,7 @@ fib : int -> (int,int,..) Map.t -> (int * (int,int,..) Map.t)
 * Idea: pass the "rest of the computation" as an additional argument `c` to a function
 * The last line of the function will be `c(..)` -- call `c`.
 * If `c` is the current function itself, it will be a tail call - efficient!
-* See file [continuation-trees.ml](continuation-trees.ml) for how to code tree fold using CPS.
-
-
-#### Other uses of CPS
-* CPS looks related to how we encoded a store in a monad 
-   - both involve passing an extra argument along hand over fist
-* In fact, there is a deeper connection: the Continuation monad, with type
-```ocaml
-  type 'a t = ('a -> answer) -> answer
-```
-  - we will not explore this monad in detail
-* What we will explore is how *coroutines* can be expressed with continuations.
+* We also saw continuations in `Lwt` where the "callback code" after an I/O operation was a function invoked later.
+  - and in Algebraic Effects world we had explicit `'a continuation` types
+* See file [continuation-trees.ml](../examples/continuation-trees.ml) for how to code tree fold using CPS.
 

@@ -102,14 +102,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Conclusion</p>
 <ul>
-  <li>For Minesweeper, O(n^2) is in fact fine as billion-by-billion grids are not used</li>
-  <li>But clearly in your “big data” app such a penalty could be intolerable</li>
-  <li>It is in general a waste of power .. more greenhouse gases</li>
-</ul>
-
-<h3 id="when-fp-wins">When FP wins</h3>
-
-<ul>
+  <li>For Minesweeper, O(n^2) is in fact fine as the grids are always “tiny” in a CPU sense</li>
+  <li>But clearly in your “big data” app such a penalty could be intolerable
+    <h3 id="when-fp-wins">When FP wins</h3>
+  </li>
   <li>Some algorithms are in fact better in the FP world</li>
 </ul>
 
@@ -117,7 +113,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Portions of immutable data structures can be shared without conflict</li>
   <li>So if an algorithm has many related stores in it the FP version can be superior</li>
-  <li>Example: a simple transactional store in pseudocode</li>
+  <li>Example: a simple transactional store monad in pseudocode</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Transactional_store</span> <span class="o">=</span> <span class="k">struct</span>
@@ -143,6 +139,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>If the <code>store</code> in the above is say a Map, the <code>s1</code> and <code>s2</code> maps should be “nearly all shared” on average.</li>
   <li>So, copying and memory use minimized.</li>
   <li>The real benefit comes when there are <code>n</code> stores <code>s1</code>, …, <code>sn</code> with sharing</li>
+  <li>Real World OCaml has a similar example comparing an <a href="https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables">(immutable) Map vs a (mutable) Hashtable</a></li>
 </ul>
 
 <h4 id="fp-and-paralellism">FP and paralellism</h4>
@@ -151,7 +148,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>If we know there are no side effects, any independent computation can be done in parallel</li>
   <li>Common example: <code>List.map</code> and other <code>.map</code>’s can apply <code>f</code> in parallel</li>
   <li>Multiple function arguments can be evaluated in parallel</li>
-  <li>etc..</li>
+  <li>And more: referential transparency in general makes parallelism much easier</li>
+  <li>Multicore OCaml is in beta, but will be released soon.</li>
 </ul>
 
 <h3 id="writing-more-efficient-fp">Writing more efficient FP</h3>
@@ -179,11 +177,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Note that memoization implicitly needs a store for this past history</li>
   <li>Could use mutable store, but could also do the “state monad thing”
     <ul>
-      <li>pass in and return the store in the memoized function
-        <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fib</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">int</span><span class="o">,</span><span class="kt">int</span><span class="o">,..</span><span class="p">)</span> <span class="nn">Map</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="p">(</span><span class="kt">int</span><span class="o">,</span><span class="kt">int</span><span class="o">,..</span><span class="p">)</span> <span class="nn">Map</span><span class="p">.</span><span class="n">t</span><span class="p">)</span>
-</code></pre></div>        </div>
-      </li>
-      <li>Requires monadic state threading and store itself will be less efficient</li>
+      <li>pass in and return the store in the memoized function</li>
     </ul>
   </li>
 </ul>
@@ -203,24 +197,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Idea: pass the “rest of the computation” as an additional argument <code>c</code> to a function</li>
   <li>The last line of the function will be <code>c(..)</code> – call <code>c</code>.</li>
   <li>If <code>c</code> is the current function itself, it will be a tail call - efficient!</li>
-  <li>See file <a href="continuation-trees.ml">continuation-trees.ml</a> for how to code tree fold using CPS.</li>
-</ul>
-
-<h4 id="other-uses-of-cps">Other uses of CPS</h4>
-<ul>
-  <li>CPS looks related to how we encoded a store in a monad
+  <li>We also saw continuations in <code>Lwt</code> where the “callback code” after an I/O operation was a function invoked later.
     <ul>
-      <li>both involve passing an extra argument along hand over fist</li>
+      <li>and in Algebraic Effects world we had explicit <code>'a continuation</code> types</li>
     </ul>
   </li>
-  <li>In fact, there is a deeper connection: the Continuation monad, with type
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">answer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">answer</span>
-</code></pre></div>    </div>
-    <ul>
-      <li>we will not explore this monad in detail</li>
-    </ul>
-  </li>
-  <li>What we will explore is how <em>coroutines</em> can be expressed with continuations.</li>
+  <li>See file <a href="../examples/continuation-trees.ml">continuation-trees.ml</a> for how to code tree fold using CPS.</li>
 </ul>
 
       
