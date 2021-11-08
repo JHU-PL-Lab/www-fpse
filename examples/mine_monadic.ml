@@ -1,9 +1,3 @@
-(* Finalcd . effects encoding topic: a larger monad example
-   
-   Question to answer: how does this work in practice?
-   Method: let's re-code the Minesweeper app we looked at earlier using a state monad.
-
-*)
 
 (* 
   Monadic state Minesweeper

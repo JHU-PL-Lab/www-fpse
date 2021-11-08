@@ -2,15 +2,16 @@
 
 * Functional data structures: 
     - at first they may feel super-inefficient
-    - but they are often in practice perfectly fine even if asymptotic behavior is worse
+    - but they are usually in practice fine even if asymptotic behavior is worse
     - and, they are better in a few cases because past states "persist for free"
 
-### Case Study: Minesweeper
+### Case Study: Monadic Minesweeper
 
 * Let us analyze the complexity of different implementations of Minesweeper.
 * Assume a grid of n elements (a square-root n by square-root n grid)
 
-Monadic version with 2D array update as a copy in implementation
+Hypothetic monadic state version 
+* Take the imperative 2D array version, implement as state monad on list-of-strings ([code in fact is here](../examples/mine_monadic.ml))
 * Each grid square increment will take O(n) since the whole grid has to be rebuilt with one change
 * O(n) inc's are performed total so it will be O(n^2).
 
