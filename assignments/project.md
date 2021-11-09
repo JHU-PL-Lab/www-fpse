@@ -8,9 +8,7 @@ Here are some high-level requirements for the projects.
 * All the code must be in OCaml obviously (excepting small bits of glue code)
 * Use the standard course libraries -- `Core`, `Async`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 1-3 people, any of these three options is good.
-* A very rough idea of the scope of the project is around 500-1000 lines of code per person.
-* There will be two official check-ins: there will be an in-class lab mid-November with a submission shortly after, and there will be a final demo and code submission on Dec 17th.
-
+* A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be putting line count as part of your grade.
 
 ### Potential Project Topic Thrusts
 
