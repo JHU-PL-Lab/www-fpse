@@ -6,20 +6,20 @@ For the projects you are to conceive, design, and implement your own standalone 
 Here are some high-level requirements for the projects.
 
 * All the code must be in OCaml obviously (excepting small bits of glue code)
-* Use the standard course libraries -- `Core`, `Async`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
+* Use the standard course libraries -- `Core`, `Lwt`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 1-3 people, any of these three options is good.
 * A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be putting line count as part of your grade.
 
 ### Potential Project Topic Thrusts
 
-* You will need to make a standalone application as you did/will in assignments 2 and 4.
+* You will need to make a standalone application as you did/will do in assignments 2 and 4.
 * Here are are three approaches to give some potential directions; feel free to do whatever you like though.
 
 #### 1. A command-line app with persistence
 * The idea here is to make some application where all the interaction is via the command line.
 * Persistent data across command invocations could be saved in a file using the `Stdio` library.
 * This path is the most straightforward of the three choices.
-* Here are some simplistic examples, you would need much more than these
+* Here is a simplistic example, you would need much more than this
 
 * A minesweeper game.  Here is a mock of such a game:
 ```sh
@@ -50,17 +50,18 @@ See [Simon Tatham's Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtat
   4. Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
   5. Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use `yojson` to convert back and forth.  
     - You should do this from the beginning in fact, it will be easier and more robust.
+  6. Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.  For example for Minesweeper consider adding e.g. anti-mines (subtracting one instead of adding one), lighthouses (expose mines in an area around it), etc.
 
 #### 2. Web client
 If  you want to suck down some data from a public RESTful API, `Cohttp` is a good library to use. 
 
 Here are some concrete project ideas involving web client:
-* Write a command line app which would access, process, and present data from an existing RESTFul API collator/processor 
+* A command line app which would access, process, and present data from an existing RESTFul API collator/processor 
    - see e.g. [Public APIs](https://github.com/public-apis/public-apis) for a large list of APIs available
    - Some free APIs there include data for shopping, weather, recipes, COVID, etc etc 
    - One concrete idea could be to grab both historical weather and COVID data for a location using two different RESTful APIs and compute the correlation between temperature and new COVID cases five days later
    - etc etc etc.
-* You could write a web crawler app
+* A web crawler app
     - starting from a URL grab it and all contained URL (up to some breadth and depth limit)
     - Then, compute some aspects on the pages, e.g. count how many lines of code, etc
 
@@ -77,10 +78,11 @@ Here is a list of well-maintained libraries we recommend using for the above app
 
 #### Web-based
 
-* All web-based applications may have delayed response or may fail, and so all of the good libraries are built on an OCaml coroutine library, either `Lwt` or `Async`.  `Async` is the Core version, but it is not gaining a lot of traction so you will probably be better off with a library over `Lwt`.  
+* All web-based applications may have delayed response or may fail, and so all of the web libraries below are built on an OCaml coroutine library, either `Lwt` or `Async`.  `Async` is the Core version, but it is not gaining a lot of traction so you will probably be better off with a library over `Lwt`.  
   - See the [coroutines lecture notes](../coroutines.html) for more information on using `Lwt`.
 * We recommend the simple [`Cohttp_lwt_unix`](https://github.com/mirage/ocaml-cohttp) for web client (API reading / crawling) applications.
-* We recomend [`Dream`](https://aantron.github.io/dream) for web server applications.  [`Opium`](https://github.com/rgrinberg/opium) is a good alternative to consider as well.  Both are built on `Lwt`.
+* We recomend [`Dream`](https://aantron.github.io/dream) for web server applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew postinstall node`, `brew install openssl` and `brew install libev` along with the other install instructions.)
+* [`Opium`](https://github.com/rgrinberg/opium) is a good alternative to `Dream` to consider as well.  Both are built on `Lwt`.
 * `Cohttp` also supports lightweight web server development.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation. 
 
 #### Persistence
@@ -105,12 +107,12 @@ Here is a list of well-maintained libraries we recommend using for the above app
 
 ### Submissions
 
-* There will be FOUR (revised1) submission points in Gradescope, one ungraded one for initial group and idea, one for the design, one for a code checkpoint and one for the final code.  For each group only one person needs to submit.
+* There will be FOUR (revised!) submission points in Gradescope, one ungraded one for initial group and idea, one for the design, one for a code checkpoint and one for the final code.  For each group only one person needs to submit to Gradescope.
 * The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus 3) potential libraries.  Basically, the result of one initial brainstorming session.
 * The design submission must include
   1. An overview of the purpose of the project
   2. A list of libraries you plan on using
-  3. Commented module type declarations which will provide you with an initial specification to code to
+  3. Commented module type declarations (`.mli` files) which will provide you with an initial specification to code to
     - You can obviously change this later and don't need every single detail filled out
     - But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.
   4. Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.

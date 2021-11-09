@@ -67,7 +67,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>All the code must be in OCaml obviously (excepting small bits of glue code)</li>
-  <li>Use the standard course libraries – <code>Core</code>, <code>Async</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
+  <li>Use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 1-3 people, any of these three options is good.</li>
   <li>A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be putting line count as part of your grade.</li>
 </ul>
@@ -75,7 +75,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="potential-project-topic-thrusts">Potential Project Topic Thrusts</h3>
 
 <ul>
-  <li>You will need to make a standalone application as you did/will in assignments 2 and 4.</li>
+  <li>You will need to make a standalone application as you did/will do in assignments 2 and 4.</li>
   <li>Here are are three approaches to give some potential directions; feel free to do whatever you like though.</li>
 </ul>
 
@@ -85,7 +85,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Persistent data across command invocations could be saved in a file using the <code>Stdio</code> library.</li>
   <li>This path is the most straightforward of the three choices.</li>
   <li>
-    <p>Here are some simplistic examples, you would need much more than these</p>
+    <p>Here is a simplistic example, you would need much more than this</p>
   </li>
   <li>A minesweeper game.  Here is a mock of such a game:
     <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>./mine.exe init 5x4 <span class="c"># initialize a new game, 5x4 board</span>
@@ -119,6 +119,7 @@ BOOM!
           <li>You should do this from the beginning in fact, it will be easier and more robust.</li>
         </ul>
       </li>
+      <li>Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.  For example for Minesweeper consider adding e.g. anti-mines (subtracting one instead of adding one), lighthouses (expose mines in an area around it), etc.</li>
     </ol>
   </li>
 </ul>
@@ -128,7 +129,7 @@ BOOM!
 
 <p>Here are some concrete project ideas involving web client:</p>
 <ul>
-  <li>Write a command line app which would access, process, and present data from an existing RESTFul API collator/processor
+  <li>A command line app which would access, process, and present data from an existing RESTFul API collator/processor
     <ul>
       <li>see e.g. <a href="https://github.com/public-apis/public-apis">Public APIs</a> for a large list of APIs available</li>
       <li>Some free APIs there include data for shopping, weather, recipes, COVID, etc etc</li>
@@ -136,7 +137,7 @@ BOOM!
       <li>etc etc etc.</li>
     </ul>
   </li>
-  <li>You could write a web crawler app
+  <li>A web crawler app
     <ul>
       <li>starting from a URL grab it and all contained URL (up to some breadth and depth limit)</li>
       <li>Then, compute some aspects on the pages, e.g. count how many lines of code, etc</li>
@@ -159,13 +160,14 @@ BOOM!
 <h4 id="web-based">Web-based</h4>
 
 <ul>
-  <li>All web-based applications may have delayed response or may fail, and so all of the good libraries are built on an OCaml coroutine library, either <code>Lwt</code> or <code>Async</code>.  <code>Async</code> is the Core version, but it is not gaining a lot of traction so you will probably be better off with a library over <code>Lwt</code>.
+  <li>All web-based applications may have delayed response or may fail, and so all of the web libraries below are built on an OCaml coroutine library, either <code>Lwt</code> or <code>Async</code>.  <code>Async</code> is the Core version, but it is not gaining a lot of traction so you will probably be better off with a library over <code>Lwt</code>.
     <ul>
       <li>See the <a href="../coroutines.html">coroutines lecture notes</a> for more information on using <code>Lwt</code>.</li>
     </ul>
   </li>
   <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_lwt_unix</code></a> for web client (API reading / crawling) applications.</li>
-  <li>We recomend <a href="https://aantron.github.io/dream"><code>Dream</code></a> for web server applications.  <a href="https://github.com/rgrinberg/opium"><code>Opium</code></a> is a good alternative to consider as well.  Both are built on <code>Lwt</code>.</li>
+  <li>We recomend <a href="https://aantron.github.io/dream"><code>Dream</code></a> for web server applications.  (Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew postinstall node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions.)</li>
+  <li><a href="https://github.com/rgrinberg/opium"><code>Opium</code></a> is a good alternative to <code>Dream</code> to consider as well.  Both are built on <code>Lwt</code>.</li>
   <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
 </ul>
 
@@ -199,13 +201,13 @@ BOOM!
 <h3 id="submissions">Submissions</h3>
 
 <ul>
-  <li>There will be FOUR (revised1) submission points in Gradescope, one ungraded one for initial group and idea, one for the design, one for a code checkpoint and one for the final code.  For each group only one person needs to submit.</li>
+  <li>There will be FOUR (revised!) submission points in Gradescope, one ungraded one for initial group and idea, one for the design, one for a code checkpoint and one for the final code.  For each group only one person needs to submit to Gradescope.</li>
   <li>The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus 3) potential libraries.  Basically, the result of one initial brainstorming session.</li>
   <li>The design submission must include
     <ol>
       <li>An overview of the purpose of the project</li>
       <li>A list of libraries you plan on using</li>
-      <li>Commented module type declarations which will provide you with an initial specification to code to
+      <li>Commented module type declarations (<code>.mli</code> files) which will provide you with an initial specification to code to
         <ul>
           <li>You can obviously change this later and don’t need every single detail filled out</li>
           <li>But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.</li>
