@@ -1,4 +1,4 @@
-The FPSE Projects
+The FPSE Projects (REVISED 11/9/2021)
 ---------------------
 
 For the projects you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.  
@@ -21,7 +21,7 @@ Here are some high-level requirements for the projects.
 * The idea here is to make some application where all the interaction is via the command line.
 * Persistent data across command invocations could be saved in a file using the `Stdio` library.
 * This path is the most straightforward of the three choices.
-* Here are some simplistic examples, you would need more than these
+* Here are some simplistic examples, you would need much more than these
 
 * A minesweeper game.  Here is a mock of such a game:
 ```sh
@@ -46,21 +46,18 @@ $ # etc
 See [Simon Tatham's Puzzle Collection](https://www.chiark.greenend.org.uk/~sgtatham/puzzles/) for a bunch of ideas for games with running demos.
 
 * For all command-line apps some ways to beef them up once the basic app is working include
-  1. Replace the command line with a web server interface a la `Cohttp_async` mentioned below which could be invoked on the command line by `curl`
-  ```sh
-  $ curl http://localhost/mine/move?1,1
-  ```
-  2. In addition to 2., write a JavaScript front-end to put a UI on your app.  Obviously you would need to be familiar with JavaScript web programming already if you chose this.
-  3. Replace the file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
-  4. Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use `yojson` to convert back and forth.  
+  1. Replace the command line with a RESTful web server using [`Dream`](https://aantron.github.io/dream) mentioned below.
+  2. In addition to 2., `Dream` supports html templates and you could "reply" to the `http` queries with html and so you can run your app in the browser.
+  3. If you know JavaScript you can beef up 2. a bit with some dynamic content.
+  4. Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
+  5. Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use `yojson` to convert back and forth.  
     - You should do this from the beginning in fact, it will be easier and more robust.
 
-#### 2. Async and web related
-The combination of the `Async` and `Cohttp_async` libraries allow for both web server and web client applications.  See below for links to the libraries.
+#### 2. Web client
+If  you want to suck down some data from a public RESTful API, `Cohttp` is a good library to use. 
 
-Here are some concrete project ideas.
-* Some of the extensions suggested above involved writing a web server interface for your app, you could instead make that your only focus and skip the command-line version
-* Another approach is to write a command line app which would access, process, and present data from an existing RESTFul API collator/processor 
+Here are some concrete project ideas involving web client:
+* Write a command line app which would access, process, and present data from an existing RESTFul API collator/processor 
    - see e.g. [Public APIs](https://github.com/public-apis/public-apis) for a large list of APIs available
    - Some free APIs there include data for shopping, weather, recipes, COVID, etc etc 
    - One concrete idea could be to grab both historical weather and COVID data for a location using two different RESTful APIs and compute the correlation between temperature and new COVID cases five days later
@@ -82,17 +79,15 @@ Here is a list of well-maintained libraries we recommend using for the above app
 
 #### Web-based
 
-* Since web-based applications may have delayed response or may fail, you should use the `Async` library for any web client or server app.
-  - See the [async lecture notes](../lazy-async.html#async) and [Real World OCaml Chapter 15](https://dev.realworldocaml.org/concurrent-programming.html) for more information on using `Async`.
-* We recommend the simple [`Cohttp_async`](https://github.com/mirage/ocaml-cohttp) for both web client (API reading / crawling) and server applications.
-* See [Real World OCaml Chapter 15](https://dev.realworldocaml.org/concurrent-programming.html#scrollNav-3) for an example of how to perform http requests with `Cohttp_async`.
-* `Cohttp` also supports lightweight web server development.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.  (This tutorial uses the `lwt` bindings; see the [Cohttp async examples](https://github.com/mirage/ocaml-cohttp/tree/master/examples/async) for `async` versions)
-* Note that `Async` is not the most mature library; its similar competitor `Lwt` might be a better choice in some cases even though it is not as `Core`-compatible.  `Cohttp` for example seems more reliable with `Lwt`.
-* Write a browser app in OCaml, and compile it to JavaScript to run in the browser via [`js_of_ocaml`](https://ocsigen.org/js_of_ocaml/3.7.0/manual/overview).
+* All web-based applications may have delayed response or may fail, and so all of the good libraries are built on an OCaml coroutine library, either `Lwt` or `Async`.  `Async` is the Core version, but it is not gaining a lot of traction so you will probably be better off with a library over `Lwt`.  
+  - See the [coroutines lecture notes](../coroutines.html) for more information on using `Lwt`.
+* We recommend the simple [`Cohttp_lwt_unix`](https://github.com/mirage/ocaml-cohttp) for web client (API reading / crawling) applications.
+* We recomend [`Dream`](https://aantron.github.io/dream) for web server applications.  [`Opium`](https://github.com/rgrinberg/opium) is a good alternative to consider as well.  Both are built on `Lwt`.
+* `Cohttp` also supports lightweight web server development.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation. 
 
 #### Persistence
 
-* For simple persistence you can just read and write from a file, via the `Stdio` Jane Street library.
+* For simple persistence you can just read and write from a file, via the `Stdio` Jane Street library.  Make sure to use a structured file format such as json.
 * If you are familiar with databases, the [sqlite3-ocaml](https://github.com/mmottl/sqlite3-ocaml) and [postgresql-ocaml](https://mmottl.github.io/postgresql-ocaml/) bindings should work for accessing SQLite or Postgres databases from within OCaml.
 
 #### Data Processing
@@ -112,7 +107,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 
 ### Submissions
 
-* There will be two submission points in Gradescope, one ungraded one for initial group and idea, one for the design, and one for the final code.  For each group only one person needs to submit.
+* There will be FOUR (revised1) submission points in Gradescope, one ungraded one for initial group and idea, one for the design, one for a code checkpoint and one for the final code.  For each group only one person needs to submit.
 * The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus 3) potential libraries.  Basically, the result of one initial brainstorming session.
 * The design submission must include
   1. An overview of the purpose of the project
@@ -124,6 +119,13 @@ Here is a list of well-maintained libraries we recommend using for the above app
   5. Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.
   6. Also include a brief list of what order you will implement features.
   7. You may also include any other information which will make it easier to understand your project.
+
+* For the code checkpoint you will need to submit your current codebase
+  1. You don't have to have anything finished
+  2. But, you should have good progress on library usage and have a some unit tests operational on your own library code.
+  3. Your project will need to be buildable with `dune build` at the top level, and testable with `dune test` If you have some non-buildable code at submission time, just comment that out.
+  4. We won't require 97% coverage but do at least run a coverage tool and cover a few of the holes.
+
 * For the demo you should be prepared to 
   1. Demo the project showing all the functionality
   2. We may ask questions during this and perhaps ask you to try additional cases
@@ -138,3 +140,20 @@ Here is a list of well-maintained libraries we recommend using for the above app
   3. You will also need to include a test suite with good coverage.
 * We will put up two submission points in Gradescope for you to upload your zipped hierarchies for the Design and Final submissions.  Please include all the source files needed to build the project but no binary or built files.
 * If you are working with a team-mate, make sure the submission is marked as such.  Only one person on the team needs to upload the submission.
+
+
+## The FPSE Labs
+<a name="labs"></a>
+
+We will be using a new method for project labs this year.  The goal of the labs is for your group (or you if a singleton) to have plenty of time to get feedback from the course staff on all aspects of your project.
+
+Here are some defining features.
+
+1. There will be five in-class labs.  Your group will be required to attend the first lab in-person on Nov 10th.
+2. Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework.
+3. Attendance will be taken at all labs and will be a part of your final grade. 
+4. Your group is required to attend **five** labs total.  Conveniently, there are five class periods which are projet labs, but you may alternatively select any CA office hour (the whole hour) to be a "lab".  If you wish to do that, show up in-person at the start of the office hour and notify the CA that you are doing a lab, and they will mark you down for attendance.
+5. All labs must be attended in-person, but you may petition for an exception.
+6. Attendance is all or none, for a lab to count all group members must be present.
+7. You are of course also welcome to show up to either the class or an office hour as a "non-lab", meaning you don't need to work on your project for the whole period and it will not count as one of your five labs.
+999. ... We may need to evolve some of the above if something is not working.

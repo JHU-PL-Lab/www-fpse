@@ -77,7 +77,7 @@ let%bind img = (* code to issue image request and pause *) in
   (* processing code to run after this image loaded*)
 ```
 
-(Note, `Lwt` uses `let*` instead of `let%bind`; `Async` uses `let%bind`)
+(Note, `Lwt` uses `let*` or `let%lwt` instead of `let%bind`; `Async` uses `let%bind`)
 
 * Observe how `bind` is naturally making the continuation a function
 * So we will be using `bind` a lot when writing coroutine code in OCaml
@@ -105,10 +105,9 @@ let* load2 = p2 in ...
 
 ## `Lwt`
 
-
-
 * The above is some high level idea of the use of coroutines
 * We will now fire up `Lwt` and get into the details
+  - It is the most commonly used coroutine library; `Async` is part of `Core` but has much less usage.
 
 <a name="lwt"></a>
 
@@ -131,9 +130,19 @@ And you might also want to do this to put the functions at the top level and to 
 
 We will now review 
 
-* [A simple starting guide](https://ocsigen.org/tuto/latest/manual/lwt)
 * [Some of the manual](https://ocsigen.org/lwt/latest/manual/manual)
-* [this `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html) which gets into how the internals work
+* [this `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html) which gets into how the internals work in Part 2.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -141,7 +150,7 @@ We will now review
 
 ## `Async`
 
-Here are some notes on `Async` which we don't plan on covering in lecture.
+Here are some notes on `Async` which we don't plan on covering in lecture. 
 
  * `Async` is another Jane Street library
  * It is based on the notion of a *promise*

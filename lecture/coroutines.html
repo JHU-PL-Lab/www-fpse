@@ -171,7 +171,7 @@ A: Split such I/O actions in two:</p>
   <span class="c">(* processing code to run after this image loaded*)</span>
 </code></pre></div></div>
 
-<p>(Note, <code>Lwt</code> uses <code>let*</code> instead of <code>let%bind</code>; <code>Async</code> uses <code>let%bind</code>)</p>
+<p>(Note, <code>Lwt</code> uses <code>let*</code> or <code>let%lwt</code> instead of <code>let%bind</code>; <code>Async</code> uses <code>let%bind</code>)</p>
 
 <ul>
   <li>Observe how <code>bind</code> is naturally making the continuation a function</li>
@@ -206,7 +206,11 @@ A: Split such I/O actions in two:</p>
 
 <ul>
   <li>The above is some high level idea of the use of coroutines</li>
-  <li>We will now fire up <code>Lwt</code> and get into the details</li>
+  <li>We will now fire up <code>Lwt</code> and get into the details
+    <ul>
+      <li>It is the most commonly used coroutine library; <code>Async</code> is part of <code>Core</code> but has much less usage.</li>
+    </ul>
+  </li>
 </ul>
 
 <p><a name="lwt"></a></p>
@@ -228,9 +232,8 @@ A: Split such I/O actions in two:</p>
 <p>We will now review</p>
 
 <ul>
-  <li><a href="https://ocsigen.org/tuto/latest/manual/lwt">A simple starting guide</a></li>
   <li><a href="https://ocsigen.org/lwt/latest/manual/manual">Some of the manual</a></li>
-  <li><a href="https://raphael-proust.github.io/code/lwt-part-1.html">this <code>Lwt</code> tutorial</a> which gets into how the internals work</li>
+  <li><a href="https://raphael-proust.github.io/code/lwt-part-1.html">this <code>Lwt</code> tutorial</a> which gets into how the internals work in Part 2.</li>
 </ul>
 
 <p><a name="async"></a></p>
