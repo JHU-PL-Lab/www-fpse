@@ -152,7 +152,7 @@ Here are some defining features.
 1. There will be five in-class labs.  Your group will be required to attend the first lab in-person on Nov 10th.
 2. Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework.
 3. Attendance will be taken at all labs and will be a part of your final grade. 
-4. Your group is required to attend **five** labs total.  Conveniently, there are five class periods which are projet labs, but you may alternatively select any CA office hour (the whole hour) to be a "lab".  If you wish to do that, show up in-person at the start of the office hour and notify the CA that you are doing a lab, and they will mark you down for attendance.
+4. Your group is required to attend **five** labs total.  Conveniently, there are five class periods which are project labs, but you may alternatively select any CA office hour (the whole hour) to be a "lab".  If you wish to do that, show up in-person at the start of the office hour and notify the CA that you are doing a lab, and they will mark you down for attendance.
 5. All labs must be attended in-person, but you may petition for an exception.
 6. Attendance is all or none, for a lab to count all group members must be present.
 7. You are of course also welcome to show up to either the class or an office hour as a "non-lab", meaning you don't need to work on your project for the whole period and it will not count as one of your five labs.
