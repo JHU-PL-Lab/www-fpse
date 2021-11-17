@@ -69,25 +69,38 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h2 id="functional-focused-languages">Functional-focused languages</h2>
 
 <ul>
-  <li>These are languages designed with FP style in mind from the start: immutable variables and data structures, full higher-order functions, currying, etc.
+  <li>These are languages designed with FP style in mind from the start</li>
+  <li>Key features include
     <ul>
-      <li>Note that you may see the term “persistent data structure”, we have been calling these “pure functional” or “immutable” data structures.</li>
-      <li>The term “persistent” has a longstanding meaning of surviving over multiple runs of a program so I view “persistent data structure” as a misleading term.</li>
+      <li>Immutable variables by default</li>
+      <li>Many immutable data structures in libraries</li>
+      <li>Full higher-order functions (can pass and return functions to functions), currying, anonymous (<code>fun x -&gt; </code> functions), etc.</li>
+      <li>(Often also includes pattern matching and type inference)</li>
+    </ul>
+  </li>
+  <li>Note that you may see the term “persistent data structure”, we have been calling these “pure functional” or “immutable” data structures.
+    <ul>
+      <li>The term “persistent” has a longstanding meaning of surviving over multiple runs of a program so I personally view “persistent data structure” as a misleading term.</li>
     </ul>
   </li>
   <li>There are generally two “schools”
     <ul>
-      <li>ML school: static types, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, etc)</li>
-      <li>Lisp school: dynamically typed (Lisp, Scheme, Clojure, Elm, etc)</li>
+      <li>ML school: static types, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, etc)</li>
+      <li>Lisp school: dynamically typed (Lisp, Scheme, Clojure, etc)</li>
     </ul>
   </li>
+  <li>All of these functional languages should be very easy to learn now that you know OCaml.</li>
 </ul>
 
 <h3 id="ocaml-and-standard-ml">OCaml and Standard ML</h3>
 
 <ul>
-  <li>Of course we have to include OCaml!</li>
-  <li>Standard ML is another variant of ML which has limited popularity these days</li>
+  <li>OCaml .. perhaps you heard of that?? :-)</li>
+  <li>Standard ML is another variant of ML
+    <ul>
+      <li>it has very limited popularity these days</li>
+    </ul>
+  </li>
 </ul>
 
 <h3 id="f">F#</h3>
@@ -128,21 +141,21 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li><a href="https://rescript-lang.org">ReScript</a> is an interesting beast, it is a fork of OCaml in terms of features
     <ul>
-      <li>but with a somewhat different syntax not so loaded with historical oddities and kludges</li>
-      <li>You can convert <code>.res</code> to <code>.bs.js</code> to run in a browser</li>
+      <li>But, with a somewhat different syntax not so loaded with historical oddities and kludges</li>
+      <li>Compiler takes <code>.res</code> to <code>.bs.js</code> which can in turn run in a browser</li>
       <li><a href="https://rescript-lang.org/try">Here</a> is a playground where you can see how <code>.res</code> is turned into <code>.js.bs</code>.</li>
+      <li><a href="https://rescript-lang.org/docs/manual/latest/newcomer-examples">Some small code examples</a> to get an idea of the syntax</li>
     </ul>
   </li>
-  <li>ReScript is a fork of <a href="https://reasonml.github.io">Reason</a> but that project seems to be languishing now
+  <li>ReScript is a fork of <a href="https://reasonml.github.io">Reason</a> but Reason seems to be languishing now
     <ul>
       <li>Reason is “full OCaml” (every single feature) but with a more modern syntax</li>
-      <li><a href="https://reasonml.github.io/en/try">This demo</a> shows the close relation of Reason, OCaml, and JavaScript
+      <li><a href="https://reasonml.github.io/en/try">This playground</a> shows the close relation of Reason, OCaml, and JavaScript
         <ul>
           <li>ReScript doesn’t have this perfect tie to OCaml but is close</li>
           <li>You can still use this demo to paste in OCaml and see what the likely ReScript code will be, or vice-versa.</li>
         </ul>
       </li>
-      <li><a href="https://rescript-lang.org/docs/manual/latest/newcomer-examples">Some small code examples</a> to get an idea of the syntax</li>
     </ul>
   </li>
 </ul>
@@ -158,7 +171,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>ReScriptReact is the ReScript version of Facebook’s excellent React UI library</li>
   <li><a href="https://github.com/jihchi/rescript-react-realworld-example-app">Here</a> is an example of a full browser app written in ReScriptReact.
     <ul>
-      <li>ReScriptReact counts as “OCaml” for the course projects, an option if you already know React.</li>
+      <li>ReScriptReact counts as “OCaml” for the course projects, an option to consider if you already know React.</li>
     </ul>
   </li>
 </ul>
@@ -196,7 +209,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>inspired by Church’s Lambda Calculus, circa 1934 - functional programming on paper</li>
       <li>Lisp is dynamically typed, there are no type declarations or inference and all errors caught at runtime.</li>
-      <li>Allows mutation everywhere (no immutable <code>let</code>), but “only mutate when really needed”.</li>
+      <li>Allows mutation everywhere (no immutable <code>let</code> or immutable lists), but “only mutate when really needed”.</li>
     </ul>
   </li>
   <li>Scheme was a clean-up of Lisp in the 70’s-80’s, there were several errors in the Lisp design
@@ -207,15 +220,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><a href="https://racket-lang.org">Racket</a> is a popular modern dialect of Scheme with many added features including types</li>
   <li><a href="https://clojure.org">Clojure</a> is another more modern Lisp dialect
     <ul>
-      <li>Has more immutablility built-in and can more cleanly support parallelism</li>
-      <li>Avoids race conditions on stateful data strutures</li>
+      <li>Has more immutablility by default than Scheme and so can more cleanly support parallelism
+        <ul>
+          <li>Avoids race conditions on stateful data strutures</li>
+        </ul>
+      </li>
       <li>Runs on the Java JVM so lots of libraries</li>
     </ul>
   </li>
   <li>Additionally, Smalltalk, Ruby, Python, and JavaScript are descended from Lisp (more below on those)</li>
 </ul>
 
-<h2 id="fp-extensions-to-yourfavoritelang">FP Extensions to YourFavoriteLang</h2>
+<h2 id="fp-in-yourfavoritelang">FP in YourFavoriteLang</h2>
 
 <ul>
   <li>It is now possible to do FP-style programming in Java, C++, Python, JavaScript, etc.</li>
@@ -227,7 +243,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>There is not necessarily good library support or integration
     <ul>
       <li>So, at this point more “checking the FP box” than actual “doing FP”</li>
-      <li>To “really do” FP you need immutable data structures and variables</li>
+      <li>To “really do” FP you need immutable data structures and default-immutable variables</li>
     </ul>
   </li>
 </ul>
@@ -238,19 +254,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Lambdas are clunky to use due to how they were patched in.</li>
-  <li>Java 8 higher-order functions  “pun” as an interface with only one method in it.
+  <li>Java 8 higher-order functions  “pun” as an interface with only one method in it, <code>apply</code>.
     <ul>
       <li>the function is taken to be the body of that single method, no need to write the method name when declaring the function then.</li>
     </ul>
   </li>
-  <li>There is also some (limited) type inference for Lambda parameters.</li>
-  <li><a href="http://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html">Here is a tutorial</a></li>
+  <li>There is also some (limited) type inference for Lambda parameters (plus type inference in general via <code>var</code>)</li>
   <li>Currying in Java, somewhat painfully: <a href="https://gist.github.com/timyates/7674005">Gist currying example</a>. For that example here is the <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html">Function</a> and <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/BiFunction.html">BiFunction</a> type.</li>
   <li>Use <code>final</code> to declare variables immutable in Java - use it!</li>
   <li>There are no immutable data structures in the Java standard library unfortunately</li>
 </ul>
 
-<h3 id="fp-in-c">FP in C++</h3>
+<h3 id="fp-in-c11">FP in C++11</h3>
 
 <ul>
   <li>Everyone is joining the Lambda party!</li>
@@ -262,13 +277,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>e.g. <code>auto mydata = 22;</code>. <code>auto</code> is like <code>var</code> in Java.</li>
     </ul>
   </li>
-  <li>C++-14 adds <a href="http://en.wikipedia.org/wiki/C++14#Generic_lambdas">generic lambdas</a> which look like the polymorphic types of OCaml/Java but are really just fancy macros.</li>
+  <li>C++14 adds <a href="http://en.wikipedia.org/wiki/C++14#Generic_lambdas">generic lambdas</a> which look like the polymorphic types of OCaml/Java but are really just fancy macros.</li>
 </ul>
 
 <h3 id="fp-in-python">FP In Python</h3>
 
 <ul>
-  <li>Python “already has” FP including closures and Currying.</li>
+  <li>Python “already has” FP including closures and Currying.  Here is a Curried add function.</li>
 </ul>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">adder</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -280,7 +295,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 <ul>
   <li>The above is a bit clunky since the intermediate function must be named</li>
-  <li><code>map</code>, <code>filter</code>, <code>reduce</code> etc are already in the core language</li>
+  <li><code>map</code>, <code>filter</code>, <code>reduce</code> etc are already in the core libraries</li>
   <li>In addition, the <a href="https://docs.python.org/3/library/functools.html"><code>functools</code></a> standard library supports other convenience higher-order function operations</li>
   <li>Plus, if you want even more FP-ism, there are additional libraries such as <a href="https://toolz.readthedocs.io/en/latest/index.html">PyToolz</a></li>
 </ul>
@@ -301,7 +316,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>and Python 3.8 finally has <code>final</code></li>
     </ul>
   </li>
-  <li>Python will also eventually have pattern matching</li>
+  <li>Python 3.10 (finally!) has pattern matching - released Oct 2021.
+    <ul>
+      <li><a href="https://www.python.org/dev/peps/pep-0636/">tutorial</a></li>
+    </ul>
+  </li>
 </ul>
 
 <h3 id="fp-in-javascript">FP In JavaScript</h3>
@@ -332,7 +351,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>A <em>closure</em> is just a higher-order function return value</li>
   <li>The term “closure” comes from how they are implemented – all variables not local to the function must be remembered</li>
-  <li>It is the key thing missing from C: C has <em>function pointers</em> you can pass around, but no closures.</li>
   <li>OCaml example:</li>
 </ul>
 
@@ -343,7 +361,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Note how <code>x</code> is a function parameter and is remembered in spite of function returning, means a reference to <code>x</code> is needed in the closure</li>
+  <li>
+    <p>Note how <code>x</code> is a function parameter and is remembered in spite of function returning, means <code>x</code> needs to be remembered, in the closure</p>
+  </li>
+  <li>
+    <p>Closures are the key thing missing from C: C has <em>function pointers</em> you can pass around, but no closures.</p>
+    <ul>
+      <li>It also doesn’t allow you to write anonymous functions (<code>fun x -&gt; ..</code>), etc, etc.</li>
+    </ul>
+  </li>
 </ul>
       
           </section>
