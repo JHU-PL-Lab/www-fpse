@@ -81,9 +81,9 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * All web-based applications may have delayed response or may fail, and so all of the web libraries below are built on an OCaml coroutine library, either `Lwt` or `Async`.  `Async` is the Core version, but it is not gaining a lot of traction so you will probably be better off with a library over `Lwt`.  
   - See the [coroutines lecture notes](../coroutines.html) for more information on using `Lwt`.
 * We recommend the simple [`Cohttp_lwt_unix`](https://github.com/mirage/ocaml-cohttp) for web client (API reading / crawling) applications.
-* We recomend [`Dream`](https://aantron.github.io/dream) for web server applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew postinstall node`, `brew install openssl` and `brew install libev` along with the other install instructions.)
+* We recomend [`Dream`](https://aantron.github.io/dream) for web applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
 * [`Opium`](https://github.com/rgrinberg/opium) is a good alternative to `Dream` to consider as well.  Both are built on `Lwt`.
-* `Cohttp` also supports lightweight web server development.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation. 
+* `Cohttp` also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation. 
 
 #### Persistence
 

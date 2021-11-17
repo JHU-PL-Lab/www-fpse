@@ -166,9 +166,9 @@ BOOM!
     </ul>
   </li>
   <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_lwt_unix</code></a> for web client (API reading / crawling) applications.</li>
-  <li>We recomend <a href="https://aantron.github.io/dream"><code>Dream</code></a> for web server applications.  (Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew postinstall node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions.)</li>
+  <li>We recomend <a href="https://aantron.github.io/dream"><code>Dream</code></a> for web applications.  (Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions. on Linux or WSL2 you will probably need to use <code>apt</code> to install similar libraries if you don’t have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, <code>Cohttp</code> (below) is also a good choice.</li>
   <li><a href="https://github.com/rgrinberg/opium"><code>Opium</code></a> is a good alternative to <code>Dream</code> to consider as well.  Both are built on <code>Lwt</code>.</li>
-  <li><code>Cohttp</code> also supports lightweight web server development.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
+  <li><code>Cohttp</code> also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
 </ul>
 
 <h4 id="persistence">Persistence</h4>
