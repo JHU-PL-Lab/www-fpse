@@ -410,7 +410,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body"><a href="assignments/assignment5.html">A5</a></div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">Project Designs</div>
@@ -444,7 +444,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body">Eat Turkey or Tofurky</div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body"><a href="assignments/assignment5.html">A5</a></div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -515,7 +515,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">Code Checkpoint; A5</div>
+            <div align="center" class="body">Code Checkpoint; A5 (Fri)</div>
           </td>
         </tr>
 	<tr> 

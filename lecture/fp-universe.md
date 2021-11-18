@@ -97,6 +97,7 @@ printfn "The area of the square is %f" (getArea square)
 * It is hard-core FP: no direct side effects at all, must use monads for every side-effect (ouch!)
 * It was gaining in popularity a lot but not so much recently, too hard-core for your average programmer
 
+(Note to self: add more on Haskell novelties, including laziness, type classes, monad uses)
 ### Lisp / Scheme / Racket
 
 * Lisp was the very first functional programming language, from the late 50's
