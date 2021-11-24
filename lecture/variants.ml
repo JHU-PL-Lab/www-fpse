@@ -41,7 +41,7 @@ let hamming_distance (left : 'a list) (right : 'a list) : ((int, string) result)
 
 let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
 
-let hamming_distance (left : 'a list) (right : 'a list) : ((int, string) result)=
+let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
   match List.length left, List.length right with
   | x, y when x <> y -> Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
   | _ -> List.zip_exn left right 
@@ -117,7 +117,7 @@ int_summate bt;;
 (* fold can also do map-like operations - the folder can return a tree *)
 let bump_nodes tree = fold ~f:(fun y -> fun ls -> fun rs-> Node(y+1,ls,rs)) ~leaf:Leaf tree;;
 
-let rec insert_int (x : 'a) (bt : 'a bin_tree) : ('a bin_tree) =
+let rec insert_int (x : int) (bt : int bin_tree) : (int bin_tree) =
    match bt with
    | Leaf -> Node(x, Leaf, Leaf)
    | Node(y, left, right) ->
