@@ -635,11 +635,22 @@ let result = !r in result (* r implicitly has latest value *)
 
 let simple_state () = 
   (* let r = ref 0 is implicit - initial value at run time *)
-  let%bind rv = get() in
-  let%bind () = set(rv + 1) in
-  let%bind result = get() in return(result)
+  let%bind rv = (get() : int t) in
+  let%bind () = (set(rv + 1) : int t) in
+  let%bind result = (get() : int t) in return(result)
 
 run @@ simple_state ();;
+
+(* inlining the above let%bind *)
+
+let simple_state () = 
+  (* let r = ref 0 is implicit - initial value at run time *)
+  bind (get()) ~f:(fun rv ->
+  bind (set(rv + 1)) ~f:(fun () ->
+  bind (get()) ~f:(fun result -> return(result))))
+
+run @@ simple_state ();;
+
 
 (* Here is a bit larger example using statefulness of State_int *)
 

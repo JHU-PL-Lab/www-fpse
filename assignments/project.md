@@ -108,8 +108,14 @@ Here is a list of well-maintained libraries we recommend using for the above app
 ### Submissions
 
 * There will be FOUR (revised!) submission points in Gradescope, one ungraded one for initial group and idea, one for the design, one for a code checkpoint and one for the final code.  For each group only one person needs to submit to Gradescope.
-* The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus 3) potential libraries.  Basically, the result of one initial brainstorming session.
-* The design submission must include
+
+#### Initial Group and Idea(s) 
+ 
+ The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus 3) potential libraries.  Basically, the result of one initial brainstorming session.
+
+#### Project Design Proposal
+
+The design submission must include
   1. An overview of the purpose of the project
   2. A list of libraries you plan on using
   3. Commented module type declarations (`.mli` files) which will provide you with an initial specification to code to
@@ -120,26 +126,59 @@ Here is a list of well-maintained libraries we recommend using for the above app
   6. Also include a brief list of what order you will implement features.
   7. You may also include any other information which will make it easier to understand your project.
 
-* For the code checkpoint you will need to submit your current codebase
+#### Code Checkpoint
+
+For the code checkpoint you will need to submit your current codebase
   1. You don't have to have anything finished
   2. But, you should have good progress on library usage and have a some unit tests operational on your own library code.
   3. Your project will need to be buildable with `dune build` at the top level, and testable with `dune test` If you have some non-buildable code at submission time, just comment that out.
   4. We won't require 97% coverage but do at least run a coverage tool and cover a few of the holes.
 
-* For the demo you should be prepared to 
-  1. Demo the project showing all the functionality
-  2. We may ask questions during this and perhaps ask you to try additional cases
-  3. Code review: take us through your code, we will be commenting as we go.  
-     - Make sure to describe your use of libraries; if you are using a novel library we may not know, give a brief overview of it.
-  4. Build and test: build your project and tests, and then review your test suite.
+<a name="demo"></a>
+#### Demo and Final Code Submission
 
-* The final submission will in addition include 
-  0. All of the code of course!
-  1. It should include a dune file which successfuly builds your project
-  2. It should include a `Readme.md` at the top outlining how to build and run the project.  If any other `opam` installs are needed outside of the offical course list, describe them in your `Readme.md`.
-  3. You will also need to include a test suite with good coverage.
-* We will put up two submission points in Gradescope for you to upload your zipped hierarchies for the Design and Final submissions.  Please include all the source files needed to build the project but no binary or built files.
-* If you are working with a team-mate, make sure the submission is marked as such.  Only one person on the team needs to upload the submission.
+For the demo you should be prepared to have a 5-10 minute presentation on your project.
+  1. A Powerpoint slide deck intro might be useful depending on your project; it is not required.
+  2. Demo the project showing all the functionality.
+  3. We may ask questions during this and perhaps ask you to try additional cases
+  4. Code review: take us through your code, we will be commenting as we go.  
+     - Make sure to describe your use of libraries; if you are using a novel library we may not know, give a brief overview of it.
+  5. Build and test: build your project and tests, and then review your test suite.
+
+The final code submission should include 
+  1. All of the code of course! (And no binaries - please `dune clean` before zipping)
+  2. It should include a `dune` file which successfuly builds your project with `dune build`
+  3. It should include a top-level `Readme.md` outlining how to build and run the project.  If any other system-level installs are needed outside of the offical course list, describe them in your `Readme.md`.
+  4. In order to be clear on what `opam` packages your project depends on you are required to include information to build a `.opam` file in your project root. This is described below in more detail.
+  5. You will also need to include a test suite with good coverage which runs automatically via `dune test` from the top-level directory.
+
+
+Here are some clarifications.
+  1. For test coverage, you should have very good coverage on your core logic.  Make sure to cover the corner cases in the code with tests.
+  2. You do not need to cover I/O aspects of the code, those fall under acceptance tests and we are only requiring unit tests at this point.  There is no need to mark all of your I/O code as coverage off.
+
+#### Making and testing an `.opam` package file
+ As was mentioned above you will need to make an `.opam` file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any `opam` dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your `dune-project` file and edit as appropriate.
+  ```scheme
+  (generate_opam_files true)
+  (authors "Yours Truly" "Truly Yours")
+  (maintainers "your@email.org")
+  (package
+   (name hello_world) ; put in your own project name here
+   (synopsis "An OCaml library for Helpful Helloing")
+   (description "A longer description")
+   (depends
+    (ounit2 (> 2.0)) ; for each opam dependency list the version
+    (core (> 0.14.1)) ; `opam list core` will display which version of core you have
+ ))
+ ```
+ 
+With these lines, `dune build` will build a file `<your_project>.opam`.  You can then use command `opam install .` to attempt to install your project as a local opam package; this will install any of the `opam` dependencies if they are not already installed.  We will use this command to install all of your `opam` dependencies.  See [dune opam integration](https://dune.readthedocs.io/en/stable/opam.html) for details on this dune file format, and [opam packaging](https://opam.ocaml.org/doc/Packaging.html) for details on the `.opam` file format.
+
+Note that any non-`opam` dependencies you will need to list in your `Readme.md` file.  You can in fact add them to the `.opam` file with `depexts` but it is not trivial to do so we will not require it.
+
+#### Code Submissions
+We will put up two submission points in Gradescope for you to upload your zipped hierarchies for the Design and Final submissions.  Please include all the source files needed to build the project but no binary or other built files - run a `dune clean` before zipping!
 
 
 ## The FPSE Labs
