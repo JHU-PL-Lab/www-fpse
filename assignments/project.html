@@ -265,7 +265,7 @@ $ # etc
 </ol>
 
 <h4 id="making-and-testing-an-opam-package-file">Making and testing an <code>.opam</code> package file</h4>
-<p>As was mentioned above you will need to make an <code>.opam</code> file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any <code>opam</code> dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your <code>dune-project</code> file and edit as appropriate.</p>
+<p>As was mentioned above you will need to make an <code>.opam</code> file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any <code>opam</code> dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your <code>dune-project</code> file and edit as appropriate.  Make sure to include any <code>opam</code> packages you are using in the <code>depends</code> section.</p>
 <pre><code class="language-scheme">  (generate_opam_files true)
   (authors "Yours Truly" "Truly Yours")
   (maintainers "your@email.org")
