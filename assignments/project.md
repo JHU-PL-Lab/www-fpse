@@ -195,4 +195,25 @@ Here are some defining features.
 5. All labs must be attended in-person, but you may petition for an exception.
 6. Attendance is all or none, for a lab to count all group members must be present.
 7. You are of course also welcome to show up to either the class or an office hour as a "non-lab", meaning you don't need to work on your project for the whole period and it will not count as one of your five labs.
-999. ... We may need to evolve some of the above if something is not working.
+
+## Sample projects
+
+Here are a few FPSE projects to give you an idea of the scope etc.
+
+https://github.com/angibenton/spotify-song-classifier
+
+https://github.com/shintyl/gomoku_fpse
+
+https://github.com/most21/mlb-hof-predictions-demo
+
+https://github.com/robertzhidealx/trade-ml
+
+https://github.com/acaswell1/rubiks-wrecker
+
+https://github.com/sallocc/ocaml-final
+
+https://github.com/XiangyuShen/FFXIV-Market-Flipper
+
+https://github.com/cldelahan/fpse_project
+
+https://github.com/shaunak215/OCaml-Connect-4
