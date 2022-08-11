@@ -59,7 +59,115 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
-          
+    <h2 id="syllabus">Syllabus</h2>
+
+<p>This is the preliminary list of proposed lecture topics and readings. See the <a href="dateline.html">dateline</a> for what we actually end up doing as the course evolves.</p>
+
+<h3 id="intro-to-functional-programming-in-ocaml">Intro to Functional Programming in OCaml</h3>
+<ul>
+  <li>History and background</li>
+  <li>Basic OCaml coding with simple data, lists, and functions</li>
+  <li>The <code>List</code> library and combinatorial programming</li>
+  <li>Variants</li>
+  <li>Programming with persistent data structures</li>
+  <li>Records</li>
+  <li>Elementary modules (<code>struct</code>, <code>sig</code>, existential types)</li>
+  <li>Side effects: state, exceptions, I/O, mutable data structure libraries</li>
+  <li>More modules: functors, first-class modules, <code>include</code>, more data structure libraries</li>
+</ul>
+
+<h3 id="specification">Specification</h3>
+<ul>
+  <li>Specifying program behavior</li>
+  <li>Type-directed programming</li>
+  <li>Pre- and post-conditions, <code>assert</code></li>
+  <li>Data structure invariants</li>
+  <li>Reasoning about programs by induction</li>
+</ul>
+
+<h3 id="testing">Testing</h3>
+<ul>
+  <li>Review of testing principles</li>
+  <li>Unit testing with <code>OUnit2</code></li>
+  <li>Code coverage with <code>Bisect</code></li>
+  <li>Random testing with <code>Base_quickcheck</code></li>
+</ul>
+
+<h3 id="idiomatic-functional-programming">Idiomatic Functional Programming</h3>
+<ul>
+  <li>Functional programming principles: concision, modularity, avoiding effects</li>
+  <li>Functional programming idioms: DRY, interfaces, combinators</li>
+  <li>Efficiency in FP</li>
+  <li>Idiomatic FP by example: code reviews of well-written OCaml</li>
+  <li>OO vs Imperative vs FP; the expression problem</li>
+</ul>
+
+<h3 id="advanced-ocaml">Advanced OCaml</h3>
+<ul>
+  <li>The type sorts of OCaml; Existential types</li>
+  <li>Module sharing constraints, first-class modules</li>
+  <li>Phantom types</li>
+  <li>GADTs</li>
+</ul>
+
+<h3 id="encoding-effects-with-monads">Encoding effects with monads</h3>
+
+<ul>
+  <li>Implicit state threading with persistent data structures</li>
+  <li>Implicit exception encoding with <code>Ok/Error</code></li>
+  <li>Officially encoding exceptions: the exception monad</li>
+  <li>The monad laws</li>
+  <li>Using the exception monad: syntactic sugar, examples</li>
+  <li>More monads and their uses: I/O, state</li>
+  <li>Asynchronous programming with Lwt</li>
+</ul>
+
+<h3 id="algebraic-effects-aka-the-mother-of-all-effects">Algebraic Effects (aka the mother of all effects)</h3>
+<ul>
+  <li>Multicore OCaml’s <code>effect</code> and <code>continue</code>/<code>discontinue</code></li>
+  <li>Encoding control effects with the MOAF: coroutines, generators, promises, asynchronous I/O</li>
+  <li>Control effects code reviews</li>
+</ul>
+
+<h3 id="multicore-programming">Multicore Programming</h3>
+<ul>
+  <li>Multicore OCaml threads, channels, async/await, etc.</li>
+</ul>
+
+<h2 id="ocaml-tools-and-miscelanea">OCaml Tools and miscelanea</h2>
+<p>(Smaller topics injected as tangents or for self-study)</p>
+
+<ul>
+  <li>Visual Studio Code’s OCaml Platform</li>
+  <li><code>utop</code> and top-level directives</li>
+  <li><code>dune</code></li>
+  <li>Making standalone OCaml executables</li>
+  <li>Basic <code>ppx</code> extensions (<code>deriving</code> etc)</li>
+  <li>Optional and named function arguments</li>
+  <li>Advanced pattern matching formats</li>
+  <li><code>|&gt;</code> and <code>@@</code> syntax</li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://dev.realworldocaml.org/toc.html">Real World OCaml 2nd Edition</a> - a comprehensive book focusing on the software engineering side of OCaml</li>
+  <li><a href="https://ocaml-sf.org/learn-ocaml-public/">Learn OCaml</a> - a series of online exercises to teach yourself OCaml</li>
+</ul>
+
+<h2 id="related-course-materials">Related course materials</h2>
+<ul>
+  <li><a href="https://www.cs.cornell.edu/courses/cs3110/2020sp/textbook/">Cornell CS3110 book</a> - book used in a sophomore-level course on functional programming</li>
+  <li><a href="https://www.cl.cam.ac.uk/teaching/1718/L28/">Advanced Functional Programming</a> - a course taught at Cambridge focusing on the deeper principles behind modern OCaml.</li>
+  <li><a href="https://www.cs.princeton.edu/courses/archive/fall21/cos326/schedule.php">Functional Programming</a> - a course taught at Princeton focusing more on program correctness.</li>
+</ul>
+
+<h2 id="meta-resources">Meta-resources</h2>
+<ul>
+  <li><a href="https://github.com/ocaml-community/awesome-ocaml">Awesome OCaml</a> - a curated list of OCaml resources</li>
+  <li><a href="https://ocaml.org">Ocaml.org</a> - the central clearinghouse for all things OCaml, includes lists of <a href="https://ocaml.org/learn/tutorials/">tutorials</a>, <a href="https://ocaml.org/learn/books.html">books</a>, and <a href="https://ocaml.org/community/media.html">videos</a>.</li>
+</ul>
+      
           </section>
         </div>
       </div>

@@ -59,7 +59,160 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
-          
+    <h2 id="ocaml-coding-information">OCaml Coding Information</h2>
+
+<p>We are using <a href="https://ocaml.org">OCaml</a> version 4.14.0.</p>
+
+<h3 id="installing-ocaml-4140-and-associated-tools">Installing OCaml 4.14.0 and associated tools</h3>
+
+<p>We require that you use the <a href="https://opam.ocaml.org">opam packaging system</a> for installing OCaml and its extensions.  Once you get <code>opam</code> installed and working, everything else should be easy to install .. so the only hard part is the first step.</p>
+
+<ul>
+  <li>For Linux or Mac see <a href="https://opam.ocaml.org/doc/Install.html">The OPAM install page</a> for install instructions.</li>
+  <li>For Mac users, the above requires <a href="https://brew.sh">Homebrew</a> (a package manager for Linux-ish libraries) so here is a more detailed suggestion of some copy/paste that should work.
+    <ul>
+      <li>Mac without homebrew installed:<code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code> will install Homebrew</li>
+      <li>Mac with Homebrew (make sure you first do a <code>brew update</code> before this): <code>brew install gpatch; brew install opam</code></li>
+    </ul>
+  </li>
+  <li>You will then need to run some terminal commands to set up the basics:
+    <ol>
+      <li><code>opam init</code> to initialize OPAM;</li>
+      <li><code>opam switch create 4.14.0</code> (this will take awhile) to build OCaml version 4.14.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to <code>opam update</code> before this <code>switch</code> to make sure OPAM is aware of the latest version);</li>
+      <li><code>eval $(opam env)</code> to let your shell know where the OPAM files are (use <code>eval `opam env`</code> instead if you are using <code>zsh</code> on a Mac); and</li>
+      <li>Also add the very same line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
+    </ol>
+  </li>
+  <li>
+    <p>If you already have an earlier version of OCaml installed via <code>opam</code>, start on step 2. above to update to 4.14.0.  Make sure to do the <code>opam update</code> step first or your install won’t know that 4.14.0 even exists.  Please don’t blaze ahead with an earlier version hoping to get awawy with it, you will run into trouble later in the class with obscure compatibility errors.</p>
+  </li>
+  <li>Windows Windows Windows.. the OCaml toolchain is unfortunately not good in straight Windows.
+    <ul>
+      <li>If you are running a recent Windows install, we recommend installing <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL 2</a> which once you have set up will allow you to follow the Linux Ubuntu install instructions to get <code>opam</code>.</li>
+      <li>Note that your Ubuntu needs the C compiler and tools for the <code>opam</code> install to work; the following Linux shell command will get you those: <code>sudo apt install make m4 gcc unzip</code>.</li>
+      <li><a href="https://www.cs.princeton.edu/courses/archive/fall20/cos326/WindowsSemiNative.php">More WSL2 for OCaml tips here</a>.</li>
+      <li>Option 2 is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, <a href="https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098">here is one of them</a>.  Once your virtual Linux box is set up, you can follow the <code>opam</code> Linux install instructions.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="required-opam-standard-packages">Required OPAM Standard packages</h4>
+
+<p>Once you have <code>opam</code> and <code>ocaml</code> 4.14.0 installed, run the following <code>opam</code> command to install additional necessary packages for the class:</p>
+
+<pre><code>opam install merlin utop ppx_deriving core bisect_ppx ounit2 async ppx_deriving_yojson ocaml-lsp-server ocamlformat ocamlformat-rpc base_quickcheck
+</code></pre>
+
+<p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file <code>~/.ocamlinit</code> to add the lines below (note <code>opam</code> probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  <code>topfind</code> really should be built-in, it allows you to load libraries.  The <code>require</code> command is one thing <code>topfind</code> adds, here it is loading the <code>Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code>Core</code> as they are improved versions.</p>
+<pre><code class="language-ocaml">#use "topfind";;
+#thread;;
+#require "core.top";;
+open Core;;
+</code></pre>
+
+<h3 id="ocaml-documentation">OCaml Documentation</h3>
+<p><a href="https://ocaml.org">ocaml.org</a> is the central repository of OCaml information.</p>
+<h4 id="the-ocaml-manual">The OCaml Manual</h4>
+
+<p>The OCaml manual is <a href="https://ocaml.org/manual/">here</a>.</p>
+<ul>
+  <li>We will cover most of the topics in Part I Chapters 1 and 2 from the manual.</li>
+  <li>Manual Chapter 7 is the language reference where you can look up details if needed.</li>
+  <li>We will be covering a few topics in the <a href="https://ocaml.org/manual/extn.html">language extensions</a> chapter:
+    <ul>
+      <li><a href="https://ocaml.org/manual/locallyabstract.html">locally abstract types</a>,</li>
+      <li><a href="https://ocaml.org/manual/firstclassmodules.html">First-class modules</a>, and</li>
+      <li><a href="https://ocaml.org/manual/gadts.html">GADT’s</a>.</li>
+    </ul>
+  </li>
+  <li>Part III of the manual documents the tools, we will not be using much of this because third parties have improved on many of the tools and we will instead use those improved versions.  See below in the Tools list where we give “our” list of tools.</li>
+  <li>Part IV describes the standard libraries but we are <em>not</em> using them so please <em>don’t</em> look here for <code>List</code>, <code>Map</code>, etc documentation.  Note that if you Google up some OCaml library name you will likely get these libraries which will have subtly wrong documentation for us.  We will primarily use Jane Street’s <code>Core</code> which replaces these with more modern versions, see the next item.</li>
+</ul>
+
+<h4 id="core">Core</h4>
+<p><code>Core</code> is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a “more modern” version of lists, sets, hash tables, etc, with lots of little improvements in many places.  <code>Core</code> itself an extension of <code>Base</code> and many modules in <code>Core</code> are directly lifted from <code>Base</code>.</p>
+
+<ul>
+  <li><a href="https://ocaml.org/p/core/v0.15.0/doc/index.html">Core documentation</a></li>
+  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book gives tutorial introductions to many of the <code>Core</code>/<code>Base</code> features.</li>
+  <li><strong>Important note</strong>: if you use a search engine to look up e.g. “OCaml Set” to see how the OCaml Set module is defined you will likely not get the <code>Core</code> version and it can be very confusing as it is similar.  Even if you search “OCaml Set Core” you will likely get an outdated version of <code>Core.Set</code>.  So, <em>bookmark the above</em> and avoid countless hours of fruitless debugging because you are using the wrong docs.</li>
+</ul>
+
+<h3 id="the-fpse-ocaml-toolbox">The FPSE OCaml Toolbox</h3>
+
+<p>Here are all the tools we will be using.  You are required to have a build for which all these tools work, and the above <code>opam</code> one-liner should install them all.</p>
+
+<ul>
+  <li><a href="https://opam.ocaml.org"><code>opam</code></a> is the package management system.  See above for install and setup instructions.</li>
+  <li><a href="https://ocaml.org/manual/comp.html"><code>ocamlc</code></a> is the standalone compiler which we will be invoking via the <code>dune</code> build tool.</li>
+  <li><a href="https://opam.ocaml.org/blog/about-utop/"><code>utop</code></a> is the read/eval/print loop.  It is a replacement for the original <a href="https://ocaml.org/manual/toplevel.html"><code>ocaml</code></a> command, with many more features such as command history, replay, etc.</li>
+  <li><a href="https://opensource.janestreet.com/core/"><code>Core</code></a> was described above</li>
+  <li><a href="https://ocaml.org/manual/ocamldoc.html"><code>ocamldoc</code></a> is the documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.</li>
+  <li><a href="https://dune.build"><code>dune</code></a> is the build tool (think <code>make</code>) that we will be using.</li>
+  <li><a href="https://github.com/gildor478/ounit">OUnit</a> is the unit tester for OCaml.  The opam package is called <code>ounit2</code> for obscure reasons.</li>
+  <li><a href="https://github.com/janestreet/ppx_jane"><code>ppx_jane</code></a> adds boilerplate functions to type definitions as well as many other macros.  Unfortunately it is not documented, but <code>[@@deriving equal, compare, sexp]</code> for example will add equal and compare on a type, and to/from s-expression convertor functions.</li>
+</ul>
+
+<p>The above tools will be our “bread and butter”, we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.</p>
+
+<ul>
+  <li><a href="https://github.com/aantron/bisect_ppx">Bisect</a> will be used for code coverage.</li>
+  <li><a href="https://opensource.janestreet.com/base_quickcheck/">base_quickcheck</a> is a fuzz tester / automated test generator for OCaml.</li>
+  <li><a href="https://opensource.janestreet.com/async/">Async</a> is a non-preempting asychronous threads library.</li>
+  <li><a href="https://github.com/ocaml-multicore/domainslib">Domains and Effects</a> are another approach to coroutines and asynchronous programming</li>
+  <li><a href="https://github.com/ocaml-multicore/ocaml-multicore">Multicore OCaml</a> will be used for parallel programming.</li>
+</ul>
+
+<h3 id="development-environments-for-ocaml">Development Environments for OCaml</h3>
+
+<p>We recommend VSCode since it has OCaml-specific features such as syntax highlighting, auto-indent, and lint analysis to make the coding process much smoother.</p>
+
+<p><strong><a href="https://code.visualstudio.com">Visual Studio Code</a></strong></p>
+
+<p>VSCode has very good OCaml support and is the “officially recommended editor”.</p>
+
+<ul>
+  <li>
+    <p>To make VSCode OCaml-aware you will need to install the <strong>OCaml Platform</strong>.   To install it, first run <code>opam install ocaml-lsp-server</code> from your shell.  Then from the <code>View</code> menu select <code>Extensions</code>, and type  OCaml in the search box and this extension will show up: select <strong>OCaml Platform</strong> from the list.</p>
+  </li>
+  <li>
+    <p>You can easily run a <code>utop</code> shell from within VSCode, just open up a shell from the <code>Terminal</code> menu and type <code>utop</code>.</p>
+  </li>
+  <li>
+    <p>If you are on Windows and using WSL2, to run Visual Studio “in WSL2 space” so you get OCaml syntax highlighting and other nice features; see <a href="https://code.visualstudio.com/blogs/2019/09/03/wsl2">this blog post</a> for how you can set it up.</p>
+  </li>
+</ul>
+
+<p><strong>vim</strong>: If you use <code>vim</code>, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell commands <code>opam install user-setup</code> and <code>opam user-setup install</code> after doing the above  default <code>opam</code> install to set up syntax highlighting, tab completion, displaying types, etc. See <a href="https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt">here</a> for some dense documentation.</p>
+
+<p><strong>emacs</strong>: See vim. Note you will need to also <code>opam install tuareg</code> to get emacs to work, and follow the instructions the install prints out.</p>
+
+<h3 id="books">Books</h3>
+
+<ul>
+  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book has a fairly good overlap with what we will cover, and can be used as a supplementary resource.
+    <ul>
+      <li>It documents many of the extensions we will be using, the <code>Core</code> libraries in particular.</li>
+    </ul>
+  </li>
+  <li><a href="https://cs3110.github.io/textbook/cover.html">Cornell cs3110 book</a> is the online text for a somewhat-related course at Cornell.  They have recently added many videos if you like watching videos to learn.  Note that they are not using <code>Core</code>.</li>
+</ul>
+
+<h3 id="coding-style">Coding Style</h3>
+
+<ul>
+  <li>The <a href="http://pl.cs.jhu.edu/fpse/style-guide.html">FPSE Style Guide</a> is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 2 on.</li>
+</ul>
+
+<h3 id="example-worked-exercises">Example Worked Exercises</h3>
+<p>One of the best ways to learn to write elegant OCaml is to study well-written OCaml code.</p>
+
+<ul>
+  <li><a href="https://exercism.io/tracks/ocaml/exercises">Exercism OCaml Track</a> has a large set of programming problems to solve which have solutions by many other programmers as well.  We will reference some of these examples in lecture.</li>
+  <li><a href="https://ocaml.org/learn/tutorials/99problems.html">99 problems</a> solves 99 basic OCaml tasks.</li>
+  <li><a href="https://ocaml-sf.org/learn-ocaml-public/#activity%3Dexercises">Learn OCaml</a> has a large number of exercises to solve.  The <a href="https://github.com/ocaml-sf/learn-ocaml-corpus/tree/master/exercises">solutions are online</a>.</li>
+</ul>
+      
           </section>
         </div>
       </div>
