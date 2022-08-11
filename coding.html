@@ -84,13 +84,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ol>
   </li>
   <li>
-    <p>If you already have an earlier version of OCaml installed via <code>opam</code>, start on step 2. above to update to 4.14.0.  Make sure to do the <code>opam update</code> step first or your install won’t know that 4.14.0 even exists.  Please don’t blaze ahead with an earlier version hoping to get awawy with it, you will run into trouble later in the class with obscure compatibility errors.</p>
+    <p>If you already have an earlier version of OCaml installed via <code>opam</code>, start on step 2. above to update to 4.14.0.  Make sure to do the <code>opam update</code> step first or your install won’t know that 4.14.0 even exists.  Please don’t blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.</p>
   </li>
-  <li>Windows Windows Windows.. the OCaml toolchain is unfortunately not good in straight Windows.
+  <li>Windows Windows Windows.. the OCaml toolchain will not work well in straight Windows.
     <ul>
-      <li>If you are running a recent Windows install, we recommend installing <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL 2</a> which once you have set up will allow you to follow the Linux Ubuntu install instructions to get <code>opam</code>.</li>
+      <li>We recommend installing <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL 2</a> which once you have set up will allow you to follow the Linux Ubuntu install instructions to get <code>opam</code>.</li>
       <li>Note that your Ubuntu needs the C compiler and tools for the <code>opam</code> install to work; the following Linux shell command will get you those: <code>sudo apt install make m4 gcc unzip</code>.</li>
-      <li><a href="https://www.cs.princeton.edu/courses/archive/fall20/cos326/WindowsSemiNative.php">More WSL2 for OCaml tips here</a>.</li>
+      <li>You can still use your Windows install of VSCode to edit files by using the <a href="https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode">VSCode Remote WSL Extension</a> – it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.</li>
       <li>Option 2 is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, <a href="https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098">here is one of them</a>.  Once your virtual Linux box is set up, you can follow the <code>opam</code> Linux install instructions.</li>
     </ul>
   </li>
@@ -173,13 +173,13 @@ open Core;;
 
 <ul>
   <li>
-    <p>To make VSCode OCaml-aware you will need to install the <strong>OCaml Platform</strong>.   To install it, first run <code>opam install ocaml-lsp-server</code> from your shell.  Then from the <code>View</code> menu select <code>Extensions</code>, and type  OCaml in the search box and this extension will show up: select <strong>OCaml Platform</strong> from the list.</p>
+    <p>To make VSCode OCaml-aware you will need to install the <strong>OCaml Platform</strong>.   To install it, from the <code>View</code> menu select <code>Extensions</code>, and type OCaml in the search box and this extension will show up: select <strong>OCaml Platform</strong> from the list.</p>
   </li>
   <li>
     <p>You can easily run a <code>utop</code> shell from within VSCode, just open up a shell from the <code>Terminal</code> menu and type <code>utop</code>.</p>
   </li>
   <li>
-    <p>If you are on Windows and using WSL2, to run Visual Studio “in WSL2 space” so you get OCaml syntax highlighting and other nice features; see <a href="https://code.visualstudio.com/blogs/2019/09/03/wsl2">this blog post</a> for how you can set it up.</p>
+    <p>If you are on Windows and using WSL2, you need to run Visual Studio “in WSL2 space” to get OCaml syntax highlighting and other nice features. See the <a href="https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode">Remote WSL Extension Docs</a> for details on how to set up the VSCode-WSL2 connection.  If you are having trouble look at the <a href="https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode#additional-resources">Additional Resources</a> on that page.  Once you have the above set up, install the OCaml Platform as described above and you should have syntax highlighting etc working.</p>
   </li>
 </ul>
 

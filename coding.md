@@ -16,12 +16,12 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
 	3.  `eval $(opam env)` to let your shell know where the OPAM files are (use ``eval `opam env` `` instead if you are using `zsh` on a Mac); and
     4.  Also add the very same line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
 
-- If you already have an earlier version of OCaml installed via `opam`, start on step 2. above to update to 4.14.0.  Make sure to do the `opam update` step first or your install won't know that 4.14.0 even exists.  Please don't blaze ahead with an earlier version hoping to get awawy with it, you will run into trouble later in the class with obscure compatibility errors.
+- If you already have an earlier version of OCaml installed via `opam`, start on step 2. above to update to 4.14.0.  Make sure to do the `opam update` step first or your install won't know that 4.14.0 even exists.  Please don't blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.
 
--   Windows Windows Windows.. the OCaml toolchain is unfortunately not good in straight Windows.
-    -   If you are running a recent Windows install, we recommend installing [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/) which once you have set up will allow you to follow the Linux Ubuntu install instructions to get `opam`. 
+-   Windows Windows Windows.. the OCaml toolchain will not work well in straight Windows.
+    -   We recommend installing [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/) which once you have set up will allow you to follow the Linux Ubuntu install instructions to get `opam`. 
        - Note that your Ubuntu needs the C compiler and tools for the `opam` install to work; the following Linux shell command will get you those: `sudo apt install make m4 gcc unzip`.
-       - [More WSL2 for OCaml tips here](https://www.cs.princeton.edu/courses/archive/fall20/cos326/WindowsSemiNative.php).  
+       - You can still use your Windows install of VSCode to edit files by using the [VSCode Remote WSL Extension](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode) -- it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.
     -   Option 2 is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, [here is one of them](https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098).  Once your virtual Linux box is set up, you can follow the `opam` Linux install instructions.
 
 
@@ -90,11 +90,11 @@ We recommend VSCode since it has OCaml-specific features such as syntax highligh
 
 VSCode has very good OCaml support and is the "officially recommended editor". 
 
-* To make VSCode OCaml-aware you will need to install the **OCaml Platform**.   To install it, first run `opam install ocaml-lsp-server` from your shell.  Then from the `View` menu select `Extensions`, and type  OCaml in the search box and this extension will show up: select **OCaml Platform** from the list.
+* To make VSCode OCaml-aware you will need to install the **OCaml Platform**.   To install it, from the `View` menu select `Extensions`, and type OCaml in the search box and this extension will show up: select **OCaml Platform** from the list.
 
 * You can easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
 
-* If you are on Windows and using WSL2, to run Visual Studio "in WSL2 space" so you get OCaml syntax highlighting and other nice features; see [this blog post](https://code.visualstudio.com/blogs/2019/09/03/wsl2) for how you can set it up.
+* If you are on Windows and using WSL2, you need to run Visual Studio "in WSL2 space" to get OCaml syntax highlighting and other nice features. See the [Remote WSL Extension Docs](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode) for details on how to set up the VSCode-WSL2 connection.  If you are having trouble look at the [Additional Resources](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode#additional-resources) on that page.  Once you have the above set up, install the OCaml Platform as described above and you should have syntax highlighting etc working.
 
 **vim**: If you use `vim`, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell commands `opam install user-setup` and `opam user-setup install` after doing the above  default `opam` install to set up syntax highlighting, tab completion, displaying types, etc. See [here](https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt) for some dense documentation.
 

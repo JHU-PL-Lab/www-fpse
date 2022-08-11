@@ -2,7 +2,7 @@
 
 Lecture material and assigments are under the indicated links.  
 
-Note that lecture material will be updated as topics are covered so consider the below just initial drafts until the lecture has in fact happened.  Assignment links may be dead until the assignment is posted.
+Note that lecture material will be updated as topics are covered so consider the below just a draft until the lecture has in fact happened.  Assignment links will likely be dead until the assignment is posted.
 
 <table class="date" width="100%" border="1" cellspacing="0" cellpadding="0" bordercolor="#CCCCCC">
         <tr> 
@@ -294,7 +294,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A3 P2 Fri (move, this is fall break?)</div>
+            <div align="center" class="body">A3 P2</div>
           </td>
         </tr>
         <tr> 
