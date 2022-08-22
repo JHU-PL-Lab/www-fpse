@@ -14,6 +14,8 @@ For Course Assistants we are fortunate to have several course alums and two PhD 
 
 **Course Assistant** Robert Zhang
 
+**Course Assistant** Brandon Stride
+
 **Course Assistant** Kyle Wu
 
 **Course Assistant** Shiwei Weng
