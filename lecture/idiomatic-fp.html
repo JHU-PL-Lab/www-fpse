@@ -41,7 +41,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
           <li><a href="/fpse/assignments/">Assignments</a>
-          <li><a href="https://campuswire.com/c/G2FCCFD2B/feed">Q&A</a></li>
+          <li><a href="https://courselore.org/courses/0644001341">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -209,14 +209,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p><a name="tail-recursion"></a><br />
 <code>fold_right</code> is not tail-recursive; here is an implementation:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span> <span class="n">l</span> <span class="o">=</span> 
-<span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
-  <span class="o">|</span> <span class="n">h</span><span class="o">::</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">h</span> <span class="p">(</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span> <span class="n">t</span><span class="p">)</span>
+<pre><code class="language-ocaml">let rec fold_right ~f ~init l = 
+match l with
+  | [] -&gt; init
+  | h::t -&gt; f h (fold_right ~f ~init t)
 
-<span class="k">let</span> <span class="n">summate</span> <span class="n">l</span> <span class="o">=</span> <span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">+</span><span class="p">)</span>  <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="n">l</span>
-<span class="k">let</span> <span class="n">concatenate</span> <span class="n">l</span> <span class="o">=</span> <span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">^</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="s2">""</span> <span class="n">l</span>
-</code></pre></div></div>
+let summate l = fold_right ~f:(+)  ~init:0 l
+let concatenate l = fold_right ~f:(^) ~init:"" l
+</code></pre>
 
 <ul>
   <li>Observe: after each recursive call completes, it must compute <code>f h rec-call-result</code></li>
@@ -224,14 +224,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Folding left is the opposite, computing <code>f</code> and passing accumulated result <em>down</em> the call stack:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span> <span class="n">l</span> <span class="o">=</span> 
-<span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
-  <span class="o">|</span> <span class="n">h</span><span class="o">::</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="p">(</span><span class="n">f</span> <span class="n">init</span> <span class="n">h</span><span class="p">)</span> <span class="n">t</span>
+<pre><code class="language-ocaml">let rec fold_left ~f ~init l = 
+match l with
+  | [] -&gt; init
+  | h::t -&gt; fold_left ~f ~init:(f init h) t
 
-<span class="k">let</span> <span class="n">summate</span> <span class="n">l</span> <span class="o">=</span> <span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="n">l</span>
-<span class="k">let</span> <span class="n">concatenate</span> <span class="n">l</span> <span class="o">=</span> <span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">^</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="s2">""</span> <span class="n">l</span>
-</code></pre></div></div>
+let summate l = fold_left ~f:(+) ~init:0 l
+let concatenate l = fold_left ~f:(^) ~init:"" l
+</code></pre>
 
 <ul>
   <li>Observe that in the recursive case when the <code>fold_left</code> completes at the base case there is no more work to do</li>

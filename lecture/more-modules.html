@@ -41,7 +41,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
           <li><a href="/fpse/assignments/">Assignments</a>
-          <li><a href="https://campuswire.com/c/G2FCCFD2B/feed">Q&A</a></li>
+          <li><a href="https://courselore.org/courses/0644001341">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -67,13 +67,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Recall <code>[@@deriving equal]</code> in the nucleotide example to get an <code>=</code> on that type:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Needs #require "ppx_jane";; in top loop, 
+<pre><code class="language-ocaml">(* Needs #require "ppx_jane";; in top loop, 
    and (preprocess (pps (ppx_jane))) in as part of the library declaration 
-   (i.e. it is (library (name ..)  .. (preprocess ... )) - one of the library decl components) *)</span>
-<span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
-<span class="k">val</span> <span class="n">equal_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-</code></pre></div></div>
+   (i.e. it is (library (name ..)  .. (preprocess ... )) - one of the library decl components) *)
+# type nucleotide = A | C | G | T [@@deriving equal];;
+type nucleotide = A | C | G | T
+val equal_nucleotide : nucleotide -&gt; nucleotide -&gt; bool = &lt;fun&gt;
+</code></pre>
 
 <ul>
   <li>The <code>[@@zibbo...]</code> indicates the type declaration is processed by the macro named <code>ppx_zibbo</code></li>
@@ -88,15 +88,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>If we have an <code>xyy_equal</code> function on component types, <code>deriving</code> can derive <code>equal</code> for a type built from those components:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
-<span class="k">val</span> <span class="n">equal_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-<span class="o">#</span> <span class="n">equal_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">]</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">A</span><span class="p">];;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span>
-<span class="o">#</span> <span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Queue</span><span class="p">.</span><span class="n">t</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Core_kernel</span><span class="p">.</span><span class="nn">Queue</span><span class="p">.</span><span class="n">t</span>
-<span class="k">val</span> <span class="n">equal_n_queue</span> <span class="o">:</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># type n_list = nucleotide list [@@deriving equal];;
+type n_list = nucleotide list
+val equal_n_list : n_list -&gt; n_list -&gt; bool = &lt;fun&gt;
+# equal_n_list [A;A;A] [A;G;A];;
+- : bool = false
+# type n_queue = nucleotide Queue.t [@@deriving equal];;
+type n_queue = nucleotide Core_kernel.Queue.t
+val equal_n_queue : n_queue -&gt; n_queue -&gt; bool = &lt;fun&gt;
+</code></pre>
 <ul>
   <li>Notice that the <code>Core</code> libraries are designed to play well as they have <code>List.equal</code>, <code>Queue.equal</code> built in</li>
   <li>Generally for a component type that is the <code>t</code> of a module, the name looked for is <code>My_module.equal</code> instead of <code>t_equal</code></li>
@@ -110,33 +110,33 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>S-expressions are a general data format like JSON or XML, in fact they are the first such format</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
-<span class="k">val</span> <span class="n">equal_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="k">val</span> <span class="n">nucleotide_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="k">val</span> <span class="n">sexp_of_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
- <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
-<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
-<span class="k">val</span> <span class="n">equal_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="k">val</span> <span class="n">n_list_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="k">val</span> <span class="n">sexp_of_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="o">#</span> <span class="n">sexp_of_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">G</span><span class="p">];;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="nc">A</span> <span class="nc">G</span> <span class="nc">G</span><span class="p">)</span> <span class="c">(* this is the "S-Expression" version of a list.. parens and spaces *)</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># type nucleotide = A | C | G | T [@@deriving equal, sexp];;
+type nucleotide = A | C | G | T
+val equal_nucleotide : nucleotide -&gt; nucleotide -&gt; bool = fun
+val nucleotide_of_sexp : Sexp.t -&gt; nucleotide = fun
+val sexp_of_nucleotide : nucleotide -&gt; Sexp.t = fun
+ type n_list = nucleotide list [@@deriving equal, sexp];;
+type n_list = nucleotide list
+type n_list = nucleotide list
+val equal_n_list : n_list -&gt; n_list -&gt; bool = fun
+val n_list_of_sexp : Sexp.t -&gt; n_list = fun
+val sexp_of_n_list : n_list -&gt; Sexp.t = fun
+# sexp_of_n_list [A;G;G];;
+- : Sexp.t = (A G G) (* this is the "S-Expression" version of a list.. parens and spaces *)
+</code></pre>
 
 <ul>
   <li><code>[@@deriving compare]</code> is analogous to <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code></li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
-<span class="k">val</span> <span class="n">compare_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="o">#</span> <span class="n">compare_nucleotide</span> <span class="nc">A</span> <span class="nc">C</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-<span class="n">utop</span> <span class="o">#</span> <span class="n">compare_nucleotide</span> <span class="nc">C</span> <span class="nc">A</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">1</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># type nucleotide = A | C | G | T [@@deriving compare];;
+type nucleotide = A | C | G | T
+val compare_nucleotide : nucleotide -&gt; nucleotide -&gt; int = fun
+# compare_nucleotide A C;;
+- : int = -1
+utop # compare_nucleotide C A;;
+- : int = 1
+</code></pre>
 <ul>
   <li><code>Core</code> does not have libraries for dealing with JSON unfortunately.</li>
   <li>But, someone else has made such a macro library, <code>ppx_deriving_yojson</code> which works with the <code>yojson</code> library to do something like what <code>deriving sexp</code> above did.</li>
@@ -144,15 +144,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>this will save wear and tear on your fingers, no need to convert.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_deriving_yojson"</span><span class="p">;;</span> <span class="c">(* see the ppx_deriving_yojson docs linked in HW for `dune` use *)</span>
-<span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">yojson</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
-<span class="k">val</span> <span class="n">nucleotide_to_yojson</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="k">val</span> <span class="n">nucleotide_of_yojson</span> <span class="o">:</span>
-  <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="nn">Ppx_deriving_yojson_runtime</span><span class="p">.</span><span class="n">error_or</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-<span class="o">#</span> <span class="n">nucleotide_to_yojson</span> <span class="nc">A</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"A"</span><span class="p">]</span> <span class="c">(* This is an OCaml inferred variant type *)</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># #require "ppx_deriving_yojson";; (* see the ppx_deriving_yojson docs linked in HW for `dune` use *)
+# type nucleotide = A | C | G | T [@@deriving yojson];;
+type nucleotide = A | C | G | T
+val nucleotide_to_yojson : nucleotide -&gt; Yojson.Safe.t = fun
+val nucleotide_of_yojson :
+  Yojson.Safe.t -&gt; nucleotide Ppx_deriving_yojson_runtime.error_or = &lt;fun&gt;
+# nucleotide_to_yojson A;;
+- : Yojson.Safe.t = `List [`String "A"] (* This is an OCaml inferred variant type *)
+</code></pre>
 
 <p><strong>Aside</strong>: <code>ppx_deriving_yojson</code> is not currently compatible with <code>ppx_jane</code> so if you want to derive equality and comparisons along with <code>yojson</code> you need to use <code>#require "ppx_deriving.eq";; / [@@deriving eq]</code> and <code>#require "ppx_deriving.ord";; / [@@deriving ord]</code> in place of the <code>equal/compare</code> deriving in <code>ppx_jane</code>.</p>
 <h2 id="defining-modules-in-the-top-loop">Defining Modules in the top loop</h2>
@@ -165,34 +165,34 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Simple set example put in top-loop syntax:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">Simple_set</span> <span class="o">=</span> <span class="k">struct</span> 
-<span class="k">open</span> <span class="nc">Core</span>
-<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span>
-<span class="k">let</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">[]</span>
-<span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span>
-<span class="k">let</span> <span class="k">rec</span> <span class="n">remove</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">equal</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">=</span>
-  <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"item is not in set"</span>
-  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
-    <span class="k">if</span> <span class="n">equal</span> <span class="n">hd</span> <span class="n">x</span> <span class="k">then</span> <span class="n">tl</span>
-    <span class="k">else</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">remove</span> <span class="n">x</span> <span class="n">tl</span> <span class="n">equal</span>
-<span class="k">let</span> <span class="k">rec</span> <span class="n">contains</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">equal</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">=</span>
-  <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">false</span>
-  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
-    <span class="k">if</span> <span class="n">equal</span> <span class="n">x</span> <span class="n">hd</span> <span class="k">then</span> <span class="bp">true</span> <span class="k">else</span> <span class="n">contains</span> <span class="n">x</span> <span class="n">tl</span> <span class="n">equal</span>
-<span class="k">end</span><span class="p">;;</span>
-<span class="k">module</span> <span class="nc">Simple_set</span> <span class="o">:</span>
-  <span class="k">sig</span>
-    <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span>
-    <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">contains</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
-  <span class="k">end</span>
-<span class="o">#</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">emptyset</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">=</span> <span class="bp">[]</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># module Simple_set = struct 
+open Core
+type 'a t = 'a list
+let emptyset : 'a t = []
+let add (x : 'a) (s : 'a t) = (x :: s)
+let rec remove (x : 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) =
+  match s with
+  | [] -&gt; failwith "item is not in set"
+  | hd :: tl -&gt;
+    if equal hd x then tl
+    else hd :: remove x tl equal
+let rec contains (x: 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) =
+  match s with
+  | [] -&gt; false
+  | hd :: tl -&gt;
+    if equal x hd then true else contains x tl equal
+end;;
+module Simple_set :
+  sig
+    type 'a t = 'a list
+    val emptyset : 'a t
+    val add : 'a -&gt; 'a t -&gt; 'a t
+    val remove : 'a -&gt; 'a t -&gt; ('a -&gt; 'a -&gt; bool) -&gt; 'a t
+    val contains : 'a -&gt; 'a t -&gt; ('a -&gt; 'a -&gt; bool) -&gt; bool
+  end
+# Simple_set.emptyset;;
+- : 'a list = []
+</code></pre>
 
 <ul>
   <li>Notice how it infers a module type (aka signature – <code>sig</code> at the start is for signature)</li>
@@ -200,19 +200,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Use <code>module type Type_name_here = ... type here ...</code> to declare module types (<code>.mli</code> file equivalents):</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="k">type</span> <span class="nc">Simple_set</span> <span class="o">=</span> <span class="c">(* module and module type namespaces are distinct, can re-use name *)</span>
-  <span class="k">sig</span>
-    <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="c">(* Do some type hiding here *)</span>
-    <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">contains</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
-  <span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">module type Simple_set = (* module and module type namespaces are distinct, can re-use name *)
+  sig
+    type 'a t (* Do some type hiding here *)
+    val emptyset : 'a t
+    val add : 'a -&gt; 'a t -&gt; 'a t
+    val remove : 'a -&gt; 'a t -&gt; ('a -&gt; 'a -&gt; bool) -&gt; 'a t
+    val contains : 'a -&gt; 'a t -&gt; ('a -&gt; 'a -&gt; bool) -&gt; bool
+  end
+</code></pre>
 
 <p>Then can replace <code>module Simple_set = struct .. end</code> with</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Simple_set</span> <span class="o">:</span> <span class="nc">Simple_set</span> <span class="o">=</span> <span class="k">struct</span> <span class="o">...</span> <span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">module Simple_set : Simple_set = struct ... end
+</code></pre>
 
 <p>and it will define the module with the above signature on it</p>
 
@@ -230,11 +230,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Super_simple_core</span> <span class="o">=</span> <span class="k">struct</span>
-  <span class="k">module</span> <span class="nc">Simple_set</span> <span class="o">=</span> <span class="nc">Simple_set</span> <span class="c">(* previously typed in above *)</span>
-  <span class="k">module</span> <span class="nc">List</span> <span class="o">=</span> <span class="nn">Core</span><span class="p">.</span><span class="nc">List</span> <span class="c">(* just borrow Core's list for our Super_simple_core *)</span>
-<span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">module Super_simple_core = struct
+  module Simple_set = Simple_set (* previously typed in above *)
+  module List = Core.List (* just borrow Core's list for our Super_simple_core *)
+end
+</code></pre>
 
 <h3 id="functors">Functors</h3>
 
@@ -257,31 +257,31 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>(Note the <code>Core</code> libraries also do this for <code>Core.Set</code> for example)</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* The following module type is "some data type plus = on it" *)</span>
-<span class="k">module</span> <span class="k">type</span> <span class="nc">Eq</span> <span class="o">=</span> <span class="k">sig</span> 
-<span class="k">type</span> <span class="n">t</span>
-<span class="k">val</span> <span class="n">equal</span><span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span> 
-<span class="k">end</span>
+<pre><code class="language-ocaml">(* The following module type is "some data type plus = on it" *)
+module type Eq = sig 
+type t
+val equal: t -&gt; t -&gt; bool 
+end
 
-<span class="k">module</span> <span class="nc">Simple_set_functor</span> <span class="p">(</span><span class="nc">M</span><span class="o">:</span> <span class="nc">Eq</span><span class="p">)</span> <span class="o">=</span> 
-<span class="k">struct</span>
-<span class="k">open</span> <span class="nc">Core</span>
-<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
-<span class="k">let</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">[]</span>
-<span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span>
-<span class="k">let</span> <span class="k">rec</span> <span class="n">remove</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span>
-  <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"item is not in set"</span>
-  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
-    <span class="k">if</span> <span class="nn">M</span><span class="p">.</span><span class="n">equal</span> <span class="n">hd</span> <span class="n">x</span> <span class="k">then</span> <span class="n">tl</span>
-    <span class="k">else</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">remove</span> <span class="n">x</span> <span class="n">tl</span>
-<span class="k">let</span> <span class="k">rec</span> <span class="n">contains</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span>
-  <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">false</span>
-  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
-    <span class="k">if</span> <span class="nn">M</span><span class="p">.</span><span class="n">equal</span> <span class="n">x</span> <span class="n">hd</span> <span class="k">then</span> <span class="bp">true</span> <span class="k">else</span> <span class="n">contains</span> <span class="n">x</span> <span class="n">tl</span>
-<span class="k">end</span>
-</code></pre></div></div>
+module Simple_set_functor (M: Eq) = 
+struct
+open Core
+type t = M.t list
+let emptyset : t = []
+let add (x : M.t) (s : t) = (x :: s)
+let rec remove (x : M.t) (s: t) =
+  match s with
+  | [] -&gt; failwith "item is not in set"
+  | hd :: tl -&gt;
+    if M.equal hd x then tl
+    else hd :: remove x tl
+let rec contains (x: M.t) (s: t) =
+  match s with
+  | [] -&gt; false
+  | hd :: tl -&gt;
+    if M.equal x hd then true else contains x tl
+end
+</code></pre>
 
 <ul>
   <li>Notice how the type that was polymorphic, <code>'a</code> in the original <code>Simple_set</code>, is <code>M.t</code> here – we are taking the type from the <code>Eq</code> module, that is the type we need.
@@ -296,16 +296,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>In other words, just like function application but on modules</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">String_set</span> <span class="o">=</span> <span class="nc">Simple_set_functor</span><span class="p">(</span><span class="nc">String</span><span class="p">);;</span>
-<span class="k">module</span> <span class="nc">String_set</span> <span class="o">:</span>
-  <span class="k">sig</span>
-    <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span>
-    <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="kt">list</span>
-    <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="kt">list</span>
-    <span class="k">val</span> <span class="n">contains</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
-  <span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># module String_set = Simple_set_functor(String);;
+module String_set :
+  sig
+    type t = string list
+    val emptyset : t
+    val add : string -&gt; t -&gt; string list
+    val remove : string -&gt; t -&gt; string list
+    val contains : string -&gt; t -&gt; bool
+  end
+</code></pre>
 <ul>
   <li>Note that we passed in a <code>String</code> module where the parameter had the <code>Eq</code> module type - why did this work?</li>
   <li>Answer: <code>String.t</code> is the underlying type of the string, and <code>String.equal</code> exists as an equality operation on strings, so <code>String</code> matches the <code>Eq</code> module type</li>
@@ -318,11 +318,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Here is one way you can test if a module matches a module type:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">String2</span> <span class="o">=</span> <span class="p">(</span><span class="nc">String</span> <span class="o">:</span> <span class="nc">Eq</span><span class="p">);;</span>
-<span class="k">module</span> <span class="nc">String2</span> <span class="o">:</span> <span class="nc">Eq</span>
-<span class="o">#</span> <span class="k">module</span> <span class="nc">String2</span> <span class="o">:</span> <span class="nc">Eq</span> <span class="o">=</span> <span class="nc">String</span><span class="p">;;</span> <span class="c">(* Equivalent way to write the above *)</span>
-<span class="k">module</span> <span class="nc">String2</span> <span class="o">:</span> <span class="nc">Eq</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># module String2 = (String : Eq);;
+module String2 : Eq
+# module String2 : Eq = String;; (* Equivalent way to write the above *)
+module String2 : Eq
+</code></pre>
 <ul>
   <li>This declares a new module <code>String2</code> which is <code>String</code> matched against the <code>Eq</code> type.</li>
   <li>Note that <code>String2</code> is restricted to <em>only</em> have <code>t</code>/<code>equal</code> with this declaration</li>
@@ -331,19 +331,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="instantiating-functors-with-our-own-custom-type">Instantiating functors with our own custom type</h3>
 <p>Here is how we could instantiate the <code>Simple_set_functor</code> with our own data type</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_jane"</span><span class="p">;;</span>
-<span class="o">#</span> <span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">=</span> <span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">]</span> <span class="k">end</span><span class="p">;;</span>
-<span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">:</span> <span class="k">sig</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="k">val</span> <span class="n">equal</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="k">end</span>
-<span class="o">#</span> <span class="k">module</span> <span class="nc">Nuc_set</span> <span class="o">=</span> <span class="nc">Simple_set_functor</span><span class="p">(</span><span class="nc">Nucleotide</span><span class="p">);;</span>
-<span class="k">module</span> <span class="nc">Nuc_set</span> <span class="o">:</span>
-  <span class="k">sig</span>
-    <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
-    <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
-    <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
-    <span class="k">val</span> <span class="n">contains</span> <span class="o">:</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
-  <span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># #require "ppx_jane";;
+# module Nucleotide = struct type t = A | C | G | T [@@deriving equal] end;;
+module Nucleotide : sig type t = A | C | G | T val equal : t -&gt; t -&gt; bool end
+# module Nuc_set = Simple_set_functor(Nucleotide);;
+module Nuc_set :
+  sig
+    type t = Nucleotide.t list
+    val emptyset : t
+    val add : Nucleotide.t -&gt; t -&gt; Nucleotide.t list
+    val remove : Nucleotide.t -&gt; t -&gt; Nucleotide.t list
+    val contains : Nucleotide.t -&gt; t -&gt; bool
+  end
+</code></pre>
 
 <ul>
   <li>Note this requires us to make a module out of our type</li>
@@ -360,15 +360,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Functors also have types; OCaml inferred a type for <code>Simple_set_functor</code> above but we can also declare it:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="k">type</span> <span class="nc">SSF</span> <span class="o">=</span> <span class="k">functor</span> <span class="p">(</span><span class="nc">M</span> <span class="o">:</span> <span class="nc">Eq</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="k">sig</span>
-      <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
-      <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="n">t</span>
-      <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
-      <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
-      <span class="k">val</span> <span class="n">contains</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
-    <span class="k">end</span><span class="p">;;</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># module type SSF = functor (M : Eq) -&gt;
+    sig
+      type t = M.t list
+      val emptyset : t
+      val add : M.t -&gt; t -&gt; t
+      val remove : M.t -&gt; t -&gt; t
+      val contains : M.t -&gt; t -&gt; bool
+    end;;
+</code></pre>
 <ul>
   <li>Observe the type is generally <code>functor (M : Module_type) -&gt; sig ... end</code></li>
   <li>Notice how the argument module <code>M</code> occurs in the result type since it has types in it</li>
@@ -384,17 +384,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>One solution is to hide the type completely in the functor type:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="k">type</span> <span class="nc">SSF_hidden</span> <span class="o">=</span> <span class="k">functor</span> <span class="p">(</span><span class="nc">M</span> <span class="o">:</span> <span class="nc">Eq</span><span class="p">)</span> <span class="o">-&gt;</span>
-    <span class="k">sig</span>
-      <span class="k">type</span> <span class="n">t</span> <span class="c">(* hide the type completely, no longer 'a t *)</span>
-      <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="n">t</span>
-      <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
-      <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
-      <span class="k">val</span> <span class="n">contains</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
-    <span class="k">end</span><span class="p">;;</span>
-    <span class="k">module</span> <span class="nc">Simple_set_functor_hidden</span> <span class="o">=</span> <span class="p">(</span><span class="nc">Simple_set_functor</span> <span class="o">:</span> <span class="nc">SSF_hidden</span><span class="p">)</span>
-    <span class="k">module</span> <span class="nc">String_set_hidden</span> <span class="o">=</span> <span class="nc">Simple_set_functor_hidden</span><span class="p">(</span><span class="nc">String</span><span class="p">);;</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">module type SSF_hidden = functor (M : Eq) -&gt;
+    sig
+      type t (* hide the type completely, no longer 'a t *)
+      val emptyset : t
+      val add : M.t -&gt; t -&gt; t
+      val remove : M.t -&gt; t -&gt; t
+      val contains : M.t -&gt; t -&gt; bool
+    end;;
+    module Simple_set_functor_hidden = (Simple_set_functor : SSF_hidden)
+    module String_set_hidden = Simple_set_functor_hidden(String);;
+</code></pre>
 
 <h3 id="cores-set-map-hash-table-etc"><code>Core</code>’s Set, Map, Hash table, etc</h3>
 
@@ -407,72 +407,72 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Here for example is how you make a map where the key is a built-in type (which has an associated module)</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">FloatMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="nc">Float</span><span class="p">);;</span> <span class="c">(* Or Char/Int/String/Bool/etc *)</span>
-<span class="k">module</span> <span class="nc">FloatMap</span> <span class="o">:</span>
-  <span class="k">sig</span> <span class="o">...</span> <span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># module FloatMap = Map.Make(Float);; (* Or Char/Int/String/Bool/etc *)
+module FloatMap :
+  sig ... end
+</code></pre>
 
 <ul>
   <li>Note it requires a bit more than just the type and comparison to be in <code>Float</code> for this to work with <code>Core</code></li>
   <li>to/from S-expression conversions needed; use <code>[@@deriving compare, sexp]</code> on your own type:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_jane"</span><span class="p">;;</span>
-<span class="o">#</span> <span class="k">module</span> <span class="nc">IntPair</span> <span class="o">=</span> <span class="k">struct</span>
-<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="o">,</span> <span class="n">sexp</span><span class="p">]</span>
-<span class="k">end</span><span class="p">;;</span>
-<span class="k">module</span> <span class="nc">IntPair</span> <span class="o">:</span>
-  <span class="k">sig</span>
-    <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span>
-    <span class="k">val</span> <span class="n">compare</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
-    <span class="k">val</span> <span class="n">t_of_sexp</span> <span class="o">:</span> <span class="nn">Sexplib0</span><span class="p">.</span><span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">sexp_of_t</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span>
-  <span class="k">end</span>
-<span class="o">#</span> <span class="k">module</span> <span class="nc">IPMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="nc">IntPair</span><span class="p">);;</span>
-<span class="k">module</span> <span class="nc">IPMap</span> <span class="o">:</span>
-  <span class="k">sig</span> <span class="o">...</span> <span class="k">end</span>
-<span class="o">#</span> <span class="k">module</span> <span class="nc">IPSet</span> <span class="o">=</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="nc">IntPair</span><span class="p">);;</span>  <span class="c">(* Sets in Core also need compare (sorts internally) *)</span>
-<span class="o">...</span>
-<span class="o">#</span> <span class="nn">IPSet</span><span class="p">.(</span><span class="n">empty</span> <span class="o">|&gt;</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">flip</span> <span class="n">add</span> <span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">flip</span> <span class="n">add</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">flip</span> <span class="n">add</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="n">to_list</span><span class="p">);;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="nn">IntPair</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="p">);</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">2</span><span class="p">)]</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">#require "ppx_jane";;
+# module IntPair = struct
+type t = int * int [@@deriving compare, sexp]
+end;;
+module IntPair :
+  sig
+    type t = int * int
+    val compare : t -&gt; t -&gt; int
+    val t_of_sexp : Sexplib0.Sexp.t -&gt; t
+    val sexp_of_t : t -&gt; Sexp.t
+  end
+# module IPMap = Map.Make(IntPair);;
+module IPMap :
+  sig ... end
+# module IPSet = Set.Make(IntPair);;  (* Sets in Core also need compare (sorts internally) *)
+...
+# IPSet.(empty |&gt; Fn.flip add (1,2) |&gt; Fn.flip add (3,2) |&gt; Fn.flip add (3,2) |&gt; to_list);;
+- : IntPair.t list = [(1, 2); (3, 2)]
+</code></pre>
 
 <p>Observe that only non-parametric types can be keys for maps:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">FloatMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="nc">List</span><span class="p">);;</span>
-<span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">27</span><span class="o">-</span><span class="mi">31</span><span class="o">:</span>
-<span class="nc">Error</span><span class="o">:</span> <span class="nc">Signature</span> <span class="n">mismatch</span><span class="o">:</span>
-       <span class="o">...</span>
-       <span class="nc">Type</span> <span class="n">declarations</span> <span class="k">do</span> <span class="n">not</span> <span class="k">match</span><span class="o">:</span>
-         <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span>
-       <span class="n">is</span> <span class="n">not</span> <span class="n">included</span> <span class="k">in</span>
-         <span class="k">type</span> <span class="n">t</span>
-       <span class="nc">They</span> <span class="n">have</span> <span class="n">different</span> <span class="n">arities</span><span class="o">.</span>
-       <span class="nc">File</span> <span class="s2">"src/map_intf.ml"</span><span class="o">,</span> <span class="n">line</span> <span class="mi">29</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">2</span><span class="o">-</span><span class="mi">35</span><span class="o">:</span> <span class="nc">Expected</span> <span class="n">declaration</span>
-       <span class="nc">File</span> <span class="s2">"src/list.mli"</span><span class="o">,</span> <span class="n">line</span> <span class="mi">12</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">0</span><span class="o">-</span><span class="mi">48</span><span class="o">:</span> <span class="nc">Actual</span> <span class="n">declaration</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># module FloatMap = Map.Make(List);;
+Line 1, characters 27-31:
+Error: Signature mismatch:
+       ...
+       Type declarations do not match:
+         type 'a t = 'a list
+       is not included in
+         type t
+       They have different arities.
+       File "src/map_intf.ml", line 29, characters 2-35: Expected declaration
+       File "src/list.mli", line 12, characters 0-48: Actual declaration
+</code></pre>
 
 <ul>
   <li>Mildly annoying solution: explictly make a module for the list type you care about:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">SList</span> <span class="o">=</span> <span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="o">,</span><span class="n">sexp</span><span class="p">]</span> <span class="k">end</span><span class="p">;;</span>
-<span class="k">module</span> <span class="nc">SList</span> <span class="o">:</span>
-  <span class="k">sig</span>
-    <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span>
-    <span class="k">val</span> <span class="n">compare</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
-    <span class="k">val</span> <span class="n">t_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">sexp_of_t</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span>
-  <span class="k">end</span>
-<span class="o">#</span> <span class="k">module</span> <span class="nc">SListMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="nc">SList</span><span class="p">);;</span>
-<span class="k">module</span> <span class="nc">SListMap</span> <span class="o">:</span>
-  <span class="k">sig</span> <span class="o">...</span> <span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># module SList = struct type t = string list [@@deriving compare,sexp] end;;
+module SList :
+  sig
+    type t = string list
+    val compare : t -&gt; t -&gt; int
+    val t_of_sexp : Sexp.t -&gt; t
+    val sexp_of_t : t -&gt; Sexp.t
+  end
+# module SListMap = Map.Make(SList);;
+module SListMap :
+  sig ... end
+</code></pre>
 <p>Simpler way to do above: can inline the module definition, no need to name it</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">SListMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="o">,</span><span class="n">sexp</span><span class="p">]</span> <span class="k">end</span><span class="p">);;</span>
-<span class="k">module</span> <span class="nc">SListMap</span> <span class="o">:</span>
-  <span class="k">sig</span> <span class="o">..</span> <span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># module SListMap = Map.Make(struct type t = string list [@@deriving compare,sexp] end);;
+module SListMap :
+  sig .. end
+</code></pre>
 <ul>
   <li>The above is a map where the <em>keys</em> are lists of strings</li>
   <li>The above examples show how non-trivial data structures can be map keys</li>
@@ -480,11 +480,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>This assumes the keys are integer pairs, and the values can be any type (<code>'a</code>)</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">=</span> <span class="nc">Leaf</span> <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="nn">IPMap</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span><span class="p">;;</span> 
-<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">=</span>
-    <span class="nc">Leaf</span>
-  <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="nn">IPMap</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># type 'a intpairmaptree = Leaf | Node of ('a IPMap.t) * 'a intpairmaptree * 'a intpairmaptree;; 
+type 'a intpairmaptree =
+    Leaf
+  | Node of 'a IPMap.t * 'a intpairmaptree * 'a intpairmaptree
+</code></pre>
 
 <h3 id="larger-example-using-coremap">Larger Example Using Core.Map</h3>
 <ul>
@@ -505,11 +505,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li><code>include</code> is pretty straightforward, it “copies/pastes” one module or module type’s definitions inside a new definition.
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">Sized_set</span> <span class="o">=</span> <span class="k">struct</span> 
-<span class="k">include</span> <span class="nc">Simple_set</span> 
-<span class="k">let</span> <span class="n">size</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">s</span>
-<span class="k">end</span>
-</code></pre></div>    </div>
+    <pre><code class="language-ocaml"># module Sized_set = struct 
+include Simple_set 
+let size (s : 'a t) = List.length s
+end
+</code></pre>
   </li>
   <li>This will make a new module <code>Sized_set</code> which is the same as <code>Simple_set</code> but with an added <code>size</code> function.</li>
   <li>Observe how <code>'a t</code> works to refer to a type in <code>Simple_set</code>, just like we had pasted all that stuff in.</li>
@@ -517,12 +517,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Similarly module types (and also functors) can use <code>include</code></p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="k">type</span> <span class="nc">Size_set</span> <span class="o">=</span>
-  <span class="k">sig</span>
-    <span class="k">include</span> <span class="nc">Simple_set</span>
-    <span class="k">val</span> <span class="n">size</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
-  <span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">module type Size_set =
+  sig
+    include Simple_set
+    val size : 'a t -&gt; int
+  end
+</code></pre>
 
 <h4 id="with"><code>with</code></h4>
 
@@ -535,24 +535,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Example: here is a type of modules which contain pairs (a toy example)</li>
   <li>We want this to be generic over any type of pair so we let <code>l</code> and <code>r</code> be undefined
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="k">type</span> <span class="nc">Pair</span> <span class="o">=</span> 
-<span class="k">sig</span>
-  <span class="k">type</span> <span class="n">l</span>
-  <span class="k">type</span> <span class="n">r</span>
-  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span>
-  <span class="k">val</span> <span class="n">left</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">l</span>
-  <span class="k">val</span> <span class="n">right</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">r</span>
-<span class="k">end</span><span class="p">;;</span>
-</code></pre></div>    </div>
+    <pre><code class="language-ocaml">module type Pair = 
+sig
+  type l
+  type r
+  type t = l * r
+  val left : t -&gt; l
+  val right : t -&gt; r
+end;;
+</code></pre>
     <p>OK lets make a concrete example of the above on <code>int</code> and <code>string</code></p>
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Pair</span> <span class="o">=</span> <span class="k">struct</span> 
- <span class="k">type</span> <span class="n">l</span> <span class="o">=</span> <span class="kt">int</span>
- <span class="k">type</span> <span class="n">r</span> <span class="o">=</span> <span class="kt">string</span>
- <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span>
- <span class="k">let</span> <span class="n">left</span> <span class="p">((</span><span class="n">l</span><span class="o">:</span><span class="n">l</span><span class="p">)</span><span class="o">,</span> <span class="p">(</span><span class="n">r</span><span class="o">:</span><span class="n">r</span><span class="p">))</span> <span class="o">=</span> <span class="n">l</span>
- <span class="k">let</span> <span class="n">right</span> <span class="p">((</span><span class="n">l</span><span class="o">:</span><span class="n">l</span><span class="p">)</span><span class="o">,</span> <span class="p">(</span><span class="n">r</span><span class="o">:</span><span class="n">r</span><span class="p">))</span> <span class="o">=</span> <span class="n">r</span>
-<span class="k">end</span><span class="p">;;</span>
-</code></pre></div>    </div>
+    <pre><code class="language-ocaml">module Pair = struct 
+ type l = int
+ type r = string
+ type t = l * r
+ let left ((l:l), (r:r)) = l
+ let right ((l:l), (r:r)) = r
+end;;
+</code></pre>
     <p>Now the problem is if we put the above signature on the module, we hid too much!<br />
 ```ocaml</p>
     <h1 id="module-matched_pair--pair--pair">module Matched_pair = (Pair : Pair);;</h1>
@@ -569,30 +569,30 @@ Error: This expression has type int but an expression was expected of type<br />
 
 <p>The solution is you can specialize abstract types in module types via <code>with</code>:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">Matched_pair</span> <span class="o">=</span> <span class="p">(</span><span class="nc">Pair</span> <span class="o">:</span> <span class="nc">Pair</span> <span class="k">with</span> <span class="k">type</span> <span class="n">l</span> <span class="o">=</span> <span class="kt">int</span> <span class="k">with</span> <span class="k">type</span> <span class="n">r</span> <span class="o">=</span> <span class="kt">string</span><span class="p">);;</span>
-<span class="k">module</span> <span class="nc">Matched_pair</span> <span class="o">:</span>
-  <span class="k">sig</span>
-    <span class="k">type</span> <span class="n">l</span> <span class="o">=</span> <span class="kt">int</span>
-    <span class="k">type</span> <span class="n">r</span> <span class="o">=</span> <span class="kt">string</span>
-    <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span>
-    <span class="k">val</span> <span class="n">left</span> <span class="o">:</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">l</span>
-    <span class="k">val</span> <span class="n">right</span> <span class="o">:</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span>
-  <span class="k">end</span>
-<span class="o">#</span> <span class="nn">Matched_pair</span><span class="p">.</span><span class="n">left</span> <span class="p">(</span><span class="mi">4</span><span class="o">,</span><span class="s2">"hi"</span><span class="p">);;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">4</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># module Matched_pair = (Pair : Pair with type l = int with type r = string);;
+module Matched_pair :
+  sig
+    type l = int
+    type r = string
+    type t = l * r
+    val left : l * r -&gt; l
+    val right : l * r -&gt; r
+  end
+# Matched_pair.left (4,"hi");;
+- : int = 4
+</code></pre>
 <p>Usually <code>with</code> is inlined like above, but it is just shorthand for defining a new module type:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="k">type</span> <span class="nc">Pair_int_string</span> <span class="o">=</span> <span class="nc">Pair</span> <span class="k">with</span> <span class="k">type</span> <span class="n">l</span> <span class="o">=</span> <span class="kt">int</span> <span class="k">with</span> <span class="k">type</span> <span class="n">r</span> <span class="o">=</span> <span class="kt">string</span><span class="p">;;</span>
-<span class="k">module</span> <span class="k">type</span> <span class="nc">Pair_int_string</span> <span class="o">=</span>
-  <span class="k">sig</span>
-    <span class="k">type</span> <span class="n">l</span> <span class="o">=</span> <span class="kt">int</span>
-    <span class="k">type</span> <span class="n">r</span> <span class="o">=</span> <span class="kt">string</span>
-    <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span>
-    <span class="k">val</span> <span class="n">left</span> <span class="o">:</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">l</span>
-    <span class="k">val</span> <span class="n">right</span> <span class="o">:</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span>
-  <span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># module type Pair_int_string = Pair with type l = int with type r = string;;
+module type Pair_int_string =
+  sig
+    type l = int
+    type r = string
+    type t = l * r
+    val left : l * r -&gt; l
+    val right : l * r -&gt; r
+  end
+</code></pre>
 
 <h3 id="other-data-structures-in-core">Other Data Structures in <code>Core</code></h3>
 

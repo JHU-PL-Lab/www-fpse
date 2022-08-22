@@ -41,7 +41,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
           <li><a href="/fpse/assignments/">Assignments</a>
-          <li><a href="https://campuswire.com/c/G2FCCFD2B/feed">Q&A</a></li>
+          <li><a href="https://courselore.org/courses/0644001341">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -111,30 +111,30 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Here is an example from their tutorial; looks familiar, eh?</li>
 </ul>
 
-<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">square</span> <span class="n">x</span> <span class="p">=</span> <span class="n">x</span> <span class="p">*</span> <span class="n">x</span>
-<span class="k">let</span> <span class="n">isOdd</span> <span class="n">x</span> <span class="p">=</span> <span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="p">&lt;&gt;</span> <span class="mi">0</span>
+<pre><code class="language-fsharp">let square x = x * x
+let isOdd x = x % 2 &lt;&gt; 0
 
-<span class="k">let</span> <span class="n">sumOfOddSquares</span> <span class="n">nums</span> <span class="p">=</span>
-    <span class="n">nums</span>
-    <span class="p">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="n">isOdd</span>
-    <span class="p">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">sumBy</span> <span class="n">square</span>
+let sumOfOddSquares nums =
+    nums
+    |&gt; List.filter isOdd
+    |&gt; List.sumBy square
 
-<span class="k">let</span> <span class="n">numbers</span> <span class="p">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">;</span> <span class="mi">4</span><span class="p">;</span> <span class="mi">5</span><span class="p">]</span>
-<span class="k">let</span> <span class="n">sum</span> <span class="p">=</span> <span class="n">sumOfOddSquares</span> <span class="n">numbers</span>
-<span class="n">printfn</span> <span class="s2">"The sum of the odd squares in %A is %d"</span> <span class="n">numbers</span> <span class="n">sum</span>
+let numbers = [1; 2; 3; 4; 5]
+let sum = sumOfOddSquares numbers
+printfn "The sum of the odd squares in %A is %d" numbers sum
 
-<span class="k">type</span> <span class="nc">Shape</span> <span class="p">=</span>
-    <span class="p">|</span> <span class="nc">Square</span> <span class="k">of</span> <span class="n">side</span><span class="p">:</span> <span class="n">double</span>
-    <span class="p">|</span> <span class="nc">Rectangle</span> <span class="k">of</span> <span class="n">width</span><span class="p">:</span> <span class="n">double</span> <span class="p">*</span> <span class="n">length</span><span class="p">:</span> <span class="n">double</span>
+type Shape =
+    | Square of side: double
+    | Rectangle of width: double * length: double
 
-<span class="k">let</span> <span class="n">getArea</span> <span class="n">shape</span> <span class="p">=</span>
-    <span class="k">match</span> <span class="n">shape</span> <span class="k">with</span>
-    <span class="p">|</span> <span class="nc">Square</span> <span class="n">side</span> <span class="p">-&gt;</span> <span class="n">side</span> <span class="p">*</span> <span class="n">side</span>
-    <span class="p">|</span> <span class="nc">Rectangle</span> <span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="n">width</span> <span class="p">*</span> <span class="n">length</span>
+let getArea shape =
+    match shape with
+    | Square side -&gt; side * side
+    | Rectangle (width, length) -&gt; width * length
 
-<span class="k">let</span> <span class="n">square</span> <span class="p">=</span> <span class="nc">Square</span> <span class="mi">2</span><span class="p">.</span><span class="mi">0</span>
-<span class="n">printfn</span> <span class="s2">"The area of the square is %f"</span> <span class="p">(</span><span class="n">getArea</span> <span class="n">square</span><span class="p">)</span>
-</code></pre></div></div>
+let square = Square 2.0
+printfn "The area of the square is %f" (getArea square)
+</code></pre>
 
 <h3 id="rescript-ex-reason">ReScript (ex-Reason)</h3>
 
@@ -287,13 +287,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Python “already has” FP including closures and Currying.  Here is a Curried add function.</li>
 </ul>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">adder</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-     <span class="k">def</span> <span class="nf">uni_adder</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
-         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
-     <span class="k">return</span> <span class="n">uni_adder</span>
+<pre><code class="language-python">def adder(x):
+     def uni_adder(y):
+         return x + y
+     return uni_adder
  
-<span class="k">print</span> <span class="n">adder</span><span class="p">(</span><span class="mi">4</span><span class="p">)(</span><span class="mi">18</span><span class="p">)</span>
-</code></pre></div></div>
+print adder(4)(18)
+</code></pre>
 <ul>
   <li>The above is a bit clunky since the intermediate function must be named</li>
   <li><code>map</code>, <code>filter</code>, <code>reduce</code> etc are already in the core libraries</li>
@@ -301,13 +301,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Plus, if you want even more FP-ism, there are additional libraries such as <a href="https://toolz.readthedocs.io/en/latest/index.html">PyToolz</a></li>
 </ul>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">toolz</span> <span class="kn">import</span> <span class="n">curry</span>
-<span class="o">@</span><span class="n">curry</span>
- <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<pre><code class="language-python">from toolz import curry
+@curry
+ def add(x, y):
+     return x + y
 
-<span class="n">plusfour</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>     
-</code></pre></div></div>
+plusfour = add(4)     
+</code></pre>
 
 <ul>
   <li>PyToolz is a port of the Clojure FP libraries to Python</li>
@@ -330,12 +330,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>JavaScript is similar to Python, it has the basics built-in already</li>
 </ul>
 
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">adder</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> 
-<span class="p">{</span> <span class="k">return</span> <span class="kd">function</span> <span class="nx">uni_adder</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> 
-    <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">;</span>
-    <span class="p">};</span>
-<span class="p">};</span>
-</code></pre></div></div>
+<pre><code class="language-javascript">function adder(a) 
+{ return function uni_adder(b) 
+    { return a+b;
+    };
+};
+</code></pre>
 
 <ul>
   <li><code>const</code> declarations bring the FP immutable variable default to JS - use it!</li>
@@ -355,11 +355,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>OCaml example:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="mi">4</span><span class="p">;;</span>
-<span class="k">val</span> <span class="n">f</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span> <span class="c">(* f is at runtime the closure "&lt;fun y code, {x |-&gt; 4}&gt;" *)</span>
-<span class="o">#</span> <span class="n">f</span> <span class="mi">3</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">7</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># let f = (fun x -&gt; fun y -&gt; x + y) 4;;
+val f : int -&gt; int = &lt;fun&gt; (* f is at runtime the closure "&lt;fun y code, {x |-&gt; 4}&gt;" *)
+# f 3;;
+- : int = 7
+</code></pre>
 
 <ul>
   <li>

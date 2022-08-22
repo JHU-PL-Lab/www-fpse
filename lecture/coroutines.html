@@ -41,7 +41,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
           <li><a href="/fpse/assignments/">Assignments</a>
-          <li><a href="https://campuswire.com/c/G2FCCFD2B/feed">Q&A</a></li>
+          <li><a href="https://courselore.org/courses/0644001341">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -161,15 +161,15 @@ A: Split such I/O actions in two:</p>
 
 <p>Monad-think on the above:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
-<span class="n">bind</span> <span class="c">(* code to issue image request and pause *)</span> 
-     <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* processing code to run after this image loaded*)</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">let img_load url =
+bind (* code to issue image request and pause *) 
+     (fun img -&gt; (* processing code to run after this image loaded*)
+</code></pre>
 <p>which is, in <code>let%bind</code> notation,</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
-<span class="k">let</span><span class="o">%</span><span class="n">bind</span> <span class="n">img</span> <span class="o">=</span> <span class="c">(* code to issue image request and pause *)</span> <span class="k">in</span>
-  <span class="c">(* processing code to run after this image loaded*)</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">let img_load url =
+let%bind img = (* code to issue image request and pause *) in
+  (* processing code to run after this image loaded*)
+</code></pre>
 
 <p>(Note, <code>Lwt</code> uses <code>let*</code> or <code>let%lwt</code> instead of <code>let%bind</code>; <code>Async</code> uses <code>let%bind</code>)</p>
 
@@ -184,17 +184,17 @@ A: Split such I/O actions in two:</p>
   <li>We eventually need to wait for these loads to finish, here is how.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url1</span> <span class="k">in</span>
-<span class="k">let</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url2</span> <span class="k">in</span>
-<span class="c">(* We immediately get to this line, the above just kicks off the requests *)</span>
-<span class="c">(* p1 and p2 are called "promises" for the actual values *)</span>
-<span class="c">(* They are the underlying monadic values, we will see that below *)</span>
-<span class="c">(* .. we can do any other processing here .. *)</span>
-<span class="c">(* When we finally need the results of the above we again use bind: *)</span>
-<span class="k">let</span><span class="o">*</span> <span class="n">load1</span> <span class="o">=</span> <span class="n">p1</span> <span class="k">in</span>
-<span class="k">let</span><span class="o">*</span> <span class="n">load2</span> <span class="o">=</span> <span class="n">p2</span> <span class="k">in</span> <span class="o">...</span>
-<span class="c">(* ... we will get here once both loads are finished -- promises fulfulled *)</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">let p1 = img_load url1 in
+let p2 = img_load url2 in
+(* We immediately get to this line, the above just kicks off the requests *)
+(* p1 and p2 are called "promises" for the actual values *)
+(* They are the underlying monadic values, we will see that below *)
+(* .. we can do any other processing here .. *)
+(* When we finally need the results of the above we again use bind: *)
+let* load1 = p1 in
+let* load2 = p2 in ...
+(* ... we will get here once both loads are finished -- promises fulfulled *)
+</code></pre>
 
 <ul>
   <li>The monad behind the scenes has a data structure holding all the continuations<br />
@@ -217,17 +217,17 @@ A: Split such I/O actions in two:</p>
 
 <p>To run <code>Lwt</code> you need to install it from the shell first:</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam <span class="nb">install </span>lwt
-</code></pre></div></div>
+<pre><code class="language-sh">opam install lwt
+</code></pre>
 
 <p>Then in <code>utop</code> do</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">require</span> <span class="s2">"lwt"</span><span class="p">;;</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">#require "lwt";;
+</code></pre>
 
 <p>And you might also want to do this to put the functions at the top level and to enable <code>let*</code>.</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">open</span> <span class="nc">Lwt</span><span class="p">;;</span>
-<span class="o">#</span> <span class="k">open</span> <span class="nc">Syntax</span><span class="p">;;</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># open Lwt;;
+# open Syntax;;
+</code></pre>
 
 <p>We will now review</p>
 
@@ -270,21 +270,21 @@ A: Split such I/O actions in two:</p>
   </li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"async"</span><span class="p">;;</span>
-<span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_jane"</span><span class="p">;;</span>
-<span class="o">#</span> <span class="k">open</span> <span class="nc">Async</span><span class="p">;;</span>
-<span class="o">#</span> <span class="k">let</span> <span class="n">eventual_string</span> <span class="o">=</span> <span class="nn">Reader</span><span class="p">.</span><span class="n">file_contents</span> <span class="s2">"update.py"</span><span class="p">;;</span>
-<span class="k">val</span> <span class="n">eventual_string</span> <span class="o">:</span> <span class="kt">string</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span>
-<span class="o">#</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">peek</span> <span class="n">eventual_string</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span> <span class="c">(* nothing has been done to force the Deferred to run *)</span>
-<span class="o">#</span> <span class="n">eventual_string</span><span class="p">;;</span> <span class="c">(* .. utop forces it to run implicitly - like Lazy.force but implicit *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span>
-<span class="s2">"#!/usr/bin/python</span><span class="err">\</span><span class="s2">...</span><span class="se">\n\n</span><span class="s2">"</span>
-<span class="o">#</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">peek</span> <span class="n">eventual_string</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="n">option</span> <span class="o">=</span>
-<span class="nc">Some</span>
- <span class="s2">"#!/usr/bin/python</span><span class="err">\</span><span class="s2">...</span><span class="se">\n\n</span><span class="s2">"</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># #require "async";;
+# #require "ppx_jane";;
+# open Async;;
+# let eventual_string = Reader.file_contents "update.py";;
+val eventual_string : string Deferred.t = &lt;abstr&gt;
+# Deferred.peek eventual_string;;
+- : string option = None (* nothing has been done to force the Deferred to run *)
+# eventual_string;; (* .. utop forces it to run implicitly - like Lazy.force but implicit *)
+- : string =
+"#!/usr/bin/python\...\n\n"
+# Deferred.peek eventual_string;;
+- : string option =
+Some
+ "#!/usr/bin/python\...\n\n"
+</code></pre>
 <ul>
   <li>An odd thing about the above is let-defining a <code>Deferred</code> will not run it
     <ul>
@@ -303,21 +303,21 @@ A: Split such I/O actions in two:</p>
   <li>This is also possible with <code>Async</code> but often I/O actions are sequenced and <code>bind</code>/<code>return</code> is thus very helpful.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">uppercase_file</span> <span class="p">(</span><span class="n">filename</span> <span class="o">:</span> <span class="kt">string</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="kt">unit</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">=</span>
-    <span class="k">let</span><span class="o">%</span><span class="n">bind</span> <span class="n">s</span> <span class="o">=</span> <span class="nn">Reader</span><span class="p">.</span><span class="n">file_contents</span> <span class="n">filename</span> <span class="k">in</span>
-        <span class="nn">Writer</span><span class="p">.</span><span class="n">save</span> <span class="n">filename</span> <span class="o">~</span><span class="n">contents</span><span class="o">:</span><span class="p">(</span><span class="nn">String</span><span class="p">.</span><span class="n">uppercase</span> <span class="n">s</span><span class="p">)</span>
-<span class="o">#</span> <span class="n">uppercase_file</span> <span class="s2">"t.txt"</span> <span class="c">(* this will implicitly run the Deferred above *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
-<span class="o">#</span> <span class="nn">Reader</span><span class="p">.</span><span class="n">file_contents</span> <span class="s2">"t.txt"</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s2">"HELLO FOLKS!"</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># let uppercase_file (filename : string) : (unit Deferred.t) =
+    let%bind s = Reader.file_contents filename in
+        Writer.save filename ~contents:(String.uppercase s)
+# uppercase_file "t.txt" (* this will implicitly run the Deferred above *)
+- : unit = ()
+# Reader.file_contents "t.txt"
+- : string = "HELLO FOLKS!"
+</code></pre>
 
 <p><code>Deferred.return</code> does the normal wrapping thing, it defers a normal value</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">d</span> <span class="o">=</span> <span class="n">return</span><span class="p">(</span><span class="mi">10</span><span class="p">);;</span>
-<span class="k">val</span> <span class="n">d</span> <span class="o">:</span> <span class="kt">int</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span>
-<span class="o">#</span> <span class="n">d</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">10</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">let d = return(10);;
+val d : int Deferred.t = &lt;abstr&gt;
+# d;;
+- : int = 10
+</code></pre>
 
 <h3 id="ivars">Ivars</h3>
 
@@ -329,20 +329,20 @@ A: Split such I/O actions in two:</p>
   <li>Here is an example based on RWOC:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">ivar</span> <span class="o">=</span> <span class="nn">Ivar</span><span class="p">.</span><span class="n">create</span> <span class="bp">()</span> <span class="c">(* Create an Ivar; think of it like a ref cell *)</span>
-<span class="k">val</span> <span class="n">ivar</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak1</span> <span class="nn">Ivar</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
-  <span class="p">{</span><span class="nn">Async_kernel__</span><span class="p">.</span><span class="nn">Types</span><span class="p">.</span><span class="nn">Ivar</span><span class="p">.</span><span class="n">cell</span> <span class="o">=</span> <span class="nn">Async_kernel__Types</span><span class="p">.</span><span class="nn">Cell</span><span class="p">.</span><span class="nc">Empty</span><span class="p">}</span>
-<span class="o">#</span> <span class="k">let</span> <span class="n">def</span> <span class="o">=</span> <span class="nn">Ivar</span><span class="p">.</span><span class="n">read</span> <span class="n">ivar</span>  <span class="c">(* Read the contents of the promise -- an empty one now! *)</span>
-<span class="k">val</span> <span class="n">def</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak2</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span>
-<span class="o">#</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">peek</span> <span class="n">def</span>
-<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak3</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span> <span class="c">(* It is nothing.  Typing `def;;` now will loop forever! *)</span>
-<span class="o">#</span> <span class="nn">Ivar</span><span class="p">.</span><span class="n">fill</span> <span class="n">ivar</span> <span class="s2">"Hello"</span> <span class="c">(* Fill a promise explicitly *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
-<span class="o">#</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">peek</span> <span class="n">def</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="s2">"Hello"</span> <span class="c">(* Indeed it got filled *)</span>
-<span class="n">def</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s2">"Hello"</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml"># let ivar = Ivar.create () (* Create an Ivar; think of it like a ref cell *)
+val ivar : '_weak1 Ivar.t =
+  {Async_kernel__.Types.Ivar.cell = Async_kernel__Types.Cell.Empty}
+# let def = Ivar.read ivar  (* Read the contents of the promise -- an empty one now! *)
+val def : '_weak2 Deferred.t = &lt;abstr&gt;
+# Deferred.peek def
+- : '_weak3 option = None (* It is nothing.  Typing `def;;` now will loop forever! *)
+# Ivar.fill ivar "Hello" (* Fill a promise explicitly *)
+- : unit = ()
+# Deferred.peek def
+- : string option = Some "Hello" (* Indeed it got filled *)
+def;;
+- : string = "Hello"
+</code></pre>
 
 <h3 id="making-the-monadic-bind-and-return">Making the monadic <code>bind</code> and return`</h3>
 
@@ -356,14 +356,14 @@ A: Split such I/O actions in two:</p>
   </li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">bind'</span> <span class="p">(</span><span class="n">d</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">t</span><span class="p">))</span> <span class="o">:</span> <span class="k">'</span><span class="n">b</span> <span class="nn">Deferred</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
-    <span class="k">let</span> <span class="n">i</span> <span class="o">=</span> <span class="nn">Ivar</span><span class="p">.</span><span class="n">create</span> <span class="bp">()</span> <span class="k">in</span>
-    <span class="n">upon</span> <span class="n">d</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="c">(* Run this first function when d is determined *)</span>
-             <span class="n">upon</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span> <span class="c">(* then run f x *)</span>
-                  <span class="p">(</span><span class="k">fun</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="nn">Ivar</span><span class="p">.</span><span class="n">fill</span> <span class="n">i</span> <span class="n">y</span><span class="p">)</span>
-           <span class="p">);</span> <span class="c">(* call the promise "filled" when f x is determined *)</span>
-    <span class="nn">Ivar</span><span class="p">.</span><span class="n">read</span> <span class="n">i</span> <span class="c">(* this returns a Deferred so users can pull on it *)</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">let bind' (d: 'a Deferred.t) ~(f:('a -&gt; 'b Deferred.t)) : 'b Deferred.t =
+    let i = Ivar.create () in
+    upon d (fun x -&gt; (* Run this first function when d is determined *)
+             upon (f x) (* then run f x *)
+                  (fun y -&gt; Ivar.fill i y)
+           ); (* call the promise "filled" when f x is determined *)
+    Ivar.read i (* this returns a Deferred so users can pull on it *)
+</code></pre>
 
 <p>We covered the basic concepts of <code>Async</code> above. See <a href="https://dev.realworldocaml.org/concurrent-programming.html">Real World OCaml Chapter 15</a> for larger examples including asynchronous http.</p>
       

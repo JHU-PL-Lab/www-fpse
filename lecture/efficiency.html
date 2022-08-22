@@ -41,7 +41,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
           <li><a href="/fpse/assignments/">Assignments</a>
-          <li><a href="https://campuswire.com/c/G2FCCFD2B/feed">Q&A</a></li>
+          <li><a href="https://courselore.org/courses/0644001341">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -82,10 +82,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Remember that sub-lists are shared since they are immutable</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="o">...</span> <span class="n">n</span><span class="p">]</span> <span class="k">in</span>
-<span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="mi">0</span>    <span class="o">::</span> <span class="n">l1</span> <span class="k">in</span>
-<span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">::</span> <span class="n">l1</span> <span class="k">in</span> <span class="o">..</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">let l1 = [1;2;3;... n] in
+let l2 = 0    :: l1 in
+let l3 = (-1) :: l1 in ..
+</code></pre>
 
 <ul>
   <li><code>l2</code> and <code>l3</code> share <code>l1</code> and all the above is O(1)</li>
@@ -147,24 +147,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Example: a simple transactional store monad (here is pseudocode)</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Transactional_store</span> <span class="o">=</span> <span class="k">struct</span>
-    <span class="k">type</span> <span class="n">store</span> <span class="o">=</span> <span class="c">(* The type of the heap data here, say it is a Map *)</span>
-    <span class="c">(* In the monad type, pass two stores, one in-use one saved *)</span>
-    <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span> 
-    <span class="k">let</span> <span class="n">bind</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span> <span class="o">=</span>
-      <span class="k">fun</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">let</span> <span class="p">(</span><span class="n">x'</span><span class="o">,</span> <span class="n">s1'</span><span class="o">,</span> <span class="n">s2'</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="n">s</span> <span class="k">in</span> <span class="n">f</span> <span class="n">x'</span> <span class="p">(</span><span class="n">s1'</span><span class="o">,</span> <span class="n">s2'</span><span class="p">)</span>
-    <span class="k">let</span> <span class="n">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">fun</span> <span class="n">ss</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span> <span class="n">ss</span><span class="p">)</span>
-    <span class="k">let</span> <span class="n">set</span> <span class="p">(</span><span class="n">v</span> <span class="o">:</span> <span class="n">data</span><span class="p">)</span> <span class="o">=</span>
-      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span><span class="o">,</span><span class="n">store_put</span> <span class="n">s1</span> <span class="n">v</span><span class="o">,</span><span class="n">s2</span><span class="p">)</span> <span class="c">(* update s1, pass along s2 *)</span>
-    <span class="k">let</span> <span class="n">get</span> <span class="bp">()</span> <span class="o">=</span>
-      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">store_get</span> <span class="n">s1</span><span class="o">,</span><span class="n">s1</span><span class="o">,</span><span class="n">s2</span><span class="p">)</span> <span class="c">(* fetch data from s1 *)</span>
-    <span class="k">let</span> <span class="n">save</span> <span class="bp">()</span> <span class="o">=</span> 
-      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span><span class="o">,</span><span class="n">s1</span><span class="o">,</span><span class="n">s1</span><span class="p">)</span> <span class="c">(* save the current store *)</span>
-    <span class="k">let</span> <span class="n">rollback</span> <span class="bp">()</span> <span class="o">=</span> 
-      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span><span class="o">,</span><span class="n">s2</span><span class="o">,</span><span class="n">s2</span><span class="p">)</span> <span class="c">(* toss s1, rollback to the saved store s2 *)</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">module Transactional_store = struct
+    type store = (* The type of the heap data here, say it is a Map *)
+    (* In the monad type, pass two stores, one in-use one saved *)
+    type 'a t = store * store -&gt; 'a * store * store 
+    let bind (x : 'a t) ~(f: 'a -&gt; 'b t) : 'b t =
+      fun (s : store * store) -&gt; let (x', s1', s2') = x s in f x' (s1', s2')
+    let return (x : 'a) : 'a t = fun ss -&gt; (x, ss)
+    let set (v : data) =
+      fun (s1, s2) -&gt; ((),store_put s1 v,s2) (* update s1, pass along s2 *)
+    let get () =
+      fun (s1, s2) -&gt; (store_get s1,s1,s2) (* fetch data from s1 *)
+    let save () = 
+      fun (s1, s2) -&gt; ((),s1,s1) (* save the current store *)
+    let rollback () = 
+      fun (s1, s2) -&gt; ((),s2,s2) (* toss s1, rollback to the saved store s2 *)
+  end
+end
+</code></pre>
 
 <ul>
   <li>If the <code>store</code> in the above is say a Map, the <code>s1</code> and <code>s2</code> maps should be “nearly all shared” on average.</li>
@@ -241,17 +241,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>We also saw continuations in <code>Lwt</code> where the “callback code” after an I/O operation was a function invoked later:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Hello,"</span> <span class="k">in</span>
-<span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"world!"</span> <span class="k">in</span>
-<span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">let* () = Lwt_io.printl "Hello," in
+let* () = Lwt_io.printl "world!" in
+Lwt.return ()
+</code></pre>
 
 <p>is really</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bind</span><span class="p">(</span><span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Hello,"</span><span class="p">)</span> 
-    <span class="p">(</span><span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="n">bind</span><span class="p">(</span><span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"world!"</span><span class="p">)</span> 
-                   <span class="p">(</span><span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span><span class="p">))</span>
-</code></pre></div></div>
+<pre><code class="language-ocaml">bind(Lwt_io.printl "Hello,") 
+    (fun () -&gt; bind(Lwt_io.printl "world!") 
+                   (fun () -&gt; Lwt.return ()))
+</code></pre>
 
 <p>– each of the 2nd arguments to bind is “the rest of the work”, the continuation.</p>
 
