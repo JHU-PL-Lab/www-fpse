@@ -2,8 +2,7 @@
 
 ### Lecture Schedule
 
-Lectures will be 1:30-2:45 on Mondays and Wednesdays in Shaffer 300. Lectures will be recorded and the Panopto page for those recordings will also be posted.
-
+Lectures will be 1:30-2:45 on Mondays and Wednesdays in Shaffer 300.
 ### Syllabus
 
 See the [Dateline](dateline.html) for the schedule and the topics that will be covered.
@@ -14,7 +13,12 @@ See the [Dateline](dateline.html) for the schedule and the topics that will be c
 
 ### Courselore Q&A board
 
-We will be using the [Courselore Q&A board](https://courselore.org/courses/0644001341) for online discussions. A registration link will be emailed so you can sign up, and it will also be posted on Canvas.  All information not on this website, such as locations of Panopto recordings, office hours, etc will be posted on Courselore.
+We will be using the [Courselore Q&A board](https://courselore.org/courses/0644001341) for online discussions. A registration link will be emailed so you can sign up, and it will also be posted as an announcement on Canvas.  All information not on this website, such as locations of Panopto recordings, office hours, etc will be posted on Courselore.
+
+Note we are not using Canvas for anything so don't try accessing things like Gradescope or Panopto from within there as it probably won't work.
+
+### Lecture Videos
+Lectures will be recorded and the Panopto page for those recordings will be posted on Courselore.
 
 ### Assignments
 

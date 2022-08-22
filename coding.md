@@ -9,12 +9,12 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
 -   For Linux or Mac see [The OPAM install page](https://opam.ocaml.org/doc/Install.html) for install instructions. 
 -  For Mac users, the above requires [Homebrew](https://brew.sh) (a package manager for Linux-ish libraries) so here is a more detailed suggestion of some copy/paste that should work.
 	- Mac without homebrew installed:`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` will install Homebrew 
-	- Mac with Homebrew (make sure you first do a `brew update` before this): `brew install gpatch; brew install opam`
+	- Mac with Homebrew already installed: `brew update; brew install gpatch; brew install opam`
 - You will then need to run some terminal commands to set up the basics:
     1.  `opam init` to initialize OPAM;
     2.  `opam switch create 4.14.0` (this will take awhile) to build OCaml version 4.14.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this `switch` to make sure OPAM is aware of the latest version);
 	3.  `eval $(opam env)` to let your shell know where the OPAM files are (use ``eval `opam env` `` instead if you are using `zsh` on a Mac); and
-    4.  Also add the very same line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
+    4.  Also add the very same line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
 
 - If you already have an earlier version of OCaml installed via `opam`, start on step 2. above to update to 4.14.0.  Make sure to do the `opam update` step first or your install won't know that 4.14.0 even exists.  Please don't blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.
 
@@ -22,14 +22,14 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
     -   We recommend installing [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/) which once you have set up will allow you to follow the Linux Ubuntu install instructions to get `opam`. 
        - Note that your Ubuntu needs the C compiler and tools for the `opam` install to work; the following Linux shell command will get you those: `sudo apt install make m4 gcc unzip`.
        - You can still use your Windows install of VSCode to edit files by using the [VSCode Remote WSL Extension](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode) -- it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.
-    -   Option 2 is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, [here is one of them](https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098).  Once your virtual Linux box is set up, you can follow the `opam` Linux install instructions.
+    -   If WSL2 is not workable, another option is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, [here is one of them](https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098).  Once your virtual Linux box is set up, you can follow the `opam` Linux install instructions.
 
 
 #### Required OPAM Standard packages
 
 Once you have `opam` and `ocaml` 4.14.0 installed, run the following `opam` command to install additional necessary packages for the class:
 
-    opam install merlin utop ppx_deriving core bisect_ppx ounit2 async ppx_deriving_yojson ocaml-lsp-server ocamlformat ocamlformat-rpc base_quickcheck
+    opam install merlin ocaml-lsp-server ocamlformat-rpc utop ounit2 async lwt ppx_deriving_yojson ppx_deriving bisect_ppx base_quickcheck
 
 
 Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file `~/.ocamlinit` to add the lines below (note `opam` probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
@@ -78,9 +78,8 @@ The above tools will be our "bread and butter", we will be using them on many as
 
 * [Bisect](https://github.com/aantron/bisect_ppx) will be used for code coverage.
 * [base_quickcheck](https://opensource.janestreet.com/base_quickcheck/) is a fuzz tester / automated test generator for OCaml.
-* [Async](https://opensource.janestreet.com/async/) is a non-preempting asychronous threads library.
-* [Domains and Effects](https://github.com/ocaml-multicore/domainslib) are another approach to coroutines and asynchronous programming
-* [Multicore OCaml](https://github.com/ocaml-multicore/ocaml-multicore) will be used for parallel programming.
+* [Lwt](https://ocsigen.org/lwt/latest/api/Lwt) is a non-preempting asychronous threads library.
+* [OCaml 5](https://github.com/kayceesrk/ocaml5-tutorial/) includes significant new features for concurrent programming: multi-core programming and effect handlers.  OCaml 5 is currently in alpha.
 
 ### Development Environments for OCaml
 

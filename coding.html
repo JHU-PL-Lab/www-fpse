@@ -72,7 +72,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>For Mac users, the above requires <a href="https://brew.sh">Homebrew</a> (a package manager for Linux-ish libraries) so here is a more detailed suggestion of some copy/paste that should work.
     <ul>
       <li>Mac without homebrew installed:<code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code> will install Homebrew</li>
-      <li>Mac with Homebrew (make sure you first do a <code>brew update</code> before this): <code>brew install gpatch; brew install opam</code></li>
+      <li>Mac with Homebrew already installed: <code>brew update; brew install gpatch; brew install opam</code></li>
     </ul>
   </li>
   <li>You will then need to run some terminal commands to set up the basics:
@@ -80,7 +80,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li><code>opam init</code> to initialize OPAM;</li>
       <li><code>opam switch create 4.14.0</code> (this will take awhile) to build OCaml version 4.14.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to <code>opam update</code> before this <code>switch</code> to make sure OPAM is aware of the latest version);</li>
       <li><code>eval $(opam env)</code> to let your shell know where the OPAM files are (use <code>eval `opam env`</code> instead if you are using <code>zsh</code> on a Mac); and</li>
-      <li>Also add the very same line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
+      <li>Also add the very same line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
     </ol>
   </li>
   <li>
@@ -91,7 +91,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>We recommend installing <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL 2</a> which once you have set up will allow you to follow the Linux Ubuntu install instructions to get <code>opam</code>.</li>
       <li>Note that your Ubuntu needs the C compiler and tools for the <code>opam</code> install to work; the following Linux shell command will get you those: <code>sudo apt install make m4 gcc unzip</code>.</li>
       <li>You can still use your Windows install of VSCode to edit files by using the <a href="https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode">VSCode Remote WSL Extension</a> – it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.</li>
-      <li>Option 2 is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, <a href="https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098">here is one of them</a>.  Once your virtual Linux box is set up, you can follow the <code>opam</code> Linux install instructions.</li>
+      <li>If WSL2 is not workable, another option is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, <a href="https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098">here is one of them</a>.  Once your virtual Linux box is set up, you can follow the <code>opam</code> Linux install instructions.</li>
     </ul>
   </li>
 </ul>
@@ -100,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Once you have <code>opam</code> and <code>ocaml</code> 4.14.0 installed, run the following <code>opam</code> command to install additional necessary packages for the class:</p>
 
-<pre><code>opam install merlin utop ppx_deriving core bisect_ppx ounit2 async ppx_deriving_yojson ocaml-lsp-server ocamlformat ocamlformat-rpc base_quickcheck
+<pre><code>opam install merlin ocaml-lsp-server ocamlformat-rpc utop ounit2 async lwt ppx_deriving_yojson ppx_deriving bisect_ppx base_quickcheck
 </code></pre>
 
 <p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file <code>~/.ocamlinit</code> to add the lines below (note <code>opam</code> probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  <code>topfind</code> really should be built-in, it allows you to load libraries.  The <code>require</code> command is one thing <code>topfind</code> adds, here it is loading the <code>Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code>Core</code> as they are improved versions.</p>
@@ -158,9 +158,8 @@ open Core;;
 <ul>
   <li><a href="https://github.com/aantron/bisect_ppx">Bisect</a> will be used for code coverage.</li>
   <li><a href="https://opensource.janestreet.com/base_quickcheck/">base_quickcheck</a> is a fuzz tester / automated test generator for OCaml.</li>
-  <li><a href="https://opensource.janestreet.com/async/">Async</a> is a non-preempting asychronous threads library.</li>
-  <li><a href="https://github.com/ocaml-multicore/domainslib">Domains and Effects</a> are another approach to coroutines and asynchronous programming</li>
-  <li><a href="https://github.com/ocaml-multicore/ocaml-multicore">Multicore OCaml</a> will be used for parallel programming.</li>
+  <li><a href="https://ocsigen.org/lwt/latest/api/Lwt">Lwt</a> is a non-preempting asychronous threads library.</li>
+  <li><a href="https://github.com/kayceesrk/ocaml5-tutorial/">OCaml 5</a> includes significant new features for concurrent programming: multi-core programming and effect handlers.  OCaml 5 is currently in alpha.</li>
 </ul>
 
 <h3 id="development-environments-for-ocaml">Development Environments for OCaml</h3>
