@@ -67,7 +67,7 @@ Here are all the tools we will be using.  You are required to have a build for w
 
 * [`opam`](https://opam.ocaml.org) is the package management system.  See above for install and setup instructions.
 * [`ocamlc`](https://ocaml.org/manual/comp.html) is the standalone compiler which we will be invoking via the `dune` build tool.
-* [`utop`](https://opam.ocaml.org/blog/about-utop/) is the read/eval/print loop.  It is a replacement for the original [`ocaml`](https://ocaml.org/manual/toplevel.html) command, with many more features such as command history, replay, etc.
+* [`utop`](https://opam.ocaml.org/blog/about-utop/) is the  read/eval/print loop.  It is a replacement for the original [`ocaml`](https://ocaml.org/manual/toplevel.html) command, with many more features such as command history, replay, etc.
 * [`Core`](https://opensource.janestreet.com/core/) was described above
 * [`ocamldoc`](https://ocaml.org/manual/ocamldoc.html) is the documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.
 * [`dune`](https://dune.build) is the build tool (think `make`) that we will be using.
