@@ -3,7 +3,6 @@ utop # 3+4;;
 
 open Core;; (* Make the Core libraries directly available *)
 let hw = "hello" ^ "world";;
-
 printf "the string is %s\n" hw
 
 3 + 4;;

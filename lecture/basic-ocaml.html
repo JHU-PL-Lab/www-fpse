@@ -94,28 +94,30 @@ utop # 3+4;;</li>
   </li>
   <li>The compile/run view is the standard <code>cc</code>/<code>gcc</code>/<code>javac</code> view and is also used in OCaml</li>
   <li>In OCaml we will more generally live in <strong>both worlds</strong>: play with code in top loop, but use compiler to compile it.</li>
-  <li>Let’s type the following in a file <code>helloworld.ml</code>:<br />
-```ocaml<br />
-open Core;; (* Make the Core libraries directly available *)<br />
-let hw = “hello” ^ “world”;;</li>
+  <li>Let’s type the following in a file <code>helloworld.ml</code>:</li>
 </ul>
 
-<p>printf “the string is %s\n” hw</p>
-<pre><code>* From the shell type `ocamlc helloworld.ml` to compile and then `./a.out` to run
+<pre><code class="language-ocaml">open Core;; (* Make the Core libraries directly available *)
+let hw = "hello" ^ "world";;
+printf "the string is %s\n" hw
+</code></pre>
 
+<ul>
+  <li>From the shell type <code>ocamlc helloworld.ml</code> to compile and then <code>./a.out</code> to run</li>
+</ul>
 
-#### Building and running with `dune`
+<h4 id="building-and-running-with-dune">Building and running with <code>dune</code></h4>
 
-* `dune` is the modern `make`/`Makefile` equivalent for OCaml.
-* In same directory, add a file `dune`:
-```scheme
-(executable             ; create an executable
-  (name helloworld)     ; need to give it a name
-  (modules helloworld)  ; it consists of just one module, helloworld.ml
-  (libraries core)      ; indicates that the core libraries are used
+<ul>
+  <li><code>dune</code> is the modern <code>make</code>/<code>Makefile</code> equivalent for OCaml.</li>
+  <li>In same directory, add a file <code>dune</code>:
+    <pre><code class="language-scheme">(executable             ; create an executable
+(name helloworld)     ; need to give it a name
+(modules helloworld)  ; it consists of just one module, helloworld.ml
+(libraries core)      ; indicates that the core libraries are used
 )
 </code></pre>
-<ul>
+  </li>
   <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.  The notation is S-expressions.</li>
   <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.4)</code> in it.</li>
   <li>Now, type <code>dune build</code> to compile a standalone program like we did above but letting <code>dune</code> invoke the compiler.</li>

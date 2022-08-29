@@ -26,12 +26,13 @@ utop # 3+4;;
 * The compile/run view is the standard `cc`/`gcc`/`javac` view and is also used in OCaml
 * In OCaml we will more generally live in **both worlds**: play with code in top loop, but use compiler to compile it.
 * Let's type the following in a file `helloworld.ml`:
+
 ```ocaml
 open Core;; (* Make the Core libraries directly available *)
 let hw = "hello" ^ "world";;
-
 printf "the string is %s\n" hw
 ```
+
 * From the shell type `ocamlc helloworld.ml` to compile and then `./a.out` to run
 
 
