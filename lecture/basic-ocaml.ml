@@ -1,6 +1,10 @@
-let hw = "hello"^" world"
+utop # 3+4;;
+- : int = 7
 
-print_string hw
+open Core;; (* Make the Core libraries directly available *)
+let hw = "hello" ^ "world";;
+
+printf "the string is %s\n" hw
 
 3 + 4;;
 let x = 3 + 4;; (* give the value a name via let keyword. *)

@@ -24,9 +24,13 @@ Lectures will be recorded and the Panopto page for those recordings will be post
 
 All assignments are linked from the [dateline](dateline.html). They will all be programming exercises, primarily in OCaml.
 
+### Exams
+
+There will be no exams.
+
 ### Project
 
-There will be an independent team project at the end of the course worth around three homeworks.
+There will be an independent team project at the end of the course worth around three homeworks.  Demos will be held around the course final exam day.
 
 ### Collaboration
 
@@ -36,11 +40,9 @@ Please make sure to consult the course [Academic Integrity Policy](integrity.htm
 
 #### Late HW Policy
 
-You will be given the same number of "late days" as there are assignment submission deadlines (around 9 total based on the planned dateline; if Part I and Part II are on different due dates they each give one late day). For each deadline you can use up to three of your late days quota, each one allowing you to submit the assignment one day later.  **The quantum of lateness is the day, so if you are 15 seconds late that counts as a day late.** If you have a cold or flu you can use the late days for such absences; if you have an extended excused absence contact instructors on Courselore and we can work something out.
+You will be given the same number of "late days" as there are assignment submission deadlines (around 9 total based on the planned dateline; if Part I and Part II are on different due dates they each give one late day). For each deadline you can use up to three of your late days quota, each one allowing you to submit the assignment one day later.  **The quantum of lateness is the day, so if you are 15 seconds late that counts as a day late.** If you have a cold or flu you can use the late days for such absences; if you have an extended excused absence contact Staff on Courselore and we can work something out.
 
 ### Office hours
 
 Office hours will be pinned on Courselore.
-### Exams
 
-There will be no exams.  The project demos will take place around what would have been the final exam slot for the course.

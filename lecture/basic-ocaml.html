@@ -66,7 +66,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>See <a href="https://pl.cs.jhu.edu/fpse/coding.html">the Coding page</a> for install instructions and lots of other information.</li>
-  <li>Make sure to use the required 4.12.0 version of OCaml, install the libraries listed via <code>opam</code>, and change your <code>.ocamlinit</code> file as mentioned on this page.
+  <li>Make sure to use the required 4.14.0 version of OCaml, install the libraries listed via <code>opam</code>, and change your <code>.ocamlinit</code> file as mentioned on that page.
     <ul>
       <li>This will let us all “play in the same sandbox” and avoid confusions</li>
     </ul>
@@ -82,63 +82,52 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="the-top-loop">The top loop</h4>
 
 <ul>
-  <li>Let’s type the following in a file <code>helloworld.ml</code>:</li>
-</ul>
-
-<pre><code class="language-ocaml">let hw = "hello"^" world"
-</code></pre>
-<ul>
-  <li>Now, run the shell command <code>ocaml</code>, copy/paste this code in, add a <code>;;</code> and hit return - it runs!</li>
-  <li>Control-D to quit <code>ocaml</code>, let us switch to its improved version, <code>utop</code>, and do the same thing.</li>
-</ul>
-
-<h4 id="the-compilerun-system">The compile/run system</h4>
-
-<ul>
-  <li>The above is the <strong>top loop</strong> aka <strong>read-eval-print</strong> view of OCaml.  You should know this from Python/Javascript/shell/etc.</li>
-  <li>Let us now do the compile/run view of C/C++/Java/etc.</li>
-  <li>
-    <p>In OCaml we really want to live in <strong>both worlds</strong></p>
+  <li>Top loops allow you to type in small snippets of code which will run and produce a result.</li>
+  <li>The OCaml top loop is the shell command <code>utop</code>.</li>
+  <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result<br />
+```ocaml<br />
+utop # 3+4;;</li>
+  <li>: int = 7<br />
+```</li>
+  <li>Control-D will exit <code>utop</code>.
+    <h4 id="the-compilerun-system">The compile/run system</h4>
   </li>
-  <li>From the shell type <code>ocamlc helloworld.ml</code> to compile and then <code>./a.out</code> to run</li>
-  <li>Nothing happens?  Because executables only interact by I/O (think Java, C, etc)</li>
-  <li>Re-write to add line
-    <pre><code class="language-ocaml">print_string hw
-</code></pre>
-  </li>
-  <li>recompile and run: we get some output!</li>
+  <li>The compile/run view is the standard <code>cc</code>/<code>gcc</code>/<code>javac</code> view and is also used in OCaml</li>
+  <li>In OCaml we will more generally live in <strong>both worlds</strong>: play with code in top loop, but use compiler to compile it.</li>
+  <li>Let’s type the following in a file <code>helloworld.ml</code>:<br />
+```ocaml<br />
+open Core;; (* Make the Core libraries directly available *)<br />
+let hw = “hello” ^ “world”;;</li>
 </ul>
 
-<h4 id="building-and-running-with-dune">Building and running with Dune</h4>
+<p>printf “the string is %s\n” hw</p>
+<pre><code>* From the shell type `ocamlc helloworld.ml` to compile and then `./a.out` to run
 
-<ul>
-  <li><code>dune</code> is the modern <code>make</code>/<code>Makefile</code> equivalent for OCaml.</li>
-  <li>In same directory, add a file <code>dune</code>:
-    <pre><code class="language-scheme">(executable
-(name helloworld)
-(modules helloworld)
+
+#### Building and running with `dune`
+
+* `dune` is the modern `make`/`Makefile` equivalent for OCaml.
+* In same directory, add a file `dune`:
+```scheme
+(executable             ; create an executable
+  (name helloworld)     ; need to give it a name
+  (modules helloworld)  ; it consists of just one module, helloworld.ml
+  (libraries core)      ; indicates that the core libraries are used
 )
 </code></pre>
-  </li>
-  <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.</li>
+<ul>
+  <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.  The notation is S-expressions.</li>
+  <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.4)</code> in it.</li>
   <li>Now, type <code>dune build</code> to compile a standalone program like we did above but letting <code>dune</code> invoke the compiler.</li>
-  <li>Then, run with <code>dune exec ./helloworld.exe</code></li>
+  <li>All of the results are placed in the <code>_build/</code> directory</li>
+  <li>Then, run with <code>dune exec ./helloworld.exe</code> - same as typing <code>_build/default/helloworld.exe</code></li>
+  <li>We will be using <code>dune</code> to build libraries and binaries, and <code>utop</code> to play with them.</li>
 </ul>
 
-<h4 id="adding-a-library">Adding a Library</h4>
+<h3 id="ocaml-language-basics-in-utop">OCaml Language Basics in <code>utop</code></h3>
 
 <ul>
-  <li>Let’s make printing less primitive: use a <code>Core</code> library function, <code>printf</code></li>
-  <li>Replace printing with line <code>Core.printf "the string is %s\n" hw</code></li>
-  <li>Try building - gives an error</li>
-  <li>Add line <code>(libraries core)</code> to dune file to fix – all library dependencies must be listed in the dune file</li>
-  <li>Compile and run</li>
-</ul>
-
-<h3 id="exploring-basic-data-in-utop">Exploring Basic Data in utop</h3>
-
-<ul>
-  <li>We will be running many small incremental programs in lecture - best done in the top loop.</li>
+  <li>We will be running many small programs in lecture - best done in the top loop.</li>
   <li>
     <p>All the following are typed as input into <code>utop</code> with <code>;;</code> ending input.</p>
   </li>

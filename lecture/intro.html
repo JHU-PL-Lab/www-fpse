@@ -69,11 +69,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>It is a style of programming where functions are the centerpiece</li>
-  <li>A key dimension is functions-as-data: functions can be passed to and returned from functions</li>
+  <li>A key dimension is functions-as-data aka higher-order functions: functions can be passed to and returned from functions</li>
   <li>It emphasizes <em>immutability</em>: data structures that cannot be changed after being created</li>
-  <li>Mathematical functions are implicitly immutable so FP aligns much more closely with math
+  <li>Mathematical functions are implicitly immutable so FP aligns closely with math
     <ul>
-      <li>It is much easier to write completely correct programs in an FP style for that reason</li>
+      <li>Think about creating an <em>algebra</em> for the domain you are coding over</li>
+      <li>It is much easier to write completely correct programs in an FP style for this reason</li>
     </ul>
   </li>
 </ul>
@@ -116,28 +117,27 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Imperative also has functions, but there functions often have side effects (e.g. mutate some shared data structures)</li>
-  <li>C has function pointers to pass around functions as data but they are not widely used and lack needed expressiveness (which we will cover later).</li>
+  <li>C has function pointers to pass around functions as data but they are not widely used and lack needed expressiveness (a topic we will cover later).</li>
 </ul>
 
 <h3 id="object-oriented-oo">Object-Oriented (OO)</h3>
 
 <ul>
   <li>Objects tend to have “their” state encapsulated within their boundary</li>
-  <li>It is usually a mutable state - changes over time</li>
-  <li>A function is similar to an object with one method, <code>call</code>, and with no fields</li>
-  <li>That doesn’t fully capture higher-order functions which is why <code>lambda</code> added to Java.</li>
+  <li>It is usually mutable state - changes over time</li>
+  <li>A function is like an object with one method, <code>call</code>, and with no fields</li>
+  <li>But, that analogy doesn’t fully capture higher-order functions which is why <code>lambda</code> added to Java.</li>
 </ul>
 
 <h3 id="functional-fp">Functional (FP)</h3>
 
 <ul>
-  <li>As mentioned above, key aspect is lack of mutation: more like a mathematical function, the output only depends on the input and it’s only output is the codomain value, not any side effects like printing, mutating, raising exceptions, etc.</li>
+  <li>As mentioned above, a key aspect is lack of mutation: more like a mathematical function, the output only depends on the input and it’s only output is the codomain value, not any side effects like printing, mutating, raising exceptions, etc.</li>
   <li>Lack of side effects is called “referential transparency” - variable values don’t change out from under you (follows how math behaves).</li>
-  <li>Standard data structures not too different from imperative case: dictionaries, lists, etc, but often will themselves be <em>immutable</em> - instead of mutating, make a fresh copy.</li>
-  <li>Key advantage is higher-order-ness: code is data, make new functions, accept functions as parameters.</li>
+  <li>Standard data structures not too different from imperative case: dictionaries, lists, etc, but can be <em>immutable</em> - instead of mutating, make a fresh copy.</li>
   <li>Allows for powerful new programming paradigms using functions as data.
     <ul>
-      <li>Simple example is function composition operation: <code>g o f (x) = g(f(x))</code>: <code>o</code> takes two functions and returns a new function</li>
+      <li>Simple example is function composition operation: <code>g o f (x) = g(f(x))</code>: <code>o</code> takes two functions and returns a new function, their composition</li>
     </ul>
   </li>
   <li>Less good at supporting extension, no notion of subclass in common functional paradigms</li>
@@ -146,9 +146,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="who-wins">Who wins?</h3>
 <p>Thesis:</p>
 <ul>
-  <li>Imperative wins for low-level code: underlying machine instructions are in the imperative domain, will run faster.</li>
-  <li>O-O wins for super large apps with fairly shallow logic: UI’s, many apps, etc.</li>
-  <li>Functional wins for complex algorithms with deep inner logic, and also for data manipulation focus
+  <li>Imperative often wins for low-level code: underlying machine instructions are in the imperative domain, will run faster.</li>
+  <li>O-O often wins for super large apps with fairly shallow logic: UI’s, etc.</li>
+  <li>Functional often wins for complex algorithms with deep inner logic, and also for data manipulation focus
     <ul>
       <li>Gets too confusing with mutation, and better composition of functions makes code easier to understand.</li>
     </ul>
@@ -159,23 +159,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="typed-functional-vs-untyped-functional">Typed Functional vs Untyped Functional</h3>
 
 <ul>
-  <li>OK we arm-wrestled over OO vs FP, now we get to arm-wrestle in FP over whether types are good (OCaml, Haskell, etc) or bad (Scheme, Clojure, Python, JavaScript)</li>
-  <li>We are clearly in the “types are good” camp here but there are trade offs
+  <li>There are typed FP languages (OCaml, Haskell, TypeScript, etc) and uptyped ones (Scheme, Clojure, Python, JavaScript)</li>
+  <li>We are clearly in the types camp here with OCaml but there are trade offs
     <ul>
-      <li>With types we have <em>type-directed programming</em>: often once all the type errors are fixed the code often just works.
-        <ul>
-          <li>this is because types are lightweight invariants on program behavior</li>
-        </ul>
-      </li>
+      <li>With types we have <em>type-directed programming</em>: types serve as a skeleton of the code structure, and often once all the type errors are fixed the code .. works!</li>
       <li>The downside is types can get in the way both in terms of code maintenance and in terms of expressiveness.</li>
     </ul>
   </li>
-</ul>
-
-<h3 id="which-typed-functional-language-ml-vs-haskell">Which Typed Functional Language? ML vs Haskell</h3>
-<ul>
-  <li>The final wrestling match in the typed FP world is which typed FP is your favorite.   People have strong feelings.</li>
-  <li>I was “born and raised” in the ML camp so we are in ML.</li>
 </ul>
       
           </section>

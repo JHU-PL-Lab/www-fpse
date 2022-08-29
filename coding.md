@@ -6,23 +6,24 @@ We are using [OCaml](https://ocaml.org) version 4.14.0.
 
 We require that you use the [opam packaging system](https://opam.ocaml.org) for installing OCaml and its extensions.  Once you get `opam` installed and working, everything else should be easy to install .. so the only hard part is the first step.
 
--   For Linux or Mac see [The OPAM install page](https://opam.ocaml.org/doc/Install.html) for install instructions. 
+-  For Linux or Mac see [The OPAM install page](https://opam.ocaml.org/doc/Install.html) for install instructions. 
 -  For Mac users, the above requires [Homebrew](https://brew.sh) (a package manager for Linux-ish libraries) so here is a more detailed suggestion of some copy/paste that should work.
 	- Mac without homebrew installed:`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` will install Homebrew 
 	- Mac with Homebrew already installed: `brew update; brew install gpatch; brew install opam`
-- You will then need to run some terminal commands to set up the basics:
-    1.  `opam init` to initialize OPAM;
-    2.  `opam switch create 4.14.0` (this will take awhile) to build OCaml version 4.14.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this `switch` to make sure OPAM is aware of the latest version);
-	3.  `eval $(opam env)` to let your shell know where the OPAM files are (use ``eval `opam env` `` instead if you are using `zsh` on a Mac); and
-    4.  Also add the very same line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
-
-- If you already have an earlier version of OCaml installed via `opam`, start on step 2. above to update to 4.14.0.  Make sure to do the `opam update` step first or your install won't know that 4.14.0 even exists.  Please don't blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.
-
--   Windows Windows Windows.. the OCaml toolchain will not work well in straight Windows.
-    -   We recommend installing [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/) which once you have set up will allow you to follow the Linux Ubuntu install instructions to get `opam`. 
-       - Note that your Ubuntu needs the C compiler and tools for the `opam` install to work; the following Linux shell command will get you those: `sudo apt install make m4 gcc unzip`.
+-   For Windows you should use WSL2, the Windows Subsystem for Linux.  It creates a Linux-like system from within Windows.
+    - Once you install [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/) you will be able to follow the Linux Ubuntu install instructions linked above. 
+       - Note that your WSL2 Ubuntu needs the C compiler and tools for the `opam` install to work; the following Linux shell command will get you those: `sudo apt install make m4 gcc unzip`.
        - You can still use your Windows install of VSCode to edit files by using the [VSCode Remote WSL Extension](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode) -- it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.
-    -   If WSL2 is not workable, another option is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, [here is one of them](https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098).  Once your virtual Linux box is set up, you can follow the `opam` Linux install instructions.
+    -  WSL2 has been working well for most people, but another option is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, [here is one of them](https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098).  Once your virtual Linux box is set up, you can follow the `opam` Linux install instructions.
+
+### Initial setup of `opam`
+You will need to run some terminal commands to set up the basics:
+   1.  `opam init` will initialize OPAM;
+   2.  `opam switch create 4.14.0` (this will take awhile) will build OCaml version 4.14.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this `switch` to make sure OPAM is aware of the latest version);
+   3.  type command `eval $(opam env)` to your shell to let it know where the opam files are (zsh users on Macs type ``eval `opam env` `` instead); and
+   4.  Also add the very same line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
+
+If you already have an earlier version of OCaml installed via `opam`, start on step 2. above to update to 4.14.0.  Make sure to do the `opam update` step first or your install won't know that 4.14.0 even exists.  Please don't blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.
 
 
 #### Required OPAM Standard packages

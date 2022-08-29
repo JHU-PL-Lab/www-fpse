@@ -4,7 +4,7 @@
 ### Installing
 
  * See [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) for install instructions and lots of other information.  
- * Make sure to use the required 4.12.0 version of OCaml, install the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on this page.
+ * Make sure to use the required 4.14.0 version of OCaml, install the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
     - This will let us all "play in the same sandbox" and avoid confusions
 
 ### The Ecosystem via Hello World in OCaml
@@ -13,56 +13,50 @@
 
 #### The top loop
 
-* Let's type the following in a file `helloworld.ml`:
-
+* Top loops allow you to type in small snippets of code which will run and produce a result.
+* The OCaml top loop is the shell command `utop`.  
+* We will run the OCaml top loop and show you you can enter expressions such as `3+4`, follow with `;;` to indicate end of input (`;;` is **required**), and hit return to get the result
 ```ocaml
-let hw = "hello"^" world"
+utop # 3+4;;
+- : int = 7
 ```
-* Now, run the shell command `ocaml`, copy/paste this code in, add a `;;` and hit return - it runs!
-* Control-D to quit `ocaml`, let us switch to its improved version, `utop`, and do the same thing.
-
+* Control-D will exit `utop`.
 #### The compile/run system
 
-* The above is the **top loop** aka **read-eval-print** view of OCaml.  You should know this from Python/Javascript/shell/etc.
-* Let us now do the compile/run view of C/C++/Java/etc.
-* In OCaml we really want to live in **both worlds**
-
-* From the shell type `ocamlc helloworld.ml` to compile and then `./a.out` to run
-* Nothing happens?  Because executables only interact by I/O (think Java, C, etc)
-* Re-write to add line
+* The compile/run view is the standard `cc`/`gcc`/`javac` view and is also used in OCaml
+* In OCaml we will more generally live in **both worlds**: play with code in top loop, but use compiler to compile it.
+* Let's type the following in a file `helloworld.ml`:
 ```ocaml
-print_string hw
+open Core;; (* Make the Core libraries directly available *)
+let hw = "hello" ^ "world";;
+
+printf "the string is %s\n" hw
 ```
-* recompile and run: we get some output!
+* From the shell type `ocamlc helloworld.ml` to compile and then `./a.out` to run
 
 
-#### Building and running with Dune
+#### Building and running with `dune`
 
 * `dune` is the modern `make`/`Makefile` equivalent for OCaml.
 * In same directory, add a file `dune`:
 ```scheme
-(executable
-  (name helloworld)
-  (modules helloworld)
+(executable             ; create an executable
+  (name helloworld)     ; need to give it a name
+  (modules helloworld)  ; it consists of just one module, helloworld.ml
+  (libraries core)      ; indicates that the core libraries are used
 )
 ```
-* This is the **build file**, specifying how to compile/test/run the program.
+* This is the **build file**, specifying how to compile/test/run the program.  The notation is S-expressions.
+* Also a file `dune-project` is needed with only `(lang dune 3.4)` in it.
 * Now, type `dune build` to compile a standalone program like we did above but letting `dune` invoke the compiler.
-* Then, run with `dune exec ./helloworld.exe`
+* All of the results are placed in the `_build/` directory
+* Then, run with `dune exec ./helloworld.exe` - same as typing `_build/default/helloworld.exe`
+* We will be using `dune` to build libraries and binaries, and `utop` to play with them.
 
-#### Adding a Library
+### OCaml Language Basics in `utop`
 
-* Let's make printing less primitive: use a `Core` library function, `printf`
-* Replace printing with line `Core.printf "the string is %s\n" hw`
-* Try building - gives an error
-* Add line `(libraries core)` to dune file to fix -- all library dependencies must be listed in the dune file
-* Compile and run
-
-### Exploring Basic Data in utop
-
-* We will be running many small incremental programs in lecture - best done in the top loop.
+* We will be running many small programs in lecture - best done in the top loop.
 * All the following are typed as input into `utop` with `;;` ending input.
-
  
 * Integers
 ```ocaml
