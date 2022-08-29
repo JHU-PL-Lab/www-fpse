@@ -89,10 +89,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>But it can be encoded via a <em>thunk</em></li>
 </ul>
 
-<pre><code class="language-ocaml">let frozen_add = fun () -&gt; printf "Have a smiley day!\n"; 4 + 3
-let thaw e = e ()
-thaw frozen_add;; (* 4+3 not computed until here *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">frozen_add</span> <span class="o">=</span> <span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="n">printf</span> <span class="s2">"Have a smiley day!</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">3</span>
+<span class="k">let</span> <span class="n">thaw</span> <span class="n">e</span> <span class="o">=</span> <span class="n">e</span> <span class="bp">()</span>
+<span class="n">thaw</span> <span class="n">frozen_add</span><span class="p">;;</span> <span class="c">(* 4+3 not computed until here *)</span>
+</code></pre></div></div>
 
 <ul>
   <li>This simple encoding is in fact just “call by name”, laziness means memoizing the result.</li>
@@ -104,44 +104,44 @@ thaw frozen_add;; (* 4+3 not computed until here *)
   <li><code>Base.Lazy</code> is a much more usable sugar for the above</li>
 </ul>
 
-<pre><code class="language-ocaml"># open Lazy;;
-# let l = lazy(printf "Have a smiley day!\n";2+3);;
-val l : int lazy_t = &lt;lazy&gt; (* lazy_t is the wrapper type *)
-# force l;;
-Have a smiley day!
-- : int = 5
-# let f lv =  (force lv) + (force lv);;
-val f : int lazy_t -&gt; int = &lt;fun&gt;
-# f l;;
-Have a smiley day! (* this is printed only once, the 2nd force uses cached 5 value *)
-- : int = 10
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">open</span> <span class="nc">Lazy</span><span class="p">;;</span>
+<span class="o">#</span> <span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="k">lazy</span><span class="p">(</span><span class="n">printf</span> <span class="s2">"Have a smiley day!</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span><span class="mi">2</span><span class="o">+</span><span class="mi">3</span><span class="p">);;</span>
+<span class="k">val</span> <span class="n">l</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">lazy_t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">lazy</span><span class="o">&gt;</span> <span class="c">(* lazy_t is the wrapper type *)</span>
+<span class="o">#</span> <span class="n">force</span> <span class="n">l</span><span class="p">;;</span>
+<span class="nc">Have</span> <span class="n">a</span> <span class="n">smiley</span> <span class="n">day</span><span class="o">!</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="o">#</span> <span class="k">let</span> <span class="n">f</span> <span class="n">lv</span> <span class="o">=</span>  <span class="p">(</span><span class="n">force</span> <span class="n">lv</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">force</span> <span class="n">lv</span><span class="p">);;</span>
+<span class="k">val</span> <span class="n">f</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">lazy_t</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="n">f</span> <span class="n">l</span><span class="p">;;</span>
+<span class="nc">Have</span> <span class="n">a</span> <span class="n">smiley</span> <span class="n">day</span><span class="o">!</span> <span class="c">(* this is printed only once, the 2nd force uses cached 5 value *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">10</span>
+</code></pre></div></div>
 
-<pre><code class="language-ocaml">open Core
-open Lazy
-type 'a stream = Cons of 'a * 'a stream Lazy.t (* List MUST be infinite - ! *)
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span>
+<span class="k">open</span> <span class="nc">Lazy</span>
+<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Cons</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span> <span class="nn">Lazy</span><span class="p">.</span><span class="n">t</span> <span class="c">(* List MUST be infinite - ! *)</span>
 
-(* Programs making lazy lists look somewhat bizarre at first - doesn't this loop forever?!? *)
-let rec all_ones : int stream = Cons(1,lazy(all_ones))
+<span class="c">(* Programs making lazy lists look somewhat bizarre at first - doesn't this loop forever?!? *)</span>
+<span class="k">let</span> <span class="k">rec</span> <span class="n">all_ones</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Cons</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="k">lazy</span><span class="p">(</span><span class="n">all_ones</span><span class="p">))</span>
 
-let rec ints n : int stream = Cons(n,lazy(ints (n+1)))
+<span class="k">let</span> <span class="k">rec</span> <span class="n">ints</span> <span class="n">n</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">n</span><span class="o">,</span><span class="k">lazy</span><span class="p">(</span><span class="n">ints</span> <span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
 
-(* Code to get the nth element of a lazy list *)
+<span class="c">(* Code to get the nth element of a lazy list *)</span>
 
-let rec nth (Cons(hd, tl) : 'a stream) (n : int) :'a =
-  if n = 0 then hd
-  else nth (force tl) (n-1)
+<span class="k">let</span> <span class="k">rec</span> <span class="n">nth</span> <span class="p">(</span><span class="nc">Cons</span><span class="p">(</span><span class="n">hd</span><span class="o">,</span> <span class="n">tl</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span><span class="k">'</span><span class="n">a</span> <span class="o">=</span>
+  <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="n">hd</span>
+  <span class="k">else</span> <span class="n">nth</span> <span class="p">(</span><span class="n">force</span> <span class="n">tl</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-(* A more interesting example - shows memoization, this is not exponential *)
+<span class="c">(* A more interesting example - shows memoization, this is not exponential *)</span>
 
-let rec fib : int stream = 
-  let rec fib_rest (Cons(hd, tl) : int stream) : (int stream) = 
-   let Cons(hd',_) = force tl in (* Note can't pattern match on first-2 together due to force needed *)
-    Cons (hd + hd', lazy(fib_rest (force tl))) in
-  Cons(1, lazy(Cons(1, lazy(fib_rest fib))))
+<span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">stream</span> <span class="o">=</span> 
+  <span class="k">let</span> <span class="k">rec</span> <span class="n">fib_rest</span> <span class="p">(</span><span class="nc">Cons</span><span class="p">(</span><span class="n">hd</span><span class="o">,</span> <span class="n">tl</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">stream</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="n">stream</span><span class="p">)</span> <span class="o">=</span> 
+   <span class="k">let</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">hd'</span><span class="o">,_</span><span class="p">)</span> <span class="o">=</span> <span class="n">force</span> <span class="n">tl</span> <span class="k">in</span> <span class="c">(* Note can't pattern match on first-2 together due to force needed *)</span>
+    <span class="nc">Cons</span> <span class="p">(</span><span class="n">hd</span> <span class="o">+</span> <span class="n">hd'</span><span class="o">,</span> <span class="k">lazy</span><span class="p">(</span><span class="n">fib_rest</span> <span class="p">(</span><span class="n">force</span> <span class="n">tl</span><span class="p">)))</span> <span class="k">in</span>
+  <span class="nc">Cons</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="k">lazy</span><span class="p">(</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="k">lazy</span><span class="p">(</span><span class="n">fib_rest</span> <span class="n">fib</span><span class="p">))))</span>
 
-nth fib 100;; (* clearly not exponential *)
-</code></pre>
+<span class="n">nth</span> <span class="n">fib</span> <span class="mi">100</span><span class="p">;;</span> <span class="c">(* clearly not exponential *)</span>
+</code></pre></div></div>
 
 <ul>
   <li>One thing not clear from the code is that a <code>Lazy</code> will not be recomputed</li>

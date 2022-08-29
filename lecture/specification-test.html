@@ -140,28 +140,28 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Review example: not bubbling up <code>option</code> or other wrapped results properly</p>
 
-<pre><code class="language-ocaml"># let zadd (l1 : int list) (l2 : int list) : (int list) = let l = List.zip l1 l2 in List.map ~f:(fun (x,y) -&gt; x+y) l;;
-Line 1, characters 74-75:
-Error: This expression has type (int * int) list List.Or_unequal_lengths.t
-       but an expression was expected of type 'c list
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">zadd</span> <span class="p">(</span><span class="n">l1</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">l2</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span> <span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip</span> <span class="n">l1</span> <span class="n">l2</span> <span class="k">in</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span> <span class="n">l</span><span class="p">;;</span>
+<span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">74</span><span class="o">-</span><span class="mi">75</span><span class="o">:</span>
+<span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">list</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span>
+       <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span> <span class="k">'</span><span class="n">c</span> <span class="kt">list</span>
+</code></pre></div></div>
 <ul>
   <li>To solve this type error you will need to <code>match</code> on the result</li>
 </ul>
 
 <p>Review example: with partial parameters applied, remainder types hint at what is needed.</p>
 
-<pre><code class="language-ocaml">let l = [[3;3]; [4;4]; 22;17] in
-List.map l;;
-- : f:(int list -&gt; '_weak1) -&gt; '_weak1 list = &lt;fun&gt;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">3</span><span class="p">;</span><span class="mi">3</span><span class="p">];</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span><span class="mi">4</span><span class="p">];</span> <span class="mi">22</span><span class="p">;</span><span class="mi">17</span><span class="p">]</span> <span class="k">in</span>
+<span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">l</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="kt">int</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">_weak1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">_weak1</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
 <ul>
   <li>The type shows that <code>f</code> needs to be a function taking an <code>int list</code> as argument.</li>
 </ul>
 
 <p>Review example: the type in an <code>.mli</code> file can direct your implementation, e.g. <code>map</code> on <code>dict</code> example from HW2</p>
-<pre><code class="language-ocaml">val map : ('a -&gt; 'b) -&gt; 'a dict -&gt; 'b dict
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">map</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">dict</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">dict</span>
+</code></pre></div></div>
 <ul>
   <li>Q: “how can I get a dict of <code>'b</code>’s built from a dict of <code>'a</code>’s here</li>
   <li>A: “Use the function from <code>'a</code> to <code>'b</code> on elements of <code>'a dict</code>.</li>
@@ -169,34 +169,34 @@ List.map l;;
 
 <p>Extension example: add a new field to a record or a new variant case, chase the type errors to patch</p>
 
-<pre><code class="language-ocaml">type party = Dem | Rep
-type voter = { name : string; party: party }
-let count_parties (l : voter list) =
-  List.fold l ~init: (0,0) 
-    ~f:(fun (cd,cr) -&gt; fun {party; _} -&gt; 
-     match party with 
-     | Dem -&gt; (cd+1, cr)
-     | Rep -&gt; (cd, cr+1) );;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">party</span> <span class="o">=</span> <span class="nc">Dem</span> <span class="o">|</span> <span class="nc">Rep</span>
+<span class="k">type</span> <span class="n">voter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span> <span class="o">:</span> <span class="kt">string</span><span class="p">;</span> <span class="n">party</span><span class="o">:</span> <span class="n">party</span> <span class="p">}</span>
+<span class="k">let</span> <span class="n">count_parties</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="n">voter</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="n">l</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">0</span><span class="p">)</span> 
+    <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span><span class="n">cr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="p">{</span><span class="n">party</span><span class="p">;</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> 
+     <span class="k">match</span> <span class="n">party</span> <span class="k">with</span> 
+     <span class="o">|</span> <span class="nc">Dem</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">cr</span><span class="p">)</span>
+     <span class="o">|</span> <span class="nc">Rep</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">);;</span>
+</code></pre></div></div>
 
 <p>Adding a <code>Gre</code> for green party:</p>
 
-<pre><code class="language-ocaml">type party = Dem | Rep | Gre
-type voter = { name : string; party: party }
-let count_parties (l : voter list) =
-  List.fold l ~init: (0,0) 
-    ~f:(fun (cd,cr) -&gt; fun {party; _} -&gt; 
-     match party with 
-     | Dem -&gt; (cd+1, cr)
-     | Rep -&gt; (cd, cr+1) );;
-Lines 6-8, characters 5-24:
-Warning 8: this pattern-matching is not exhaustive.
-Here is an example of a case that is not matched:
-Gre
-type party = Dem | Rep | Gre
-type voter = { name : string; party : party; }
-val count_parties : voter list -&gt; int * int = &lt;fun&gt;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">party</span> <span class="o">=</span> <span class="nc">Dem</span> <span class="o">|</span> <span class="nc">Rep</span> <span class="o">|</span> <span class="nc">Gre</span>
+<span class="k">type</span> <span class="n">voter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span> <span class="o">:</span> <span class="kt">string</span><span class="p">;</span> <span class="n">party</span><span class="o">:</span> <span class="n">party</span> <span class="p">}</span>
+<span class="k">let</span> <span class="n">count_parties</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="n">voter</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="n">l</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">0</span><span class="p">)</span> 
+    <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span><span class="n">cr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="p">{</span><span class="n">party</span><span class="p">;</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> 
+     <span class="k">match</span> <span class="n">party</span> <span class="k">with</span> 
+     <span class="o">|</span> <span class="nc">Dem</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">cr</span><span class="p">)</span>
+     <span class="o">|</span> <span class="nc">Rep</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">);;</span>
+<span class="nc">Lines</span> <span class="mi">6</span><span class="o">-</span><span class="mi">8</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">5</span><span class="o">-</span><span class="mi">24</span><span class="o">:</span>
+<span class="nc">Warning</span> <span class="mi">8</span><span class="o">:</span> <span class="n">this</span> <span class="n">pattern</span><span class="o">-</span><span class="n">matching</span> <span class="n">is</span> <span class="n">not</span> <span class="n">exhaustive</span><span class="o">.</span>
+<span class="nc">Here</span> <span class="n">is</span> <span class="n">an</span> <span class="n">example</span> <span class="k">of</span> <span class="n">a</span> <span class="n">case</span> <span class="n">that</span> <span class="n">is</span> <span class="n">not</span> <span class="n">matched</span><span class="o">:</span>
+<span class="nc">Gre</span>
+<span class="k">type</span> <span class="n">party</span> <span class="o">=</span> <span class="nc">Dem</span> <span class="o">|</span> <span class="nc">Rep</span> <span class="o">|</span> <span class="nc">Gre</span>
+<span class="k">type</span> <span class="n">voter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span> <span class="o">:</span> <span class="kt">string</span><span class="p">;</span> <span class="n">party</span> <span class="o">:</span> <span class="n">party</span><span class="p">;</span> <span class="p">}</span>
+<span class="k">val</span> <span class="n">count_parties</span> <span class="o">:</span> <span class="n">voter</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
 
 <ul>
   <li>Shows a new <code>match</code> case is needed; in process of adding new case it will become clear a triple is also needed</li>
@@ -219,25 +219,25 @@ val count_parties : voter list -&gt; int * int = &lt;fun&gt;
 
 <p>Let us consider some preconditions and postconditions on the <code>Simple_set</code>:</p>
 
-<pre><code class="language-ocaml">module Simple_set_functor (M: Eq) = 
-struct
-open Core
-type t = M.t list
-let emptyset : t = []
-let add (x : M.t) (s : t) = (x :: s)
-let rec remove (x : M.t) (s: t) =
-  match s with
-  | [] -&gt; failwith "item is not in set"
-  | hd :: tl -&gt;
-    if M.equal hd x then tl
-    else hd :: remove x tl
-let rec contains (x: M.t) (s: t) =
-  match s with
-  | [] -&gt; false
-  | hd :: tl -&gt;
-    if M.equal x hd then true else contains x tl
-end
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Simple_set_functor</span> <span class="p">(</span><span class="nc">M</span><span class="o">:</span> <span class="nc">Eq</span><span class="p">)</span> <span class="o">=</span> 
+<span class="k">struct</span>
+<span class="k">open</span> <span class="nc">Core</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
+<span class="k">let</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">[]</span>
+<span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span>
+<span class="k">let</span> <span class="k">rec</span> <span class="n">remove</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"item is not in set"</span>
+  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="nn">M</span><span class="p">.</span><span class="n">equal</span> <span class="n">hd</span> <span class="n">x</span> <span class="k">then</span> <span class="n">tl</span>
+    <span class="k">else</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">remove</span> <span class="n">x</span> <span class="n">tl</span>
+<span class="k">let</span> <span class="k">rec</span> <span class="n">contains</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">false</span>
+  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="nn">M</span><span class="p">.</span><span class="n">equal</span> <span class="n">x</span> <span class="n">hd</span> <span class="k">then</span> <span class="bp">true</span> <span class="k">else</span> <span class="n">contains</span> <span class="n">x</span> <span class="n">tl</span>
+<span class="k">end</span>
+</code></pre></div></div>
 
 <ul>
   <li>Precondition on <code>remove</code>: <code>s</code> is not empty (it would always fail otherwise)</li>
@@ -260,9 +260,9 @@ end
     </ul>
   </li>
   <li>Example new version of <code>add</code> above:
-    <pre><code class="language-ocaml">let add (x : M.t) (s : t) = 
-let s' = (x :: s) in assert (contains x s')
-</code></pre>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> 
+<span class="k">let</span> <span class="n">s'</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span> <span class="k">in</span> <span class="k">assert</span> <span class="p">(</span><span class="n">contains</span> <span class="n">x</span> <span class="n">s'</span><span class="p">)</span>
+</code></pre></div>    </div>
   </li>
   <li>Good for development mode, but not after deployment (slows things down)</li>
   <li>Often better to make tests that enforce assertions instead of using <code>assert</code>
@@ -291,11 +291,11 @@ let s' = (x :: s) in assert (contains x s')
   <li>A standard invariant for recursive functions is that the recursive calls return what the outer function expected</li>
 </ul>
 
-<pre><code class="language-ocaml">let rec rev l = 
-  match l with 
-  | [] -&gt; []
-  | x::xs -&gt; let rxs = rev xs in assert(Poly.(List.rev xs = rxs)); rxs @ [x]
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span> 
+  <span class="k">match</span> <span class="n">l</span> <span class="k">with</span> 
+  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
+  <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span> <span class="o">-&gt;</span> <span class="k">let</span> <span class="n">rxs</span> <span class="o">=</span> <span class="n">rev</span> <span class="n">xs</span> <span class="k">in</span> <span class="k">assert</span><span class="p">(</span><span class="nn">Poly</span><span class="p">.(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">rxs</span><span class="p">));</span> <span class="n">rxs</span> <span class="o">@</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+</code></pre></div></div>
 <ul>
   <li>Note that we have to use the built-in <code>List.rev</code> to test our version - somewhat circular (note <code>Poly</code> quick-open lets <code>=</code> work on any type)</li>
   <li>In general a big issue with specification is it is often hard to give a code-based definition of the full spec.</li>
@@ -317,15 +317,15 @@ let s' = (x :: s) in assert (contains x s')
   <li>Folding right: just flip the order the list is walked over in the above</li>
 </ul>
 
-<pre><code class="language-ocaml">(* invariant for length a: a is length of list up to here *)
-let length l = List.fold ~init:0 ~f:(fun a _ -&gt; a+1) l 
-(* invariant for rev a: a is reverse of list up to here *)
-let rev l = List.fold ~init:[]  ~f:(fun a x -&gt; x::a) l 
-(* invariant for map a: a is f applied to each element of list up to here *)
-let map ~f l = List.fold_right ~init:[]  ~f:(fun x a -&gt; (f x)::a) l
-(* etc *)
-let filter ~f l = List.fold_right ~init:[] ~f:(fun x a -&gt; if f x then x::a else a) l
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* invariant for length a: a is length of list up to here *)</span>
+<span class="k">let</span> <span class="n">length</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">a</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="n">l</span> 
+<span class="c">(* invariant for rev a: a is reverse of list up to here *)</span>
+<span class="k">let</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span>  <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">a</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">::</span><span class="n">a</span><span class="p">)</span> <span class="n">l</span> 
+<span class="c">(* invariant for map a: a is f applied to each element of list up to here *)</span>
+<span class="k">let</span> <span class="n">map</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span>  <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span><span class="o">::</span><span class="n">a</span><span class="p">)</span> <span class="n">l</span>
+<span class="c">(* etc *)</span>
+<span class="k">let</span> <span class="n">filter</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">f</span> <span class="n">x</span> <span class="k">then</span> <span class="n">x</span><span class="o">::</span><span class="n">a</span> <span class="k">else</span> <span class="n">a</span><span class="p">)</span> <span class="n">l</span>
+</code></pre></div></div>
 
 <h3 id="formal-verification">Formal Verification</h3>
 
@@ -406,17 +406,17 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun x a -&gt; if f x then x::a el
   <li>Here is your standard simple <code>tests.ml</code> file, from the simple-set example:</li>
 </ul>
 
-<pre><code class="language-ocaml">open OUnit2
-open Simple_set
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">OUnit2</span>
+<span class="k">open</span> <span class="nc">Simple_set</span>
 
-let tests = "test suite for set" &gt;::: [
-  "empty"  &gt;:: (fun _ -&gt; assert_equal (emptyset) (emptyset));
-  "3-elt"    &gt;:: (fun _ -&gt; assert_equal true (contains 5 (add 5 emptyset) (=)));
-  "1-elt nested" &gt;:: (fun _ -&gt; assert_equal false (contains 5 (remove 5 (add 5 emptyset) (=))(=)));
-]
+<span class="k">let</span> <span class="n">tests</span> <span class="o">=</span> <span class="s2">"test suite for set"</span> <span class="o">&gt;:::</span> <span class="p">[</span>
+  <span class="s2">"empty"</span>  <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="n">emptyset</span><span class="p">)</span> <span class="p">(</span><span class="n">emptyset</span><span class="p">));</span>
+  <span class="s2">"3-elt"</span>    <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="bp">true</span> <span class="p">(</span><span class="n">contains</span> <span class="mi">5</span> <span class="p">(</span><span class="n">add</span> <span class="mi">5</span> <span class="n">emptyset</span><span class="p">)</span> <span class="p">(</span><span class="o">=</span><span class="p">)));</span>
+  <span class="s2">"1-elt nested"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="bp">false</span> <span class="p">(</span><span class="n">contains</span> <span class="mi">5</span> <span class="p">(</span><span class="n">remove</span> <span class="mi">5</span> <span class="p">(</span><span class="n">add</span> <span class="mi">5</span> <span class="n">emptyset</span><span class="p">)</span> <span class="p">(</span><span class="o">=</span><span class="p">))(</span><span class="o">=</span><span class="p">)));</span>
+<span class="p">]</span>
 
-let () = run_test_tt_main tests
-</code></pre>
+<span class="k">let</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">run_test_tt_main</span> <span class="n">tests</span>
+</code></pre></div></div>
 
 <ul>
   <li>The infix <code>&gt;::</code> operator takes a string (left) and a function with <code>_</code> argument (right) and builds a single test</li>
@@ -431,32 +431,32 @@ let () = run_test_tt_main tests
   <li>Here a dune build file which would work for the simple set tests for example:</li>
 </ul>
 
-<pre><code class="language-scheme">(executable
-  (name tests)
-  (libraries
-    ounit2
-    simple_set
-  ))
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>
+  <span class="p">(</span><span class="nf">name</span> <span class="nv">tests</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">libraries</span>
+    <span class="nv">ounit2</span>
+    <span class="nv">simple_set</span>
+  <span class="p">))</span>
 
-; dune rule so command line "dune runtest" (and "dune test") will run tests.
-(rule
- (alias runtest)
- (action (chdir %{project_root}
-  (run ./test/tests.exe))))
-</code></pre>
+<span class="c1">; dune rule so command line "dune runtest" (and "dune test") will run tests.</span>
+<span class="p">(</span><span class="nf">rule</span>
+ <span class="p">(</span><span class="nf">alias</span> <span class="nv">runtest</span><span class="p">)</span>
+ <span class="p">(</span><span class="nf">action</span> <span class="p">(</span><span class="nf">chdir</span> <span class="nv">%</span><span class="err">{</span><span class="nv">project_root</span><span class="err">}</span>
+  <span class="p">(</span><span class="nf">run</span> <span class="o">.</span><span class="nv">/test/tests</span><span class="o">.</span><span class="nv">exe</span><span class="p">))))</span>
+</code></pre></div></div>
 
 <ul>
   <li>The alias rule also runs the tests after building them</li>
   <li>We in fact use dune shorthand for the above: replace <code>executable</code> with <code>test</code> and it makes an executable with the above alias to run tests:</li>
 </ul>
 
-<pre><code class="language-scheme">(test
-  (name tests)
-  (libraries
-    ounit2
-    simple_set
-  ))
-</code></pre>
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">test</span>
+  <span class="p">(</span><span class="nf">name</span> <span class="nv">tests</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">libraries</span>
+    <span class="nv">ounit2</span>
+    <span class="nv">simple_set</span>
+  <span class="p">))</span>
+</code></pre></div></div>
 
 <h3 id="tangent-defining-infix-operators">Tangent: defining infix operators</h3>
 
@@ -464,23 +464,23 @@ let () = run_test_tt_main tests
   <li>The OUnit infix operators <code>&gt;::</code>/<code>&gt;:::</code> are just like <code>+</code>, <code>^</code> etc</li>
 </ul>
 
-<pre><code class="language-ocaml"># #require "ounit2";;
-# open OUnit2;;
-# (&gt;::) ;;
-- : string -&gt; test_fun -&gt; test = &lt;fun&gt;
-# (&gt;:::);;
-- : string -&gt; test list -&gt; test = &lt;fun&gt;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ounit2"</span><span class="p">;;</span>
+<span class="o">#</span> <span class="k">open</span> <span class="nc">OUnit2</span><span class="p">;;</span>
+<span class="o">#</span> <span class="p">(</span><span class="o">&gt;::</span><span class="p">)</span> <span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">test_fun</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="p">(</span><span class="o">&gt;:::</span><span class="p">);;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
 
 <ul>
   <li>There is no magic to this, you can also do it:</li>
 </ul>
 
-<pre><code class="language-ocaml">utop # let (^^) x y = x + y;;
-val ( ^^ ) : int -&gt; int -&gt; int = &lt;fun&gt;
-utop # 3 ^^ 5;;
-- : int = 8
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">utop</span> <span class="o">#</span> <span class="k">let</span> <span class="p">(</span><span class="o">^^</span><span class="p">)</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;;</span>
+<span class="k">val</span> <span class="p">(</span> <span class="o">^^</span> <span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="n">utop</span> <span class="o">#</span> <span class="mi">3</span> <span class="o">^^</span> <span class="mi">5</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">8</span>
+</code></pre></div></div>
 <ul>
   <li>Note unlike in C++ we are not overloading operators, <code>^^</code> only works on two ints now.</li>
   <li>The old version of <code>^^</code> for printing just got nuked.</li>
@@ -495,18 +495,18 @@ utop # 3 ^^ 5;;
   <li>Simple example of testing one function on a bunch of lists:</li>
 </ul>
 
-<pre><code class="language-ocaml"># let make_rev_test l = ("test test" &gt;:: (fun _ -&gt; assert_equal(List.rev @@ List.rev l) l));; 
-val make_rev_test : 'a list -&gt; test = &lt;fun&gt;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">make_rev_test</span> <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"test test"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span><span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">l</span><span class="p">)</span> <span class="n">l</span><span class="p">));;</span> 
+<span class="k">val</span> <span class="n">make_rev_test</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
 
-<pre><code class="language-ocaml">let make_rev_suite ll = 
-  "suite of rev rev tests" &gt;::: List.map ll ~f:(fun l -&gt; make_rev_test l);;
-val make_rev_suite : 'a list list -&gt; test = &lt;fun&gt;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">make_rev_suite</span> <span class="n">ll</span> <span class="o">=</span> 
+  <span class="s2">"suite of rev rev tests"</span> <span class="o">&gt;:::</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">ll</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">l</span> <span class="o">-&gt;</span> <span class="n">make_rev_test</span> <span class="n">l</span><span class="p">);;</span>
+<span class="k">val</span> <span class="n">make_rev_suite</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
 
-<pre><code class="language-ocaml">let s = make_rev_suite [[];[1;2;3];[2;44;2];[32;2;3;2;1]];;
-let () = run_test_tt_main s;; (* DON'T actually do this line in utop, runs but crashes utop! *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="n">make_rev_suite</span> <span class="p">[[];[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];[</span><span class="mi">2</span><span class="p">;</span><span class="mi">44</span><span class="p">;</span><span class="mi">2</span><span class="p">];[</span><span class="mi">32</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">1</span><span class="p">]];;</span>
+<span class="k">let</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">run_test_tt_main</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* DON'T actually do this line in utop, runs but crashes utop! *)</span>
+</code></pre></div></div>
 
 <ul>
   <li>In general you can build an arbitrarily big tree of tests with suites of suites etc
@@ -516,20 +516,20 @@ let () = run_test_tt_main s;; (* DON'T actually do this line in utop, runs but c
   </li>
 </ul>
 
-<pre><code class="language-ocaml">let s' = "id tests" &gt;::: 
-  ["one" &gt;:: (fun _ -&gt; assert_equal (Fn.id 4) 4) ;
-   "two" &gt;:: (fun _ -&gt; assert_equal (Fn.id "hello") "hello")];;
-let suites = test_list [s;s'];; (* make suite of suites *)
-let named_suites = "revrev and Fn.id" &gt;: suites (* any tree of tests can be named *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">s'</span> <span class="o">=</span> <span class="s2">"id tests"</span> <span class="o">&gt;:::</span> 
+  <span class="p">[</span><span class="s2">"one"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="mi">4</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="p">;</span>
+   <span class="s2">"two"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="s2">"hello"</span><span class="p">)</span> <span class="s2">"hello"</span><span class="p">)];;</span>
+<span class="k">let</span> <span class="n">suites</span> <span class="o">=</span> <span class="n">test_list</span> <span class="p">[</span><span class="n">s</span><span class="p">;</span><span class="n">s'</span><span class="p">];;</span> <span class="c">(* make suite of suites *)</span>
+<span class="k">let</span> <span class="n">named_suites</span> <span class="o">=</span> <span class="s2">"revrev and Fn.id"</span> <span class="o">&gt;:</span> <span class="n">suites</span> <span class="c">(* any tree of tests can be named *)</span>
+</code></pre></div></div>
 
 <p>Here is the type of <code>test</code> under the hood (from the docs) which should make clear why the above works:</p>
 
-<pre><code class="language-ocaml">type test =
-| TestCase of test_fun
-| TestList of test list
-| TestLabel of string * test
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">test</span> <span class="o">=</span>
+<span class="o">|</span> <span class="nc">TestCase</span> <span class="k">of</span> <span class="n">test_fun</span>
+<span class="o">|</span> <span class="nc">TestList</span> <span class="k">of</span> <span class="n">test</span> <span class="kt">list</span>
+<span class="o">|</span> <span class="nc">TestLabel</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">*</span> <span class="n">test</span>
+</code></pre></div></div>
 
 <ul>
   <li>We will now take a brief pass through the <br />

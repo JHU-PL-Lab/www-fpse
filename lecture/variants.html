@@ -77,11 +77,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Example variant type for doing mixed arithmetic (integers and floats)</p>
 
-<pre><code class="language-ocaml">type ff_num = Fixed of int | Floating of float;;  (* read "|" as "or" *)
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">ff_num</span> <span class="o">=</span> <span class="nc">Fixed</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="nc">Floating</span> <span class="k">of</span> <span class="kt">float</span><span class="p">;;</span>  <span class="c">(* read "|" as "or" *)</span>
 
-Fixed(5);; (* tag 5 as a Fixed *)
-Floating 4.0;; (* tag 4.0 as a Floating *)
-</code></pre>
+<span class="nc">Fixed</span><span class="p">(</span><span class="mi">5</span><span class="p">);;</span> <span class="c">(* tag 5 as a Fixed *)</span>
+<span class="nc">Floating</span> <span class="mi">4</span><span class="o">.</span><span class="mi">0</span><span class="p">;;</span> <span class="c">(* tag 4.0 as a Floating *)</span>
+</code></pre></div></div>
 
 <ul>
   <li>Each case of the variant is wrapped with a ‘Constructor’ which serves for both
@@ -96,38 +96,38 @@ Floating 4.0;; (* tag 4.0 as a Floating *)
   <li>Note constructors look like functions but they are <strong>not</strong> – you always need to give the argument</li>
 </ul>
 
-<pre><code class="language-ocaml">let ff_as_int x =
-    match x with
-    | Fixed n -&gt; n    (* variants fit well into pattern matching syntax *)
-    | Floating z -&gt; int_of_float z;;
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">ff_as_int</span> <span class="n">x</span> <span class="o">=</span>
+    <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
+    <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span>    <span class="c">(* variants fit well into pattern matching syntax *)</span>
+    <span class="o">|</span> <span class="nc">Floating</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">int_of_float</span> <span class="n">z</span><span class="p">;;</span>
 
-ff_as_int (Fixed 5);;
-</code></pre>
+<span class="n">ff_as_int</span> <span class="p">(</span><span class="nc">Fixed</span> <span class="mi">5</span><span class="p">);;</span>
+</code></pre></div></div>
 
 <p>A non-trivial function using the above variant type</p>
 
-<pre><code class="language-ocaml">let ff_add n1 n2 =
-   match n1, n2 with    (* note use of pair here to parallel-match on two variables  *)
-     | Fixed i1, Fixed i2 -&gt; Fixed (i1 + i2)
-     | Fixed i1, Floating f2 -&gt;  Floating(float i1 +. f2) (* need to coerce *)
-     | Floating f1, Fixed i2 -&gt; Floating(f1 +. float i2)  (* ditto *)
-     | Floating f1, Floating f2 -&gt; Floating(f1 +. f2)
-;;
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">ff_add</span> <span class="n">n1</span> <span class="n">n2</span> <span class="o">=</span>
+   <span class="k">match</span> <span class="n">n1</span><span class="o">,</span> <span class="n">n2</span> <span class="k">with</span>    <span class="c">(* note use of pair here to parallel-match on two variables  *)</span>
+     <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">i1</span><span class="o">,</span> <span class="nc">Fixed</span> <span class="n">i2</span> <span class="o">-&gt;</span> <span class="nc">Fixed</span> <span class="p">(</span><span class="n">i1</span> <span class="o">+</span> <span class="n">i2</span><span class="p">)</span>
+     <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">i1</span><span class="o">,</span> <span class="nc">Floating</span> <span class="n">f2</span> <span class="o">-&gt;</span>  <span class="nc">Floating</span><span class="p">(</span><span class="kt">float</span> <span class="n">i1</span> <span class="o">+.</span> <span class="n">f2</span><span class="p">)</span> <span class="c">(* need to coerce *)</span>
+     <span class="o">|</span> <span class="nc">Floating</span> <span class="n">f1</span><span class="o">,</span> <span class="nc">Fixed</span> <span class="n">i2</span> <span class="o">-&gt;</span> <span class="nc">Floating</span><span class="p">(</span><span class="n">f1</span> <span class="o">+.</span> <span class="kt">float</span> <span class="n">i2</span><span class="p">)</span>  <span class="c">(* ditto *)</span>
+     <span class="o">|</span> <span class="nc">Floating</span> <span class="n">f1</span><span class="o">,</span> <span class="nc">Floating</span> <span class="n">f2</span> <span class="o">-&gt;</span> <span class="nc">Floating</span><span class="p">(</span><span class="n">f1</span> <span class="o">+.</span> <span class="n">f2</span><span class="p">)</span>
+<span class="p">;;</span>
 
-ff_add (Fixed 123) (Floating 3.14159);;
-</code></pre>
+<span class="n">ff_add</span> <span class="p">(</span><span class="nc">Fixed</span> <span class="mi">123</span><span class="p">)</span> <span class="p">(</span><span class="nc">Floating</span> <span class="mi">3</span><span class="o">.</span><span class="mi">14159</span><span class="p">);;</span>
+</code></pre></div></div>
 
 <ul>
   <li>No data item?  leave off the <code>of</code>.</li>
   <li>Multiple data items in a single variant clause?  Wrap with a tuple (or record once we cover them):</li>
 </ul>
 
-<pre><code class="language-ocaml">type complex = CZero | Nonzero of float * float;;
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">complex</span> <span class="o">=</span> <span class="nc">CZero</span> <span class="o">|</span> <span class="nc">Nonzero</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">*</span> <span class="kt">float</span><span class="p">;;</span>
 
-let com = Nonzero(3.2,11.2);;
-let zer = CZero;;
-let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing error; use @@ instead of " " *)
-</code></pre>
+<span class="k">let</span> <span class="n">com</span> <span class="o">=</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span>
+<span class="k">let</span> <span class="n">zer</span> <span class="o">=</span> <span class="nc">CZero</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">ocaml_annoyance</span> <span class="o">=</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span> <span class="c">(* this is a parsing error; use @@ instead of " " *)</span>
+</code></pre></div></div>
 
 <h4 id="an-example-of-variants-plus-list-libraries">An Example of Variants plus List. libraries</h4>
 
@@ -138,38 +138,38 @@ let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing error; use 
   <li>You will need to use this with <code>Core</code> since regular <code>=</code> will not work on <code>nucleotide</code>s.</li>
 </ul>
 
-<pre><code class="language-ocaml">(* Example derived from 
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Example derived from 
    https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
    This code needs a #require "ppx_jane";; in top loop to load ppx extension for @@deriving equal 
-   Or, in a dune file it will need   (preprocess (pps ppx_deriving.eq)) added to the library decl *)
+   Or, in a dune file it will need   (preprocess (pps ppx_deriving.eq)) added to the library decl *)</span>
 
-type nucleotide = A | C | G | T [@@deriving equal]
+<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">]</span>
 
-let hamming_distance (left : 'a list) (right : 'a list) : ((int, string) result)=
-  match List.length left, List.length right with
-  | x, y when x &lt;&gt; y -&gt; Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
-  | _ -&gt; Ok (List.length (List.filter ~f:(fun (a,b) -&gt; not (equal_nucleotide a b)) (* _ is wild card match *)
-             (List.zip_exn left right))) (* We already know this never fails - OK to _exn *)
+<span class="k">let</span> <span class="n">hamming_distance</span> <span class="p">(</span><span class="n">left</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="p">((</span><span class="kt">int</span><span class="o">,</span> <span class="kt">string</span><span class="p">)</span> <span class="n">result</span><span class="p">)</span><span class="o">=</span>
+  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">left</span><span class="o">,</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">right</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span> <span class="k">when</span> <span class="n">x</span> <span class="o">&lt;&gt;</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"left and right strands must be of equal length"</span> <span class="c">(* "when" allows additional constraints *)</span>
+  <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">not</span> <span class="p">(</span><span class="n">equal_nucleotide</span> <span class="n">a</span> <span class="n">b</span><span class="p">))</span> <span class="c">(* _ is wild card match *)</span>
+             <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="n">left</span> <span class="n">right</span><span class="p">)))</span> <span class="c">(* We already know this never fails - OK to _exn *)</span>
 
-let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
-</code></pre>
+<span class="k">let</span> <span class="n">hamm_example</span> <span class="o">=</span> <span class="n">hamming_distance</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">C</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">T</span><span class="p">;</span><span class="nc">T</span><span class="p">]</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">C</span><span class="p">;</span><span class="nc">T</span><span class="p">]</span>
+</code></pre></div></div>
 
 <p>All the parens above are very hard to read, use pipes instead:</p>
-<pre><code class="language-ocaml">let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
-  match List.length left, List.length right with
-  | x, y when x &lt;&gt; y -&gt; Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
-  | _ -&gt; List.zip_exn left right 
-      |&gt; List.filter ~f:(fun (a,b) -&gt; not (equal_nucleotide a b)) 
-      |&gt; List.length 
-      |&gt; fun x -&gt; Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">hamming_distance</span> <span class="p">(</span><span class="n">left</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="p">((</span><span class="kt">int</span><span class="o">,</span> <span class="kt">string</span><span class="p">)</span> <span class="n">result</span><span class="p">)</span><span class="o">=</span>
+  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">left</span><span class="o">,</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">right</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span> <span class="k">when</span> <span class="n">x</span> <span class="o">&lt;&gt;</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"left and right strands must be of equal length"</span> <span class="c">(* "when" allows additional constraints *)</span>
+  <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="n">left</span> <span class="n">right</span> 
+      <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">not</span> <span class="p">(</span><span class="n">equal_nucleotide</span> <span class="n">a</span> <span class="n">b</span><span class="p">))</span> 
+      <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> 
+      <span class="o">|&gt;</span> <span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="nc">Ok</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c">(* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)</span>
+</code></pre></div></div>
 
 <h4 id="parametric-variant-types">Parametric variant types</h4>
 
 <p>Here is the system’s declaration of the <code>option</code> type – the <code>#show_type</code> top loop directive (or just <code>#show</code>) will print it:</p>
-<pre><code class="language-ocaml"># #show_type option;;
-type 'a option = None | Some of 'a
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="n">option</span><span class="p">;;</span>
+<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span> <span class="o">|</span> <span class="nc">Some</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span>
+</code></pre></div></div>
 <ul>
   <li>The <code>'a</code> here is a <em>parameter</em>, which gets filled in by a concrete type to make an actual type.</li>
   <li>e.g. <code>Some("hello") : string option</code> – the <code>string</code> fills in the parameter <code>'a</code></li>
@@ -179,9 +179,9 @@ type 'a option = None | Some of 'a
 </ul>
 
 <p>And here is <code>result</code>:</p>
-<pre><code class="language-ocaml"># #show_type result;;
-type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="n">result</span><span class="p">;;</span>
+<span class="k">type</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span><span class="o">,</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span><span class="o">,</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">Ok</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">|</span> <span class="nc">Error</span> <span class="k">of</span> <span class="k">'</span><span class="n">b</span>
+</code></pre></div></div>
 
 <ul>
   <li>Same idea but <em>a pair</em> of type parameters; <code>'b</code> is the type of the <code>Error</code>.</li>
@@ -202,23 +202,23 @@ type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
 
 <p>Homebrew lists as a warm-up - the built-in <code>list</code> type is in fact not needed</p>
 
-<pre><code class="language-ocaml">type 'a homebrew_list = Mt | Cons of 'a * 'a homebrew_list;;
-let hb_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">homebrew_list</span> <span class="o">=</span> <span class="nc">Mt</span> <span class="o">|</span> <span class="nc">Cons</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">homebrew_list</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">hb_eg</span> <span class="o">=</span> <span class="nc">Cons</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">5</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">7</span><span class="o">,</span><span class="nc">Mt</span><span class="p">)));;</span> <span class="c">(* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)</span>
+</code></pre></div></div>
 <p>Coding over homebrew lists is basically identical to built-in lists.</p>
 
-<pre><code class="language-ocaml">let rec homebrew_map (ml : 'a homebrew_list) ~(f : 'a -&gt; 'b) : ('b homebrew_list) =
-  match ml with
-    | Mt -&gt; Mt
-    | Cons(hd,tl) -&gt; Cons(f hd,homebrew_map tl ~f)
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">homebrew_map</span> <span class="p">(</span><span class="n">ml</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">homebrew_list</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">b</span> <span class="n">homebrew_list</span><span class="p">)</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">ml</span> <span class="k">with</span>
+    <span class="o">|</span> <span class="nc">Mt</span> <span class="o">-&gt;</span> <span class="nc">Mt</span>
+    <span class="o">|</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">hd</span><span class="o">,</span><span class="n">tl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">f</span> <span class="n">hd</span><span class="o">,</span><span class="n">homebrew_map</span> <span class="n">tl</span> <span class="o">~</span><span class="n">f</span><span class="p">)</span>
 
-let map_eg = homebrew_map hb_eg ~f:(fun x -&gt; x - 1)
-</code></pre>
+<span class="k">let</span> <span class="n">map_eg</span> <span class="o">=</span> <span class="n">homebrew_map</span> <span class="n">hb_eg</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
 
 <p>Lets look at the built-in <code>list</code> type:</p>
-<pre><code class="language-ocaml"># #show_type list;;
-type 'a list = [] | (::) of 'a * 'a list
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="kt">list</span><span class="p">;;</span>
+<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">=</span> <span class="bp">[]</span> <span class="o">|</span> <span class="p">(</span><span class="o">::</span><span class="p">)</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span>
+</code></pre></div></div>
 <p>Looks very similar to our homebrew one, eh??</p>
 
 <h3 id="binary-trees">Binary trees</h3>
@@ -229,30 +229,30 @@ type 'a list = [] | (::) of 'a * 'a list
   <li>Here is a tree with data in the <em>nodes</em> but not the leaves.</li>
 </ul>
 
-<pre><code class="language-ocaml">type 'a bin_tree = Leaf | Node of 'a * 'a bin_tree * 'a bin_tree
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="o">=</span> <span class="nc">Leaf</span> <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span>
+</code></pre></div></div>
 
 <p>Here are some simple example trees</p>
 
-<pre><code class="language-ocaml">let bt0 = Node("whack!",Leaf, Leaf);;
-let bt1 = Node("fiddly ",
-            Node("backer ",
-               Leaf,
-               Node("crack ",
-                  Leaf,
-                  Leaf)),
-            bt0);;
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">bt0</span> <span class="o">=</span> <span class="nc">Node</span><span class="p">(</span><span class="s2">"whack!"</span><span class="o">,</span><span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">);;</span>
+<span class="k">let</span> <span class="n">bt1</span> <span class="o">=</span> <span class="nc">Node</span><span class="p">(</span><span class="s2">"fiddly "</span><span class="o">,</span>
+            <span class="nc">Node</span><span class="p">(</span><span class="s2">"backer "</span><span class="o">,</span>
+               <span class="nc">Leaf</span><span class="o">,</span>
+               <span class="nc">Node</span><span class="p">(</span><span class="s2">"crack "</span><span class="o">,</span>
+                  <span class="nc">Leaf</span><span class="o">,</span>
+                  <span class="nc">Leaf</span><span class="p">))</span><span class="o">,</span>
+            <span class="n">bt0</span><span class="p">);;</span>
 
-let bt2 = Node("fiddly ",
-            Node("backer ",
-               Leaf,
-               Node("crack ",
-                  Leaf,
-                  Leaf)),
-            bt0);;
-(* Type error, like list, must have uniform type: *)
-Node("fiddly",Node(0,Leaf,Leaf),Leaf);;
-</code></pre>
+<span class="k">let</span> <span class="n">bt2</span> <span class="o">=</span> <span class="nc">Node</span><span class="p">(</span><span class="s2">"fiddly "</span><span class="o">,</span>
+            <span class="nc">Node</span><span class="p">(</span><span class="s2">"backer "</span><span class="o">,</span>
+               <span class="nc">Leaf</span><span class="o">,</span>
+               <span class="nc">Node</span><span class="p">(</span><span class="s2">"crack "</span><span class="o">,</span>
+                  <span class="nc">Leaf</span><span class="o">,</span>
+                  <span class="nc">Leaf</span><span class="p">))</span><span class="o">,</span>
+            <span class="n">bt0</span><span class="p">);;</span>
+<span class="c">(* Type error, like list, must have uniform type: *)</span>
+<span class="nc">Node</span><span class="p">(</span><span class="s2">"fiddly"</span><span class="o">,</span><span class="nc">Node</span><span class="p">(</span><span class="mi">0</span><span class="o">,</span><span class="nc">Leaf</span><span class="o">,</span><span class="nc">Leaf</span><span class="p">)</span><span class="o">,</span><span class="nc">Leaf</span><span class="p">);;</span>
+</code></pre></div></div>
 
 <h4 id="operations-on-binary-trees">Operations on Binary Trees</h4>
 
@@ -266,44 +266,44 @@ Node("fiddly",Node(0,Leaf,Leaf),Leaf);;
     </ol>
   </li>
   <li>Here is a simple recursive function over binary trees for example:
-    <pre><code class="language-ocaml">let rec add_gobble binstringtree =
- match binstringtree with
- | Leaf -&gt; Leaf
- | Node(y, left, right) -&gt;
-     Node(y^"gobble",add_gobble left,add_gobble right)
-</code></pre>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">add_gobble</span> <span class="n">binstringtree</span> <span class="o">=</span>
+ <span class="k">match</span> <span class="n">binstringtree</span> <span class="k">with</span>
+ <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Leaf</span>
+ <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
+     <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">^</span><span class="s2">"gobble"</span><span class="o">,</span><span class="n">add_gobble</span> <span class="n">left</span><span class="o">,</span><span class="n">add_gobble</span> <span class="n">right</span><span class="p">)</span>
+</code></pre></div>    </div>
   </li>
   <li>Remember, like with lists this is not mutating the tree, its building a new one</li>
   <li>Observe: this is an instance of the general operation of building a tree with same structure but applying an operation on each node value</li>
   <li>i.e. it is a <strong>map</strong> operation over a tree.  Let us code it.</li>
 </ul>
 
-<pre><code class="language-ocaml">let rec map (tree : 'a bin_tree) ~(f : 'a -&gt; 'b) : ('b bin_tree) =
-   match tree with
-   | Leaf -&gt; Leaf
-   | Node(y, left, right) -&gt;
-       Node(f y,map ~f left,map ~f right)
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">map</span> <span class="p">(</span><span class="n">tree</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">b</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">=</span>
+   <span class="k">match</span> <span class="n">tree</span> <span class="k">with</span>
+   <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Leaf</span>
+   <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
+       <span class="nc">Node</span><span class="p">(</span><span class="n">f</span> <span class="n">y</span><span class="o">,</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span> <span class="n">left</span><span class="o">,</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span> <span class="n">right</span><span class="p">)</span>
 
-(* using tree map to make a non-recursive add_gobble *)
-let add_gobble tree = map ~f:(fun s -&gt; s ^ "gobble") tree
-</code></pre>
+<span class="c">(* using tree map to make a non-recursive add_gobble *)</span>
+<span class="k">let</span> <span class="n">add_gobble</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span> <span class="o">^</span> <span class="s2">"gobble"</span><span class="p">)</span> <span class="n">tree</span>
+</code></pre></div></div>
 <ul>
   <li>Fold is also natural on binary trees, apply operation f to node value and each subtree result.</li>
 </ul>
 
-<pre><code class="language-ocaml">let rec fold (tree : 'a bin_tree) ~(f : 'a -&gt; 'b -&gt; 'b -&gt; 'b) ~(leaf : 'b) : 'b =
-   match tree with
-   | Leaf -&gt; leaf
-   | Node(y, left, right) -&gt;
-       f y (fold ~f ~leaf left) (fold ~f ~leaf right)
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold</span> <span class="p">(</span><span class="n">tree</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">leaf</span> <span class="o">:</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">b</span> <span class="o">=</span>
+   <span class="k">match</span> <span class="n">tree</span> <span class="k">with</span>
+   <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="n">leaf</span>
+   <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
+       <span class="n">f</span> <span class="n">y</span> <span class="p">(</span><span class="n">fold</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">leaf</span> <span class="n">left</span><span class="p">)</span> <span class="p">(</span><span class="n">fold</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">leaf</span> <span class="n">right</span><span class="p">)</span>
 
-(* using tree fold *)
-let int_summate tree = fold ~f:(fun y -&gt; fun ls -&gt; fun rs -&gt; y + ls + rs) ~leaf:0 tree;;
-let bt = Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
-int_summate bt;;
-(* fold can also do map-like operations - the folder can return a tree *)
-let bump_nodes tree = fold ~f:(fun y -&gt; fun ls -&gt; fun rs-&gt; Node(y+1,ls,rs)) ~leaf:Leaf tree;;
-</code></pre>
+<span class="c">(* using tree fold *)</span>
+<span class="k">let</span> <span class="n">int_summate</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">fold</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">ls</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">rs</span> <span class="o">-&gt;</span> <span class="n">y</span> <span class="o">+</span> <span class="n">ls</span> <span class="o">+</span> <span class="n">rs</span><span class="p">)</span> <span class="o">~</span><span class="n">leaf</span><span class="o">:</span><span class="mi">0</span> <span class="n">tree</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">bt</span> <span class="o">=</span> <span class="nc">Node</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Node</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="nc">Leaf</span><span class="o">,</span><span class="nc">Node</span><span class="p">(</span><span class="mi">2</span><span class="o">,</span><span class="nc">Leaf</span><span class="o">,</span><span class="nc">Leaf</span><span class="p">))</span><span class="o">,</span><span class="nc">Leaf</span><span class="p">);;</span>
+<span class="n">int_summate</span> <span class="n">bt</span><span class="p">;;</span>
+<span class="c">(* fold can also do map-like operations - the folder can return a tree *)</span>
+<span class="k">let</span> <span class="n">bump_nodes</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">fold</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">ls</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">rs</span><span class="o">-&gt;</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span><span class="n">ls</span><span class="o">,</span><span class="n">rs</span><span class="p">))</span> <span class="o">~</span><span class="n">leaf</span><span class="o">:</span><span class="nc">Leaf</span> <span class="n">tree</span><span class="p">;;</span>
+</code></pre></div></div>
 
 <ul>
   <li>Many of the other <code>List</code> functions have analogues on binary trees and recursive variants in general
@@ -316,22 +316,22 @@ let bump_nodes tree = fold ~f:(fun y -&gt; fun ls -&gt; fun rs-&gt; Node(y+1,ls,
   <li>For integers at least this is easy as we have <code>&lt;=</code>:</li>
 </ul>
 
-<pre><code class="language-ocaml">let rec insert_int (x : int) (bt : int bin_tree) : (int bin_tree) =
-   match bt with
-   | Leaf -&gt; Node(x, Leaf, Leaf)
-   | Node(y, left, right) -&gt;
-       if x &lt;= y then Node(y, insert_int x left, right)
-       else Node(y, left, insert_int x right)
-;;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">insert_int</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="n">bt</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">=</span>
+   <span class="k">match</span> <span class="n">bt</span> <span class="k">with</span>
+   <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Node</span><span class="p">(</span><span class="n">x</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">)</span>
+   <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
+       <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="k">then</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">insert_int</span> <span class="n">x</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span>
+       <span class="k">else</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">insert_int</span> <span class="n">x</span> <span class="n">right</span><span class="p">)</span>
+<span class="p">;;</span>
+</code></pre></div></div>
 
 <ul>
   <li>Like lists operations this is not mutating – it returns a whole new tree.</li>
 </ul>
 
-<pre><code class="language-ocaml">let bt' = insert_int 4 bt;;
-let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent insert *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">bt'</span> <span class="o">=</span> <span class="n">insert_int</span> <span class="mi">4</span> <span class="n">bt</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">bt''</span> <span class="o">=</span> <span class="n">insert_int</span> <span class="mi">0</span> <span class="n">bt'</span><span class="p">;;</span> <span class="c">(* thread in the most recent tree into subsequent insert *)</span>
+</code></pre></div></div>
 
 <ul>
   <li>For non-integers however, we need to explicitly supply any equal or comparison function.
@@ -344,27 +344,27 @@ let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent 
   <li>Here is an example of how to sort a string list with <code>List.sort</code>:</li>
 </ul>
 
-<pre><code class="language-ocaml">List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* pass string's comparison function as argument *)
-(* insight into OCaml expected behavior for compare: *)
-# String.compare "Ahh" "Ahh";; )(* =  returns 0 *)
-- : int = 0
-# String.compare "Ahh" "Bee";; (* &lt; returns -1 *)
-- : int = -1
-# String.compare "Ahh" "Ack";; (* &gt; returns 1 *)
-- : int = 1
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">sort</span> <span class="p">[</span><span class="s2">"Zoo"</span><span class="p">;</span><span class="s2">"Hey"</span><span class="p">;</span><span class="s2">"Abba"</span><span class="p">]</span> <span class="p">(</span><span class="nn">String</span><span class="p">.</span><span class="n">compare</span><span class="p">);;</span> <span class="c">(* pass string's comparison function as argument *)</span>
+<span class="c">(* insight into OCaml expected behavior for compare: *)</span>
+<span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Ahh"</span><span class="p">;;</span> <span class="p">)(</span><span class="o">*</span> <span class="o">=</span>  <span class="n">returns</span> <span class="mi">0</span> <span class="o">*</span><span class="p">)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Bee"</span><span class="p">;;</span> <span class="c">(* &lt; returns -1 *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Ack"</span><span class="p">;;</span> <span class="c">(* &gt; returns 1 *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">1</span>
+</code></pre></div></div>
 
 <p>So, a general tree insert would follow the lead of <code>List.sort</code>:</p>
 
-<pre><code class="language-ocaml">let rec insert x bt compare =
-   match bt with
-   | Leaf -&gt; Node(x, Leaf, Leaf)
-   | Node(y, left, right) -&gt;
-       if (compare x y) &lt;= 0 then Node(y, insert x left compare, right)
-       else Node(y, left, insert x right compare)
-;;
-let bt' = insert 4 bt (Int.compare);;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">insert</span> <span class="n">x</span> <span class="n">bt</span> <span class="n">compare</span> <span class="o">=</span>
+   <span class="k">match</span> <span class="n">bt</span> <span class="k">with</span>
+   <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Node</span><span class="p">(</span><span class="n">x</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">)</span>
+   <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
+       <span class="k">if</span> <span class="p">(</span><span class="n">compare</span> <span class="n">x</span> <span class="n">y</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">insert</span> <span class="n">x</span> <span class="n">left</span> <span class="n">compare</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span>
+       <span class="k">else</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">insert</span> <span class="n">x</span> <span class="n">right</span> <span class="n">compare</span><span class="p">)</span>
+<span class="p">;;</span>
+<span class="k">let</span> <span class="n">bt'</span> <span class="o">=</span> <span class="n">insert</span> <span class="mi">4</span> <span class="n">bt</span> <span class="p">(</span><span class="nn">Int</span><span class="p">.</span><span class="n">compare</span><span class="p">);;</span>
+</code></pre></div></div>
 
 <ul>
   <li>In general all the built-in types have both <code>compare</code> and <code>equal</code> (which is same as <code>(=)</code>) defined</li>
@@ -380,39 +380,39 @@ let bt' = insert 4 bt (Int.compare);;
   <li>A better term would be “inferred variants” - you don’t need to declare them via <code>type</code>.</li>
 </ul>
 
-<pre><code class="language-ocaml"># `Zinger(3);;
-- : [&gt; `Zinger of int ] = `Zinger 3
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nt">`Zinger</span><span class="p">(</span><span class="mi">3</span><span class="p">);;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="p">[</span><span class="o">&gt;</span> <span class="nt">`Zinger</span> <span class="k">of</span> <span class="kt">int</span> <span class="p">]</span> <span class="o">=</span> <span class="nt">`Zinger</span> <span class="mi">3</span>
+</code></pre></div></div>
 <ul>
   <li>This looks a bit useless, it inferred a 1-ary variant type</li>
   <li>But the “<code>&gt;</code>” in the type means <em>there could be other variants showing up in the future</em>.</li>
 </ul>
 
-<pre><code class="language-ocaml"># [`Zinger 3; `Zanger "hi"];;
-- : [&gt; `Zanger of string | `Zinger of int ] list = [`Zinger 3; `Zanger "hi"]
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="p">[</span><span class="nt">`Zinger</span> <span class="mi">3</span><span class="p">;</span> <span class="nt">`Zanger</span> <span class="s2">"hi"</span><span class="p">];;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="p">[</span><span class="o">&gt;</span> <span class="nt">`Zanger</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="nt">`Zinger</span> <span class="k">of</span> <span class="kt">int</span> <span class="p">]</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="nt">`Zinger</span> <span class="mi">3</span><span class="p">;</span> <span class="nt">`Zanger</span> <span class="s2">"hi"</span><span class="p">]</span>
+</code></pre></div></div>
 
 <ul>
   <li>We can of course pattern match as well:</li>
 </ul>
 
-<pre><code class="language-ocaml"># let zing_zang z = 
-match z with
-| `Zinger n -&gt; "zing! "^(Int.to_string n)
-| `Zanger s -&gt; "zang! "^s
-val zing_zang : [&lt; `Zanger of string | `Zinger of int ] -&gt; string = &lt;fun&gt;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">zing_zang</span> <span class="n">z</span> <span class="o">=</span> 
+<span class="k">match</span> <span class="n">z</span> <span class="k">with</span>
+<span class="o">|</span> <span class="nt">`Zinger</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="s2">"zing! "</span><span class="o">^</span><span class="p">(</span><span class="nn">Int</span><span class="p">.</span><span class="n">to_string</span> <span class="n">n</span><span class="p">)</span>
+<span class="o">|</span> <span class="nt">`Zanger</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="s2">"zang! "</span><span class="o">^</span><span class="n">s</span>
+<span class="k">val</span> <span class="n">zing_zang</span> <span class="o">:</span> <span class="p">[</span><span class="o">&lt;</span> <span class="nt">`Zanger</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="nt">`Zinger</span> <span class="k">of</span> <span class="kt">int</span> <span class="p">]</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
 <p>Observe how the type now has a <code>&lt;</code> instead of a <code>&gt;</code>; the meaning is it is those fields or <em>fewer</em>.</p>
 
-<pre><code class="language-ocaml"># zing_zang @@ `Zanger "wow";;
-- : string = "zang! wow"
-# zing_zang @@ `Zuber 1.2;;
-Line 1, characters 13-23:
-Error: This expression has type [&gt; `Zuber of float ]
-       but an expression was expected of type
-         [&lt; `Zanger of string | `Zinger of int ]
-       The second variant type does not allow tag(s) `Zuber
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="n">zing_zang</span> <span class="o">@@</span> <span class="nt">`Zanger</span> <span class="s2">"wow"</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s2">"zang! wow"</span>
+<span class="o">#</span> <span class="n">zing_zang</span> <span class="o">@@</span> <span class="nt">`Zuber</span> <span class="mi">1</span><span class="o">.</span><span class="mi">2</span><span class="p">;;</span>
+<span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">13</span><span class="o">-</span><span class="mi">23</span><span class="o">:</span>
+<span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="p">[</span><span class="o">&gt;</span> <span class="nt">`Zuber</span> <span class="k">of</span> <span class="kt">float</span> <span class="p">]</span>
+       <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span>
+         <span class="p">[</span><span class="o">&lt;</span> <span class="nt">`Zanger</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="nt">`Zinger</span> <span class="k">of</span> <span class="kt">int</span> <span class="p">]</span>
+       <span class="nc">The</span> <span class="n">second</span> <span class="n">variant</span> <span class="k">type</span> <span class="n">does</span> <span class="n">not</span> <span class="n">allow</span> <span class="n">tag</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="nt">`Zuber</span>
+</code></pre></div></div>
 
 <ul>
   <li>Generally you should use the non-polymorphic form by default</li>

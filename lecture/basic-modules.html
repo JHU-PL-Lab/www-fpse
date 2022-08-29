@@ -80,24 +80,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="ml-files-as-modules"><code>.ml</code> files as modules</h3>
 
 <p>The contents of the file <code>simple_set.ml</code> in the above is the following:</p>
-<pre><code class="language-ocaml">open Core
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span>
 
-type 'a t = 'a list
-let emptyset : 'a t = []
-let add (x : 'a) (s : 'a t) : 'a t = (x :: s)
-let rec remove (x : 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) : 'a t =
-  match s with
-  | [] -&gt; failwith "item is not in set"
-  | hd :: tl -&gt;
-    if equal hd x then tl
-    else hd :: remove x tl equal
-let rec contains (x: 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) : bool =
-  match s with
-  | [] -&gt; false
-  | hd :: tl -&gt;
-    if equal x hd then true else contains x tl equal
+<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span>
+<span class="k">let</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">[]</span>
+<span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span>
+<span class="k">let</span> <span class="k">rec</span> <span class="n">remove</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">equal</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"item is not in set"</span>
+  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="n">equal</span> <span class="n">hd</span> <span class="n">x</span> <span class="k">then</span> <span class="n">tl</span>
+    <span class="k">else</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">remove</span> <span class="n">x</span> <span class="n">tl</span> <span class="n">equal</span>
+<span class="k">let</span> <span class="k">rec</span> <span class="n">contains</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">equal</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">false</span>
+  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="n">equal</span> <span class="n">x</span> <span class="n">hd</span> <span class="k">then</span> <span class="bp">true</span> <span class="k">else</span> <span class="n">contains</span> <span class="n">x</span> <span class="n">tl</span> <span class="n">equal</span>
 
-</code></pre>
+</code></pre></div></div>
 <ul>
   <li>The above code defines module <code>Simple_set</code> since it is in the file <code>simple_set.ml</code></li>
   <li>Modules are just collections of top-level definable things (things you could type into top loop)</li>
@@ -124,20 +124,20 @@ let rec contains (x: 'a) (s: 'a t) (equal : 'a -&gt; 'a -&gt; bool) : bool =
 
 <p>This file can be built as a library module with the dune file in <code>src/dune</code> (remember to execute <code>dune</code> from the project top-level, it automatically finds the build files in subdirectories)</p>
 
-<pre><code class="language-scheme">(library
- (name simple_set)
- (modules simple_set) 
- (libraries core)
-)
-</code></pre>
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">library</span>
+ <span class="p">(</span><span class="nf">name</span> <span class="nv">simple_set</span><span class="p">)</span>
+ <span class="p">(</span><span class="nf">modules</span> <span class="nv">simple_set</span><span class="p">)</span> 
+ <span class="p">(</span><span class="nf">libraries</span> <span class="nv">core</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
 
 <p>And if you want to play with your library module, command <code>dune utop</code> from the same directory will load it into the top loop:</p>
 
-<pre><code class="language-ocaml">myshell $ dune utop
-...
-utop # Simple_set.add 4 Simple_set.emptyset;;
-- : int list = [4]
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">myshell</span> <span class="o">$</span> <span class="n">dune</span> <span class="n">utop</span>
+<span class="o">...</span>
+<span class="n">utop</span> <span class="o">#</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">add</span> <span class="mi">4</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">emptyset</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+</code></pre></div></div>
 
 <ul>
   <li>Notice how the file name is <code>simple_set.ml</code> and it produces a module <code>Simple_set</code></li>
@@ -177,20 +177,20 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 
 <p>So, here the <code>simple_set.mli</code> file from the above zip:</p>
 
-<pre><code class="language-ocaml">    type 'a t    (* hide the type 'a list here by not giving it in signature *)
-    val emptyset : 'a t
-    val add: 'a -&gt; 'a t -&gt;'a t
-    val remove : 'a -&gt; 'a t -&gt;  ('a -&gt; 'a -&gt; bool) -&gt; 'a t
-    val contains: 'a -&gt; 'a t -&gt;  ('a -&gt; 'a -&gt; bool) -&gt; bool 
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>    <span class="c">(* hide the type 'a list here by not giving it in signature *)</span>
+    <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
+    <span class="k">val</span> <span class="n">add</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span><span class="k">'</span><span class="n">a</span> <span class="n">t</span>
+    <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span>  <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
+    <span class="k">val</span> <span class="n">contains</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span>  <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> 
+</code></pre></div></div>
 
 <p>Now if we <code>dune utop</code> with this added file we get</p>
 
-<pre><code class="language-ocaml">myshell $ dune utop
-...
-utop # Simple_set.add 4 Simple_set.emptyset;;
-- : int Simple_set.t = &lt;abstr&gt;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">myshell</span> <span class="o">$</span> <span class="n">dune</span> <span class="n">utop</span>
+<span class="o">...</span>
+<span class="n">utop</span> <span class="o">#</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">add</span> <span class="mi">4</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">emptyset</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span>
+</code></pre></div></div>
 
 <ul>
   <li>Notice how the <code>int list</code> result type from before is now <code>int Simple_set.t</code>
@@ -217,12 +217,12 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 
 <p>Here is what we need to add to the <code>dune</code> file along with the above to build the executable:</p>
 
-<pre><code class="language-scheme">(executable
-  (name set_main)
-  (libraries simple_set core)
-  (modules set_main)
-)
-</code></pre>
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>
+  <span class="p">(</span><span class="nf">name</span> <span class="nv">set_main</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">libraries</span> <span class="nv">simple_set</span> <span class="nv">core</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">modules</span> <span class="nv">set_main</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div></div>
 
 <ul>
   <li>We will now inspect <code>set_main.ml</code> in VSCode so we can use the tool tips to check out various types</li>
@@ -260,13 +260,13 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 
 <p>Writing your own functions with optional arguments is easy: the value passed in is an <code>option</code> type</p>
 
-<pre><code class="language-ocaml"># let f ?x y = match x with Some z -&gt; z + y | None -&gt; y;;
-val f : ?x:int -&gt; int -&gt; int = &lt;fun&gt;
-# f ~x:1 2;;
-- : int = 3
-# f 2;;
-- : int = 2
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">f</span> <span class="o">?</span><span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="k">match</span> <span class="n">x</span> <span class="k">with</span> <span class="nc">Some</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="n">y</span> <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="p">;;</span>
+<span class="k">val</span> <span class="n">f</span> <span class="o">:</span> <span class="o">?</span><span class="n">x</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="n">f</span> <span class="o">~</span><span class="n">x</span><span class="o">:</span><span class="mi">1</span> <span class="mi">2</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="o">#</span> <span class="n">f</span> <span class="mi">2</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">2</span>
+</code></pre></div></div>
 
 <ul>
   <li>Use them when they are the right thing: will reduce clutter of passing often un-needed items.</li>
