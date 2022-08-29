@@ -87,9 +87,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result</li>
 </ul>
 
-<pre><code class="language-ocaml">utop # 3+4;;
-- : int = 7
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">utop</span> <span class="o">#</span> <span class="mi">3</span><span class="o">+</span><span class="mi">4</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">7</span>
+</code></pre></div></div>
 
 <ul>
   <li>Control-D will exit <code>utop</code>.
@@ -97,13 +97,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>The compile/run view is the standard <code>cc</code>/<code>gcc</code>/<code>javac</code> view and is also used in OCaml</li>
   <li>In OCaml we will more generally live in <strong>both worlds</strong>: play with code in top loop, but use compiler to compile it.</li>
-  <li>Let's type the following in a file <code>helloworld.ml</code>:</li>
+  <li>Let’s type the following in a file <code>helloworld.ml</code>:</li>
 </ul>
 
-<pre><code class="language-ocaml">open Core;; (* Make the Core libraries directly available *)
-let hw = "hello" ^ "world";;
-printf "the string is %s\n" hw
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span> <span class="c">(* Make the Core libraries directly available *)</span>
+<span class="k">let</span> <span class="n">hw</span> <span class="o">=</span> <span class="s2">"hello"</span> <span class="o">^</span> <span class="s2">"world"</span><span class="p">;;</span>
+<span class="n">printf</span> <span class="s2">"the string is %s</span><span class="se">\n</span><span class="s2">"</span> <span class="n">hw</span>
+</code></pre></div></div>
 
 <ul>
   <li>From the shell type <code>ocamlc helloworld.ml</code> to compile and then <code>./a.out</code> to run</li>
@@ -114,12 +114,12 @@ printf "the string is %s\n" hw
 <ul>
   <li><code>dune</code> is the modern <code>make</code>/<code>Makefile</code> equivalent for OCaml.</li>
   <li>In same directory, add a file <code>dune</code>:
-    <pre><code class="language-scheme">(executable             ; create an executable
-(name helloworld)     ; need to give it a name
-(modules helloworld)  ; it consists of just one module, helloworld.ml
-(libraries core)      ; indicates that the core libraries are used
-)
-</code></pre>
+    <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>             <span class="c1">; create an executable</span>
+<span class="p">(</span><span class="nf">name</span> <span class="nv">helloworld</span><span class="p">)</span>     <span class="c1">; need to give it a name</span>
+<span class="p">(</span><span class="nf">modules</span> <span class="nv">helloworld</span><span class="p">)</span>  <span class="c1">; it consists of just one module, helloworld.ml</span>
+<span class="p">(</span><span class="nf">libraries</span> <span class="nv">core</span><span class="p">)</span>      <span class="c1">; indicates that the core libraries are used</span>
+<span class="p">)</span>
+</code></pre></div>    </div>
   </li>
   <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.  The notation is S-expressions.</li>
   <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.4)</code> in it.</li>
@@ -137,37 +137,37 @@ printf "the string is %s\n" hw
     <p>All the following are typed as input into <code>utop</code> with <code>;;</code> ending input.</p>
   </li>
   <li>Integers
-    <pre><code class="language-ocaml highlighter-rouge">3 + 4;;
-let x = 3 + 4;; (* give the value a name via let keyword. *)
-let y = x + 5;; (* can use x now *)
-let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
-</code></pre>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* give the value a name via let keyword. *)</span>
+<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* can use x now *)</span>
+<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span> <span class="k">in</span> <span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* let .. in defines a local variable z *)</span>
+</code></pre></div>    </div>
   </li>
 </ul>
 
 <h4 id="boolean-operations">Boolean operations</h4>
 
-<pre><code class="language-ocaml">let b = true;;
-b &amp;&amp; false;;
-true || false;;
-1 = 2;; (* = not == for equality comparison; note = works on ints only in our OCaml setup *)
-1 &lt;&gt; 2;;  (* &lt;&gt; not != for not equal *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">b</span> <span class="o">=</span> <span class="bp">true</span><span class="p">;;</span>
+<span class="n">b</span> <span class="o">&amp;&amp;</span> <span class="bp">false</span><span class="p">;;</span>
+<span class="bp">true</span> <span class="o">||</span> <span class="bp">false</span><span class="p">;;</span>
+<span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* = not == for equality comparison; note = works on ints only in our OCaml setup *)</span>
+<span class="mi">1</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">;;</span>  <span class="c">(* &lt;&gt; not != for not equal *)</span>
+</code></pre></div></div>
 
 <h4 id="other-basic-data--see-documentation-for-details">Other basic data – see documentation for details</h4>
-<pre><code class="language-ocaml">4.5;; (* floats *)
-4.5 +. 4.3;; (* operations are +. etc not just + which is for ints only *)
-30980314323422L;; (* 64-bit integers *)
-'c';; (* characters *)
-"and of course strings";;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">4</span><span class="o">.</span><span class="mi">5</span><span class="p">;;</span> <span class="c">(* floats *)</span>
+<span class="mi">4</span><span class="o">.</span><span class="mi">5</span> <span class="o">+.</span> <span class="mi">4</span><span class="o">.</span><span class="mi">3</span><span class="p">;;</span> <span class="c">(* operations are +. etc not just + which is for ints only *)</span>
+<span class="mi">30980314323422</span><span class="nc">L</span><span class="p">;;</span> <span class="c">(* 64-bit integers *)</span>
+<span class="k">'</span><span class="n">c'</span><span class="p">;;</span> <span class="c">(* characters *)</span>
+<span class="s2">"and of course strings"</span><span class="p">;;</span>
+</code></pre></div></div>
 
 <h4 id="simple-functions-on-integers">Simple functions on integers</h4>
 
 <p>To declare a function <code>squared</code> with <code>x</code> its one parameter.  <code>return</code> is  implicit.</p>
-<pre><code class="language-ocaml">let squared x = x * x;; (* returns     val squared : int -&gt; int = &lt;fun&gt;     *)
-squared 4;; (* to call a function -- separate arguments with S P A C E S *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">squared</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;;</span> <span class="c">(* returns     val squared : int -&gt; int = &lt;fun&gt;     *)</span>
+<span class="n">squared</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* to call a function -- separate arguments with S P A C E S *)</span>
+</code></pre></div></div>
 <ul>
   <li>OCaml has no <code>return</code> statement; value of the whole body-expression is what gets returned</li>
   <li>Type is automatically <strong>inferred</strong> and printed as domain <code>-&gt;</code> range; <code>int -&gt; int</code> here.</li>
@@ -178,21 +178,21 @@ squared 4;; (* to call a function -- separate arguments with S P A C E S *)
 
 <p>Let’s write a well-known function with recursion and if-then-else syntax</p>
 
-<pre><code class="language-ocaml">let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
-  if n &lt;= 0 then 0
-  else if n = 1 then 1
-  else fib (n - 1) + fib (n - 2);; (* notice again everything is an expression, no "return" *)
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="n">n</span> <span class="o">=</span>     <span class="c">(* the "rec" keyword needs to be added to allow recursion *)</span>
+  <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">then</span> <span class="mi">1</span>
+  <span class="k">else</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);;</span> <span class="c">(* notice again everything is an expression, no "return" *)</span>
 
-fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)
-</code></pre>
+<span class="n">fib</span> <span class="mi">10</span><span class="p">;;</span> <span class="c">(* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)</span>
+</code></pre></div></div>
 
 <p>Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read <code>fib</code> using pattern match notation similar to Java/C <code>switch</code> which we will cover in detail later:</p>
 
-<pre><code class="language-ocaml">let rec fib = function 
-  | 0 -&gt; 0 
-  | 1 -&gt; 1 
-  | n -&gt; fib (n - 1) + fib (n - 2);;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="o">=</span> <span class="k">function</span> 
+  <span class="o">|</span> <span class="mi">0</span> <span class="o">-&gt;</span> <span class="mi">0</span> 
+  <span class="o">|</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="mi">1</span> 
+  <span class="o">|</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);;</span>
+</code></pre></div></div>
 <h4 id="anonymous-aka-un-named-functions">Anonymous (aka un-named) functions</h4>
 
 <ul>
@@ -200,27 +200,27 @@ fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too bi
   <li>Much of this course will be showing how this is useful</li>
 </ul>
 
-<pre><code class="language-ocaml">let add1 x = x + 1;; (* a normal add1 definition *)
-add1 3;;
-let anon_add1 = (function x -&gt; x + 1);; (* equivalent to above; "x" is argument here *)
-anon_add1 3;;
-(anon_add1 4) + 7;; 
-((function x -&gt; x + 1) 4) + 7;; (* can inline anonymous function definition *)
-((fun x -&gt; x + 1) 4) + 7;; (*  shorthand notation -- cut off the "ction" *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add1</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* a normal add1 definition *)</span>
+<span class="n">add1</span> <span class="mi">3</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* equivalent to above; "x" is argument here *)</span>
+<span class="n">anon_add1</span> <span class="mi">3</span><span class="p">;;</span>
+<span class="p">(</span><span class="n">anon_add1</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> 
+<span class="p">((</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(* can inline anonymous function definition *)</span>
+<span class="p">((</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(*  shorthand notation -- cut off the "ction" *)</span>
+</code></pre></div></div>
 
 <ul>
   <li>Multiple arguments - just leave s p a c e s between multiple arguments in both definitions and uses</li>
 </ul>
 
-<pre><code class="language-ocaml">let add x y = x + y;;
-add 3 4;;
-(add 3) 4;; (* same meaning as previous application -- two applications, " " associates LEFT *)
-let add3 = add 3;; (* No need to give all arguments at once!  Type of add is int -&gt; (int -&gt; int) - "CURRIED" *)
-add3 4;;
-add3 20;;
-(+) 3 4;; (* Putting () around any infix operator turns it into a 2-argument function *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;;</span>
+<span class="n">add</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span>
+<span class="p">(</span><span class="n">add</span> <span class="mi">3</span><span class="p">)</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* same meaning as previous application -- two applications, " " associates LEFT *)</span>
+<span class="k">let</span> <span class="n">add3</span> <span class="o">=</span> <span class="n">add</span> <span class="mi">3</span><span class="p">;;</span> <span class="c">(* No need to give all arguments at once!  Type of add is int -&gt; (int -&gt; int) - "CURRIED" *)</span>
+<span class="n">add3</span> <span class="mi">4</span><span class="p">;;</span>
+<span class="n">add3</span> <span class="mi">20</span><span class="p">;;</span>
+<span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* Putting () around any infix operator turns it into a 2-argument function *)</span>
+</code></pre></div></div>
 
 <p>Conclusion: add is a function taking an integer, and returning a <strong>function</strong> which takes ints to ints.<br />
 So, add is a <strong>higher-order function</strong>: it either takes a function as an argument, or returns a function as result.</p>
@@ -228,16 +228,16 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <p>Observe <code>int -&gt; int -&gt; int</code> is parenthesized as <code>int -&gt; (int -&gt; int)</code> – unusual <strong>right</strong> associativity</p>
 
 <p>Be careful on operator precedence with this goofy way that function application doesn’t need parens!</p>
-<pre><code class="language-ocaml">add3 (3 * 2);;
-add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - application binds tighter than * *)
-add3 @@ 3 * 2;; (* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">add3</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);;</span>
+<span class="n">add3</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* NOT the previous - this is the same as (add3 3) * 2 - application binds tighter than * *)</span>
+<span class="n">add3</span> <span class="o">@@</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)</span>
+</code></pre></div></div>
 
 <ul>
   <li><code>=</code> is also a 2-argument function; it is somewhat strange in our <code>Core</code> OCaml on non-ints:
-    <pre><code class="language-ocaml">3.4 = 4.2;; (* errors, = only works on ints with the Core library in use *)
-Float.(=) 3.3 4.4;; (* Solution: use the Float module's = function for floats *)
-</code></pre>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span><span class="o">.</span><span class="mi">4</span> <span class="o">=</span> <span class="mi">4</span><span class="o">.</span><span class="mi">2</span><span class="p">;;</span> <span class="c">(* errors, = only works on ints with the Core library in use *)</span>
+<span class="nn">Float</span><span class="p">.(</span><span class="o">=</span><span class="p">)</span> <span class="mi">3</span><span class="o">.</span><span class="mi">3</span> <span class="mi">4</span><span class="o">.</span><span class="mi">4</span><span class="p">;;</span> <span class="c">(* Solution: use the Float module's = function for floats *)</span>
+</code></pre></div>    </div>
   </li>
   <li>Why this apparent ugliness?  Pay a price here but reap rewards later of having the right notion of <code>=</code>.</li>
 </ul>
@@ -248,17 +248,17 @@ Float.(=) 3.3 4.4;; (* Solution: use the Float module's = function for floats *)
   <li>Before getting into “bigger” data types and how to declare our own, let’s use one of the simplest structured data types, the built-in <code>option</code> type.</li>
 </ul>
 
-<pre><code class="language-ocaml">Some 5;;
-- : int option = Some 5
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Some</span> <span class="mi">5</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">5</span>
+</code></pre></div></div>
 
 <ul>
   <li>All this does is “wrap” the 5 in the <code>Some</code> tag</li>
 </ul>
 
-<pre><code class="language-ocaml">None;;
-- : 'a option = None
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">None</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span>
+</code></pre></div></div>
 
 <ul>
   <li>Notice these are both in the <code>option</code> type .. either you have <code>Some</code> data or you have <code>None</code>.</li>
@@ -267,30 +267,30 @@ Float.(=) 3.3 4.4;; (* Solution: use the Float module's = function for floats *)
   <li>The <code>option</code> type is very useful; here is a super simple example.</li>
 </ul>
 
-<pre><code class="language-ocaml"># let nice_div m n = if n = 0 then None else Some (m / n);;
-val nice_div : int -&gt; int -&gt; int option = &lt;fun&gt;
-# nice_div 10 0;;
-- : int option = None
-# nice_div 10 2;;
-- : int option = Some 5
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">nice_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">None</span> <span class="k">else</span> <span class="nc">Some</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">);;</span>
+<span class="k">val</span> <span class="n">nice_div</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="n">nice_div</span> <span class="mi">10</span> <span class="mi">0</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span>
+<span class="o">#</span> <span class="n">nice_div</span> <span class="mi">10</span> <span class="mi">2</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">5</span>
+</code></pre></div></div>
 
 <p>There is a downside with this though, you can’t just use <code>nice_div</code> like <code>/</code>:</p>
 
-<pre><code class="language-ocaml"># (nice_div 5 2) + 7;;
-Line 1, characters 0-14:
-Error: This expression has type int option
-       but an expression was expected of type int
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="p">(</span><span class="n">nice_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span>
+<span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">0</span><span class="o">-</span><span class="mi">14</span><span class="o">:</span>
+<span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="kt">int</span> <span class="n">option</span>
+       <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span> <span class="kt">int</span>
+</code></pre></div></div>
 
 <p>This type error means the <code>+</code> lhs should be type <code>int</code> but is a <code>Some</code> value which is not an <code>int</code>.</p>
 
 <p>Here is a non-solution to that:</p>
-<pre><code class="language-ocaml"># let not_nice_div m n = if n = 0 then None else m / n;;
-Line 1, characters 47-52:
-Error: This expression has type int but an expression was expected of type
-         'a option
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">not_nice_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">None</span> <span class="k">else</span> <span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">;;</span>
+<span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">47</span><span class="o">-</span><span class="mi">52</span><span class="o">:</span>
+<span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="kt">int</span> <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span>
+         <span class="k">'</span><span class="n">a</span> <span class="n">option</span>
+</code></pre></div></div>
 <ul>
   <li>The <code>then</code> and <code>else</code> branches must return the same type, here they do not.</li>
   <li>The <code>int</code> and <code>int option</code> types have no overlap of members!  Generally true across OCaml.</li>
@@ -300,11 +300,11 @@ Error: This expression has type int but an expression was expected of type
 <h4 id="using-pattern-matching-to-use-nice_div">Using pattern matching to use <code>nice_div</code></h4>
 
 <p>Here is a real solution to the above issue:</p>
-<pre><code class="language-ocaml"># match (nice_div 5 2) with 
-   | Some i -&gt; i + 7 (* i is bound to the result, 2 here *)
-   | None -&gt; failwith "This should never happen, we divided by 2";;
-- : int = 9
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">match</span> <span class="p">(</span><span class="n">nice_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="k">with</span> 
+   <span class="o">|</span> <span class="nc">Some</span> <span class="n">i</span> <span class="o">-&gt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">7</span> <span class="c">(* i is bound to the result, 2 here *)</span>
+   <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"This should never happen, we divided by 2"</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">9</span>
+</code></pre></div></div>
 <ul>
   <li>This shows how OCaml lets us <em>destruct</em> option values, via the <code>match</code> syntax.</li>
   <li><code>match</code> is similar to <code>switch</code> in C/Java/.. but is much more flexible in OCaml</li>
@@ -316,9 +316,9 @@ Error: This expression has type int but an expression was expected of type
 
 <p>An “even nicer” version of the above would be to use the <code>result</code> type, which is very similar to <code>option</code> but is specialized just for error handling.</p>
 
-<pre><code class="language-ocaml"># let nicer_div m n = if n = 0 then Error "Divide by zero" else Ok (m / n);;
-val nicer_div : int -&gt; int -&gt; (int, string) result = &lt;fun&gt;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">nicer_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">Error</span> <span class="s2">"Divide by zero"</span> <span class="k">else</span> <span class="nc">Ok</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">);;</span>
+<span class="k">val</span> <span class="n">nicer_div</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">int</span><span class="o">,</span> <span class="kt">string</span><span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
 <ul>
   <li>The <code>result</code> type is explicitly intended for this case of failure-result
     <ul>
@@ -330,17 +330,17 @@ val nicer_div : int -&gt; int -&gt; (int, string) result = &lt;fun&gt;
   <li>This is a “more well-typed” version of the C approach of returning <code>-1</code> or <code>NULL</code> to indicate failure.</li>
 </ul>
 
-<pre><code class="language-ocaml"># match (nicer_div 5 2) with 
-   | Ok i -&gt; i + 7
-   | Error s -&gt; failwith s;;
-- : int = 9
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">match</span> <span class="p">(</span><span class="n">nicer_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="k">with</span> 
+   <span class="o">|</span> <span class="nc">Ok</span> <span class="n">i</span> <span class="o">-&gt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">7</span>
+   <span class="o">|</span> <span class="nc">Error</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="n">s</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">9</span>
+</code></pre></div></div>
 
 <p>Lastly, the function could itself raise an exception</p>
 
-<pre><code class="language-ocaml">let div_exn m n = if n = 0 then failwith "divide by zero is bad!" else m / n;;
-div_exn 3 4;;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">div_exn</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="n">failwith</span> <span class="s2">"divide by zero is bad!"</span> <span class="k">else</span> <span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">;;</span>
+<span class="n">div_exn</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span>
+</code></pre></div></div>
 
 <ul>
   <li>This has the property of not needing a match on the result.</li>
@@ -361,23 +361,23 @@ div_exn 3 4;;
   <li>They are <strong>immutable</strong> so while they look something like arrays or vectors they are not</li>
 </ul>
 
-<pre><code class="language-ocaml">let l1 = [1; 2; 3];;
-let l2 = [1; 1+1; 1+1+1];;
-let l3 = ["a"; "b"; "c"];;
-let l4 = [1; "a"];; (* error - All elements must have same type *)
-let l5 = [];; (* empty list *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
+<span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="p">];;</span>
+<span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">;</span> <span class="s2">"b"</span><span class="p">;</span> <span class="s2">"c"</span><span class="p">];;</span>
+<span class="k">let</span> <span class="n">l4</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="s2">"a"</span><span class="p">];;</span> <span class="c">(* error - All elements must have same type *)</span>
+<span class="k">let</span> <span class="n">l5</span> <span class="o">=</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* empty list *)</span>
+</code></pre></div></div>
 
 <h4 id="building-lists">Building lists</h4>
 
 <p>Lists are represented internally as <strong>binary trees</strong> with left child a leaf.</p>
-<pre><code class="language-ocaml">0 :: l1;; (* "::" is 'consing' 0 to the top of the tree - fast *)
-0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to [0;1;2;3] *)
-[1; 2; 3] @ [4; 5];; (* appending lists - slower, needs to cons 3/2/1 on front of [4;5] *)
-let z = [2; 4; 6];;
-let y = 0 :: z;;
-z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">0</span> <span class="o">::</span> <span class="n">l1</span><span class="p">;;</span> <span class="c">(* "::" is 'consing' 0 to the top of the tree - fast *)</span>
+<span class="mi">0</span> <span class="o">::</span> <span class="p">(</span><span class="mi">1</span> <span class="o">::</span> <span class="p">(</span><span class="mi">2</span> <span class="o">::</span> <span class="p">(</span><span class="mi">3</span> <span class="o">::</span> <span class="bp">[]</span><span class="p">)));;</span> <span class="c">(* equivalent to [0;1;2;3] *)</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">]</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span> <span class="mi">5</span><span class="p">];;</span> <span class="c">(* appending lists - slower, needs to cons 3/2/1 on front of [4;5] *)</span>
+<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">;</span> <span class="mi">4</span><span class="p">;</span> <span class="mi">6</span><span class="p">];;</span>
+<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">::</span> <span class="n">z</span><span class="p">;;</span>
+<span class="n">z</span><span class="p">;;</span> <span class="c">(* Observe z itself did not change -- recall lists are immutable in OCaml *)</span>
+</code></pre></div></div>
 
 <h4 id="destructing-lists-with-pattern-matching">Destructing Lists with pattern matching</h4>
 
@@ -386,51 +386,51 @@ z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
   <li>This function gets the tail, the list without the first element.</li>
 </ul>
 
-<pre><code class="language-ocaml">let tl_exn l =
-  match l with
-  |  [] -&gt; invalid_arg "empty lists have no tail"
-  |  x :: xs -&gt; Ok xs  (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
-;;
-let l = [1;2;3];; 
-let l' = tl_exn l;;
-l;; (* IMPORTANT: lists are immutable, l didn't change!! *)
-let l'' =  tl_exn l' (* So to get tail of tail, take tail of l' not 2 x tail of l!  THREAD the state! *)
-tl_exn [];; (* Raise an exception if the list had no tail *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl_exn</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
+  <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">invalid_arg</span> <span class="s2">"empty lists have no tail"</span>
+  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="n">xs</span>  <span class="c">(* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)</span>
+<span class="p">;;</span>
+<span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> 
+<span class="k">let</span> <span class="n">l'</span> <span class="o">=</span> <span class="n">tl_exn</span> <span class="n">l</span><span class="p">;;</span>
+<span class="n">l</span><span class="p">;;</span> <span class="c">(* IMPORTANT: lists are immutable, l didn't change!! *)</span>
+<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span>  <span class="n">tl_exn</span> <span class="n">l'</span> <span class="c">(* So to get tail of tail, take tail of l' not 2 x tail of l!  THREAD the state! *)</span>
+<span class="n">tl_exn</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* Raise an exception if the list had no tail *)</span>
+</code></pre></div></div>
 
 <ul>
   <li>An alternative to avoid the exception effect is to return <code>Ok/Error</code>:</li>
 </ul>
 
-<pre><code class="language-ocaml">let tl l =
-  match l with
-  |  [] -&gt; Error "empty list has no tail"
-  |  x :: xs -&gt; Ok xs
-;;
-let l = [1;2;3];; 
-let l' = tl l;;
-tl [];;
-let l'' = tl l' (* Oops this fails!  As in the div example above need to case on `Ok/Error` *)
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
+  <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"empty list has no tail"</span>
+  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="n">xs</span>
+<span class="p">;;</span>
+<span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> 
+<span class="k">let</span> <span class="n">l'</span> <span class="o">=</span> <span class="n">tl</span> <span class="n">l</span><span class="p">;;</span>
+<span class="n">tl</span> <span class="bp">[]</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span> <span class="n">tl</span> <span class="n">l'</span> <span class="c">(* Oops this fails!  As in the div example above need to case on `Ok/Error` *)</span>
+</code></pre></div></div>
 
 <ul>
   <li>Lists are not random access like arrays; if you want to get the nth element, you need to work for it.</li>
 </ul>
 
-<pre><code class="language-ocaml">let rec nth_exn l n =
-  match l with
-  |  [] -&gt; invalid_arg "there is no nth element in this list"
-  |  x :: xs -&gt; if n = 0 then x else nth_exn xs (n-1)
-;;
-nth_exn [33;22;11] 1;;
-nth_exn [33;22;11] 3;;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">nth_exn</span> <span class="n">l</span> <span class="n">n</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
+  <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">invalid_arg</span> <span class="s2">"there is no nth element in this list"</span>
+  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="n">x</span> <span class="k">else</span> <span class="n">nth_exn</span> <span class="n">xs</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="p">;;</span>
+<span class="n">nth_exn</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">1</span><span class="p">;;</span>
+<span class="n">nth_exn</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">3</span><span class="p">;;</span>
+</code></pre></div></div>
 
 <p>Fortunately many common operations are already in the <code>List</code> module in the <code>Core</code> library:</p>
 
-<pre><code class="language-ocaml"># List.nth [1;2;3] 2;;
-- : int option = Some 3
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="mi">2</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">3</span>
+</code></pre></div></div>
 <ul>
   <li>This library uses the <code>option</code> type instead of raising an exception like we did</li>
   <li><code>List.nth_exn</code> raises an exception like ours does.  Both versions are useful.</li>
