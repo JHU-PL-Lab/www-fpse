@@ -79,7 +79,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>Once you install <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL 2</a> you will be able to follow the Linux Ubuntu install instructions linked above.
         <ul>
-          <li>Note that your WSL2 Ubuntu needs the C compiler and tools for the <code>opam</code> install to work; the following Linux shell command will get you those: <code>sudo apt install make m4 gcc unzip</code>.</li>
+          <li>Note that your WSL2 Ubuntu needs the C compiler and tools for the <code>opam</code> install to work; the following Linux shell command will get you those: <code>sudo apt install make m4 gcc unzip bubblewrap</code>.</li>
           <li>You can still use your Windows install of VSCode to edit files by using the <a href="https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode">VSCode Remote WSL Extension</a> – it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.</li>
         </ul>
       </li>
@@ -91,10 +91,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="initial-setup-of-opam">Initial setup of <code>opam</code></h3>
 <p>You will need to run some terminal commands to set up the basics:</p>
 <ol>
-  <li><code>opam init</code> will initialize OPAM;</li>
+  <li><code>opam init</code> will initialize OPAM (we suggest you answer <code>y</code> to the question <code>Do you want opam to modify ~/.profile? [N/y/f]</code>);</li>
+  <li>If you didn’t get that question or said <code>N</code>, you will need to add line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
+  <li>Type command <code>eval $(opam env)</code> to your shell to let it know where the opam files are (zsh users on Macs type <code>eval `opam env`</code> instead)</li>
   <li><code>opam switch create 4.14.0</code> (this will take awhile) will build OCaml version 4.14.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to <code>opam update</code> before this <code>switch</code> to make sure OPAM is aware of the latest version);</li>
-  <li>type command <code>eval $(opam env)</code> to your shell to let it know where the opam files are (zsh users on Macs type <code>eval `opam env`</code> instead); and</li>
-  <li>Also add the very same line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
 </ol>
 
 <p>If you already have an earlier version of OCaml installed via <code>opam</code>, start on step 2. above to update to 4.14.0.  Make sure to do the <code>opam update</code> step first or your install won’t know that 4.14.0 even exists.  Please don’t blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.</p>
@@ -107,11 +107,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre>
 
 <p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, edit the file <code>~/.ocamlinit</code> to add the lines below (note <code>opam</code> probably already created this file, just make sure the lines below are in it).  The lines in this file are input to the top loop when it first starts.  <code>topfind</code> really should be built-in, it allows you to load libraries.  The <code>require</code> command is one thing <code>topfind</code> adds, here it is loading the <code>Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code>Core</code> as they are improved versions.</p>
-<pre><code class="language-ocaml">#use "topfind";;
-#thread;;
-#require "core.top";;
-open Core;;
-</code></pre>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">use</span> <span class="s2">"topfind"</span><span class="p">;;</span>
+<span class="o">#</span><span class="n">thread</span><span class="p">;;</span>
+<span class="o">#</span><span class="n">require</span> <span class="s2">"core.top"</span><span class="p">;;</span>
+<span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span>
+</code></pre></div></div>
 
 <h3 id="ocaml-documentation">OCaml Documentation</h3>
 <p><a href="https://ocaml.org">ocaml.org</a> is the central repository of OCaml information.</p>

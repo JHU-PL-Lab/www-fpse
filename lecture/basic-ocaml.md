@@ -48,7 +48,7 @@ printf "the string is %s\n" hw
 ```
 * This is the **build file**, specifying how to compile/test/run the program.  The notation is S-expressions.
 * Also a file `dune-project` is needed with only `(lang dune 3.4)` in it.
-* Now, type `dune build` to compile a standalone program like we did above but letting `dune` invoke the compiler.
+* Now, type `dune build` to compile this `helloworld.ml` code as an executable.
 * All of the results are placed in the `_build/` directory
 * Then, run with `dune exec ./helloworld.exe` - same as typing `_build/default/helloworld.exe`
 * We will be using `dune` to build libraries and binaries, and `utop` to play with them.
