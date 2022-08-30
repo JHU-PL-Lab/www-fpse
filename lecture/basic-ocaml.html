@@ -97,7 +97,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>The compile/run view is the standard <code>cc</code>/<code>gcc</code>/<code>javac</code> view and is also used in OCaml</li>
   <li>In OCaml we will more generally live in <strong>both worlds</strong>: play with code in top loop, but use compiler to compile it.</li>
-  <li>Let’s type the following in a file <code>helloworld.ml</code>:</li>
+  <li>Let’s cover how we will compile in OCaml.  Suppose the following is in a file <code>helloworld.ml</code>:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span> <span class="c">(* Make the Core libraries directly available *)</span>
@@ -106,14 +106,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>From the shell type <code>ocamlc helloworld.ml</code> to compile and then <code>./a.out</code> to run</li>
-</ul>
-
-<h4 id="building-and-running-with-dune">Building and running with <code>dune</code></h4>
-
-<ul>
-  <li><code>dune</code> is the modern <code>make</code>/<code>Makefile</code> equivalent for OCaml.</li>
-  <li>In same directory, add a file <code>dune</code>:
+  <li>The actual compiler is <code>ocamlc</code> or <code>ocamlopt</code>, but we will not be directly invoking it</li>
+  <li>Instead we will operate at a higer level and use <code>dune</code> to invoke it for us</li>
+  <li><code>dune</code> is a modern <code>make</code>/<code>Makefile</code> equivalent for OCaml which is very powerful.</li>
+  <li>So, in same directory, there should be a <code>dune</code> file with the following contents:
     <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>             <span class="c1">; create an executable</span>
 <span class="p">(</span><span class="nf">name</span> <span class="nv">helloworld</span><span class="p">)</span>     <span class="c1">; need to give it a name</span>
 <span class="p">(</span><span class="nf">modules</span> <span class="nv">helloworld</span><span class="p">)</span>  <span class="c1">; it consists of just one module, helloworld.ml</span>
@@ -127,6 +123,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>All of the results are placed in the <code>_build/</code> directory</li>
   <li>Then, run with <code>dune exec ./helloworld.exe</code> - same as typing <code>_build/default/helloworld.exe</code></li>
   <li>We will be using <code>dune</code> to build libraries and binaries, and <code>utop</code> to play with them.</li>
+  <li>If you want to try these commands yourself the above <code>helloworld.ml</code> and dune files are in <a href="helloworld.zip">this zip</a>, just unzip and the <code>dune</code> commands above should work from within the <code>helloworld</code> directory.</li>
 </ul>
 
 <h3 id="ocaml-language-basics-in-utop">OCaml Language Basics in <code>utop</code></h3>

@@ -27,7 +27,7 @@ utop # 3+4;;
 
 * The compile/run view is the standard `cc`/`gcc`/`javac` view and is also used in OCaml
 * In OCaml we will more generally live in **both worlds**: play with code in top loop, but use compiler to compile it.
-* Let's type the following in a file `helloworld.ml`:
+* Let's cover how we will compile in OCaml.  Suppose the following is in a file `helloworld.ml`:
 
 ```ocaml
 open Core;; (* Make the Core libraries directly available *)
@@ -35,13 +35,10 @@ let hw = "hello" ^ "world";;
 printf "the string is %s\n" hw
 ```
 
-* From the shell type `ocamlc helloworld.ml` to compile and then `./a.out` to run
-
-
-#### Building and running with `dune`
-
-* `dune` is the modern `make`/`Makefile` equivalent for OCaml.
-* In same directory, add a file `dune`:
+* The actual compiler is `ocamlc` or `ocamlopt`, but we will not be directly invoking it
+* Instead we will operate at a higer level and use `dune` to invoke it for us
+* `dune` is a modern `make`/`Makefile` equivalent for OCaml which is very powerful.
+* So, in same directory, there should be a `dune` file with the following contents:
 ```scheme
 (executable             ; create an executable
   (name helloworld)     ; need to give it a name
@@ -55,6 +52,7 @@ printf "the string is %s\n" hw
 * All of the results are placed in the `_build/` directory
 * Then, run with `dune exec ./helloworld.exe` - same as typing `_build/default/helloworld.exe`
 * We will be using `dune` to build libraries and binaries, and `utop` to play with them.
+* If you want to try these commands yourself the above `helloworld.ml` and dune files are in [this zip](helloworld.zip), just unzip and the `dune` commands above should work from within the `helloworld` directory.
 
 ### OCaml Language Basics in `utop`
 
