@@ -33,7 +33,7 @@ Once you have `opam` and `ocaml` 4.14.0 installed, run the following `opam` comm
     opam install merlin ocaml-lsp-server ocamlformat-rpc utop ounit2 async lwt ppx_deriving_yojson ppx_deriving bisect_ppx base_quickcheck
 
 
-Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, create  or edit the file `~/.ocamlinit` to incliude the lines below.  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
+Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, create  or edit the file `~/.ocamlinit` to contain the lines below.  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
 ```ocaml
 #use "topfind";;
 #thread;;
