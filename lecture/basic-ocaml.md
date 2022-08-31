@@ -204,7 +204,8 @@ Error: This expression has type int option
        but an expression was expected of type int
 ```
 
-This type error means the `+` lhs should be type `int` but is a `Some` value which is not an `int`.
+* Notice the type of the return value of `nice_div`, it is `int option`, not `int`
+* This type error is saying the `+` lhs needs to be type `int` but is a `Some` value which is not an `int`.
 
 Here is a non-solution to that:
  ```ocaml

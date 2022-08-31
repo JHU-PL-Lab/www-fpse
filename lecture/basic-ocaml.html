@@ -279,7 +279,10 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
        <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span> <span class="kt">int</span>
 </code></pre></div></div>
 
-<p>This type error means the <code>+</code> lhs should be type <code>int</code> but is a <code>Some</code> value which is not an <code>int</code>.</p>
+<ul>
+  <li>Notice the type of the return value of <code>nice_div</code>, it is <code>int option</code>, not <code>int</code></li>
+  <li>This type error is saying the <code>+</code> lhs needs to be type <code>int</code> but is a <code>Some</code> value which is not an <code>int</code>.</li>
+</ul>
 
 <p>Here is a non-solution to that:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">not_nice_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">None</span> <span class="k">else</span> <span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">;;</span>
