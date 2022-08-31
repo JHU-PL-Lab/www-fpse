@@ -77,19 +77,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
-  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="n">rev</span> <span class="n">xs</span> <span class="o">@</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+  <span class="o">|</span>  <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">rev</span> <span class="n">tl</span> <span class="o">@</span> <span class="p">[</span><span class="n">hd</span><span class="p">]</span>
 <span class="p">;;</span>
 <span class="n">rev</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> <span class="c">(* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)</span>
 </code></pre></div></div>
 
 <ul>
   <li>Correctness of a recursive function by induction: assume recursive call does what you expect in arguing it is overall correct.</li>
-  <li>For this example, can assume <code>rev xs</code> always reverses the tail of the list,
+  <li>For this example, can assume <code>rev tl</code> always reverses the tail of the list,
     <ul>
-      <li>(e.g. in computing <code>rev [1;2;3]</code> we match <code>x</code> = <code>1</code> and <code>xs</code> = <code>[2;3]</code> and can assume <code>rev [2;3]</code> = <code>[3;2]</code> )</li>
+      <li>(e.g. in computing <code>rev [1;2;3]</code> we match <code>hd</code> = <code>1</code> and <code>tl</code> = <code>[2;3]</code> and can assume <code>rev [2;3]</code> = <code>[3;2]</code> )</li>
     </ul>
   </li>
-  <li>Given that fact, <code>rev xs @ [x]</code> should clearly reverse the whole list
+  <li>Given that fact, <code>rev tl @ [hd]</code> should clearly reverse the whole list
     <ul>
       <li>(e.g. <code>[3;2] @ [1]</code> = <code>[3;2;1]</code> for the example)</li>
     </ul>
@@ -113,7 +113,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">zero_negs</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
-  <span class="o">|</span>  <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">x</span><span class="p">)</span> <span class="o">::</span> <span class="n">zero_negs</span> <span class="n">xs</span>
+  <span class="o">|</span>  <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">if</span> <span class="n">hd</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">hd</span><span class="p">)</span> <span class="o">::</span> <span class="n">zero_negs</span> <span class="n">tl</span>
 <span class="k">in</span>
 <span class="n">zero_negs</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span>
 </code></pre></div></div>
@@ -128,9 +128,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>but we put an <code>open Core</code> in our <code>.ocamlinit</code> (and in the template for A1) so you can just write e.g. <code>List.rev</code></li>
     </ul>
   </li>
-  <li>Note that the <code>Core</code> module extends (think subclasses) <code>Base</code>, look in <code>Base.List</code> for the <code>List</code> documentation.</li>
   <li>(Note that <code>List.hd</code> is also available, but you should nearly always be pattern matching to take apart lists; don’t use <code>List.hd</code> on the homework.)</li>
-  <li>Let us <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html">peek at the documentation for <code>Base.List</code></a> to see what is available; we will cover a few of them now.</li>
+  <li>Let us peek at the documentation <a href="https://ocaml.org/p/core/v0.15.0/doc/Core/List/index.html"><code>Core.List</code></a> to see what is available; we will cover a few of them now.</li>
 </ul>
 
 <h4 id="some-simple-but-very-handy-list-library-functions">Some simple but very handy <code>List</code> library functions</h4>
@@ -439,7 +438,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">~</span><span class="n">init</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
     <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
-  <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">x</span> <span class="p">(</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="n">xs</span> <span class="o">~</span><span class="n">init</span><span class="p">)</span> <span class="c">(* note argument `~f` is shorthand for `~f:f` *)</span>
+  <span class="o">|</span> <span class="n">hd</span><span class="o">::</span><span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">hd</span> <span class="p">(</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="n">tl</span> <span class="o">~</span><span class="n">init</span><span class="p">)</span> <span class="c">(* note argument `~f` is shorthand for `~f:f` *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -465,7 +464,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold</span> <span class="n">l</span> <span class="o">~</span><span class="n">init</span> <span class="o">~</span><span class="n">f</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
     <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
-  <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span> <span class="o">-&gt;</span> <span class="n">fold</span> <span class="n">xs</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="p">(</span><span class="n">f</span> <span class="n">init</span> <span class="n">x</span><span class="p">)</span> <span class="o">~</span><span class="n">f</span> <span class="c">(* working from left side, pass *down* the accumulated result *)</span>
+  <span class="o">|</span> <span class="n">hd</span><span class="o">::</span><span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">fold</span> <span class="n">tl</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="p">(</span><span class="n">f</span> <span class="n">init</span> <span class="n">hd</span><span class="p">)</span> <span class="o">~</span><span class="n">f</span> <span class="c">(* working from left side, pass *down* the accumulated result *)</span>
 </code></pre></div></div>
 
 <ul>

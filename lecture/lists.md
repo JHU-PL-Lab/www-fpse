@@ -13,15 +13,15 @@
 let rec rev l =
   match l with
   |  [] -> []
-  |  x :: xs -> rev xs @ [x]
+  |  hd :: tl -> rev tl @ [hd]
 ;;
 rev [1;2;3];; (* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)
 ```
 
 * Correctness of a recursive function by induction: assume recursive call does what you expect in arguing it is overall correct.
-* For this example, can assume `rev xs` always reverses the tail of the list,  
-    - (e.g. in computing `rev [1;2;3]` we match `x` = `1` and `xs` = `[2;3]` and can assume `rev [2;3]` = `[3;2]` )
-* Given that fact, `rev xs @ [x]` should clearly reverse the whole list 
+* For this example, can assume `rev tl` always reverses the tail of the list,  
+    - (e.g. in computing `rev [1;2;3]` we match `hd` = `1` and `tl` = `[2;3]` and can assume `rev [2;3]` = `[3;2]` )
+* Given that fact, `rev tl @ [hd]` should clearly reverse the whole list 
     - (e.g. `[3;2] @ [1]` = `[3;2;1]` for the example)
 * QED, the function is proved correct! (actually partially correct, this induction argument does not rule out infinite loops)
 
@@ -41,7 +41,7 @@ Of course `rev` is also in `Core.List` since it is a common operation:
 let rec zero_negs l =
   match l with
   |  [] -> []
-  |  x :: xs -> (if x < 0 then 0 else x) :: zero_negs xs
+  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl
 in
 zero_negs [1;-2;3];;
 ```
@@ -52,9 +52,8 @@ zero_negs [1;-2;3];;
 * `List` is a **module**, think fancy package.  It contains functions *plus* values *plus* types *plus* even other modules
 * `List` is itself in the module `Core` so the full name for `rev` is `Core.List.rev`
     * but we put an `open Core` in our `.ocamlinit` (and in the template for A1) so you can just write e.g. `List.rev`
-* Note that the `Core` module extends (think subclasses) `Base`, look in `Base.List` for the `List` documentation.
 * (Note that `List.hd` is also available, but you should nearly always be pattern matching to take apart lists; don't use `List.hd` on the homework.)
-* Let us [peek at the documentation for `Base.List`](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html) to see what is available; we will cover a few of them now.
+* Let us peek at the documentation [`Core.List`](https://ocaml.org/p/core/v0.15.0/doc/Core/List/index.html) to see what is available; we will cover a few of them now.
 
 #### Some simple but very handy `List` library functions
 
@@ -334,7 +333,7 @@ Here is simple code for `fold_right` to better understand it:
 let rec fold_right ~f l ~init =
   match l with
     [] -> init
-  | x::xs -> f x (fold_right ~f xs ~init) (* note argument `~f` is shorthand for `~f:f` *)
+  | hd::tl -> f hd (fold_right ~f tl ~init) (* note argument `~f` is shorthand for `~f:f` *)
 ```
 
 * `List.fold_left` aka `List.fold` (use the latter syntax generally) puts the `~init` on the left:
@@ -355,7 +354,7 @@ Code for `fold` aka `fold_left`:
 let rec fold l ~init ~f =
   match l with
     [] -> init
-  | x::xs -> fold xs ~init:(f init x) ~f (* working from left side, pass *down* the accumulated result *)
+  | hd::tl -> fold tl ~init:(f init hd) ~f (* working from left side, pass *down* the accumulated result *)
 ```
 
 - Note that the first parameter to f is the accumulated value passed *down* and the second parameter is the current list value

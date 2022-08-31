@@ -1,7 +1,7 @@
 let rec rev l =
   match l with
   |  [] -> []
-  |  x :: xs -> rev xs @ [x]
+  |  hd :: tl -> rev tl @ [hd]
 ;;
 rev [1;2;3];; (* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)
 
@@ -11,7 +11,7 @@ rev [1;2;3];; (* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)
 let rec zero_negs l =
   match l with
   |  [] -> []
-  |  x :: xs -> (if x < 0 then 0 else x) :: zero_negs xs
+  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl
 in
 zero_negs [1;-2;3];;
 
@@ -129,7 +129,7 @@ let exists ~f l =  (* Note the ~f is **declaring** a named argument f, we were o
 let rec fold_right ~f l ~init =
   match l with
     [] -> init
-  | x::xs -> f x (fold_right ~f xs ~init) (* note argument `~f` is shorthand for `~f:f` *)
+  | hd::tl -> f hd (fold_right ~f tl ~init) (* note argument `~f` is shorthand for `~f:f` *)
 
 # List.fold ~f:(||) ~init:false [true; false];; (* this is false || (true || false), the FIRST false is the ~init *)
 - : bool = true
