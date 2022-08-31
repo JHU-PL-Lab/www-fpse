@@ -14,7 +14,7 @@ let b = true;;
 b && false;;
 true || false;;
 1 = 2;; (* = not == for equality comparison; note = works on ints only in our OCaml setup *)
-1 <> 2;;  (* <> not != for not equal *)
+1 <> 2;;  (* <>, not !=, for not equal *)
 
 4.5;; (* floats *)
 4.5 +. 4.3;; (* operations are +. etc not just + which is for ints only *)
@@ -32,7 +32,7 @@ let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
 
 fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)
 
-let rec fib = function 
+let rec fib x = match x with
   | 0 -> 0 
   | 1 -> 1 
   | n -> fib (n - 1) + fib (n - 2);;
@@ -51,7 +51,7 @@ add 3 4;;
 let add3 = add 3;; (* No need to give all arguments at once!  Type of add is int -> (int -> int) - "CURRIED" *)
 add3 4;;
 add3 20;;
-(+) 3 4;; (* Putting () around any infix operator turns it into a 2-argument function *)
+(+) 3 4;; (* Putting () around any infix operator turns it into a regular 2-argument function *)
 
 add3 (3 * 2);;
 add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - application binds tighter than * *)

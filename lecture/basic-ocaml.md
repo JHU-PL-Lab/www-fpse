@@ -59,7 +59,8 @@ printf "the string is %s\n" hw
 * We will be running many small programs in lecture - best done in the top loop.
 * All the following are typed as input into `utop` with `;;` ending input.
  
-* Integers
+###  Integers
+
 ```ocaml
 3 + 4;;
 let x = 3 + 4;; (* give the value a name via let keyword. *)
@@ -74,7 +75,7 @@ let b = true;;
 b && false;;
 true || false;;
 1 = 2;; (* = not == for equality comparison; note = works on ints only in our OCaml setup *)
-1 <> 2;;  (* <> not != for not equal *)
+1 <> 2;;  (* <>, not !=, for not equal *)
 ```
 
 #### Other basic data -- see documentation for details
@@ -110,10 +111,10 @@ let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
 fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)
 ```
 
-Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read `fib` using pattern match notation similar to Java/C `switch` which we will cover in detail later:
+Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read `fib` using pattern `match` notation similar to Java/C `switch` which we will cover in detail later:
 
 ```ocaml
-let rec fib = function 
+let rec fib x = match x with
   | 0 -> 0 
   | 1 -> 1 
   | n -> fib (n - 1) + fib (n - 2);;
@@ -142,7 +143,7 @@ add 3 4;;
 let add3 = add 3;; (* No need to give all arguments at once!  Type of add is int -> (int -> int) - "CURRIED" *)
 add3 4;;
 add3 20;;
-(+) 3 4;; (* Putting () around any infix operator turns it into a 2-argument function *)
+(+) 3 4;; (* Putting () around any infix operator turns it into a regular 2-argument function *)
 ```
 
 Conclusion: add is a function taking an integer, and returning a **function** which takes ints to ints.
@@ -150,7 +151,7 @@ So, add is a **higher-order function**: it either takes a function as an argumen
 
 Observe `int -> int -> int` is parenthesized as `int -> (int -> int)` -- unusual **right** associativity
 
-Be careful on operator precedence with this goofy way that function application doesn't need parens!
+Be careful on operator precedence with this goofy (aka stupid) way that function application doesn't need parens!
 ```ocaml
 add3 (3 * 2);;
 add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - application binds tighter than * *)
@@ -183,7 +184,7 @@ None;;
  * Notice these are both in the `option` type .. either you have `Some` data or you have `None`.
  * `option` is similar to how you can have null or non-null objects in other languages, but it is explicit here.
  * These kinds of types with the capital-letter-named tags are called **variants** in OCaml; each tag wraps a different variant.
- * The `option` type is very useful; here is a super simple example.
+ * The `option` type is very useful; here is an oversimplified example.
 
  ```ocaml
 # let nice_div m n = if n = 0 then None else Some (m / n);;
@@ -218,7 +219,7 @@ Error: This expression has type int but an expression was expected of type
 
 #### Using pattern matching to use `nice_div`
 
-Here is a real solution to the above issue:
+Here is how we can in fact use `nice_div`:
 ```ocaml
 # match (nice_div 5 2) with 
    | Some i -> i + 7 (* i is bound to the result, 2 here *)
@@ -267,7 +268,7 @@ div_exn 3 4;;
 
 ### Lists
 
-* Lists are pervasive in OCaml
+* Lists are the most common data structure in OCaml, similar to dictionaries/objects for Python/JavaScript.
 * They are **immutable** so while they look something like arrays or vectors they are not
 
 ```ocaml
