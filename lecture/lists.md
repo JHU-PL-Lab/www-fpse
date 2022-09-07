@@ -2,6 +2,7 @@
 * First we will do a few more recursive functions over lists
 * Then we will show how the `Core.List` library functions allow a great many (most?) operations to be written without recursion
 * This is *combinator programming*, solve a task by composing operations on a few standard combinators ("combiners")
+* (Note for Assignment 1 Part I you will not be able to use the library combinators, they are for Part II)
 
 #### Reversing a list
 
@@ -81,7 +82,7 @@ List.append [1;2] [3;4];; (* Usually the infix @ syntax is used for append *)
 - : 'a list list -> 'a list = <fun>
 # List.append;;
 - : 'a list -> 'a list -> 'a list = <fun>
-# List.map;;  (* We will do this one below; type gives away what it does *)
+# List.map;;  (* We will do this one below *)
 - : 'a list -> f:('a -> 'b) -> 'b list = <fun>
 ```
 
@@ -90,7 +91,7 @@ List.append [1;2] [3;4];; (* Usually the infix @ syntax is used for append *)
 ```ocaml
 let rec join (l: 'a list list) = match l with
   | [] -> [] (* "joining together a list of no-lists is an empty list" *)
-  | l :: ls -> l @ join ls (* " by induction assume (join ls) will turn list-of-lists to single list" *)
+  | l :: ls -> l @ join ls (* "by induction assume (join ls) will turn list-of-lists to single list" *)
 ```
 
 #### OCaml tuples and some `List` library functions using tuples
@@ -143,6 +144,7 @@ List.unzip @@ all_front_back_pairs [1;2;3;4;5;6];;
 * In a series of pipes, the leftmost argument is data, and all the others are functions
 * The data is fed into first function, output of first function fed as input to second, etc
 * This is exactly what the shell `|` does with standard input / standard output.
+* Please use pipes as much as possible on Part II of Assignment 1 - will make the code more readable
 
 * `List.zip` is the opposite of unzip: take two lists and make a single list pairing elements
 
@@ -163,6 +165,7 @@ Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
 type nonrec 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
 ```
 * This means the value is either `Ok(..)` or `Unequal_lenghts`, very similar to `result`
+* The `'a` here is the type parameter, more on those later so don't sweat it now
 * The latter case is for zipping lists of different lengths:
 
 ```ocaml
@@ -172,9 +175,8 @@ Core.List.Or_unequal_lengths.Unequal_lengths
 ```
 
 * In the original same-length case we got the result from the first clause in this type, `Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]`.
-* They should have just used the existing `result` type here, these values and types are ugly!!
 * Note `List.zip_exn` will just raise an exception for unequal-length lists, avoiding all of this wrapper ugliness
-    - but in larger programs we really want to avoid exceptions at a distance so it is often worth the suffering
+    - but in larger programs we want to avoid exceptions at a distance so it is often worth the suffering
 
 #### zip/unzip and Currying
 
@@ -201,7 +203,7 @@ let zip_pair (l,r) = List.zip_exn l r in
 zip_pair @@ List.unzip [(1, 3); (2, 4)];;
 [(1, 3); (2, 4)] |> List.unzip|> zip_pair ;; (* Pipe equivalent form *)
 ```
-* Congratulations, we just wrote a fancy no-op function :smile:
+* Congratulations, we just wrote a fancy no-op function 😁
 * The general principle here is a *curried* 2-argument function like `int -> int -> int` is **isomorphic** to `int * int -> int`
 * The latter form looks more like a standard function taking multiple arguments and is the **uncurried** form.
 * And we sometimes need to interconvert between the two representations
@@ -266,7 +268,7 @@ List.filter [1;-1;2;-2;0] (fun x -> x >= 0);;
 ```
 
 * Cool, we can "glue in" any checking function (boolean-returning, i.e. a *predicate*) and `List.filter` will do the rest
-* Observe `List.filter` has type `'a list -> f:('a -> bool) -> 'a list` -- the `f` is a *named argument*, we can put args out of order if we give name via `~f:` syntax:
+* Observe `List.filter` has type `'a list -> f:('a -> bool) -> 'a list` -- the `f:` is declaring a *named argument*, we can put args out of order if we give name via `~f:` syntax:
 
 ```ocaml
 List.filter ~f:(fun x -> x >= 0) [1;-1;2;-2;0];;
@@ -277,6 +279,14 @@ List.filter ~f:(fun x -> x >= 0) [1;-1;2;-2;0];;
 let remove_negatives = List.filter ~f:(fun x -> x >= 0);;
 remove_negatives  [1;-1;2;-2;0];;
 ```
+
+Note that you can either inline the function as a `fun` or can declare it in advance:
+```ocaml
+let gtz x = x >= 0;;
+List.filter ~f:gtz [1;-1;2;-2;0];;
+```
+Usually for short functions it is better to inline them, it makes the code more readable.
+
 
 Let us use `filter` to write a function determining if a list has any negative elements:
 
@@ -293,7 +303,7 @@ Similarly, `List.for_all` checks if it holds for *all* elements.
 
 #### List.map
 
-* `List.map` is  super cool, apply some operation we supply to every element of a list:
+* `List.map` is  super powerful, apply some operation we supply to every element of a list:
 
 ```ocaml
 # List.map ~f:(fun x -> x + 1) [1;-1;2;-2;0];;

@@ -64,6 +64,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>First we will do a few more recursive functions over lists</li>
   <li>Then we will show how the <code>Core.List</code> library functions allow a great many (most?) operations to be written without recursion</li>
   <li>This is <em>combinator programming</em>, solve a task by composing operations on a few standard combinators (“combiners”)</li>
+  <li>(Note for Assignment 1 Part I you will not be able to use the library combinators, they are for Part II)</li>
 </ul>
 
 <h4 id="reversing-a-list">Reversing a list</h4>
@@ -158,7 +159,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 <span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">append</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span><span class="p">;;</span>  <span class="c">(* We will do this one below; type gives away what it does *)</span>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span><span class="p">;;</span>  <span class="c">(* We will do this one below *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
@@ -168,7 +169,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">join</span> <span class="p">(</span><span class="n">l</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span> <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span> <span class="c">(* "joining together a list of no-lists is an empty list" *)</span>
-  <span class="o">|</span> <span class="n">l</span> <span class="o">::</span> <span class="n">ls</span> <span class="o">-&gt;</span> <span class="n">l</span> <span class="o">@</span> <span class="n">join</span> <span class="n">ls</span> <span class="c">(* " by induction assume (join ls) will turn list-of-lists to single list" *)</span>
+  <span class="o">|</span> <span class="n">l</span> <span class="o">::</span> <span class="n">ls</span> <span class="o">-&gt;</span> <span class="n">l</span> <span class="o">@</span> <span class="n">join</span> <span class="n">ls</span> <span class="c">(* "by induction assume (join ls) will turn list-of-lists to single list" *)</span>
 </code></pre></div></div>
 
 <h4 id="ocaml-tuples-and-some-list-library-functions-using-tuples">OCaml tuples and some <code>List</code> library functions using tuples</h4>
@@ -232,8 +233,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>In a series of pipes, the leftmost argument is data, and all the others are functions</li>
   <li>The data is fed into first function, output of first function fed as input to second, etc</li>
+  <li>This is exactly what the shell <code>|</code> does with standard input / standard output.</li>
   <li>
-    <p>This is exactly what the shell <code>|</code> does with standard input / standard output.</p>
+    <p>Please use pipes as much as possible on Part II of Assignment 1 - will make the code more readable</p>
   </li>
   <li><code>List.zip</code> is the opposite of unzip: take two lists and make a single list pairing elements</li>
 </ul>
@@ -259,6 +261,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 <ul>
   <li>This means the value is either <code>Ok(..)</code> or <code>Unequal_lenghts</code>, very similar to <code>result</code></li>
+  <li>The <code>'a</code> here is the type parameter, more on those later so don’t sweat it now</li>
   <li>The latter case is for zipping lists of different lengths:</li>
 </ul>
 
@@ -269,10 +272,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>In the original same-length case we got the result from the first clause in this type, <code>Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]</code>.</li>
-  <li>They should have just used the existing <code>result</code> type here, these values and types are ugly!!</li>
   <li>Note <code>List.zip_exn</code> will just raise an exception for unequal-length lists, avoiding all of this wrapper ugliness
     <ul>
-      <li>but in larger programs we really want to avoid exceptions at a distance so it is often worth the suffering</li>
+      <li>but in larger programs we want to avoid exceptions at a distance so it is often worth the suffering</li>
     </ul>
   </li>
 </ul>
@@ -302,7 +304,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="p">)]</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">unzip</span><span class="o">|&gt;</span> <span class="n">zip_pair</span> <span class="p">;;</span> <span class="c">(* Pipe equivalent form *)</span>
 </code></pre></div></div>
 <ul>
-  <li>Congratulations, we just wrote a fancy no-op function :smile:</li>
+  <li>Congratulations, we just wrote a fancy no-op function 😁</li>
   <li>The general principle here is a <em>curried</em> 2-argument function like <code>int -&gt; int -&gt; int</code> is <strong>isomorphic</strong> to <code>int * int -&gt; int</code></li>
   <li>The latter form looks more like a standard function taking multiple arguments and is the <strong>uncurried</strong> form.</li>
   <li>And we sometimes need to interconvert between the two representations</li>
@@ -368,7 +370,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Cool, we can “glue in” any checking function (boolean-returning, i.e. a <em>predicate</em>) and <code>List.filter</code> will do the rest</li>
-  <li>Observe <code>List.filter</code> has type <code>'a list -&gt; f:('a -&gt; bool) -&gt; 'a list</code> – the <code>f</code> is a <em>named argument</em>, we can put args out of order if we give name via <code>~f:</code> syntax:</li>
+  <li>Observe <code>List.filter</code> has type <code>'a list -&gt; f:('a -&gt; bool) -&gt; 'a list</code> – the <code>f:</code> is declaring a <em>named argument</em>, we can put args out of order if we give name via <code>~f:</code> syntax:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
@@ -380,6 +382,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">remove_negatives</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">);;</span>
 <span class="n">remove_negatives</span>  <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
 </code></pre></div></div>
+
+<p>Note that you can either inline the function as a <code>fun</code> or can declare it in advance:</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">gtz</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;;</span>
+<span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="n">gtz</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
+</code></pre></div></div>
+<p>Usually for short functions it is better to inline them, it makes the code more readable.</p>
 
 <p>Let us use <code>filter</code> to write a function determining if a list has any negative elements:</p>
 
@@ -397,7 +405,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="listmap">List.map</h4>
 
 <ul>
-  <li><code>List.map</code> is  super cool, apply some operation we supply to every element of a list:</li>
+  <li><code>List.map</code> is  super powerful, apply some operation we supply to every element of a list:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>

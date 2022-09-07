@@ -31,12 +31,12 @@ List.append [1;2] [3;4];; (* Usually the infix @ syntax is used for append *)
 - : 'a list list -> 'a list = <fun>
 # List.append;;
 - : 'a list -> 'a list -> 'a list = <fun>
-# List.map;;  (* We will do this one below; type gives away what it does *)
+# List.map;;  (* We will do this one below *)
 - : 'a list -> f:('a -> 'b) -> 'b list = <fun>
 
 let rec join (l: 'a list list) = match l with
   | [] -> [] (* "joining together a list of no-lists is an empty list" *)
-  | l :: ls -> l @ join ls (* " by induction assume (join ls) will turn list-of-lists to single list" *)
+  | l :: ls -> l @ join ls (* "by induction assume (join ls) will turn list-of-lists to single list" *)
 
 # (1,2.,"3");;
 - : int * float * string = (1, 2., "3")
@@ -104,6 +104,9 @@ List.filter ~f:(fun x -> x >= 0) [1;-1;2;-2;0];;
 
 let remove_negatives = List.filter ~f:(fun x -> x >= 0);;
 remove_negatives  [1;-1;2;-2;0];;
+
+let gtz x = x >= 0;;
+List.filter ~f:gtz [1;-1;2;-2;0];;
 
 let has_negs l = l |> List.filter ~f:(fun x -> x < 0) |> List.is_empty |> not;;
 
