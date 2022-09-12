@@ -62,7 +62,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <h3 id="variants">Variants</h3>
 
 <ul>
-  <li>Variants build or-data (this or this or this); records build and-data (this and this and this)</li>
+  <li>Variants build or-data (this-or-this-or-this); records build and-data (this-and-this-and-this)</li>
   <li>They are the fundamental data constructors</li>
   <li>We start with variants</li>
 </ul>
@@ -70,7 +70,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="variants-1">Variants</h3>
 <ul>
   <li>The <code>option</code> and <code>result</code> types we have been using are simple forms of <em>variant types</em></li>
-  <li>Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the sort</li>
+  <li>Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the specific form</li>
   <li>They are related to <code>union</code> types in C or <code>enums</code> in Java, but are more safe than C and more general than Java</li>
   <li>Like OCaml lists and tuples they are by default immutable</li>
 </ul>
@@ -79,14 +79,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">ff_num</span> <span class="o">=</span> <span class="nc">Fixed</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="nc">Floating</span> <span class="k">of</span> <span class="kt">float</span><span class="p">;;</span>  <span class="c">(* read "|" as "or" *)</span>
 
-<span class="nc">Fixed</span><span class="p">(</span><span class="mi">5</span><span class="p">);;</span> <span class="c">(* tag 5 as a Fixed *)</span>
+<span class="nc">Fixed</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* tag 5 as a Fixed *)</span>
 <span class="nc">Floating</span> <span class="mi">4</span><span class="o">.</span><span class="mi">0</span><span class="p">;;</span> <span class="c">(* tag 4.0 as a Floating *)</span>
 </code></pre></div></div>
 
 <ul>
-  <li>Each case of the variant is wrapped with a ‘Constructor’ which serves for both
+  <li>Each case of the variant is wrapped with a <em>constructor</em> which serves for both
     <ul>
-      <li>Constructing values of the variant type</li>
+      <li>constructing values of the variant type</li>
       <li>inspecting them by pattern matching</li>
     </ul>
   </li>
@@ -126,7 +126,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <span class="k">let</span> <span class="n">com</span> <span class="o">=</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span>
 <span class="k">let</span> <span class="n">zer</span> <span class="o">=</span> <span class="nc">CZero</span><span class="p">;;</span>
-<span class="k">let</span> <span class="n">ocaml_annoyance</span> <span class="o">=</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span> <span class="c">(* this is a parsing error; use @@ instead of " " *)</span>
+<span class="k">let</span> <span class="n">ocaml_annoyance</span> <span class="o">=</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span> <span class="c">(* this is a parsing glitch; use @@ instead of " " *)</span>
 </code></pre></div></div>
 
 <h4 id="an-example-of-variants-plus-list-libraries">An Example of Variants plus List. libraries</h4>
@@ -166,8 +166,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>One more variation, let’s use <code>fold</code> instead of <code>filter</code>/<code>length</code></p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">hamming_distance</span> <span class="p">(</span><span class="n">left</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="p">((</span><span class="kt">int</span><span class="o">,</span> <span class="kt">string</span><span class="p">)</span> <span class="n">result</span><span class="p">)</span><span class="o">=</span>
-  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">left</span><span class="o">,</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">right</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span> <span class="k">when</span> <span class="n">x</span> <span class="o">&lt;&gt;</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"left and right strands must be of equal length"</span>
+  <span class="k">match</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">left</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">right</span><span class="p">)</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="bp">false</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"left and right strands must be of equal length"</span>
   <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="n">left</span> <span class="n">right</span> 
       <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">+</span> <span class="k">if</span> <span class="p">(</span><span class="n">equal_nucleotide</span> <span class="n">a</span> <span class="n">b</span><span class="p">)</span> <span class="k">then</span> <span class="mi">0</span>  <span class="k">else</span> <span class="mi">1</span><span class="p">)</span> 
       <span class="o">|&gt;</span> <span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="nc">Ok</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>

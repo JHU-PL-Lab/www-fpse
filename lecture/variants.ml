@@ -1,6 +1,6 @@
 type ff_num = Fixed of int | Floating of float;;  (* read "|" as "or" *)
 
-Fixed(5);; (* tag 5 as a Fixed *)
+Fixed 5;; (* tag 5 as a Fixed *)
 Floating 4.0;; (* tag 4.0 as a Floating *)
 
 let ff_as_int x =
@@ -24,7 +24,7 @@ type complex = CZero | Nonzero of float * float;;
 
 let com = Nonzero(3.2,11.2);;
 let zer = CZero;;
-let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing error; use @@ instead of " " *)
+let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing glitch; use @@ instead of " " *)
 
 (* Example derived from 
    https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
@@ -50,8 +50,8 @@ let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int,
       |> fun x -> Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
 
 let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
-  match List.length left, List.length right with
-  | x, y when x <> y -> Error "left and right strands must be of equal length"
+  match (List.length left) = (List.length right) with
+  | false -> Error "left and right strands must be of equal length"
   | _ -> List.zip_exn left right 
       |> List.fold ~init:0 ~f:(fun accum (a,b) -> accum + if (equal_nucleotide a b) then 0  else 1) 
       |> fun x -> Ok(x)

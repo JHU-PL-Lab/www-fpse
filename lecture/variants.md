@@ -1,12 +1,12 @@
 ### Variants
 
-* Variants build or-data (this or this or this); records build and-data (this and this and this)
+* Variants build or-data (this-or-this-or-this); records build and-data (this-and-this-and-this)
 * They are the fundamental data constructors
 * We start with variants
 
 ### Variants
 * The `option` and `result` types we have been using are simple forms of *variant types*
-* Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the sort
+* Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the specific form
 * They are related to `union` types in C or `enums` in Java, but are more safe than C and more general than Java
 * Like OCaml lists and tuples they are by default immutable
 
@@ -15,12 +15,12 @@ Example variant type for doing mixed arithmetic (integers and floats)
 ```ocaml
 type ff_num = Fixed of int | Floating of float;;  (* read "|" as "or" *)
 
-Fixed(5);; (* tag 5 as a Fixed *)
+Fixed 5;; (* tag 5 as a Fixed *)
 Floating 4.0;; (* tag 4.0 as a Floating *)
 ```
 
- * Each case of the variant is wrapped with a 'Constructor' which serves for both
-      - Constructing values of the variant type
+ * Each case of the variant is wrapped with a *constructor* which serves for both
+      - constructing values of the variant type
       - inspecting them by pattern matching
  * Constructors must start with a Capital Letter to distinguish from variables
  * Variants must be declared but once declared type inference can infer them.
@@ -58,7 +58,7 @@ type complex = CZero | Nonzero of float * float;;
 
 let com = Nonzero(3.2,11.2);;
 let zer = CZero;;
-let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing error; use @@ instead of " " *)
+let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing glitch; use @@ instead of " " *)
 ```
 
 #### An Example of Variants plus List. libraries
@@ -99,8 +99,8 @@ let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int,
 One more variation, let's use `fold` instead of `filter`/`length`
 ```ocaml
 let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
-  match List.length left, List.length right with
-  | x, y when x <> y -> Error "left and right strands must be of equal length"
+  match (List.length left) = (List.length right) with
+  | false -> Error "left and right strands must be of equal length"
   | _ -> List.zip_exn left right 
       |> List.fold ~init:0 ~f:(fun accum (a,b) -> accum + if (equal_nucleotide a b) then 0  else 1) 
       |> fun x -> Ok(x)
