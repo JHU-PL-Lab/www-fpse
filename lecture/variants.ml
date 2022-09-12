@@ -43,11 +43,18 @@ let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
 
 let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
   match List.length left, List.length right with
-  | x, y when x <> y -> Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
+  | x, y when x <> y -> Error "left and right strands must be of equal length"
   | _ -> List.zip_exn left right 
       |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) 
       |> List.length 
       |> fun x -> Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
+
+let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
+  match List.length left, List.length right with
+  | x, y when x <> y -> Error "left and right strands must be of equal length"
+  | _ -> List.zip_exn left right 
+      |> List.fold ~init:0 ~f:(fun accum (a,b) -> accum + if (equal_nucleotide a b) then 0  else 1) 
+      |> fun x -> Ok(x)
 
 # #show_type option;;
 type 'a option = None | Some of 'a

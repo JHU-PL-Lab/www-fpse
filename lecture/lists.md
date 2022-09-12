@@ -319,9 +319,9 @@ List.map ~f:(fun (x,y) -> x + y) [(1,2);(3,4)];; (* turns list of number pairs i
 * The `fold` library functions do exactly that.  Here for example is `List.fold_right` at work 
 
 ```ocaml
-let exists ~f l =  (* Note the ~f is **declaring** a named argument f, we were only using pre-declared ones above *)
-  let bool_result_list = List.map ~f:f l in
-  List.fold_right bool_result_list ~f:(||) ~init:false;;
+let exists l ~f =  (* Note: ~f is **declaring** a named argument f *)
+  List.map ~f l    (* ~f as an argument is shorthand for ~f:f *)
+  |> List.fold_right ~f:(||) ~init:false;;
 # exists ~f:(fun x -> x >= 0) [-1;-2];;
 - : bool = false
 # exists ~f:(fun x -> x >= 0) [1;-2];;
@@ -333,29 +333,29 @@ let exists ~f l =  (* Note the ~f is **declaring** a named argument f, we were o
 * For `fold_right` the `~init` is on the **right**, that is why it is called a "fold right":
 
 ```ocaml
-# List.fold_right ~f:(||) ~init:false [true; false];; (* this is true || (false || (false)), the final false the ~init *)
-- : bool = true
+# List.fold_right ~f:(+) ~init:0 [3; 5];; (* this is 3 + (5 + 0), the ~init is on the RIGHT *)
+- : int = 8
 ```
 
-Here is simple code for `fold_right` to better understand it:
+Here is possible code for `fold_right` to help understand it:
 
 ```ocaml
 let rec fold_right ~f l ~init =
   match l with
-    [] -> init
-  | hd::tl -> f hd (fold_right ~f tl ~init) (* note argument `~f` is shorthand for `~f:f` *)
+  | [] -> init
+  | hd::tl -> f hd (fold_right ~f tl ~init)
 ```
 
 * `List.fold_left` aka `List.fold` (use the latter syntax generally) puts the `~init` on the left:
 
 ```ocaml
-# List.fold ~f:(||) ~init:false [true; false];; (* this is false || (true || false), the FIRST false is the ~init *)
-- : bool = true
+# List.fold ~f:(+) ~init:0 [3; 5];; (* this is 0 + ( 3 + 5), the ~init is on the LEFT *)
+- : int = 8
 ```
 
-* Note that in this case folding left or right gives the same answer; 
-    - that is because `||` is *commutative and associative*, so e.g. `true || (false || (false) = false || (true || false)`.
-* But e.g. `List.fold ~f:(-) ~init:0 [1;2]` is `(0-1)-2` is `-3` and `List.fold_right ~f:(-) ~init:0 [1;2]` is `(1-2)-0` is `-1` 
+* Note that in the cases above folding left or right gives the same answer; 
+    - that is because `+` and `||` are both *commutative and associative*.
+* But e.g. `List.fold ~f:(-) ~init:0 [1;2]` is `(0 - 1) - 2` is `-3` and `List.fold_right ~f:(-) ~init:0 [1;2]` is `(1 - 2) - 0` is `-1` 
 * All things equal folding left is preferred, it is *tail recursive* and can be optimized
 
 Code for `fold` aka `fold_left`:
@@ -363,27 +363,36 @@ Code for `fold` aka `fold_left`:
 ```ocaml 
 let rec fold l ~init ~f =
   match l with
-    [] -> init
-  | hd::tl -> fold tl ~init:(f init hd) ~f (* working from left side, pass *down* the accumulated result *)
+  | [] -> init
+  | hd::tl -> fold tl ~init:(f init hd) ~f
 ```
 
 - Note that the first parameter to f is the accumulated value passed *down* and the second parameter is the current list value
-- Guess what this does then: `List.fold [1;2;3] ~init:0 ~f:(fun x -> fun y -> x + 1);;`
+- Guess what this does then: `List.fold ["a";"b";"c"] ~init:0 ~f:(fun accum -> fun elt -> accum + 1);;`
+- Fold left/right are canonical functions contrasting how you can accumulate a value down vs up the recursion; sometimes you need to do both
 
 The documention is helpful as well:
  - `fold [e1;...;en] ~init ~f` returns `f (... f (f (f init e1) e2) e3 ...) en`
- - `fold_right [a1; ...; an] ~f ~init:b` returns `f a1 (f a2 (... (f an b) ...))`.
- - Also notice that the arguents to `f` are not symmetric, the individual items `e` are the second parameter in `fold` and the `a`'s are first in `fold_right`.
- - The other argument is called the *accumulator*, it is the result thus far.
+   - e.g. `fold [1;2;3] ~init ~f` returns `f (f (f init 1) 2) 3`
+ - `fold_right [a1; ...; an] ~f ~init` returns `f a1 (f a2 (... (f an init) ...))`.
+   - e.g. `fold_right [1;2;3] ~f ~init` returns `f 1 (f 2 (f 3 init))`
+ - Also notice that the arguents to `f` are swapped in left/right folding functions:
+   - in `fold` `f` should be a `fun accum elt -> ...` and 
+   - in `fold_right` it should be `fun elt accum -> ...`
+ - `elt` is the list *element* and `accum` is the *accumulator*, it is the result thus far.
 
+Here is a use of `fold` where the accumulator is a different type than the list elements:
 
+```ocaml
+let map l ~f = List.fold ~f:(fun accum elt -> accum @ [f elt]) ~init:[] l
+```
 
 Efficiency of `fold`:
  - Observe how the value of the function is what is directly returned from the recursion
  - Such a function is *tail recursive*
  - The compiler doesn't need to use a call stack for such functions since nothing happens upon return
  - Important when lists get really long that you don't use stack unless required.
- - More later on this.
+ - Observe that `fold_right` is not tail recursive, so it needs the stack and will be slower - that is why `fold` is the left version.
 
 #### `fold_until`
 
