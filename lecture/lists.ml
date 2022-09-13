@@ -118,26 +118,30 @@ let has_negs l = List.exists ~f:(fun x -> x < 0) l;;
 - : bool list = [true; false; true; false; true]
 List.map ~f:(fun (x,y) -> x + y) [(1,2);(3,4)];; (* turns list of number pairs into list of their sums *)
 
+# List.fold_right ~f:(+) ~init:0 [3; 5; 7];; (* this computes 3 + (5 + (7 + 0))  *)
+- : int = 15
+
+# List.fold ~f:(+) ~init:0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
+- : int = 15
+
+List.fold ["a";"b";"c"] ~init:0 ~f:(fun accum -> fun elt -> accum + 1);;`
+
+List.fold_right ["a";"b";"c"] ~init:0 ~f:(fun elt -> fun accum -> accum + 1);;`
+
+let map l ~f = List.fold ~f:(fun accum elt -> accum @ [f elt]) ~init:[] l
+
 let exists l ~f =  (* Note: ~f is **declaring** a named argument f *)
   List.map ~f l    (* ~f as an argument is shorthand for ~f:f *)
-  |> List.fold_right ~f:(||) ~init:false;;
+  |> List.fold ~f:(||) ~init:false;;
 # exists ~f:(fun x -> x >= 0) [-1;-2];;
 - : bool = false
 # exists ~f:(fun x -> x >= 0) [1;-2];;
 - : bool = true
 
-# List.fold_right ~f:(+) ~init:0 [3; 5];; (* this is 3 + (5 + 0), the ~init is on the RIGHT *)
-- : int = 8
-
 let rec fold_right ~f l ~init =
   match l with
   | [] -> init
   | hd::tl -> f hd (fold_right ~f tl ~init)
-
-# List.fold ~f:(+) ~init:0 [3; 5];; (* this is 0 + ( 3 + 5), the ~init is on the LEFT *)
-- : int = 8
-
-let map l ~f = List.fold ~f:(fun accum elt -> accum @ [f elt]) ~init:[] l
 
 let summate_til_zero l =
   List.fold_until l ~init:0
