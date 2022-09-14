@@ -35,7 +35,8 @@ let rec contains (x: 'a) (s: 'a t) (equal : 'a -> 'a -> bool) : bool =
 ```
 * The above code defines module `Simple_set` since it is in the file `simple_set.ml`
 * Modules are just collections of top-level definable things (things you could type into top loop)
-* This particular module is just a set implemented as a list; it is in fact a multiset
+* Assignment 1 file `submission.ml` is in fact making a module as well, named `Submission`.
+* This particular set module is just a set implemented as a list; it is in fact a multiset
 * The line `type 'a t = 'a list` is a *type abbreviation*, `'a t` is a synonym for `'a list`
    - below we will show how to *hide* the fact that it is a list.
 * Naming a type just `t` is the standard for "the" underlying type of a module
@@ -133,7 +134,7 @@ Here is what we need to add to the `dune` file along with the above to build the
 
 * `set_main.ml` uses the `In_channel` module to read in file contents
 * It is part of the `Stdio` module (which is itself included in `Core` so `Core.In_channel` is the same as `Stdio.In_channel`)
-* The Documentation is [here](https://ocaml.janestreet.com/ocaml-core/latest/doc/stdio/Stdio/In_channel/index.html); we will go through it to observe a few points
+* The Documentation is [here](https://ocaml.org/p/stdio/v0.15.0/doc/Stdio/index.html); we will go through it to observe a few points
   - First, now that we covered abstract types we can see there is an abstract type `t` here
   - As with our own set, it is "the underlinying data" for the module, in this case file handles
   - It is hidden though so we don't get access to the details of how "files are handled"
@@ -165,7 +166,7 @@ val f : ?x:int -> int -> int = <fun>
 #### The `Sys` library
 
 * We are using this library to read in the command line args, via `Sys.get_argv`.
-* We will also take a quick look at its documentation [here](https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core__/Core_sys/index.html)
+* We will also take a quick look at its documentation [here](https://ocaml.org/p/core/v0.15.0/doc/Core/Sys/index.html)
   - Notice how this particular module has no carrier type `t`, it is just a collection of utility functions.
 
 #### Running executables

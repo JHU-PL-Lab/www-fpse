@@ -101,7 +101,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>The above code defines module <code>Simple_set</code> since it is in the file <code>simple_set.ml</code></li>
   <li>Modules are just collections of top-level definable things (things you could type into top loop)</li>
-  <li>This particular module is just a set implemented as a list; it is in fact a multiset</li>
+  <li>Assignment 1 file <code>submission.ml</code> is in fact making a module as well, named <code>Submission</code>.</li>
+  <li>This particular set module is just a set implemented as a list; it is in fact a multiset</li>
   <li>The line <code>type 'a t = 'a list</code> is a <em>type abbreviation</em>, <code>'a t</code> is a synonym for <code>'a list</code>
     <ul>
       <li>below we will show how to <em>hide</em> the fact that it is a list.</li>
@@ -233,7 +234,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li><code>set_main.ml</code> uses the <code>In_channel</code> module to read in file contents</li>
   <li>It is part of the <code>Stdio</code> module (which is itself included in <code>Core</code> so <code>Core.In_channel</code> is the same as <code>Stdio.In_channel</code>)</li>
-  <li>The Documentation is <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/stdio/Stdio/In_channel/index.html">here</a>; we will go through it to observe a few points
+  <li>The Documentation is <a href="https://ocaml.org/p/stdio/v0.15.0/doc/Stdio/index.html">here</a>; we will go through it to observe a few points
     <ul>
       <li>First, now that we covered abstract types we can see there is an abstract type <code>t</code> here</li>
       <li>As with our own set, it is “the underlinying data” for the module, in this case file handles</li>
@@ -276,7 +277,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>We are using this library to read in the command line args, via <code>Sys.get_argv</code>.</li>
-  <li>We will also take a quick look at its documentation <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core/Core__/Core_sys/index.html">here</a>
+  <li>We will also take a quick look at its documentation <a href="https://ocaml.org/p/core/v0.15.0/doc/Core/Sys/index.html">here</a>
     <ul>
       <li>Notice how this particular module has no carrier type <code>t</code>, it is just a collection of utility functions.</li>
     </ul>

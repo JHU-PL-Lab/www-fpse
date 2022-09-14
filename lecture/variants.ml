@@ -33,34 +33,33 @@ let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing glitch; use
 
 type nucleotide = A | C | G | T [@@deriving equal]
 
-let hamming_distance (left : 'a list) (right : 'a list) : ((int, string) result)=
-  match List.length left, List.length right with
-  | x, y when x <> y -> Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
-  | _ -> Ok (List.length (List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) (* _ is wild card match *)
-             (List.zip_exn left right))) (* We already know this never fails - OK to _exn *)
+let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
+  match List.zip left right with (* recall this returns Ok(list) or Unequal_lengths, another variant *)
+  | List.Or_unequal_lengths.Unequal_lengths -> Error "left and right strands must be of equal length"
+  | List.Or_unequal_lengths.Ok l ->
+    l
+    |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) 
+    |> List.length 
+    |> fun x -> Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
 
 let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
 
 let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
-  match List.length left, List.length right with
-  | x, y when x <> y -> Error "left and right strands must be of equal length"
-  | _ -> List.zip_exn left right 
-      |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) 
-      |> List.length 
-      |> fun x -> Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
-
-let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
-  match (List.length left) = (List.length right) with
-  | false -> Error "left and right strands must be of equal length"
-  | _ -> List.zip_exn left right 
-      |> List.fold ~init:0 ~f:(fun accum (a,b) -> accum + if (equal_nucleotide a b) then 0  else 1) 
-      |> fun x -> Ok(x)
+  match List.zip left right with
+  | List.Or_unequal_lengths.Unequal_lengths -> Error "left and right strands must be of equal length"
+  | List.Or_unequal_lengths.Ok (l) ->
+    l
+    |> List.fold ~init:0 ~f:(fun accum (a,b) -> accum + if (equal_nucleotide a b) then 0  else 1) 
+    |> fun x -> Ok(x)
 
 # #show_type option;;
 type 'a option = None | Some of 'a
 
 # #show_type result;;
 type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
+
+# #show_type List.Or_unequal_lengths.t;;
+type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
 
 type 'a homebrew_list = Mt | Cons of 'a * 'a homebrew_list;;
 let hb_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
@@ -70,7 +69,7 @@ let rec homebrew_map (ml : 'a homebrew_list) ~(f : 'a -> 'b) : ('b homebrew_list
     | Mt -> Mt
     | Cons(hd,tl) -> Cons(f hd,homebrew_map tl ~f)
 
-let map_eg = homebrew_map hb_eg ~f:(fun x -> x - 1)
+let map_eg = homebrew_map (Cons(3,Cons(5,Cons(7,Mt)))) ~f:(fun x -> x - 1)
 
 # #show_type list;;
 type 'a list = [] | (::) of 'a * 'a list
@@ -111,18 +110,17 @@ let rec map (tree : 'a bin_tree) ~(f : 'a -> 'b) : ('b bin_tree) =
 (* using tree map to make a non-recursive add_gobble *)
 let add_gobble tree = map ~f:(fun s -> s ^ "gobble") tree
 
-let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'b -> 'b -> 'b) ~(leaf : 'b) : 'b =
+let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'accum -> 'accum -> 'accum) ~(leaf : 'accum) : 'accum =
    match tree with
    | Leaf -> leaf
    | Node(y, left, right) ->
        f y (fold ~f ~leaf left) (fold ~f ~leaf right)
 
 (* using tree fold *)
-let int_summate tree = fold ~f:(fun y -> fun ls -> fun rs -> y + ls + rs) ~leaf:0 tree;;
-let bt = Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
-int_summate bt;;
+let int_summate tree = fold ~f:(fun elt laccum raccum -> elt + laccum + raccum) ~leaf:0 tree;;
+int_summate @@ Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
 (* fold can also do map-like operations - the folder can return a tree *)
-let bump_nodes tree = fold ~f:(fun y -> fun ls -> fun rs-> Node(y+1,ls,rs)) ~leaf:Leaf tree;;
+let bump_nodes tree = fold ~f:(fun elt la ra -> Node(elt+1,la,ra)) ~leaf:Leaf tree;;
 
 let rec insert_int (x : int) (bt : int bin_tree) : (int bin_tree) =
    match bt with
@@ -153,7 +151,7 @@ let rec insert x bt compare =
 ;;
 let bt' = insert 4 bt (Int.compare);;
 
-# `Zinger(3);;
+# `Zinger(3);; (* prefix constructors with a backtick for the inferred variants *)
 - : [> `Zinger of int ] = `Zinger 3
 
 # [`Zinger 3; `Zanger "hi"];;

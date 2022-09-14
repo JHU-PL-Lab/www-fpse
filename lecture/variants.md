@@ -76,36 +76,29 @@ let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing glitch; use
 
 type nucleotide = A | C | G | T [@@deriving equal]
 
-let hamming_distance (left : 'a list) (right : 'a list) : ((int, string) result)=
-  match List.length left, List.length right with
-  | x, y when x <> y -> Error "left and right strands must be of equal length" (* "when" allows additional constraints *)
-  | _ -> Ok (List.length (List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) (* _ is wild card match *)
-             (List.zip_exn left right))) (* We already know this never fails - OK to _exn *)
+let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
+  match List.zip left right with (* recall this returns Ok(list) or Unequal_lengths, another variant *)
+  | List.Or_unequal_lengths.Unequal_lengths -> Error "left and right strands must be of equal length"
+  | List.Or_unequal_lengths.Ok l ->
+    l
+    |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) 
+    |> List.length 
+    |> fun x -> Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
 
 let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
 ```
-
-All the parens above are very hard to read, use pipes instead:
+Now let's use `fold` instead of `filter`/`length`
 ```ocaml
 let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
-  match List.length left, List.length right with
-  | x, y when x <> y -> Error "left and right strands must be of equal length"
-  | _ -> List.zip_exn left right 
-      |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) 
-      |> List.length 
-      |> fun x -> Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
-```
-
-One more variation, let's use `fold` instead of `filter`/`length`
-```ocaml
-let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
-  match (List.length left) = (List.length right) with
-  | false -> Error "left and right strands must be of equal length"
-  | _ -> List.zip_exn left right 
-      |> List.fold ~init:0 ~f:(fun accum (a,b) -> accum + if (equal_nucleotide a b) then 0  else 1) 
-      |> fun x -> Ok(x)
+  match List.zip left right with
+  | List.Or_unequal_lengths.Unequal_lengths -> Error "left and right strands must be of equal length"
+  | List.Or_unequal_lengths.Ok (l) ->
+    l
+    |> List.fold ~init:0 ~f:(fun accum (a,b) -> accum + if (equal_nucleotide a b) then 0  else 1) 
+    |> fun x -> Ok(x)
 ```
 #### Parametric variant types
+We have used several of these but just have not looked at the type so carefully.
 
 Here is the system's declaration of the `option` type -- the `#show_type` top loop directive (or just `#show`) will print it:
 ```ocaml
@@ -127,8 +120,14 @@ type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
  * Same idea but *a pair* of type parameters; `'b` is the type of the `Error`.
  * Observe `Ok(4) : (int, 'a) result` and `Error("bad") : ('a, string) result`
 
+Lastly, `List.zip` has a special type for its return value which is very similar to `option`:
+```ocaml
+# #show_type List.Or_unequal_lengths.t;;
+type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
+```
+
 #### Recursive data structures 
-  - A common use of variant types: self-referential data structures
+  - A common use of variant types is to build self-referential data structures
   - Functional programming is fantastic for computing over tree-structured data
   - Recursive types can refer to themselves in their own definition
      - similar in spirit to how C structs can be recursive (but, no pointers needed here)
@@ -148,7 +147,7 @@ let rec homebrew_map (ml : 'a homebrew_list) ~(f : 'a -> 'b) : ('b homebrew_list
     | Mt -> Mt
     | Cons(hd,tl) -> Cons(f hd,homebrew_map tl ~f)
 
-let map_eg = homebrew_map hb_eg ~f:(fun x -> x - 1)
+let map_eg = homebrew_map (Cons(3,Cons(5,Cons(7,Mt)))) ~f:(fun x -> x - 1)
 ```
 
 Lets look at the built-in `list` type:
@@ -156,13 +155,13 @@ Lets look at the built-in `list` type:
 # #show_type list;;
 type 'a list = [] | (::) of 'a * 'a list
 ```
-Looks very similar to our homebrew one, eh??
+Looks just like our homebrew one other than names for the components
 
 ### Binary trees
 
 * Binary trees are like lists but with two self-referential sub-structures instead of one
 * Binary trees also show how arbitrary recursive variants work; same idea but more variants.
-* Here is a tree with data in the *nodes* but not the leaves.
+* Here is a tree with data in the intermediate *nodes* but not in the leaves.
 
 ```ocaml
 type 'a bin_tree = Leaf | Node of 'a * 'a bin_tree * 'a bin_tree
@@ -191,7 +190,7 @@ let bt2 = Node("fiddly ",
 Node("fiddly",Node(0,Leaf,Leaf),Leaf);;
 ```
 
-#### Operations on Binary Trees
+#### Combinators for Binary Trees
 
 * Since lists are built-in we get a massive library of functions on them.
 * For these binary trees (and in general for whatever variant types you roll yourself) there is no such luxury.
@@ -208,9 +207,9 @@ let rec add_gobble binstringtree =
        Node(y^"gobble",add_gobble left,add_gobble right)
 ```
 
- * Remember, like with lists this is not mutating the tree, its building a new one
+ * Remember, as with lists this is not mutating the tree, its building a new one
  * Observe: this is an instance of the general operation of building a tree with same structure but applying an operation on each node value
- * i.e. it is a **map** operation over a tree.  Let us code it.
+ * i.e. it is a **map** operation over a tree.  Let us code `map` and use it to add gobbles.
 
 ```ocaml
 let rec map (tree : 'a bin_tree) ~(f : 'a -> 'b) : ('b bin_tree) =
@@ -225,18 +224,17 @@ let add_gobble tree = map ~f:(fun s -> s ^ "gobble") tree
 * Fold is also natural on binary trees, apply operation f to node value and each subtree result.
 
 ```ocaml
-let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'b -> 'b -> 'b) ~(leaf : 'b) : 'b =
+let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'accum -> 'accum -> 'accum) ~(leaf : 'accum) : 'accum =
    match tree with
    | Leaf -> leaf
    | Node(y, left, right) ->
        f y (fold ~f ~leaf left) (fold ~f ~leaf right)
 
 (* using tree fold *)
-let int_summate tree = fold ~f:(fun y -> fun ls -> fun rs -> y + ls + rs) ~leaf:0 tree;;
-let bt = Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
-int_summate bt;;
+let int_summate tree = fold ~f:(fun elt laccum raccum -> elt + laccum + raccum) ~leaf:0 tree;;
+int_summate @@ Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
 (* fold can also do map-like operations - the folder can return a tree *)
-let bump_nodes tree = fold ~f:(fun y -> fun ls -> fun rs-> Node(y+1,ls,rs)) ~leaf:Leaf tree;;
+let bump_nodes tree = fold ~f:(fun elt la ra -> Node(elt+1,la,ra)) ~leaf:Leaf tree;;
 ```
 
 * Many of the other `List` functions have analogues on binary trees and recursive variants in general
@@ -304,7 +302,7 @@ let bt' = insert 4 bt (Int.compare);;
 * A better term would be "inferred variants" - you don't need to declare them via `type`.
 
 ```ocaml
-# `Zinger(3);;
+# `Zinger(3);; (* prefix constructors with a backtick for the inferred variants *)
 - : [> `Zinger of int ] = `Zinger 3
 ```
 * This looks a bit useless, it inferred a 1-ary variant type
