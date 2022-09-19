@@ -105,13 +105,13 @@ One thing to point out is that it's bad form to over-indent. These tools should 
             | []      -> []
             | x :: xs -> (fn x) :: (match fn xs)
   ```
-    looks worse than this:
-   ```ocaml
+  looks worse than this:
+  ```ocaml
     let rec map fn lst =
       match lst with
       | [] -> []
       | x :: xs -> (fn x) :: (match fn xs)
-   ```
+  ```
 
 ## Modules
 

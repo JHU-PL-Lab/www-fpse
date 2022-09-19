@@ -182,12 +182,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
             <span class="o">|</span> <span class="bp">[]</span>      <span class="o">-&gt;</span> <span class="bp">[]</span>
             <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">fn</span> <span class="n">x</span><span class="p">)</span> <span class="o">::</span> <span class="p">(</span><span class="k">match</span> <span class="n">fn</span> <span class="n">xs</span><span class="p">)</span>
 </code></pre></div></div>
-<pre><code>looks worse than this:    ```ocaml
-let rec map fn lst =
-  match lst with
-  | [] -&gt; []
-  | x :: xs -&gt; (fn x) :: (match fn xs)    ```
-</code></pre>
+<p>looks worse than this:</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">let</span> <span class="k">rec</span> <span class="n">map</span> <span class="n">fn</span> <span class="n">lst</span> <span class="o">=</span>
+      <span class="k">match</span> <span class="n">lst</span> <span class="k">with</span>
+      <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
+      <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">fn</span> <span class="n">x</span><span class="p">)</span> <span class="o">::</span> <span class="p">(</span><span class="k">match</span> <span class="n">fn</span> <span class="n">xs</span><span class="p">)</span>
+</code></pre></div></div>
 
 <h2 id="modules">Modules</h2>
 
