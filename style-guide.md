@@ -99,19 +99,19 @@ To automatically format your code in VSCode, use `option-shift-F` on Mac or `alt
 As a side note, notice how the `if` and `then` keywords are on the same line, while the `else` keyword is on its own line.  In if-statements, predicate variables or expressions (in this case `x`) should be short, but branches can be (reasonably) long.
 
 One thing to point out is that it's bad form to over-indent. These tools should fix any cases of over-indentation, but just remember that this:
-    ```ocaml
+   ```ocaml
     let rec map fn lst =
             match lst with
             | []      -> []
             | x :: xs -> (fn x) :: (match fn xs)
-    ```
+  ```
     looks worse than this:
-    ```ocaml
+   ```ocaml
     let rec map fn lst =
       match lst with
       | [] -> []
       | x :: xs -> (fn x) :: (match fn xs)
-    ```
+   ```
 
 ## Modules
 
