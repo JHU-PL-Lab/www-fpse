@@ -207,7 +207,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>The module is closely related to the module it’s being opened in (e.g. if you’re opening <code>My_module</code> in <code>my_module_utils.ml</code>).</li>
     </ul>
 
-    <p>You should also take advantage of features like <code>let open</code> and the <code>My_module.( ... )</code> syntax.  Both features restrict opening the module to a particular scope, allowing you to have the best of both worlds.</p>
+    <p>You should also take advantage of the <code>let open My_Module in ...</code> and <code>My_module.( ... )</code> syntax.  Both features restrict opening the module to the <code>...</code> code, allowing you to have the best of both worlds. For example, <code>String.("hi" = ho")</code> is easier to read than <code>String.(=) "hi" "ho"</code>.</p>
   </li>
   <li>When writing a module for a data structure, the type of the underlying data of the module is conventially written as <code>t</code> (for “type”), e.g. <code>String_set.t</code> is the type of a set of strings, not <code>String_set.string_set</code>.  This may seem to contradict the “give descriptive names” guideline we mentioned earlier, but the descriptiveness is already in the module name.  Note that <code>Core</code> uses this convention: for example <code>Core.Result.t</code> is the <code>Ok/Error</code> variant type.</li>
 </ol>

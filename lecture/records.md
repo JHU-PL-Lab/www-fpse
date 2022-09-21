@@ -1,6 +1,7 @@
 
 ### Records
   - Records are like tuples, a data combiner, but with label names added for readability
+    - Yes it is only about readability but it can make a big difference in code quality
   - Record types must be declared just like OCaml variants.
   - Again the fields are immutable by default (but there is a way to make them mutable ..)
 
@@ -18,7 +19,7 @@ let rattoint r =
    {num = n; denom = d} -> n / d;;
 ```
 
-Only one pattern matched so can again inline pattern in `fun`ctions and `let`s
+Only one pattern matched so should inline pattern in `fun`ctions and `let`s
 ```ocaml
 let rattoint {num = n; denom = d}  =  n / d;;
 ```
@@ -29,11 +30,22 @@ Short-cut: pun between variable and field name (understand the above form before
 let rat_to_int {num; denom}  =  num / denom ;;
 ```
 
+which is just sugar for 
+
+```ocaml
+let rat_to_int {num = num; denom = denom}  =  num / denom ;;
+```
+ - be clear that the first `num =`/`denom =` are *labels* and the others are *variables*; same as in many languages.
+
+
 Another short-cut if you only care about a few fields (very useful for a big record):
 ```ocaml
-let get_num {num; _}  =  num;;
+let numerator {num; _}  =  num;; (* _ here means "plus any other fields" )
 ```
- - This is a special form of pattern, "`; _`" at the *end* of a record means don't-care on all the missing fields.
+or even this:
+```ocaml
+let numerator {num}  = num;;
+```
 
 Can also use dot projections a la C etc, but happy path is usually patterns
 ```ocaml
@@ -65,11 +77,7 @@ Solution is to generally avoid dot; or declare `x`'s type if needed.
 ```ocaml
 fun (x : ratio) -> x.num;; (* x is declared a ratio, avoiding previous shadowing *)
 ```
-* You can often leave out unused fields in a pattern:
 
-```ocaml
-let numerator {num}  = num;;
-```
 * Multiple punning.. pun both on parameters and in record creation
 
 ```ocaml
@@ -77,7 +85,7 @@ let make_ratio num denom = {num; denom};;
 make_ratio 1 2;;
 ```
 
-* Here is another shorthand for changing just some of the fields: `{r with ...}`
+* Here is a shorthand for changing just some of the fields: `{r with ...}`
   - Very useful for records with many fields, not so much here though
   - Note "change" is not mutation again, it constructs a new record.
 

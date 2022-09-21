@@ -79,8 +79,6 @@ let compl = rand_from quickcheck_generator_complex
 
 (* type 'a bin_tree = Leaf | Node of 'a * 'a bin_tree * 'a bin_tree [@@deriving quickcheck] *)
 
-type int_tree = Leaf | Node of int * int_tree * int_tree [@@deriving quickcheck]
-
 type int_tree = 
   | Leaf
   | Node of int * int_tree * int_tree [@@deriving quickcheck]

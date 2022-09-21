@@ -62,7 +62,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     
 <h3 id="records">Records</h3>
 <ul>
-  <li>Records are like tuples, a data combiner, but with label names added for readability</li>
+  <li>Records are like tuples, a data combiner, but with label names added for readability
+    <ul>
+      <li>Yes it is only about readability but it can make a big difference in code quality</li>
+    </ul>
+  </li>
   <li>Record types must be declared just like OCaml variants.</li>
   <li>Again the fields are immutable by default (but there is a way to make them mutable ..)</li>
 </ul>
@@ -79,7 +83,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
    <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">/</span> <span class="n">d</span><span class="p">;;</span>
 </code></pre></div></div>
 
-<p>Only one pattern matched so can again inline pattern in <code>fun</code>ctions and <code>let</code>s</p>
+<p>Only one pattern matched so should inline pattern in <code>fun</code>ctions and <code>let</code>s</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rattoint</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d</span><span class="p">}</span>  <span class="o">=</span>  <span class="n">n</span> <span class="o">/</span> <span class="n">d</span><span class="p">;;</span>
 </code></pre></div></div>
 
@@ -88,12 +92,20 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat_to_int</span> <span class="p">{</span><span class="n">num</span><span class="p">;</span> <span class="n">denom</span><span class="p">}</span>  <span class="o">=</span>  <span class="n">num</span> <span class="o">/</span> <span class="n">denom</span> <span class="p">;;</span>
 </code></pre></div></div>
 
-<p>Another short-cut if you only care about a few fields (very useful for a big record):</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">get_num</span> <span class="p">{</span><span class="n">num</span><span class="p">;</span> <span class="n">_</span><span class="p">}</span>  <span class="o">=</span>  <span class="n">num</span><span class="p">;;</span>
+<p>which is just sugar for</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat_to_int</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="n">num</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">denom</span><span class="p">}</span>  <span class="o">=</span>  <span class="n">num</span> <span class="o">/</span> <span class="n">denom</span> <span class="p">;;</span>
 </code></pre></div></div>
 <ul>
-  <li>This is a special form of pattern, “<code>; _</code>” at the <em>end</em> of a record means don’t-care on all the missing fields.</li>
+  <li>be clear that the first <code>num =</code>/<code>denom =</code> are <em>labels</em> and the others are <em>variables</em>; same as in many languages.</li>
 </ul>
+
+<p>Another short-cut if you only care about a few fields (very useful for a big record):</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">numerator</span> <span class="p">{</span><span class="n">num</span><span class="p">;</span> <span class="n">_</span><span class="p">}</span>  <span class="o">=</span>  <span class="n">num</span><span class="p">;;</span> <span class="c">(* _ here means "plus any other fields" )
+</span></code></pre></div></div>
+<p>or even this:</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">numerator</span> <span class="p">{</span><span class="n">num</span><span class="p">}</span>  <span class="o">=</span> <span class="n">num</span><span class="p">;;</span>
+</code></pre></div></div>
 
 <p>Can also use dot projections a la C etc, but happy path is usually patterns</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rattoint</span> <span class="n">r</span>  <span class="o">=</span>  <span class="n">r</span><span class="o">.</span><span class="n">num</span> <span class="o">/</span> <span class="n">r</span><span class="o">.</span><span class="n">denom</span><span class="p">;;</span>
@@ -122,12 +134,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="n">ratio</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">num</span><span class="p">;;</span> <span class="c">(* x is declared a ratio, avoiding previous shadowing *)</span>
 </code></pre></div></div>
-<ul>
-  <li>You can often leave out unused fields in a pattern:</li>
-</ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">numerator</span> <span class="p">{</span><span class="n">num</span><span class="p">}</span>  <span class="o">=</span> <span class="n">num</span><span class="p">;;</span>
-</code></pre></div></div>
 <ul>
   <li>Multiple punning.. pun both on parameters and in record creation</li>
 </ul>
@@ -137,7 +144,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Here is another shorthand for changing just some of the fields: <code>{r with ...}</code>
+  <li>Here is a shorthand for changing just some of the fields: <code>{r with ...}</code>
     <ul>
       <li>Very useful for records with many fields, not so much here though</li>
       <li>Note “change” is not mutation again, it constructs a new record.</li>

@@ -209,8 +209,7 @@ Warning 10: this expression should have type unit.
 ```ocaml
 let x = ref 1 in
 while !x < 10 do
-  Out_channel.print_string (Int.to_string !x);
-  Out_channel.print_string "\n";
+  printf "count is %i ...\n" !x;
   x := !x + 1;
 done;;
 ```
@@ -223,7 +222,7 @@ done;;
  - Entered and shown as `[| 1; 2; 3 |]` (added "`|`") in top-loop to distinguish from lists.
  - Have to be initialized before using
      - In general, there is no such thing as "uninitialized" in OCaml.
-     - If you really need it, make it an `int option array` and init to `None`'s.
+     - If you need "undefined"/"null", make it an `int option array` and init to `None`'s.
 
 
 ```ocaml
@@ -249,14 +248,14 @@ let l = Array.to_list a;;
 * `Core` discourages over-use of exceptions in its library function signatures
   - Avoid the `blah_exn` named ones unless really needed!
 
-There are a few simple built-in exceptions which we used a bit:
+There are a few simple built-in exceptions which we used some already:
 
 ```ocaml
 failwith "Oops";; (* Generic code failure - exception is named Failure *)
 invalid_arg "This function works on non-empty lists only";; (* Invalid_argument exception *)
 ```
 
-Also there are the library functions raising exceptions
+Also there are library functions we covered that raise exceptions
 
 ```ocaml
 # List.zip_exn [1;2] [2;3;4];;
@@ -270,33 +269,33 @@ Exception: (Invalid_argument "length mismatch in zip_exn: 2 <> 3")
 * The value returned by an exception is very similar in looks to a variant.
 
 ```ocaml
-exception Goo of string;; (* Note like with variants the `of` is optional, no payload required *)
+exception Boom of string;; (* Note like with variants the `of` is optional, no payload required *)
 
-let f _ = raise @@ Goo "keyboard on fire";; (* raise is ultimately how all exceptions are raised *)
+let f _ = raise @@ Boom "keyboard on fire";; (* raise is ultimately how all exceptions are raised *)
 f ();;
 
 let g () =
   try f ()
   with
-  | Goo s -> (Out_channel.(print_string("exception raised: ");
-    print_string(s);print_string("\n")))
+  | Boom s -> printf "exception Boom raised with payload string \"%s\"\n" s
 ;;
 g ();;
 ```
 
 * Exceptions are in fact first-class data, all of the single type `exn`  
- - This is not very often useful.
+ - This is rarely useful.
 
 ```ocaml
-# let ex = Goo "oops";;
-val ex : exn = Goo("oops")
+# let ex = Boom "oops";;
+val ex : exn = Boom("oops")
 # raise ex;;
-Exception: Goo("oops").
+Exception: Boom("oops").
 ```
 
-### Mutating data structures in `Base`
+### Mutating data structures in `Core`
 
-* The `Stack` and `Queue` modules in `Base` (and `Core`) are mutable data structures.
+* The `Stack` and `Queue` modules in `Core` are *mutable* data structures.
+* (There are no immutable libraries for stack/queue - just use `list`s)
 * (There is also `Hash_set` which is a (hashed) mutable set and `Hashtbl` which is a mutable hashtable; more on those later)
 * Here is a simple example of playing around with a `Stack` for example.
 
@@ -309,7 +308,7 @@ val s : '_weak3 t = <abstr> (* Stack.t is the underlying implementation and is h
 - : unit = ()
 # Stack.push s "hello one more time";;
 - : unit = ()
-# Stack.to_list s;; (* very handy function to see what is there; top on left *)
+# Stack.to_list s;; (* a handy function to see what is there; top on left *)
 - : string list = ["hello one more time"; "hello again"; "hello"]
 # Stack.pop s;;
 - : string option = Some "hello one more time"
@@ -323,7 +322,7 @@ val s : '_weak3 t = <abstr> (* Stack.t is the underlying implementation and is h
 - : bool = true
 ```
 
-### Summing up effects: Parentheses Matching Function
+### Summing Up Effects: A Parentheses Matching Function
 
 * To show how to use effects and some of the trade-offs, we look at a small example
 * See file [matching.ml](../examples/matching.ml) which has several versions of a simple parenthesis matching function

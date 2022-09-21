@@ -125,7 +125,7 @@ One thing to point out is that it's bad form to over-indent. These tools should 
   - The module is a standard library that you want to use throughout your entire environment (e.g. `Core`).
   - The module is closely related to the module it's being opened in (e.g. if you're opening `My_module` in `my_module_utils.ml`).
     
-    You should also take advantage of features like `let open` and the `My_module.( ... )` syntax.  Both features restrict opening the module to a particular scope, allowing you to have the best of both worlds. 
+    You should also take advantage of the `let open My_Module in ...` and `My_module.( ... )` syntax.  Both features restrict opening the module to the `...` code, allowing you to have the best of both worlds. For example, `String.("hi" = ho")` is easier to read than `String.(=) "hi" "ho"`. 
 
 4. When writing a module for a data structure, the type of the underlying data of the module is conventially written as `t` (for "type"), e.g. `String_set.t` is the type of a set of strings, not `String_set.string_set`.  This may seem to contradict the "give descriptive names" guideline we mentioned earlier, but the descriptiveness is already in the module name.  Note that `Core` uses this convention: for example `Core.Result.t` is the `Ok/Error` variant type.
 

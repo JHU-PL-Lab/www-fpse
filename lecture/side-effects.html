@@ -303,8 +303,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">1</span> <span class="k">in</span>
 <span class="k">while</span> <span class="o">!</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="k">do</span>
-  <span class="nn">Out_channel</span><span class="p">.</span><span class="n">print_string</span> <span class="p">(</span><span class="nn">Int</span><span class="p">.</span><span class="n">to_string</span> <span class="o">!</span><span class="n">x</span><span class="p">);</span>
-  <span class="nn">Out_channel</span><span class="p">.</span><span class="n">print_string</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span>
+  <span class="n">printf</span> <span class="s2">"count is %i ...</span><span class="se">\n</span><span class="s2">"</span> <span class="o">!</span><span class="n">x</span><span class="p">;</span>
   <span class="n">x</span> <span class="o">:=</span> <span class="o">!</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
 <span class="k">done</span><span class="p">;;</span>
 </code></pre></div></div>
@@ -321,7 +320,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Have to be initialized before using
     <ul>
       <li>In general, there is no such thing as “uninitialized” in OCaml.</li>
-      <li>If you really need it, make it an <code>int option array</code> and init to <code>None</code>’s.</li>
+      <li>If you need “undefined”/”null”, make it an <code>int option array</code> and init to <code>None</code>’s.</li>
     </ul>
   </li>
 </ul>
@@ -356,13 +355,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<p>There are a few simple built-in exceptions which we used a bit:</p>
+<p>There are a few simple built-in exceptions which we used some already:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">failwith</span> <span class="s2">"Oops"</span><span class="p">;;</span> <span class="c">(* Generic code failure - exception is named Failure *)</span>
 <span class="n">invalid_arg</span> <span class="s2">"This function works on non-empty lists only"</span><span class="p">;;</span> <span class="c">(* Invalid_argument exception *)</span>
 </code></pre></div></div>
 
-<p>Also there are the library functions raising exceptions</p>
+<p>Also there are library functions we covered that raise exceptions</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">]</span> <span class="p">[</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">];;</span>
 <span class="nc">Exception</span><span class="o">:</span> <span class="p">(</span><span class="nc">Invalid_argument</span> <span class="s2">"length mismatch in zip_exn: 2 &lt;&gt; 3"</span><span class="p">)</span>
@@ -379,35 +378,35 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The value returned by an exception is very similar in looks to a variant.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">exception</span> <span class="nc">Goo</span> <span class="k">of</span> <span class="kt">string</span><span class="p">;;</span> <span class="c">(* Note like with variants the `of` is optional, no payload required *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">exception</span> <span class="nc">Boom</span> <span class="k">of</span> <span class="kt">string</span><span class="p">;;</span> <span class="c">(* Note like with variants the `of` is optional, no payload required *)</span>
 
-<span class="k">let</span> <span class="n">f</span> <span class="n">_</span> <span class="o">=</span> <span class="k">raise</span> <span class="o">@@</span> <span class="nc">Goo</span> <span class="s2">"keyboard on fire"</span><span class="p">;;</span> <span class="c">(* raise is ultimately how all exceptions are raised *)</span>
+<span class="k">let</span> <span class="n">f</span> <span class="n">_</span> <span class="o">=</span> <span class="k">raise</span> <span class="o">@@</span> <span class="nc">Boom</span> <span class="s2">"keyboard on fire"</span><span class="p">;;</span> <span class="c">(* raise is ultimately how all exceptions are raised *)</span>
 <span class="n">f</span> <span class="bp">()</span><span class="p">;;</span>
 
 <span class="k">let</span> <span class="n">g</span> <span class="bp">()</span> <span class="o">=</span>
   <span class="k">try</span> <span class="n">f</span> <span class="bp">()</span>
   <span class="k">with</span>
-  <span class="o">|</span> <span class="nc">Goo</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nn">Out_channel</span><span class="p">.(</span><span class="n">print_string</span><span class="p">(</span><span class="s2">"exception raised: "</span><span class="p">);</span>
-    <span class="n">print_string</span><span class="p">(</span><span class="n">s</span><span class="p">);</span><span class="n">print_string</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)))</span>
+  <span class="o">|</span> <span class="nc">Boom</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">printf</span> <span class="s2">"exception Boom raised with payload string </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"\n</span><span class="s2">"</span> <span class="n">s</span>
 <span class="p">;;</span>
 <span class="n">g</span> <span class="bp">()</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <ul>
   <li>Exceptions are in fact first-class data, all of the single type <code>exn</code></li>
-  <li>This is not very often useful.</li>
+  <li>This is rarely useful.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">ex</span> <span class="o">=</span> <span class="nc">Goo</span> <span class="s2">"oops"</span><span class="p">;;</span>
-<span class="k">val</span> <span class="n">ex</span> <span class="o">:</span> <span class="n">exn</span> <span class="o">=</span> <span class="nc">Goo</span><span class="p">(</span><span class="s2">"oops"</span><span class="p">)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">ex</span> <span class="o">=</span> <span class="nc">Boom</span> <span class="s2">"oops"</span><span class="p">;;</span>
+<span class="k">val</span> <span class="n">ex</span> <span class="o">:</span> <span class="n">exn</span> <span class="o">=</span> <span class="nc">Boom</span><span class="p">(</span><span class="s2">"oops"</span><span class="p">)</span>
 <span class="o">#</span> <span class="k">raise</span> <span class="n">ex</span><span class="p">;;</span>
-<span class="nc">Exception</span><span class="o">:</span> <span class="nc">Goo</span><span class="p">(</span><span class="s2">"oops"</span><span class="p">)</span><span class="o">.</span>
+<span class="nc">Exception</span><span class="o">:</span> <span class="nc">Boom</span><span class="p">(</span><span class="s2">"oops"</span><span class="p">)</span><span class="o">.</span>
 </code></pre></div></div>
 
-<h3 id="mutating-data-structures-in-base">Mutating data structures in <code>Base</code></h3>
+<h3 id="mutating-data-structures-in-core">Mutating data structures in <code>Core</code></h3>
 
 <ul>
-  <li>The <code>Stack</code> and <code>Queue</code> modules in <code>Base</code> (and <code>Core</code>) are mutable data structures.</li>
+  <li>The <code>Stack</code> and <code>Queue</code> modules in <code>Core</code> are <em>mutable</em> data structures.</li>
+  <li>(There are no immutable libraries for stack/queue - just use <code>list</code>s)</li>
   <li>(There is also <code>Hash_set</code> which is a (hashed) mutable set and <code>Hashtbl</code> which is a mutable hashtable; more on those later)</li>
   <li>Here is a simple example of playing around with a <code>Stack</code> for example.</li>
 </ul>
@@ -420,7 +419,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
 <span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">push</span> <span class="n">s</span> <span class="s2">"hello one more time"</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
-<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">to_list</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* very handy function to see what is there; top on left *)</span>
+<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">to_list</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* a handy function to see what is there; top on left *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"hello one more time"</span><span class="p">;</span> <span class="s2">"hello again"</span><span class="p">;</span> <span class="s2">"hello"</span><span class="p">]</span>
 <span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop</span> <span class="n">s</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="s2">"hello one more time"</span>
@@ -434,7 +433,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">true</span>
 </code></pre></div></div>
 
-<h3 id="summing-up-effects-parentheses-matching-function">Summing up effects: Parentheses Matching Function</h3>
+<h3 id="summing-up-effects-a-parentheses-matching-function">Summing Up Effects: A Parentheses Matching Function</h3>
 
 <ul>
   <li>To show how to use effects and some of the trade-offs, we look at a small example</li>

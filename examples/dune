@@ -1,0 +1,6 @@
+(library
+  (name justforbuild)
+  (modules matching mine_array mine_monadic mine_mutate minesweeper quickcheck_examples school cool_school continuation_trees)
+  (libraries core)
+  (preprocess (pps ppx_jane)))
+
