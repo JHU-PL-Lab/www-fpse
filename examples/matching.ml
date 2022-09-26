@@ -11,16 +11,16 @@ open Core
 
 let are_balanced_stack s =
   let stack_of_lefts = Stack.create () in
-  let match_with s c =
-    Option.value_map (Stack.pop s) ~f:(fun c' -> Char.( = ) c c') ~default:false
+  let match_with c =
+    Option.value_map (Stack.pop stack_of_lefts) ~f:(fun c' -> Char.( = ) c c') ~default:false
   in
   let parse = function
     | ('(' | '{' | '[') as c ->
         Stack.push stack_of_lefts c;
         true
-    | ')' -> match_with stack_of_lefts '('
-    | '}' -> match_with stack_of_lefts '{'
-    | ']' -> match_with stack_of_lefts '['
+    | ')' -> match_with '('
+    | '}' -> match_with '{'
+    | ']' -> match_with '['
     | _ -> true
   in
   let r = String.for_all ~f:(fun c -> parse c) s in
@@ -29,16 +29,16 @@ let are_balanced_stack s =
 (* Here is an alternate version, mainly to show what Option.value_map does *)
 let are_balanced_stack' s =
   let stack_of_lefts = Stack.create () in
-  let match_with s c = (* expand meaning of Option.value_map *)
-    match Stack.pop s with Some c' -> Char.(c = c') | None -> false
+  let match_with c = (* expand meaning of Option.value_map *)
+    match Stack.pop stack_of_lefts with Some c' -> Char.(c = c') | None -> false
   in
   let parse = function
     | ('(' | '{' | '[') as c ->
         Stack.push stack_of_lefts c;
         true
-    | ')' -> match_with stack_of_lefts '('
-    | '}' -> match_with stack_of_lefts '{'
-    | ']' -> match_with stack_of_lefts '['
+    | ')' -> match_with '('
+    | '}' -> match_with '{'
+    | ']' -> match_with '['
     | _ -> true
   in
   (* Use fold instead of for_all here *)
@@ -50,12 +50,12 @@ let are_balanced_stack' s =
 
 let are_balanced_exn s =
   let stack_of_lefts = Stack.create () in
-  let match_with s c = Char.( = ) c (Stack.pop_exn s) in
+  let match_with  c = Char.( = ) c (Stack.pop_exn stack_of_lefts) in
   let parse = function
     | ('(' | '{' | '[') as c -> Fn.const true @@ Stack.push stack_of_lefts c
-    | ')' -> match_with stack_of_lefts '('
-    | '}' -> match_with stack_of_lefts '{'
-    | ']' -> match_with stack_of_lefts '['
+    | ')' -> match_with '('
+    | '}' -> match_with '{'
+    | ']' -> match_with '['
     | _ -> true
   in
   try

@@ -64,7 +64,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="tangent-ppx_jane-and-deriving">Tangent: <code>ppx_jane</code> and <code>deriving</code></h3>
 
 <ul>
-  <li>Recall <code>[@@deriving equal]</code> in the nucleotide example to get an <code>=</code> on that type:</li>
+  <li>Recall <code>[@@deriving equal]</code> in the nucleotide example to get an <code>=</code> on that type “for free”:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Needs #require "ppx_jane";; in top loop, 
@@ -76,7 +76,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>The <code>[@@zibbo...]</code> indicates the type declaration is processed by the macro named <code>ppx_zibbo</code></li>
+  <li><code>[@@zibbo...]</code> notation in code indicates the line is processed by the macro named <code>ppx_zibbo</code></li>
   <li>The <code>equal</code> is a parameter to the macro, here it is which <code>deriving</code> extension is added</li>
   <li>The <code>[@@deriving equal]</code> in particular causes an <code>equal_nucleotide</code> function to be automatically generated</li>
   <li>Without this function we would have to use pattern matching to write our own equality.</li>
@@ -85,7 +85,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="composing-deriving-equal">Composing <code>deriving equal</code></h4>
 
 <ul>
-  <li>If we have an <code>xyy_equal</code> function on component types, <code>deriving</code> can derive <code>equal</code> for a type built from those components:</li>
+  <li>If we have an <code>xyy_equal</code> function on component types, <code>deriving</code> can derive <code>equal</code> for a type built from those components. For example equality on <em>lists</em> of nucleotides:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
@@ -98,9 +98,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">val</span> <span class="n">equal_n_queue</span> <span class="o">:</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 <ul>
-  <li>Notice that the <code>Core</code> libraries are designed to play well as they have <code>List.equal</code>, <code>Queue.equal</code> built in</li>
-  <li>Generally for a component type that is the <code>t</code> of a module, the name looked for is <code>My_module.equal</code> instead of <code>t_equal</code></li>
-  <li>Similarly, if we are making our own module with its carrier type <code>t</code> it will also generate <code>My_module.equal</code> if we use <code>[@@deriving equal]</code></li>
+  <li>Notice that the <code>Core</code> libraries are designed to play well as they have <code>List.equal</code>, <code>Queue.equal</code> built in
+    <ul>
+      <li>But, <code>List.equal : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a list -&gt; bool</code> – it needs <code>=</code> on the underlying list data.</li>
+      <li>This is a bit annoying as you keep having to pass <code>=</code> for members to check <code>'</code> for lists</li>
+      <li>.. one goal of this lecture is eventuall y we will fix this</li>
+    </ul>
+  </li>
+  <li>Note that in general for a component type that is the <code>t</code> of a module, the name looked for is <code>My_module.equal</code> instead of <code>t_equal</code></li>
 </ul>
 
 <h3 id="some-other-useful-deriving-type-accessor-extensions-in-ppx_jane">Some other useful <code>@@deriving</code> type accessor extensions in ppx_jane</h3>
@@ -115,7 +120,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">val</span> <span class="n">equal_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
 <span class="k">val</span> <span class="n">nucleotide_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="k">fun</span>
 <span class="k">val</span> <span class="n">sexp_of_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
- <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
+<span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
 <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
 <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
 <span class="k">val</span> <span class="n">equal_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
@@ -152,9 +157,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="nn">Ppx_deriving_yojson_runtime</span><span class="p">.</span><span class="n">error_or</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 <span class="o">#</span> <span class="n">nucleotide_to_yojson</span> <span class="nc">A</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"A"</span><span class="p">]</span> <span class="c">(* This is an OCaml inferred variant type *)</span>
+<span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">yojson</span><span class="p">];;</span> <span class="c">(* extend to lists of nuc's *)</span>
+<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
+<span class="k">val</span> <span class="n">n_list_to_yojson</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="k">val</span> <span class="n">n_list_of_yojson</span> <span class="o">:</span>
+  <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="nn">Ppx_deriving_yojson_runtime</span><span class="p">.</span><span class="n">error_or</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="n">n_list_to_yojson</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">];;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
+<span class="nt">`List</span> <span class="p">[</span><span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"A"</span><span class="p">];</span> <span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"A"</span><span class="p">];</span> <span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"G"</span><span class="p">]]</span>
 </code></pre></div></div>
 
-<p><strong>Aside</strong>: <code>ppx_deriving_yojson</code> is not currently compatible with <code>ppx_jane</code> so if you want to derive equality and comparisons along with <code>yojson</code> you need to use <code>#require "ppx_deriving.eq";; / [@@deriving eq]</code> and <code>#require "ppx_deriving.ord";; / [@@deriving ord]</code> in place of the <code>equal/compare</code> deriving in <code>ppx_jane</code>.</p>
+<p><strong>Aside</strong>: <code>ppx_deriving_yojson</code> is not compatible with <code>ppx_jane</code> so if you want to derive equality and comparisons along with <code>yojson</code> you need to use <code>#require "ppx_deriving.eq";; / [@@deriving eq]</code> and <code>#require "ppx_deriving.ord";; / [@@deriving ord]</code> in place of the <code>equal/compare</code> deriving in <code>ppx_jane</code>.</p>
 <h2 id="defining-modules-in-the-top-loop">Defining Modules in the top loop</h2>
 
 <ul>
@@ -201,7 +214,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="k">type</span> <span class="nc">Simple_set</span> <span class="o">=</span> <span class="c">(* module and module type namespaces are distinct, can re-use name *)</span>
-  <span class="k">sig</span>
+  <span class="k">sig</span> <span class="c">(* everything up to end below is what would be in an .mli file *)</span>
     <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="c">(* Do some type hiding here *)</span>
     <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
     <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>

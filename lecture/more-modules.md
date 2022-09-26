@@ -2,7 +2,7 @@
 
 ### Tangent: `ppx_jane` and `deriving`
 
-* Recall `[@@deriving equal]` in the nucleotide example to get an `=` on that type:
+* Recall `[@@deriving equal]` in the nucleotide example to get an `=` on that type "for free":
 
 ```ocaml
 (* Needs #require "ppx_jane";; in top loop, 
@@ -13,14 +13,14 @@ type nucleotide = A | C | G | T
 val equal_nucleotide : nucleotide -> nucleotide -> bool = <fun>
 ```
 
-* The `[@@zibbo...]` indicates the type declaration is processed by the macro named `ppx_zibbo`
+* `[@@zibbo...]` notation in code indicates the line is processed by the macro named `ppx_zibbo`
 * The `equal` is a parameter to the macro, here it is which `deriving` extension is added
 * The `[@@deriving equal]` in particular causes an `equal_nucleotide` function to be automatically generated
 * Without this function we would have to use pattern matching to write our own equality.
 
 #### Composing `deriving equal`
 
-* If we have an `xyy_equal` function on component types, `deriving` can derive `equal` for a type built from those components:
+* If we have an `xyy_equal` function on component types, `deriving` can derive `equal` for a type built from those components. For example equality on *lists* of nucleotides:
 
 ```ocaml
 # type n_list = nucleotide list [@@deriving equal];;
@@ -33,8 +33,10 @@ type n_queue = nucleotide Core_kernel.Queue.t
 val equal_n_queue : n_queue -> n_queue -> bool = <fun>
 ```
 * Notice that the `Core` libraries are designed to play well as they have `List.equal`, `Queue.equal` built in
-* Generally for a component type that is the `t` of a module, the name looked for is `My_module.equal` instead of `t_equal`
-* Similarly, if we are making our own module with its carrier type `t` it will also generate `My_module.equal` if we use `[@@deriving equal]`
+  - But, `List.equal : ('a -> 'a -> bool) -> 'a list -> 'a list -> bool` -- it needs `=` on the underlying list data.
+  - This is a bit annoying as you keep having to pass `=` for members to check `'` for lists
+  - .. one goal of this lecture is eventuall y we will fix this
+* Note that in general for a component type that is the `t` of a module, the name looked for is `My_module.equal` instead of `t_equal`
 
 ### Some other useful `@@deriving` type accessor extensions in ppx_jane
 
@@ -47,7 +49,7 @@ type nucleotide = A | C | G | T
 val equal_nucleotide : nucleotide -> nucleotide -> bool = fun
 val nucleotide_of_sexp : Sexp.t -> nucleotide = fun
 val sexp_of_nucleotide : nucleotide -> Sexp.t = fun
- type n_list = nucleotide list [@@deriving equal, sexp];;
+# type n_list = nucleotide list [@@deriving equal, sexp];;
 type n_list = nucleotide list
 type n_list = nucleotide list
 val equal_n_list : n_list -> n_list -> bool = fun
@@ -82,9 +84,17 @@ val nucleotide_of_yojson :
   Yojson.Safe.t -> nucleotide Ppx_deriving_yojson_runtime.error_or = <fun>
 # nucleotide_to_yojson A;;
 - : Yojson.Safe.t = `List [`String "A"] (* This is an OCaml inferred variant type *)
+# type n_list = nucleotide list [@@deriving yojson];; (* extend to lists of nuc's *)
+type n_list = nucleotide list
+val n_list_to_yojson : n_list -> Yojson.Safe.t = <fun>
+val n_list_of_yojson :
+  Yojson.Safe.t -> n_list Ppx_deriving_yojson_runtime.error_or = <fun>
+# n_list_to_yojson [A;A;G];;
+- : Yojson.Safe.t =
+`List [`List [`String "A"]; `List [`String "A"]; `List [`String "G"]]
 ```
 
-**Aside**: `ppx_deriving_yojson` is not currently compatible with `ppx_jane` so if you want to derive equality and comparisons along with `yojson` you need to use `#require "ppx_deriving.eq";; / [@@deriving eq]` and `#require "ppx_deriving.ord";; / [@@deriving ord]` in place of the `equal/compare` deriving in `ppx_jane`. 
+**Aside**: `ppx_deriving_yojson` is not compatible with `ppx_jane` so if you want to derive equality and comparisons along with `yojson` you need to use `#require "ppx_deriving.eq";; / [@@deriving eq]` and `#require "ppx_deriving.ord";; / [@@deriving ord]` in place of the `equal/compare` deriving in `ppx_jane`. 
 ## Defining Modules in the top loop
 
 * We will now cover how you can define modules in the top loop.
@@ -129,7 +139,7 @@ module Simple_set :
 
 ```ocaml
 module type Simple_set = (* module and module type namespaces are distinct, can re-use name *)
-  sig
+  sig (* everything up to end below is what would be in an .mli file *)
     type 'a t (* Do some type hiding here *)
     val emptyset : 'a t
     val add : 'a -> 'a t -> 'a t
