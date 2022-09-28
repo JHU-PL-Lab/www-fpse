@@ -165,12 +165,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">#</span> <span class="n">n_list_to_yojson</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
 <span class="nt">`List</span> <span class="p">[</span><span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"A"</span><span class="p">];</span> <span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"A"</span><span class="p">];</span> <span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"G"</span><span class="p">]]</span>
+<span class="o">#</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">]</span> <span class="o">|&gt;</span> <span class="n">n_list_to_yojson</span> <span class="o">|&gt;</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">pretty_to_string</span> <span class="o">|&gt;</span> <span class="n">print_endline</span><span class="p">;;</span>
+<span class="p">[</span> <span class="p">[</span> <span class="s2">"A"</span> <span class="p">]</span><span class="o">,</span> <span class="p">[</span> <span class="s2">"A"</span> <span class="p">]</span><span class="o">,</span> <span class="p">[</span> <span class="s2">"G"</span> <span class="p">]</span> <span class="p">]</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
 </code></pre></div></div>
-
-<p><strong>Aside</strong>: <code>ppx_deriving_yojson</code> is not compatible with <code>ppx_jane</code> so if you want to derive equality and comparisons along with <code>yojson</code> you need to use <code>#require "ppx_deriving.eq";; / [@@deriving eq]</code> and <code>#require "ppx_deriving.ord";; / [@@deriving ord]</code> in place of the <code>equal/compare</code> deriving in <code>ppx_jane</code>.</p>
-<h2 id="defining-modules-in-the-top-loop">Defining Modules in the top loop</h2>
-
 <ul>
+  <li>See the docs for more examples, in particular for records which is the bread and butter of JSON data: key-value collections.</li>
+  <li><strong>Aside</strong>: <code>ppx_deriving_yojson</code> is not compatible with <code>ppx_jane</code> so if you want to derive equality and comparisons along with <code>yojson</code> you need to use <code>#require "ppx_deriving.eq";; / [@@deriving eq]</code> and <code>#require "ppx_deriving.ord";; / [@@deriving ord]</code> in place of the <code>equal/compare</code> deriving in <code>ppx_jane</code>.
+    <h2 id="defining-modules-in-the-top-loop">Defining Modules in the top loop</h2>
+  </li>
   <li>We will now cover how you can define modules in the top loop.</li>
   <li>The main reason we are covering this is it will help us understand nested modules and functors (functions on modules), even when in files</li>
   <li>Basic idea to input a module in top-loop: write <code>module My_module = struct ... end</code> with file contents inserted into the “..” part</li>

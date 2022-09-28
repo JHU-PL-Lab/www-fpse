@@ -29,7 +29,7 @@ module type Key =
 
 (* We are defining the School module; let us follow convention and name 
   "its" underlying data type t.  
-  Note that IntMap has one type parameter which is the map's range
+  Note that IntMap has one type parameter which is the map's value data
    -- string list for a School 
   (The functor only needed the key type since compare is not needed on values)
 *)

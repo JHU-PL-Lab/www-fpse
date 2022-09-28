@@ -92,9 +92,12 @@ val n_list_of_yojson :
 # n_list_to_yojson [A;A;G];;
 - : Yojson.Safe.t =
 `List [`List [`String "A"]; `List [`String "A"]; `List [`String "G"]]
+# [A;A;G] |> n_list_to_yojson |> Yojson.Safe.pretty_to_string |> print_endline;;
+[ [ "A" ], [ "A" ], [ "G" ] ]
+- : unit = ()
 ```
-
-**Aside**: `ppx_deriving_yojson` is not compatible with `ppx_jane` so if you want to derive equality and comparisons along with `yojson` you need to use `#require "ppx_deriving.eq";; / [@@deriving eq]` and `#require "ppx_deriving.ord";; / [@@deriving ord]` in place of the `equal/compare` deriving in `ppx_jane`. 
+* See the docs for more examples, in particular for records which is the bread and butter of JSON data: key-value collections.
+* **Aside**: `ppx_deriving_yojson` is not compatible with `ppx_jane` so if you want to derive equality and comparisons along with `yojson` you need to use `#require "ppx_deriving.eq";; / [@@deriving eq]` and `#require "ppx_deriving.ord";; / [@@deriving ord]` in place of the `equal/compare` deriving in `ppx_jane`. 
 ## Defining Modules in the top loop
 
 * We will now cover how you can define modules in the top loop.
