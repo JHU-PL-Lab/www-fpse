@@ -75,14 +75,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>The high-level goal is to have software that is “correct”</li>
-  <li>But there are vastly different degrees of precision on what “correct” means
+  <li>But there are vastly different degrees of precision on what to call “correct”
     <ul>
       <li>Informal spec.: we had some vague idea of what the code should do, wrote it, iteratively addressed feedback of users</li>
-      <li>Semi-formal spec.: Sat down with stakeholds, wrote out a specification document</li>
+      <li>Semi-formal spec.: Sat down with stakeholds, wrote out a specification document in English with a few pictures/formulas</li>
       <li>Rigorous spec.: Have an unambiguous mathematical notion of what correct behavior should be, write it out as the formal specification, make sure code meets it.</li>
     </ul>
   </li>
-  <li>In practice all of these modes can be fruitful depending on the project and the component of the project.</li>
+  <li>In practice all of these modes can be fruitful depending on the project.</li>
 </ul>
 
 <h3 id="forms-of-specification">Forms of specification</h3>
@@ -95,27 +95,36 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Types, e.g. writing an <code>.mli</code> file before implementing the code
     <ul>
+      <li>Gives a very rigorous, compiler-checked skeleton for the code</li>
       <li>Much more precise than the previous in terms of code/spec relationship, but limited expressiveness</li>
     </ul>
   </li>
   <li>Tests
     <ul>
-      <li>a test suite constitutes a specification on a finite window of behavior</li>
-      <li>Can be very accurate on the cases listed, but could be woefully incomplete</li>
+      <li>A test suite constitutes a specification on a finite window of behavior - can’t run all infinite cases</li>
+      <li>Can be 100% accurate on the cases tested, but could be woefully incomplete</li>
+      <li><em>Coverage</em> measurements can be used to help close the incompleteness gap somewhat (never fully however)</li>
     </ul>
   </li>
-  <li>Full logical assertions
+  <li>Full logical assertions specifying code behavior in terms of math
     <ul>
       <li>e.g. <em>precondition</em> on a function that tree parameter is a binary tree (left values &lt; right values)</li>
+      <li>e.g. <em>precondition</em> on a function that tree parameter is a <em>balanced</em> binary tree</li>
       <li>e.g. <em>postcondition</em> that <code>List.sort</code> always returns a sorted list</li>
+      <li>e.g. <em>precondition</em>/<em>postcondition</em> on tree <code>add</code> function that if the input tree is balanced the output tree will also be.</li>
       <li>e.g. <em>invariants</em> on data structures such as a <code>Set</code> implementation which uses an underlying always-sorted list.</li>
-      <li>More general than tests, but not necessarily verified (do at least write tests to verify on lots of examples)</li>
+      <li>e.g. <em>inductive invariants</em> on recursive algorithms, e.g. assuming that in the body of <code>reverse</code> that it works on a shorter list.</li>
+      <li>Logical assertions are more general than tests since they are for <em>all</em> inputs
+        <ul>
+          <li>but not necessarily verified (but, invariants do guide tests - write tests to verify on lots of examples)</li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li>Verified assertions aka formal methods
     <ul>
-      <li>after making the above logical assertions, <em>verify</em> the code meets the assertions</li>
-      <li>now this is mostly research, but becoming more mainstream</li>
+      <li>After making the above logical assertions, <em>verify</em> the code meets the assertions using a verification tool</li>
+      <li>Now this is mostly research, but becoming more mainstream</li>
     </ul>
   </li>
 </ul>
@@ -130,10 +139,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>With time the annoyance turns to thanks (we promise!)</li>
     </ul>
   </li>
-  <li>Principle is: just to write code matching declared type will get you well on the way to an implementation
+  <li>Principle is: writing code that matches declared type will get you well on the way to an implementation
     <ul>
       <li>type errors point to code errors to be fixed</li>
-      <li>when the last type error drops, the code will often directly work</li>
+      <li>when the last type error drops, the code may directly work</li>
     </ul>
   </li>
 </ul>
@@ -241,36 +250,41 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Precondition on <code>remove</code>: <code>s</code> is not empty (it would always fail otherwise)</li>
-  <li>Stronger precondition: <code>contains x s</code> must hold</li>
+  <li>Stronger precondition on <code>remove</code>: <code>contains x s</code> must hold</li>
   <li>Postcondition on <code>remove</code> for it returning set <code>s'</code>:  <code>not(contains x s')</code> - ??
     <ul>
-      <li>No, this set data structure could be a multiset and this will not always hold!</li>
-      <li>If we had this postcondition on our spec we would know our implementation failed</li>
+      <li>No, this simple “set” data structure is in fact a multiset and this will not always hold!</li>
+      <li>If we had this postcondition on our spec we would see our implementation failed to meet it</li>
     </ul>
   </li>
   <li>Postcondition on <code>add x s</code>: for the resulting set <code>s'</code>, <code>contains x s'</code> holds</li>
 </ul>
 
-<h4 id="assertions">Assertions</h4>
+<h4 id="assertions-in-code">Assertions in code</h4>
 
 <ul>
   <li>OCaml <code>assert</code> can be placed in code to directly verify properties
     <ul>
       <li>program dies if the assertion fails, it should always hold</li>
+      <li>silently returns <code>()</code> if it succeeds</li>
     </ul>
   </li>
   <li>Example new version of <code>add</code> above:
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> 
-<span class="k">let</span> <span class="n">s'</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span> <span class="k">in</span> <span class="k">assert</span> <span class="p">(</span><span class="n">contains</span> <span class="n">x</span> <span class="n">s'</span><span class="p">)</span>
+<span class="k">let</span> <span class="n">s'</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span> <span class="k">in</span> <span class="k">assert</span> <span class="p">(</span><span class="n">contains</span> <span class="n">x</span> <span class="n">s'</span><span class="p">);</span> <span class="n">s'</span>
 </code></pre></div>    </div>
   </li>
   <li>Good for development mode, but not after deployment (slows things down)</li>
-  <li>Often better to make tests that enforce assertions instead of using <code>assert</code>
+  <li>Often better to make tests to spot-check assertions instead of using <code>assert</code>
     <ul>
       <li><a href="https://github.com/janestreet/ppx_inline_test"><code>ppx_inline_tests</code></a> is a library where you can write tests in-line with your code</li>
       <li>example: <code>let s_test = .. in let%test_unit "add adds" = assert (contains (add s_test x) x)</code></li>
       <li>inline tests both document invariants and serve as tests: two-for-one!</li>
-      <li>They also allow functions and data structures hidden in a module to be tested</li>
+      <li>They also allow functions and data structures hidden in a module to be tested
+        <ul>
+          <li>one issue with OCaml’s modules is the tester module needs to see the local functions in the library module so they need to be made non-local for that - oops</li>
+        </ul>
+      </li>
     </ul>
   </li>
 </ul>
@@ -278,7 +292,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="data-structure-invariants">Data structure invariants</h3>
 
 <ul>
-  <li>It is often the case that there are additional restrictions on values allowed in a data structure type</li>
+  <li>It is often the case that there are additional restrictions on values allowed in a data structure type
+    <ul>
+      <li>ordered tree and balanced tree examples from above</li>
+    </ul>
+  </li>
   <li>Example from <code>dict</code> on homework: <code>is_ordered</code> must hold for the binary tree.</li>
   <li>Such data structure invariants should be made clear in the code documentation</li>
 </ul>
@@ -286,8 +304,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="recursion-invariants">Recursion Invariants</h3>
 
 <ul>
-  <li>Recursion and other loops (e.g. in fold) is a prime place to assert invariants</li>
-  <li>(Even if you don’t write them out, <em>thinking</em> of the invariants are critical to any recursive program)</li>
+  <li>Recursion and other loops (e.g. in <code>fold</code>) is a prime place to assert invariants</li>
+  <li>(Even if you don’t write them out, <em>thinking</em> of the invariants are critical to coding recursive programs)</li>
   <li>A standard invariant for recursive functions is that the recursive calls return what the outer function expected</li>
 </ul>
 
@@ -302,29 +320,29 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>So, our main focus is on <em>partial</em> specs, give sanity conditions and not complete property</li>
 </ul>
 
-<h3 id="invariants-over-folds-etc">Invariants over folds etc</h3>
+<h3 id="invariants-over-folds-as-examples">Invariants over folds as examples</h3>
 
 <ul>
   <li>In re-implementing some of the common <code>List</code> functions with <code>fold</code>s it helps to think of the invariant</li>
   <li>Folding left (<code>List.fold</code>):
     <ul>
       <li>Suppose we are at some arbitrary point processing the fold;</li>
-      <li>assume accumulation <code>a</code> has “the result of the task” for all elements to the left</li>
-      <li>require <code>~f</code> to then “do the task” to incorporate the current element <code>x</code></li>
-      <li>also assume <code>a</code> is initially <code>init</code></li>
+      <li>assume accumulation <code>accum</code> has “the result of the task” for all elements to the left in the list</li>
+      <li>require <code>~f</code> to then “do the task” to incorporate the current element <code>elt</code></li>
+      <li>also assume <code>accum</code> is initially <code>init</code></li>
     </ul>
   </li>
   <li>Folding right: just flip the order the list is walked over in the above</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* invariant for length a: a is length of list up to here *)</span>
-<span class="k">let</span> <span class="n">length</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">a</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="n">l</span> 
-<span class="c">(* invariant for rev a: a is reverse of list up to here *)</span>
-<span class="k">let</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span>  <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">a</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">::</span><span class="n">a</span><span class="p">)</span> <span class="n">l</span> 
-<span class="c">(* invariant for map a: a is f applied to each element of list up to here *)</span>
-<span class="k">let</span> <span class="n">map</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span>  <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span><span class="o">::</span><span class="n">a</span><span class="p">)</span> <span class="n">l</span>
+<span class="k">let</span> <span class="n">length</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">l</span> 
+<span class="c">(* invariant for rev accum: accum is reverse of list up to here *)</span>
+<span class="k">let</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span>  <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">elt</span><span class="o">::</span><span class="n">accum</span><span class="p">)</span> <span class="n">l</span> 
+<span class="c">(* invariant for map accum: accum is f applied to each element of list up to here *)</span>
+<span class="k">let</span> <span class="n">map</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span>  <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">elt</span><span class="p">)</span><span class="o">::</span><span class="n">accum</span><span class="p">)</span> <span class="n">l</span>
 <span class="c">(* etc *)</span>
-<span class="k">let</span> <span class="n">filter</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">f</span> <span class="n">x</span> <span class="k">then</span> <span class="n">x</span><span class="o">::</span><span class="n">a</span> <span class="k">else</span> <span class="n">a</span><span class="p">)</span> <span class="n">l</span>
+<span class="k">let</span> <span class="n">filter</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">f</span> <span class="n">elt</span> <span class="k">then</span> <span class="n">elt</span><span class="o">::</span><span class="n">accum</span> <span class="k">else</span> <span class="n">accum</span><span class="p">)</span> <span class="n">l</span>
 </code></pre></div></div>
 
 <h3 id="formal-verification">Formal Verification</h3>
@@ -376,13 +394,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h3 id="standard-categories-of-tests">Standard categories of tests</h3>
 <ul>
-  <li><strong>Unit testing</strong>: what you have mainly done – test the small pieces of the app</li>
-  <li><strong>Acceptance testing</strong>: test the bigger pieces.
+  <li><strong>Unit testing</strong>: what you have mainly done – test the small pieces of the app; no I/O testing</li>
+  <li><strong>Acceptance testing</strong>: test the bigger pieces including I/O
     <ul>
-      <li>For example testing your <code>histo.exe</code> on a certain fixed directory tree.</li>
+      <li>For example testing your <code>keywordcount.exe</code> on a certain fixed directory tree.</li>
     </ul>
   </li>
-  <li><strong>Random testing</strong> aka fuzz testing aka monkey testing aka property-based testing aka quickcheck: test on inputs generated randomly from a distribution</li>
+  <li><strong>Random testing</strong> of which there are many types: fuzz testing / monkey testing / property-based testing / quickcheck:
+    <ul>
+      <li>all test on data generated <strong>randomly</strong> from some distribution</li>
+      <li>“quickcheck”ing is running unit tests on randomly generated data (random lists of ints, etc)</li>
+      <li>“fuzz testing” is running acceptance tests with random input strings supplied.</li>
+    </ul>
+  </li>
 </ul>
 
 <h3 id="testing-and-coverage">Testing and coverage</h3>
@@ -426,7 +450,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="how-the-tests-run">How the tests run</h4>
 <ul>
-  <li>The above <code>tests.ml</code> file is just defining an executable, like <code>histo.exe</code> on HW2</li>
+  <li>The above <code>tests.ml</code> file is just defining an executable, like <code>keywordcount.exe</code> on HW2</li>
   <li>Build and run the executable to run the tests</li>
   <li>Here a dune build file which would work for the simple set tests for example:</li>
 </ul>

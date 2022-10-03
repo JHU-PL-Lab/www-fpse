@@ -9,29 +9,35 @@
 ### Correctness
 
 * The high-level goal is to have software that is "correct"
-* But there are vastly different degrees of precision on what "correct" means
+* But there are vastly different degrees of precision on what to call "correct"
    - Informal spec.: we had some vague idea of what the code should do, wrote it, iteratively addressed feedback of users
-   - Semi-formal spec.: Sat down with stakeholds, wrote out a specification document
+   - Semi-formal spec.: Sat down with stakeholds, wrote out a specification document in English with a few pictures/formulas
    - Rigorous spec.: Have an unambiguous mathematical notion of what correct behavior should be, write it out as the formal specification, make sure code meets it.
-* In practice all of these modes can be fruitful depending on the project and the component of the project.
+* In practice all of these modes can be fruitful depending on the project.
 
 ### Forms of specification
 
 * Requirements and Design documents: high-level informal descriptions of what the app should do
   - This is the classic form of specification in software engineering; far from code
 * Types, e.g. writing an `.mli` file before implementing the code
+  - Gives a very rigorous, compiler-checked skeleton for the code
   - Much more precise than the previous in terms of code/spec relationship, but limited expressiveness
 * Tests
-  - a test suite constitutes a specification on a finite window of behavior
-  - Can be very accurate on the cases listed, but could be woefully incomplete
-* Full logical assertions
+  - A test suite constitutes a specification on a finite window of behavior - can't run all infinite cases
+  - Can be 100% accurate on the cases tested, but could be woefully incomplete
+  - *Coverage* measurements can be used to help close the incompleteness gap somewhat (never fully however)
+* Full logical assertions specifying code behavior in terms of math
   - e.g. *precondition* on a function that tree parameter is a binary tree (left values < right values)
+  - e.g. *precondition* on a function that tree parameter is a *balanced* binary tree
   - e.g. *postcondition* that `List.sort` always returns a sorted list
+  - e.g. *precondition*/*postcondition* on tree `add` function that if the input tree is balanced the output tree will also be.
   - e.g. *invariants* on data structures such as a `Set` implementation which uses an underlying always-sorted list.
-  - More general than tests, but not necessarily verified (do at least write tests to verify on lots of examples)
+  - e.g. *inductive invariants* on recursive algorithms, e.g. assuming that in the body of `reverse` that it works on a shorter list.
+  - Logical assertions are more general than tests since they are for *all* inputs
+    - but not necessarily verified (but, invariants do guide tests - write tests to verify on lots of examples)
 * Verified assertions aka formal methods
-  - after making the above logical assertions, *verify* the code meets the assertions
-  - now this is mostly research, but becoming more mainstream
+  - After making the above logical assertions, *verify* the code meets the assertions using a verification tool
+  - Now this is mostly research, but becoming more mainstream
 
 ### Type-directed programming
 
@@ -39,9 +45,9 @@ Fact: types outline the "shape" of the code you need to write and serve as a "st
 
  * You have been doing type-directed programming, perhaps getting very annoyed whilst
    - With time the annoyance turns to thanks (we promise!)
- * Principle is: just to write code matching declared type will get you well on the way to an implementation
+ * Principle is: writing code that matches declared type will get you well on the way to an implementation
    - type errors point to code errors to be fixed
-   - when the last type error drops, the code will often directly work
+   - when the last type error drops, the code may directly work
 
 Review example: not bubbling up `option` or other wrapped results properly
 
@@ -139,38 +145,41 @@ end
 ```
 
 * Precondition on `remove`: `s` is not empty (it would always fail otherwise)
-* Stronger precondition: `contains x s` must hold
+* Stronger precondition on `remove`: `contains x s` must hold
 * Postcondition on `remove` for it returning set `s'`:  `not(contains x s')` - ??
-  - No, this set data structure could be a multiset and this will not always hold!
-  - If we had this postcondition on our spec we would know our implementation failed
+  - No, this simple "set" data structure is in fact a multiset and this will not always hold!
+  - If we had this postcondition on our spec we would see our implementation failed to meet it
 * Postcondition on `add x s`: for the resulting set `s'`, `contains x s'` holds
 
-#### Assertions
+#### Assertions in code
 
 * OCaml `assert` can be placed in code to directly verify properties
   - program dies if the assertion fails, it should always hold
+  - silently returns `()` if it succeeds
 * Example new version of `add` above:
 ```ocaml
 let add (x : M.t) (s : t) = 
-  let s' = (x :: s) in assert (contains x s')
+  let s' = (x :: s) in assert (contains x s'); s'
 ```
 * Good for development mode, but not after deployment (slows things down)
-* Often better to make tests that enforce assertions instead of using `assert`
+* Often better to make tests to spot-check assertions instead of using `assert`
   - [`ppx_inline_tests`](https://github.com/janestreet/ppx_inline_test) is a library where you can write tests in-line with your code
   - example: `let s_test = .. in let%test_unit "add adds" = assert (contains (add s_test x) x)`
   - inline tests both document invariants and serve as tests: two-for-one!
   - They also allow functions and data structures hidden in a module to be tested
+    - one issue with OCaml's modules is the tester module needs to see the local functions in the library module so they need to be made non-local for that - oops
 
 ### Data structure invariants
 
 * It is often the case that there are additional restrictions on values allowed in a data structure type
+  - ordered tree and balanced tree examples from above
 * Example from `dict` on homework: `is_ordered` must hold for the binary tree.
 * Such data structure invariants should be made clear in the code documentation
 
 ### Recursion Invariants
 
-* Recursion and other loops (e.g. in fold) is a prime place to assert invariants
-* (Even if you don't write them out, *thinking* of the invariants are critical to any recursive program)
+* Recursion and other loops (e.g. in `fold`) is a prime place to assert invariants
+* (Even if you don't write them out, *thinking* of the invariants are critical to coding recursive programs)
 * A standard invariant for recursive functions is that the recursive calls return what the outer function expected
 
 ```ocaml
@@ -183,25 +192,25 @@ let rec rev l =
  * In general a big issue with specification is it is often hard to give a code-based definition of the full spec.
  * So, our main focus is on *partial* specs, give sanity conditions and not complete property
 
-### Invariants over folds etc
+### Invariants over folds as examples
 
 * In re-implementing some of the common `List` functions with `fold`s it helps to think of the invariant
 * Folding left (`List.fold`):
    - Suppose we are at some arbitrary point processing the fold;
-   - assume accumulation `a` has "the result of the task" for all elements to the left
-   - require `~f` to then "do the task" to incorporate the current element `x`
-   - also assume `a` is initially `init`
+   - assume accumulation `accum` has "the result of the task" for all elements to the left in the list
+   - require `~f` to then "do the task" to incorporate the current element `elt`
+   - also assume `accum` is initially `init`
 * Folding right: just flip the order the list is walked over in the above
 
 ```ocaml
 (* invariant for length a: a is length of list up to here *)
-let length l = List.fold ~init:0 ~f:(fun a _ -> a+1) l 
-(* invariant for rev a: a is reverse of list up to here *)
-let rev l = List.fold ~init:[]  ~f:(fun a x -> x::a) l 
-(* invariant for map a: a is f applied to each element of list up to here *)
-let map ~f l = List.fold_right ~init:[]  ~f:(fun x a -> (f x)::a) l
+let length l = List.fold ~init:0 ~f:(fun accum _ -> accum + 1) l 
+(* invariant for rev accum: accum is reverse of list up to here *)
+let rev l = List.fold ~init:[]  ~f:(fun accum elt -> elt::accum) l 
+(* invariant for map accum: accum is f applied to each element of list up to here *)
+let map ~f l = List.fold_right ~init:[]  ~f:(fun elt accum -> (f elt)::accum) l
 (* etc *)
-let filter ~f l = List.fold_right ~init:[] ~f:(fun x a -> if f x then x::a else a) l
+let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then elt::accum else accum) l
 ```
 
 ### Formal Verification
@@ -234,10 +243,13 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun x a -> if f x then x::a else 
   - Glass-box tests are in the context of bugs in the code and other code properties
 
 ### Standard categories of tests
-* **Unit testing**: what you have mainly done -- test the small pieces of the app
-* **Acceptance testing**: test the bigger pieces.  
-  - For example testing your `histo.exe` on a certain fixed directory tree.
-* **Random testing** aka fuzz testing aka monkey testing aka property-based testing aka quickcheck: test on inputs generated randomly from a distribution
+* **Unit testing**: what you have mainly done -- test the small pieces of the app; no I/O testing
+* **Acceptance testing**: test the bigger pieces including I/O
+  - For example testing your `keywordcount.exe` on a certain fixed directory tree.
+* **Random testing** of which there are many types: fuzz testing / monkey testing / property-based testing / quickcheck: 
+  - all test on data generated **randomly** from some distribution
+  - "quickcheck"ing is running unit tests on randomly generated data (random lists of ints, etc)
+  - "fuzz testing" is running acceptance tests with random input strings supplied.
 
 ### Testing and coverage
 
@@ -271,7 +283,7 @@ let () = run_test_tt_main tests
 * Then, `OUnit2.run_test_tt_main tests` will run the suite `tests`
 
 #### How the tests run
-* The above `tests.ml` file is just defining an executable, like `histo.exe` on HW2
+* The above `tests.ml` file is just defining an executable, like `keywordcount.exe` on HW2
 * Build and run the executable to run the tests
 * Here a dune build file which would work for the simple set tests for example:
 
