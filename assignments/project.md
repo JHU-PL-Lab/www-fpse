@@ -203,7 +203,7 @@ Here are a few FPSE projects from past years to give you an idea of the scope et
 * [Spotify Classifier](https://github.com/angibenton/spotify-song-classifier)
 * [Gomoku](https://github.com/shintyl/gomoku_fpse)
 * [MLB HOF Projections](https://github.com/most21/mlb-hof-predictions-demo)
-* [TradeML]https://github.com/robertzhidealx/trade-ml
+* [TradeML](https://github.com/robertzhidealx/trade-ml)
 * [Rubiks Wrecker](https://github.com/acaswell1/rubiks-wrecker)
 * [Connect 4](https://github.com/sallocc/ocaml-final)
 * [FFXIV-Market-Flipper](https://github.com/XiangyuShen/FFXIV-Market-Flipper)
