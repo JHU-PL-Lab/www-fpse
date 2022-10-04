@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="/fpse/assignments/">Assignments</a>
+          <li><a href="https://courselore.org/courses/0644001341">Q&A</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="assignment-3-modules-and-testing">Assignment 3: Modules and Testing</h2>
+
+<p>For Part I of this assignment you will be writing various modules, module types,<br />
+and functors, to better understand how they work.  You will also use them<br />
+so you have a better idea how they can help in practice.</p>
+
+<p>For Part II you will write your own test suite from scratch, and configure it to use<br />
+the Bisect code coverage tool which will verify you have good coverage with your tests.  You will also need to document a few invariants in your tests, which we describe below.</p>
+
+<p>As usual we will give two due dates for the two parts.</p>
+
+<h3 id="the-file-structure">The file structure</h3>
+
+<ul>
+  <li><a href="http://pl.cs.jhu.edu/fpse/assignments/assignment3.zip">Use the this zip file</a> for your assignment.</li>
+  <li>Like assignment 1-2, we are giving you a skeleton to fill in.  Your Part I and II answers will go in the files  <code>assignment3/src/abstraction.ml</code> and <code>assignment3/test/</code>.</li>
+  <li>Part I consists of questions 1-3 and your own tests for those questions in <code>assignment3/test/tests.ml</code> as well as a <code>dune</code> file to run them.  For Part I you need to write some basic tests, we will mainly just sure you have a couple. The bulk of the testing will be in Part II.</li>
+  <li>Part II consists of question 4, your own tests for that question, as well as making sure your overall coverage with <code>bisect</code> is good.</li>
+</ul>
+
+<h3 id="coverage-and-invariants-for-part-ii">Coverage and Invariants for Part II</h3>
+<ul>
+  <li>You will need to incorporate the Bisect tool into your dune build file as was described in lecture, and use its output to improve the coverage of your test suite.  Test coverage will be a component of your grade.</li>
+  <li>Lastly you will need to write a special suite of tests which you will name “Invariant Checking” which asserts five <em>different</em> invariant properties holding on function defined in <code>abstraction.ml</code>.  We gave several examples of such propertes in lecture, for example <code>List.rev @@ List.rev l</code> is <code>l</code> for any list <code>l</code>.  Such properties are useful to verify with quickchecking, but here you need to just test each property on specific cases.</li>
+</ul>
+
+<p>For each of the above, add your specifications as comments to your existing code.  You don’t need to add any <code>assert</code>s.  But do try to make your assertions precise.</p>
+
+<h3 id="resources">Resources</h3>
+<p>Here are a few resources to keep in mind to help with this assignment.</p>
+
+<ul>
+  <li>Make sure to review the <a href="https://pl.cs.jhu.edu/fpse/lecture/more-modules.html">More Modules lecture notes</a> for Part I.</li>
+  <li>If you feel like you need more on the subtleties of information hiding in functors, the <a href="https://dev.realworldocaml.org/functors.html">Real World OCaml book chapter on functors</a> may be worth looking at.</li>
+  <li>For coverage in part II this was covered in the <a href="https://pl.cs.jhu.edu/fpse/lecture/specification-test.html">Specification and Testing Lecture</a>; these notes also contain links to OUnit and Bisect documentation.</li>
+</ul>
+
+<h3 id="submission-and-grading">Submission and Grading</h3>
+<ul>
+  <li>As usual, run a final <code>dune clean; dune build</code> and then upload <code>_build/default/assignment3.zip</code> to Gradescope.  Note we will be giving you very little information in our report since you need to provide good coverage on your own and not rely on Gradescope.</li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+				</div>			
+
+
+   </body>
+</html>
