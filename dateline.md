@@ -223,7 +223,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body"><a href="lecture/specification-test.html">Specification and Testing</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body"><a href="assignments/assignment3.html">A3</a></div>
+            <div align="center" class="body"><a href="assignments/assignment3.html">A3 (Tues)</a></div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -260,7 +260,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A3 PI Fri</div>
+            <div align="center" class="body">A3 PI</div>
           </td>
         </tr>
         <tr> 
@@ -294,7 +294,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A3 P2</div>
+            <div align="center" class="body">A3 PII</div>
           </td>
         </tr>
         <tr> 
