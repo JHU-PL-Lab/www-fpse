@@ -278,8 +278,23 @@ let tests = "test suite for set" >::: [
 let () = run_test_tt_main tests
 ```
 
-* The infix `>::` operator takes a string (left) and a function with `_` argument (right) and builds a single test
-* The `>:::` operator simply takes an OCaml list of the above and builds a test suite
+* The infix `>::` operator takes a string (test name) and a piece of test code under `fun _ ->` (to keep it from running right away) and builds a single test of type `test`:
+  ```ocaml
+  # let test1 = "simple test" >:: fun _ -> assert_equal (2 :: []) [2];;
+    val test1 : test =
+    TestLabel ("simple test",
+    TestCase (Short, <fun>))
+   ```
+
+* The `>:::` operator simply takes a `test list` and builds a test suite (which in fact is just of type `test`)
+  ```ocaml
+  # let test_suite = "suite now" >::: [test1];;
+  val test_suite : test =
+  TestLabel ("suite now",
+   TestList
+    [TestLabel ("simple test",
+      TestCase (Short, <fun>))])
+  ```
 * Then, `OUnit2.run_test_tt_main tests` will run the suite `tests`
 
 #### How the tests run
@@ -314,36 +329,12 @@ let () = run_test_tt_main tests
   ))
   ```
 
-### Tangent: defining infix operators
 
-* The OUnit infix operators `>::`/`>:::` are just like `+`, `^` etc
+### Higher-order testing
 
-```ocaml
-# #require "ounit2";;
-# open OUnit2;;
-# (>::) ;;
-- : string -> test_fun -> test = <fun>
-# (>:::);;
-- : string -> test list -> test = <fun>
-```
-
-* There is no magic to this, you can also do it:
-
-```ocaml
-utop # let (^^) x y = x + y;;
-val ( ^^ ) : int -> int -> int = <fun>
-utop # 3 ^^ 5;;
-- : int = 8
-```
-* Note unlike in C++ we are not overloading operators, `^^` only works on two ints now.
-* The old version of `^^` for printing just got nuked.
-* So, new infix ops are always defined within a module to avoid overlap
-* OCaml will eventually have overloading but it is still in the development pipe
-
-### Building test suites with OUnit
-
-* The OUnit philosophy is to use OCaml functions to pull out the repeated code in your suite
-* Simple example of testing one function on a bunch of lists:
+* If you did unit testing in other languages it looks pretty much like the above
+* But in OCaml we can make tests more programatically which makes for less code duplication
+* Example: lets make a bunch of different tests on the same invariant, that reversing a list twice is a no-op:
 
 ```ocaml
 # let make_rev_test l = ("test test" >:: (fun _ -> assert_equal(List.rev @@ List.rev l) l));; 
@@ -381,13 +372,42 @@ type test =
 | TestLabel of string * test
 ```
 
-* We will now take a brief pass through the 
-OUnit [Overview docs](https://gildor478.github.io/ounit/ounit2/index.html) and [API docs](http://ocaml.github.io/platform-dev/packages/ounit/ounit.2.0.0/doc/oUnit/OUnit2/)
-  - Testing if exception that should have been raised was raised: `assert_raises`
-  - If you need fixed setup/teardown code bracketing a group of tests: `bracket`
-    - useful for large mutable structures or external databases, etc
-  - Testing applications (aka acceptance testing): `assert_command` to run your app
-    - Really not OCaml-specific, tests input/output of any executable
+### Tangent: defining infix operators
+
+* The OUnit infix operators `>::`/`>:::` are just like `+`, `^` etc
+
+```ocaml
+# #require "ounit2";;
+# open OUnit2;;
+# (>::) ;;
+- : string -> test_fun -> test = <fun>
+# (>:::);;
+- : string -> test list -> test = <fun>
+```
+
+* There is no magic to this, you can also do it:
+
+```ocaml
+utop # let (^^) x y = x + y;;
+val ( ^^ ) : int -> int -> int = <fun>
+utop # 3 ^^ 5;;
+- : int = 8
+```
+* Note unlike in C++ we are not overloading operators, `^^` only works on two ints now.
+* The old version of `^^` for printing just got nuked.
+* So, new infix ops are always defined within a module to avoid overlap
+* OCaml will eventually have overloading but it is still in the development pipe
+
+### Making actual tests
+
+* We used `assert_equal` above which is the OUnit function to check things being equal
+* `assert_bool` which is like the `assert` OCaml command: `assert_bool "name that test" (0=0)` for example
+* If you want to verify some code raises an exception, use `assert_raises`
+* To perform acceptance testing (I/O), use `assert_command` to run a shell command and compare against output
+* If you need fixed setup/teardown code bracketing a group of tests to setup e.g. files: `bracket_tmpfile`
+
+As always, see the documentation for more details: 
+OUnit [API docs](https://ocaml.org/p/ounit2/2.2.3/doc/index.html)
 
 ### Bisect for OCaml code coverage
 
@@ -427,17 +447,16 @@ We will check how well my tests of the simple set example covered the code using
 
 * We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](../examples/quickcheck_examples.ml)
 
-* [Base_quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/base_quickcheck/Base_quickcheck/index.html)
-* [Quickcheck docs](https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Quickcheck/index.html)
+* [Base_quickcheck docs](https://ocaml.org/p/base_quickcheck/v0.15.0/doc/Base_quickcheck/index.html)
+* The [Real World OCaml](https://dev.realworldocaml.org/testing.html#property-testing-with-quickcheck) book has a short tutorial (it uses `ppx_inline_tests` and not `OUnit2` but)
 
 
+### Fuzz testing vs Quickcheck
 
-### Fuzz testing vs Random Testing
-
-* We are focusing on random testing (aka property-based testing) now but fuzz testing also important
-* Slogan: "fuzz testing is to acceptance tests as random testing is to unit tests"
+* We are focusing on quickchecking (aka property-based testing) now but fuzz testing also important
+* Fuzz testing is to acceptance tests as quickcheck is to unit tests
   - fuzzers feed in inputs on `stdio` and other input channels to whole app
-  - random testers are internally generating random data
+  - quickcheckers are internally generating random data
 * Industry fuzz testers do a lot more more than generate totally random data
   - They may be aware that the string input should fit a particular grammar, e.g. html
   - They may be combined with a coverage tool and work to find random data "covering" all the code

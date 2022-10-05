@@ -443,8 +443,22 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>The infix <code>&gt;::</code> operator takes a string (left) and a function with <code>_</code> argument (right) and builds a single test</li>
-  <li>The <code>&gt;:::</code> operator simply takes an OCaml list of the above and builds a test suite</li>
+  <li>The infix <code>&gt;::</code> operator takes a string (test name) and a piece of test code under <code>fun _ -&gt;</code> (to keep it from running right away) and builds a single test of type <code>test</code>:
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">test1</span> <span class="o">=</span> <span class="s2">"simple test"</span> <span class="o">&gt;::</span> <span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="mi">2</span> <span class="o">::</span> <span class="bp">[]</span><span class="p">)</span> <span class="p">[</span><span class="mi">2</span><span class="p">];;</span>
+  <span class="k">val</span> <span class="n">test1</span> <span class="o">:</span> <span class="n">test</span> <span class="o">=</span>
+  <span class="nc">TestLabel</span> <span class="p">(</span><span class="s2">"simple test"</span><span class="o">,</span>
+  <span class="nc">TestCase</span> <span class="p">(</span><span class="nc">Short</span><span class="o">,</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span><span class="p">))</span>
+</code></pre></div>    </div>
+  </li>
+  <li>The <code>&gt;:::</code> operator simply takes a <code>test list</code> and builds a test suite (which in fact is just of type <code>test</code>)
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">test_suite</span> <span class="o">=</span> <span class="s2">"suite now"</span> <span class="o">&gt;:::</span> <span class="p">[</span><span class="n">test1</span><span class="p">];;</span>
+<span class="k">val</span> <span class="n">test_suite</span> <span class="o">:</span> <span class="n">test</span> <span class="o">=</span>
+<span class="nc">TestLabel</span> <span class="p">(</span><span class="s2">"suite now"</span><span class="o">,</span>
+ <span class="nc">TestList</span>
+  <span class="p">[</span><span class="nc">TestLabel</span> <span class="p">(</span><span class="s2">"simple test"</span><span class="o">,</span>
+    <span class="nc">TestCase</span> <span class="p">(</span><span class="nc">Short</span><span class="o">,</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span><span class="p">))])</span>
+</code></pre></div>    </div>
+  </li>
   <li>Then, <code>OUnit2.run_test_tt_main tests</code> will run the suite <code>tests</code></li>
 </ul>
 
@@ -482,41 +496,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="p">))</span>
 </code></pre></div></div>
 
-<h3 id="tangent-defining-infix-operators">Tangent: defining infix operators</h3>
+<h3 id="higher-order-testing">Higher-order testing</h3>
 
 <ul>
-  <li>The OUnit infix operators <code>&gt;::</code>/<code>&gt;:::</code> are just like <code>+</code>, <code>^</code> etc</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ounit2"</span><span class="p">;;</span>
-<span class="o">#</span> <span class="k">open</span> <span class="nc">OUnit2</span><span class="p">;;</span>
-<span class="o">#</span> <span class="p">(</span><span class="o">&gt;::</span><span class="p">)</span> <span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">test_fun</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-<span class="o">#</span> <span class="p">(</span><span class="o">&gt;:::</span><span class="p">);;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-</code></pre></div></div>
-
-<ul>
-  <li>There is no magic to this, you can also do it:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">utop</span> <span class="o">#</span> <span class="k">let</span> <span class="p">(</span><span class="o">^^</span><span class="p">)</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;;</span>
-<span class="k">val</span> <span class="p">(</span> <span class="o">^^</span> <span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-<span class="n">utop</span> <span class="o">#</span> <span class="mi">3</span> <span class="o">^^</span> <span class="mi">5</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">8</span>
-</code></pre></div></div>
-<ul>
-  <li>Note unlike in C++ we are not overloading operators, <code>^^</code> only works on two ints now.</li>
-  <li>The old version of <code>^^</code> for printing just got nuked.</li>
-  <li>So, new infix ops are always defined within a module to avoid overlap</li>
-  <li>OCaml will eventually have overloading but it is still in the development pipe</li>
-</ul>
-
-<h3 id="building-test-suites-with-ounit">Building test suites with OUnit</h3>
-
-<ul>
-  <li>The OUnit philosophy is to use OCaml functions to pull out the repeated code in your suite</li>
-  <li>Simple example of testing one function on a bunch of lists:</li>
+  <li>If you did unit testing in other languages it looks pretty much like the above</li>
+  <li>But in OCaml we can make tests more programatically which makes for less code duplication</li>
+  <li>Example: lets make a bunch of different tests on the same invariant, that reversing a list twice is a no-op:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">make_rev_test</span> <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"test test"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span><span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">l</span><span class="p">)</span> <span class="n">l</span><span class="p">));;</span> 
@@ -555,24 +540,48 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">|</span> <span class="nc">TestLabel</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">*</span> <span class="n">test</span>
 </code></pre></div></div>
 
+<h3 id="tangent-defining-infix-operators">Tangent: defining infix operators</h3>
+
 <ul>
-  <li>We will now take a brief pass through the <br />
-OUnit <a href="https://gildor478.github.io/ounit/ounit2/index.html">Overview docs</a> and <a href="http://ocaml.github.io/platform-dev/packages/ounit/ounit.2.0.0/doc/oUnit/OUnit2/">API docs</a>
-    <ul>
-      <li>Testing if exception that should have been raised was raised: <code>assert_raises</code></li>
-      <li>If you need fixed setup/teardown code bracketing a group of tests: <code>bracket</code>
-        <ul>
-          <li>useful for large mutable structures or external databases, etc</li>
-        </ul>
-      </li>
-      <li>Testing applications (aka acceptance testing): <code>assert_command</code> to run your app
-        <ul>
-          <li>Really not OCaml-specific, tests input/output of any executable</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+  <li>The OUnit infix operators <code>&gt;::</code>/<code>&gt;:::</code> are just like <code>+</code>, <code>^</code> etc</li>
 </ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ounit2"</span><span class="p">;;</span>
+<span class="o">#</span> <span class="k">open</span> <span class="nc">OUnit2</span><span class="p">;;</span>
+<span class="o">#</span> <span class="p">(</span><span class="o">&gt;::</span><span class="p">)</span> <span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">test_fun</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="p">(</span><span class="o">&gt;:::</span><span class="p">);;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>There is no magic to this, you can also do it:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">utop</span> <span class="o">#</span> <span class="k">let</span> <span class="p">(</span><span class="o">^^</span><span class="p">)</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;;</span>
+<span class="k">val</span> <span class="p">(</span> <span class="o">^^</span> <span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="n">utop</span> <span class="o">#</span> <span class="mi">3</span> <span class="o">^^</span> <span class="mi">5</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">8</span>
+</code></pre></div></div>
+<ul>
+  <li>Note unlike in C++ we are not overloading operators, <code>^^</code> only works on two ints now.</li>
+  <li>The old version of <code>^^</code> for printing just got nuked.</li>
+  <li>So, new infix ops are always defined within a module to avoid overlap</li>
+  <li>OCaml will eventually have overloading but it is still in the development pipe</li>
+</ul>
+
+<h3 id="making-actual-tests">Making actual tests</h3>
+
+<ul>
+  <li>We used <code>assert_equal</code> above which is the OUnit function to check things being equal</li>
+  <li><code>assert_bool</code> which is like the <code>assert</code> OCaml command: <code>assert_bool "name that test" (0=0)</code> for example</li>
+  <li>If you want to verify some code raises an exception, use <code>assert_raises</code></li>
+  <li>To perform acceptance testing (I/O), use <code>assert_command</code> to run a shell command and compare against output</li>
+  <li>If you need fixed setup/teardown code bracketing a group of tests to setup e.g. files: <code>bracket_tmpfile</code></li>
+</ul>
+
+<p>As always, see the documentation for more details: <br />
+OUnit <a href="https://ocaml.org/p/ounit2/2.2.3/doc/index.html">API docs</a></p>
 
 <h3 id="bisect-for-ocaml-code-coverage">Bisect for OCaml code coverage</h3>
 
@@ -634,18 +643,18 @@ OUnit <a href="https://gildor478.github.io/ounit/ounit2/index.html">Overview doc
   <li>
     <p>We will look at several examples of the <code>Base_quickcheck</code> library in action in <a href="../examples/quickcheck_examples.ml">quickcheck_examples.ml</a></p>
   </li>
-  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base_quickcheck/Base_quickcheck/index.html">Base_quickcheck docs</a></li>
-  <li><a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Quickcheck/index.html">Quickcheck docs</a></li>
+  <li><a href="https://ocaml.org/p/base_quickcheck/v0.15.0/doc/Base_quickcheck/index.html">Base_quickcheck docs</a></li>
+  <li>The <a href="https://dev.realworldocaml.org/testing.html#property-testing-with-quickcheck">Real World OCaml</a> book has a short tutorial (it uses <code>ppx_inline_tests</code> and not <code>OUnit2</code> but)</li>
 </ul>
 
-<h3 id="fuzz-testing-vs-random-testing">Fuzz testing vs Random Testing</h3>
+<h3 id="fuzz-testing-vs-quickcheck">Fuzz testing vs Quickcheck</h3>
 
 <ul>
-  <li>We are focusing on random testing (aka property-based testing) now but fuzz testing also important</li>
-  <li>Slogan: “fuzz testing is to acceptance tests as random testing is to unit tests”
+  <li>We are focusing on quickchecking (aka property-based testing) now but fuzz testing also important</li>
+  <li>Fuzz testing is to acceptance tests as quickcheck is to unit tests
     <ul>
       <li>fuzzers feed in inputs on <code>stdio</code> and other input channels to whole app</li>
-      <li>random testers are internally generating random data</li>
+      <li>quickcheckers are internally generating random data</li>
     </ul>
   </li>
   <li>Industry fuzz testers do a lot more more than generate totally random data
@@ -661,7 +670,7 @@ OUnit <a href="https://gildor478.github.io/ounit/ounit2/index.html">Overview doc
       </div>
 
 				<div id="copyright">
-					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+					Web Design: TEMPLATED
 				</div>			
 
 
