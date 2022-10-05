@@ -56,7 +56,7 @@ let rand_list_pair = rand_from (Quickcheck.Generator.both int_list_gen int_list_
 (* So, primarily used to validate invariants or to make sure no exceptions are raised *)
 
 (* Simple failure example from Real World OCaml *)
-(* Quickcheck.test will run the ~f function on 1000 different random data items by default *)
+(* Quickcheck.test will run the ~f function on 10000 different random data items by default *)
 
 (* Replace `assert` with `OUnit2.assert_bool "test name"` and put it under fun _ -> and this code will be an OUnit test. *)
 let invariant x = assert(Sign.equal (Int.sign (Int.neg x)) (Sign.flip (Int.sign x)))

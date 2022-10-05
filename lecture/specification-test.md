@@ -238,7 +238,7 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
   - Writing tests before fully coding the answer makes the tests serve as your "coding spec"
   - Adding tests for corner cases will flesh out the spec
   - Adding tests covering past bugs will make sure they are caught quickly next time
- * Another way this is phrased: black-box (spec) and glass-box (code-based) testing
+ * Equivalent terminology you may see: black-box (spec) and glass-box (code-based) testing
   - Black-box tests are those written against the spec
   - Glass-box tests are in the context of bugs in the code and other code properties
 
@@ -248,8 +248,8 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
   - For example testing your `keywordcount.exe` on a certain fixed directory tree.
 * **Random testing** of which there are many types: fuzz testing / monkey testing / property-based testing / quickcheck: 
   - all test on data generated **randomly** from some distribution
-  - "quickcheck"ing is running unit tests on randomly generated data (random lists of ints, etc)
-  - "fuzz testing" is running acceptance tests with random input strings supplied.
+  - "quickcheck"ing aka property-based testing is running **unit** tests on randomly generated data (random lists of ints, etc)
+  - "fuzz testing" is running **acceptance** tests with random input strings supplied.
 
 ### Testing and coverage
 
@@ -260,7 +260,7 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
 
 ## OUnit2
 
-* We have been using `OUnit2` mostly as a black box up to now
+* We have been using the `OUnit2` library mostly as a black box up to now
 * Now we will go through the details, which are in fact very simple
   - There is not much in `OUnit2` per se, if you want something extra just write some higher-order functions to do it
 * Here is your standard simple `tests.ml` file, from the simple-set example:
@@ -333,7 +333,7 @@ let () = run_test_tt_main tests
 ### Higher-order testing
 
 * If you did unit testing in other languages it looks pretty much like the above
-* But in OCaml we can make tests more programatically which makes for less code duplication
+* But in OCaml we can make tests programatically which makes for less code duplication
 * Example: lets make a bunch of different tests on the same invariant, that reversing a list twice is a no-op:
 
 ```ocaml
@@ -432,23 +432,24 @@ We will check how well my tests of the simple set example covered the code using
 <a name = "quickcheck"></a>
 ## Base_quickcheck and Random Testing
 ### The big picture of random testing
-1. We need to be able to generate random data which is the parameters of the functions we wish to test
-  - Easy for first-order data, hard for functions; only do for the former
-2. We run the function on the random data
-3. We need to know if the test worked or not on the random data
-  - there can be a chicken vs egg issue here, in some cases it can be difficult to see if it worked
-  - so, some things are not amenable to random testing and other times only limited properties checked (e.g. no invariant assertion failures)
+
+  0. Suppose we have one function `f` that we want to test.
+  1. We need to be able to generate random data which is the parameters of `f`
+  2. We run `f` on different random data many times (say 100 or 10000 times)
+  3. We need to know if the test worked or not on the random data
+     - So, tests usually verify that invariants hold or some bad exception not raised etc.
+     - This is another reason invariants are good, they are properties that can be quickchecked
 ### Using `Base_quickcheck`
 
 * `Base_quickcheck` contains three key algorithms:
   1. Generators, `Quickcheck.Generator` - make random data of desired distribution in given type
-  2. Shrinkers, `Quickcheck.Shrinker` - if a failing case is discovered, try to make it smaller
+  2. Shrinkers, `Quickcheck.Shrinker` - if a failing case is discovered, try to make it smaller (we will not cover these in detail)
   3. Runner, `Quickcheck.test` etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.
 
 * We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](../examples/quickcheck_examples.ml)
 
 * [Base_quickcheck docs](https://ocaml.org/p/base_quickcheck/v0.15.0/doc/Base_quickcheck/index.html)
-* The [Real World OCaml](https://dev.realworldocaml.org/testing.html#property-testing-with-quickcheck) book has a short tutorial (it uses `ppx_inline_tests` and not `OUnit2` but)
+* The [Real World OCaml](https://dev.realworldocaml.org/testing.html#property-testing-with-quickcheck) book has a short tutorial (note it uses `ppx_inline_tests` and not `OUnit2`)
 
 
 ### Fuzz testing vs Quickcheck

@@ -387,7 +387,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Adding tests covering past bugs will make sure they are caught quickly next time</li>
     </ul>
   </li>
-  <li>Another way this is phrased: black-box (spec) and glass-box (code-based) testing</li>
+  <li>Equivalent terminology you may see: black-box (spec) and glass-box (code-based) testing</li>
   <li>Black-box tests are those written against the spec</li>
   <li>Glass-box tests are in the context of bugs in the code and other code properties</li>
 </ul>
@@ -403,8 +403,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><strong>Random testing</strong> of which there are many types: fuzz testing / monkey testing / property-based testing / quickcheck:
     <ul>
       <li>all test on data generated <strong>randomly</strong> from some distribution</li>
-      <li>“quickcheck”ing is running unit tests on randomly generated data (random lists of ints, etc)</li>
-      <li>“fuzz testing” is running acceptance tests with random input strings supplied.</li>
+      <li>“quickcheck”ing aka property-based testing is running <strong>unit</strong> tests on randomly generated data (random lists of ints, etc)</li>
+      <li>“fuzz testing” is running <strong>acceptance</strong> tests with random input strings supplied.</li>
     </ul>
   </li>
 </ul>
@@ -421,7 +421,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h2 id="ounit2">OUnit2</h2>
 
 <ul>
-  <li>We have been using <code>OUnit2</code> mostly as a black box up to now</li>
+  <li>We have been using the <code>OUnit2</code> library mostly as a black box up to now</li>
   <li>Now we will go through the details, which are in fact very simple
     <ul>
       <li>There is not much in <code>OUnit2</code> per se, if you want something extra just write some higher-order functions to do it</li>
@@ -500,7 +500,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>If you did unit testing in other languages it looks pretty much like the above</li>
-  <li>But in OCaml we can make tests more programatically which makes for less code duplication</li>
+  <li>But in OCaml we can make tests programatically which makes for less code duplication</li>
   <li>Example: lets make a bunch of different tests on the same invariant, that reversing a list twice is a no-op:</li>
 </ul>
 
@@ -615,17 +615,15 @@ OUnit <a href="https://ocaml.org/p/ounit2/2.2.3/doc/index.html">API docs</a></p>
 <p><a name="quickcheck"></a></p>
 <h2 id="base_quickcheck-and-random-testing">Base_quickcheck and Random Testing</h2>
 <h3 id="the-big-picture-of-random-testing">The big picture of random testing</h3>
+
 <ol>
-  <li>We need to be able to generate random data which is the parameters of the functions we wish to test
-    <ul>
-      <li>Easy for first-order data, hard for functions; only do for the former</li>
-    </ul>
-  </li>
-  <li>We run the function on the random data</li>
+  <li>Suppose we have one function <code>f</code> that we want to test.</li>
+  <li>We need to be able to generate random data which is the parameters of <code>f</code></li>
+  <li>We run <code>f</code> on different random data many times (say 100 or 10000 times)</li>
   <li>We need to know if the test worked or not on the random data
     <ul>
-      <li>there can be a chicken vs egg issue here, in some cases it can be difficult to see if it worked</li>
-      <li>so, some things are not amenable to random testing and other times only limited properties checked (e.g. no invariant assertion failures)
+      <li>So, tests usually verify that invariants hold or some bad exception not raised etc.</li>
+      <li>This is another reason invariants are good, they are properties that can be quickchecked
         <h3 id="using-base_quickcheck">Using <code>Base_quickcheck</code></h3>
       </li>
     </ul>
@@ -636,7 +634,7 @@ OUnit <a href="https://ocaml.org/p/ounit2/2.2.3/doc/index.html">API docs</a></p>
   <li><code>Base_quickcheck</code> contains three key algorithms:
     <ol>
       <li>Generators, <code>Quickcheck.Generator</code> - make random data of desired distribution in given type</li>
-      <li>Shrinkers, <code>Quickcheck.Shrinker</code> - if a failing case is discovered, try to make it smaller</li>
+      <li>Shrinkers, <code>Quickcheck.Shrinker</code> - if a failing case is discovered, try to make it smaller (we will not cover these in detail)</li>
       <li>Runner, <code>Quickcheck.test</code> etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.</li>
     </ol>
   </li>
@@ -644,7 +642,7 @@ OUnit <a href="https://ocaml.org/p/ounit2/2.2.3/doc/index.html">API docs</a></p>
     <p>We will look at several examples of the <code>Base_quickcheck</code> library in action in <a href="../examples/quickcheck_examples.ml">quickcheck_examples.ml</a></p>
   </li>
   <li><a href="https://ocaml.org/p/base_quickcheck/v0.15.0/doc/Base_quickcheck/index.html">Base_quickcheck docs</a></li>
-  <li>The <a href="https://dev.realworldocaml.org/testing.html#property-testing-with-quickcheck">Real World OCaml</a> book has a short tutorial (it uses <code>ppx_inline_tests</code> and not <code>OUnit2</code> but)</li>
+  <li>The <a href="https://dev.realworldocaml.org/testing.html#property-testing-with-quickcheck">Real World OCaml</a> book has a short tutorial (note it uses <code>ppx_inline_tests</code> and not <code>OUnit2</code>)</li>
 </ul>
 
 <h3 id="fuzz-testing-vs-quickcheck">Fuzz testing vs Quickcheck</h3>
