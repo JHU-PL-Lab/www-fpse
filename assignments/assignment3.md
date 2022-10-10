@@ -13,8 +13,8 @@ As usual we will give two due dates for the two parts.
 ### The file structure
 
 * [Use the this zip file](http://pl.cs.jhu.edu/fpse/assignments/assignment3.zip) for your assignment. 
-* Like assignment 1-2, we are giving you a skeleton to fill in.  Your Part I and II answers will go in the files  `assignment3/src/abstraction.ml` and `assignment3/test/`.
-* Part I consists of questions 1-2 and your own tests for those questions in `assignment3/test/tests.ml` as well as a `dune` file to run them.  For Part I you need to write some basic tests, we will mainly just sure you have a couple. The bulk of the testing will be in Part II.
+* Like assignment 1-2, we are giving you a skeleton to fill in.  Your Part I and II answers will go in the files  `assignment3/src/abstraction.ml` and `assignment3/tests/`.
+* Part I consists of questions 1-2 and your own tests for those questions in `assignment3/tests/tests.ml` as well as a `dune` file to run them.  For Part I you need to write some basic tests, we will mainly just sure you have a couple. The bulk of the testing will be in Part II.
 * Part II consists of question 3, your own tests for that question, as well as making sure your overall coverage with `bisect` is good.
 
 ### Coverage and Invariants for Part II

@@ -18,16 +18,15 @@ This a major theme of the course; we have already covered some of this but let's
 3. Generally avoid side effects; it will help you achieve 1. and 2.
   - Recall how pure functional code is referentially transparent, the behavior is all in the interface with no "hidden" actions.
   - Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on
-     - Aim for pipeline mode when writing functional code
-  - If the pipeline metaphor is failing, add side effects
+  - But, if the pipeline metaphor is failing, considewr adding side effects
 4. Speed
   - There is always a trade-off in programming between efficiency and elegance
-  - Much of the time it is possiuble to prioritize concision and modularity over running time and space
+  - Much of the time it is possible to prioritize concision and modularity over running time and space
+      - Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority
   - **But**, sometimes speed really matters
-    - When data sets get large or algorithms
-    - Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority
-    - Do generally avoid high polynomial or exponential algorithms unless uses are all small
-    - Also pay more attention when data sets get very large, even n vs n log n gets noticeable there.
+    - When data sets get large or algorithms get complex
+    - Do generally avoid high polynomial or exponential algorithms on potentially lare inputs
+    - Also pay more attention when data sets get extremely large, even n vs n log n gets noticeable there.
 
 ### FP Idioms
 
@@ -35,26 +34,25 @@ Here is a list of idioms, many of which are review as we touched on them before
 
 #### Don't Repeat Yourself (DRY from OO): 
   - Extract duplicate code into its own function
-  - Code usually won't be exact duplicate; extract different bits as function parameters
+  - Code usually won't be exact duplicate; extract different bits as function parameters so the different bits are passed in
   - May also entail replacing specific types with generic types `'a` or functor parameter types `t`, `elt` etc
 
 #### Hide it behind an interface
-  - If a function is an auxiliary function to only one other function, define it in the body of the latter.
-     - i.e. `let f x = let aux y = ..aux body.. in .. f body ..`
-  - If a function is not local to a single function but is not used outside its module, leave it out of the module type (usually `.mli` file) which will hide it to module users
+  - If a function is auxiliary to only one other function, define it in the body of the latter.
+     - i.e. `let f x = let aux y = ..<aux's body>.. in .. <f's body> ..`
+  - If a function is not local to a single function but is not used outside its module, leave it out of the module type (e.g. `.mli` file) which will hide it to module users
   - Make a new module for a new data type, include operations on the type (only) in it
      - This is not just for generic data structures lke `Map`/`Set`, it is for app-specific data structures
      - Example: `ChessBoard` is a nontrivial data type for a chess game, make it its own module
   - Hide types `t` in module types if users don't need to see the details
-    - But, open it up if needed for e.g. testing
-  - Replace imperative code with an equivalent functional implementation with a clearer interface
+  - Functional code has everything in the interface so it will make a more precice interface
+    - Or on the other hand perhaps you can have a simpler interface if it is imperative, e.g. `fresh_name : () -> string` making a different string each time called
 
 #### Have a focus of responsibility
   - Each function and module should have a clear focus that can be summarized in a sentence
   - Divide one function/module into two if it is doing two different things
-  - A module should have a very clear focus of responsibility
-    - Don't add random stuff to module if it doesn't fit with it's summary purpose
-    - If you need more from an existing module, make a new one and `include` the old one
+  - Don't add random stuff to module if it doesn't fit with it's summary purpose
+  - If you need more than is in an existing module, make a new one and `include` the old one
 
 #### Concision
 
@@ -132,6 +130,7 @@ let concatenate l = fold_left ~f:(^) ~init:"" l
  * But, instead of adding to array you are usually updating in-place which is constant
  * Updating one element of a list is worst-case O(n) - re-build whole list
  * Random access of nth element: O(n) list, O(1) array.
+ * If you want fast random access to a "list" that is not growing / shrinking / changing, can use an `array`.
 
 `Map` vs `Hashtbl`
  * `Map` is implemented like the `dict` of the homework, but avoids the worst case of an unbalanced tree (on average the `dict` should be good but it could build a long thin tree in worst case)
@@ -147,7 +146,7 @@ let concatenate l = fold_left ~f:(^) ~init:"" l
   - If you have many related maps, e.g. repeatedly forking off a map into two sub-versions
   - Due to referential transparency the cost of copying is **zero**!!
   - Multiple Lists similarly can share common portions
-  - See [Real World OCaml](https://dev.realworldocaml.org/maps-and-hashtables.html) for example benchmarks of this
+  - See [Real World OCaml benchmarks (scroll down)](https://dev.realworldocaml.org/maps-and-hashtables.html) for example benchmarks of this
 
 ### Examples of Idiomatic FP
 <a name = "examples"></a>

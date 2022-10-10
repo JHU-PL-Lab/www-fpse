@@ -92,23 +92,20 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>Recall how pure functional code is referentially transparent, the behavior is all in the interface with no “hidden” actions.</li>
       <li>Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on</li>
-    </ul>
-    <ul>
-      <li>Aim for pipeline mode when writing functional code<br />
-     - If the pipeline metaphor is failing, add side effects</li>
+      <li>But, if the pipeline metaphor is failing, considewr adding side effects</li>
     </ul>
   </li>
   <li>Speed
     <ul>
       <li>There is always a trade-off in programming between efficiency and elegance</li>
-      <li>Much of the time it is possiuble to prioritize concision and modularity over running time and space</li>
-      <li><strong>But</strong>, sometimes speed really matters</li>
+      <li>Much of the time it is possible to prioritize concision and modularity over running time and space</li>
     </ul>
     <ul>
-      <li>When data sets get large or algorithms</li>
-      <li>Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority</li>
-      <li>Do generally avoid high polynomial or exponential algorithms unless uses are all small</li>
-      <li>Also pay more attention when data sets get very large, even n vs n log n gets noticeable there.</li>
+      <li>Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority<br />
+    - <strong>But</strong>, sometimes speed really matters</li>
+      <li>When data sets get large or algorithms get complex</li>
+      <li>Do generally avoid high polynomial or exponential algorithms on potentially lare inputs</li>
+      <li>Also pay more attention when data sets get extremely large, even n vs n log n gets noticeable there.</li>
     </ul>
   </li>
 </ol>
@@ -120,42 +117,38 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="dont-repeat-yourself-dry-from-oo">Don’t Repeat Yourself (DRY from OO):</h4>
 <ul>
   <li>Extract duplicate code into its own function</li>
-  <li>Code usually won’t be exact duplicate; extract different bits as function parameters</li>
+  <li>Code usually won’t be exact duplicate; extract different bits as function parameters so the different bits are passed in</li>
   <li>May also entail replacing specific types with generic types <code>'a</code> or functor parameter types <code>t</code>, <code>elt</code> etc</li>
 </ul>
 
 <h4 id="hide-it-behind-an-interface">Hide it behind an interface</h4>
 <ul>
-  <li>If a function is an auxiliary function to only one other function, define it in the body of the latter.
+  <li>If a function is auxiliary to only one other function, define it in the body of the latter.
     <ul>
-      <li>i.e. <code>let f x = let aux y = ..aux body.. in .. f body ..</code></li>
+      <li>i.e. <code>let f x = let aux y = ..&lt;aux's body&gt;.. in .. &lt;f's body&gt; ..</code></li>
     </ul>
   </li>
-  <li>If a function is not local to a single function but is not used outside its module, leave it out of the module type (usually <code>.mli</code> file) which will hide it to module users</li>
+  <li>If a function is not local to a single function but is not used outside its module, leave it out of the module type (e.g. <code>.mli</code> file) which will hide it to module users</li>
   <li>Make a new module for a new data type, include operations on the type (only) in it
     <ul>
       <li>This is not just for generic data structures lke <code>Map</code>/<code>Set</code>, it is for app-specific data structures</li>
       <li>Example: <code>ChessBoard</code> is a nontrivial data type for a chess game, make it its own module</li>
     </ul>
   </li>
-  <li>Hide types <code>t</code> in module types if users don’t need to see the details
+  <li>Hide types <code>t</code> in module types if users don’t need to see the details</li>
+  <li>Functional code has everything in the interface so it will make a more precice interface
     <ul>
-      <li>But, open it up if needed for e.g. testing</li>
+      <li>Or on the other hand perhaps you can have a simpler interface if it is imperative, e.g. <code>fresh_name : () -&gt; string</code> making a different string each time called</li>
     </ul>
   </li>
-  <li>Replace imperative code with an equivalent functional implementation with a clearer interface</li>
 </ul>
 
 <h4 id="have-a-focus-of-responsibility">Have a focus of responsibility</h4>
 <ul>
   <li>Each function and module should have a clear focus that can be summarized in a sentence</li>
   <li>Divide one function/module into two if it is doing two different things</li>
-  <li>A module should have a very clear focus of responsibility
-    <ul>
-      <li>Don’t add random stuff to module if it doesn’t fit with it’s summary purpose</li>
-      <li>If you need more from an existing module, make a new one and <code>include</code> the old one</li>
-    </ul>
-  </li>
+  <li>Don’t add random stuff to module if it doesn’t fit with it’s summary purpose</li>
+  <li>If you need more than is in an existing module, make a new one and <code>include</code> the old one</li>
 </ul>
 
 <h4 id="concision">Concision</h4>
@@ -262,6 +255,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>But, instead of adding to array you are usually updating in-place which is constant</li>
   <li>Updating one element of a list is worst-case O(n) - re-build whole list</li>
   <li>Random access of nth element: O(n) list, O(1) array.</li>
+  <li>If you want fast random access to a “list” that is not growing / shrinking / changing, can use an <code>array</code>.</li>
 </ul>
 
 <p><code>Map</code> vs <code>Hashtbl</code></p>
@@ -285,7 +279,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>If you have many related maps, e.g. repeatedly forking off a map into two sub-versions</li>
       <li>Due to referential transparency the cost of copying is <strong>zero</strong>!!</li>
       <li>Multiple Lists similarly can share common portions</li>
-      <li>See <a href="https://dev.realworldocaml.org/maps-and-hashtables.html">Real World OCaml</a> for example benchmarks of this</li>
+      <li>See <a href="https://dev.realworldocaml.org/maps-and-hashtables.html">Real World OCaml benchmarks (scroll down)</a> for example benchmarks of this</li>
     </ul>
   </li>
 </ul>
@@ -323,7 +317,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       </div>
 
 				<div id="copyright">
-					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+					Web Design: TEMPLATED
 				</div>			
 
 
