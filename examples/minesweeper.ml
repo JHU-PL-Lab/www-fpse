@@ -1,79 +1,87 @@
 (* Directly from
-   https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c  
+    https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c
 
-  With explanatory comments added by SFS.
-
-   *)
+   With explanatory comments added by SFS.
+*)
 
 open Base
 
 let to_char = function
   | -1 -> '*'
-  | 1  -> '1'
-  | 2  -> '2'
-  | 3  -> '3'
-  | 4  -> '4'
-  | 5  -> '5'
-  | 6  -> '6'
-  | 7  -> '7'
-  | 8  -> '8' 
-  | _  -> ' '
+  | 1 -> '1'
+  | 2 -> '2'
+  | 3 -> '3'
+  | 4 -> '4'
+  | 5 -> '5'
+  | 6 -> '6'
+  | 7 -> '7'
+  | 8 -> '8'
+  | _ -> ' '
 
 module Board = struct
-  type t = string list  (* board data; see test/test.ml for examples *)
+  type t = string list (* board data; see test/test.ml for examples *)
 
-(* get the (x,y) character on board b.
-   Uses several functions in Option to properly deal with exceptional cases *)  
+  (* get the (x,y) character on board b.
+     
+    Should return `None` in all error cases, e.g. (x,y) is not on the grid, etc.
 
-  let get_boom (b: t) (x: int) (y: int): char  = 
-    List.nth_exn b y |> (fun row -> String.get row x);;
+     We will write several different equivalent versions to compare. *)
 
-  let get (b: t) (x: int) (y: int): char option = 
-    List.nth b y |>
-    Option.value_map ~default:None ~f:(fun row -> Option.try_with (fun () -> String.get row x))
+  let get0 (b : t) (x : int) (y : int) : char option =
+    match List.nth b y with (* If y is too big or small List.nth will return None *)
+    | None -> None 
+    | Some(row) -> try Some(String.get row x) with Invalid_argument _ -> None  
 
-  let get' (b: t) (x: int) (y: int): char option = 
-    Option.bind (List.nth b y) 
-    ~f:(fun row -> Option.return(String.get row x))
+(* Let us rewrite the above using some Option library functions;
+   Hover over the functions to see their types.  *)    
+  let get (b : t) (x : int) (y : int) : char option =
+    List.nth b y
+    |> Option.value_map ~default:None ~f:(fun row ->
+           Option.try_with (fun () -> String.get row x))
 
-(* The above might raise an exception in String.get so return 
-   is in fact not what is needed here
-   -- use Option.try_with as above to turn exception to `None`:
- *)    
-  let get'' (b: t) (x: int) (y: int): char option = 
-    Option.bind (List.nth b y) 
-    ~f:(fun row -> Option.try_with(fun () -> String.get row x))
+  (* Option.bind is like value_map but implicitly propagates None (bubbles it up) 
+     This implicit bubbling is part of monadic programming, lots more later on that! *)
+  let get' (b : t) (x : int) (y : int) : char option =
+    List.nth b y
+    |> Option.bind ~f:(fun row -> Option.try_with (fun () -> String.get row x))
 
-(* Shorthand pipe-like notation >>= ; need to open Option to enable *)
+  (* Shorthand pipe notation >>=, it is just infix Option.bind; 
+     need to open Option to enable *)
 
-let get''' (b: t) (x: int) (y: int): char option = 
-    Option.((List.nth b y) 
-    >>= (fun row -> try_with(fun () -> String.get row x)))
+  let get'' (b : t) (x : int) (y : int) : char option =
+    Option.(List.nth b y >>= fun row -> try_with (fun () -> String.get row x))
 
-(* Another notation where you don't need to make the fun;
-   instead use let%bind to bind the `row` here. 
-   Note that VSCode is not aware of let%bind macro
-   and also you need to #require and/or preprocess ppx_let *)
-let get'''' (b: t) (x: int) (y: int): char option = 
-let open Option in let open Option.Let_syntax in
-let%bind row = List.nth b y in try_with(fun () -> String.get row x)
+  (* Another equivalent notation for Option.bind where you don't need to make the fun row -> ... ;
+     instead use let%bind to bind the `row` here.
+     let%bind allows the None case to be implicit in the background: it reads like regular code
+     Compare with the get'' version, it is just a small bit of syntax sugar
+ *)
+  let get''' (b : t) (x : int) (y : int) : char option =
+    let open Option in (* let open Option in .. is like Option.(...) *)
+    let open Let_syntax in (* need to open this module to get let%bind to work *)
+    let%bind row = List.nth b y in
+    try_with (fun () -> String.get row x)
 
-  let adjacents (b: t) (x: int) (y: int): char list = 
+(* Get a list of chars for all the squares adjacent to (x,y) *)    
+
+  let adjacents (b : t) (x : int) (y : int) : char list =
     let g xo yo = get b (x + xo) (y + yo) in
-    List.filter_map ~f:Fn.id [
-      g (-1) (-1);  g 0 (-1);  g 1 (-1);
-      g (-1) 0   ;             g 1 0   ;
-      g (-1) 1   ;  g 0 1   ;  g 1 1   ; 
-    ]
+    List.filter_map ~f:Fn.id
+      [
+        g (-1) (-1); g 0 (-1); g 1 (-1); g (-1) 0; g 1 0; g (-1) 1; g 0 1; g 1 1;
+      ]
 
   let is_mine = Char.equal '*'
   let is_field = Fn.non is_mine
   let is_field' c = not @@ is_mine c
 
-  let map_field (b: t) ~(f: int -> int -> char -> char): t =
-    List.mapi b ~f:(fun y r -> String.mapi r ~f:(fun x c -> if is_field c then f x y c else c)) 
+  (* Apply a function to every element of the grid to produce a new grid 
+    f gets the x y coordinate as well as args *)
+  let mapxy (b : t) ~(f : int -> int -> char -> char) : t =
+    List.mapi b ~f:(fun y r ->
+        String.mapi r ~f:(fun x c -> if is_field c then f x y c else c))
 end
 
-let annotate (board: string list) = 
-  let count x y = Board.adjacents board x y |> List.count ~f:(Board.is_mine) in
-  Board.map_field board ~f:(fun x y _ -> count x y |> to_char)
+let annotate (board : string list) =
+  let count x y = Board.adjacents board x y |> List.count ~f:Board.is_mine in
+  Board.mapxy board ~f:(fun x y _ -> count x y |> to_char)

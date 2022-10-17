@@ -5,7 +5,7 @@ Minesweeper board display
 From https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae59540d18f3c18615dcbb956
 
 *)
-open Base
+open Core
 
 type cell = Mine | Empty of int
 

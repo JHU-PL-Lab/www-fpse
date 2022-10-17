@@ -13,7 +13,7 @@ module Array_2d = struct
   let get (b : 'a t) (x : int) (y : int) : 'a option =
     Option.try_with (fun () -> b.(x).(y))
 
-  let map (b : 'a t) ~(f : int -> int -> 'a -> 'a) : 'a t =
+  let mapxy (b : 'a t) ~(f : int -> int -> 'a -> 'a) : 'a t =
     Array.mapi b ~f:(fun y r -> Array.mapi r ~f:(f y))
 
   let adjacents (b : 'a t) (x : int) (y : int) : 'a list =
@@ -50,7 +50,7 @@ let array_annotate (board : char Array_2d.t) =
   let count_nearby_mines x y =
     Array_2d.adjacents board x y |> List.count ~f:is_mine
   in
-  Array_2d.map board ~f:(fun y x c ->
+  Array_2d.mapxy board ~f:(fun y x c ->
       if is_field c then count_nearby_mines x y |> to_char else c)
 
 let annotate (l : string list) =

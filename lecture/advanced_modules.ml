@@ -53,12 +53,15 @@ module type Eq = sig type t val equal : t -> t -> bool end
  - if a module is given this type the type `t` in that module is COMPLETELY hidden from outsiders
  - They know there EXISTS some type there (which is an actual type), they just don't know what it is.
  - So, they never, ever can directly do anything with such a t-typed object
+ - An existential type is a type variable alias where you don't know what it is aliased to.
+ - Recall that the notion of something existing but not directly defined is a fundamental part of math:
+    "for all x there EXISTS a y such that y > x" -- many math assertions have "exists" in them.
  - if you want to see if something is an alias or an existential, ask to #show it; you will see aliased type.
 
  # #show String.t;;
 type nonrec t = string (* alias *)
 # #show Map.t;;
-type nonrec ('key, 'value, 'cmp) t = ('key, 'value, 'cmp) Map.t (* existential / hidden *)
+type nonrec ('key, 'value, 'cmp) t = ('key, 'value, 'cmp) Map.t (* existential / hidden - j *)
 
  * Moral: every time you see a type variable reference t / 'a / Int.t / etc
     first sort it into one of the above four categories
@@ -145,7 +148,12 @@ let left_test = String_pair_smarter.left pair_test
 
 (* New syntax: destructive substitution to fix this *)
 
-(* Best: version 3 *replaces* type t with Datum.t using := in place of = *)
+(* Best: version 3 *replaces* type t with Datum.t using := in place of = 
+   Observe that := is basically inlining the type t into the module type. 
+   Compare the output of the following to see the difference *)
+
+module type Temp_alias = Pair_i with type t = string;;
+module type Temp_replace = Pair_i with type t := string;;
 
 module Make_pair_smartest(Datum : Datum_i) : (Pair_i with type t := Datum.t)= 
 struct
@@ -167,7 +175,7 @@ module String_pair_smartest = Make_pair_smartest(String)
 (* ******************* *)
 
 
-(* Treat modules as data values: let-define, put in lists, etc etc *)
+(* Treat modules as data values: let-define them, put in lists, etc etc *)
 (* We often need an explicit module type to get this to work *)
 (* (in general, the more advanced the types get the weaker the inference is) *)
 
@@ -180,7 +188,7 @@ sig
   val right : lr -> string
   val equal : lr -> lr -> bool
 end
-(* Let us puts a module in a ref cell as a stupid example of modules-as-data
+(* Let us put a module in a ref cell as a stupid example of modules-as-data
     "(module M : M_i)" is the syntax for turning regular module into first-class one *)
 
 let mcell  =  ref (module String_pair_smartest : Sps_i)
@@ -209,11 +217,12 @@ end
 
 module Int_item : Item_i = struct
   type t = Int.t
-  let item = 33
+  let item = 33 (* Yes a bit overwrought, a module just to hold a single number *)
   let to_sexpr () = Int.sexp_of_t item
 end
 
-(* Let us write a function to make the above module for int i *)
+(* Better: let us write a function to make the above module for any int i 
+   Uses higher-order modules, the function is returning a module *)
 let make_int_item (i : int) = (module struct
   type t = Int.t
   let item = i
@@ -227,7 +236,7 @@ let make_string_item (s : string) = (module struct
   let to_sexpr () = String.sexp_of_t item
 end : Item_i)
 
-(* Since the type t is hidden in Item_i we can make a heterogenous list! *)
+(* Since the type t is 100.0% hidden in Item_i we can make a heterogenous list! *)
 let item_list = [make_string_item "hi"; make_int_item 5]
 
 (* Inspect the type above, OCaml still sees a uniform list
