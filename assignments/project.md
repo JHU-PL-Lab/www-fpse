@@ -1,14 +1,14 @@
-The FPSE Projects (DRAFT)
+The FPSE Projects
 -----------------
 
 For the projects you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.  
 ### Requirements
 Here are some high-level requirements for the projects.
 
-* All the code must be in OCaml obviously (excepting small bits of glue code)
+* All the code must be in OCaml obviously (excepting small bits of glue code or explicit excpetions if you petition)
 * Use the standard course libraries -- `Core`, `Lwt`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
-* Project groups can be from 1-3 people, non-singleton project groups are preferred.
-* A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be putting line count as part of your grade.
+* Project groups can be from 1-3 people; non-singleton project groups are preferred.
+* A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count as part of your grade.
 
 ### Potential Project Topic Thrusts
 
@@ -19,7 +19,7 @@ Here are some high-level requirements for the projects.
 * The idea here is to make some application where all the interaction is via the command line.
 * Persistent data across command invocations could be saved in a file using the `Stdio` library.
 * This path is the most straightforward of the three choices.
-* Here is a very simplistic example, you would need much more than this
+* Here is a very simplistic example, you would need **much** more than this
 
 * A minesweeper game.  Here is a mock of such a game:
 ```sh
@@ -184,21 +184,21 @@ We will put up two submission points in Gradescope for you to upload your zipped
 ## The FPSE Labs
 <a name="labs"></a>
 
-We will be using a new method for project labs this year.  The goal of the labs is for your group (or you if a singleton) to have plenty of time to get feedback from the course staff on all aspects of your project.
+The goal of the labs is for your group to have plenty of time to get feedback from the course staff on all aspects of your project.
 
 Here are some defining features.
 
-1. There will be five in-class labs.  Your group will be required to attend the first lab in-person on Nov 10th.
+1. There will be six in-class labs.  Your group will be required to attend the first lab in-person on Nov 10th.
 2. Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework.
 3. Attendance will be taken at all labs and will be a part of your final grade. 
-4. Your group is required to attend **five** labs total.  Conveniently, there are five class periods which are project labs, but you may alternatively select any CA office hour (the whole hour) to be a "lab".  If you wish to do that, show up in-person at the start of the office hour and notify the CA that you are doing a lab, and they will mark you down for attendance.
+4. Your group is required to attend **six** labs total.  Conveniently, there are six class periods which are project labs, but you may alternatively select any CA office hour (the whole hour) to be a "lab".  If you wish to do that, show up in-person at the start of the office hour and notify the CA that you are doing a lab, and they will mark you down for attendance.
 5. All labs must be attended in-person, but you may petition for an exception.
-6. Attendance is all or none, for a lab to count all group members must be present.
+6. **Attendance is all or none** -- for a lab to count all group members must be present.  Group work is group work.
 7. You are of course also welcome to show up to either the class or an office hour as a "non-lab", meaning you don't need to work on your project for the whole period and it will not count as one of your five labs.
 
 ## Sample projects
 
-Here are a few FPSE projects from past years to give you an idea of the scope etc.
+Here are a few FPSE projects from past years to give you an idea of the scope etc.  Please pick a different idea.
 
 * [Spotify Classifier](https://github.com/angibenton/spotify-song-classifier)
 * [Gomoku](https://github.com/shintyl/gomoku_fpse)

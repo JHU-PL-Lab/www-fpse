@@ -246,11 +246,22 @@ let item_list = [make_string_item "hi"; make_int_item 5]
    Only when types are 100% hidden are they "exists" 
    So, there is not a lot we can do with such data structures *)
 
+
 let to_sexpr_items (il : (module Item_i) list)  = 
   List.map ~f:(fun it -> let (module M) = it in M.to_sexpr()) il
 
 (* This example is not particularly useful, but there are many useful examples
    See e.g. https://dev.realworldocaml.org/first-class-modules.html 's query handling example *)
+
+
+(* The main thing we still avoid here is ad-hoc typed structures, e.g. we still cannot do
+   [1;true;2;false;55;false] kind of thing and that is GOOD! 
+   If we wanted an alternating int-string list, instead do
+   [(1,true);(2,false);(55,false)]
+   which will be type-correct and less bug-prone
+   
+   In general rely on OCaml's types for *accurate* invariants on your code
+   *)
 
 
 (* ******************************************************** *)
@@ -295,10 +306,10 @@ module PairMap = Map.Make(IntPair)
 (* Let us reconsider the first-class modules method for making Maps
    now that we know the syntax
 *)
+(* make an empty module with string key; type of m is funky more below on that *)
+let m = Map.empty (module String) 
 
-let m = Map.empty (module String) (* make an empty module with string key *)
-
-(* Now can simply use Map.add etc, no need for our own module *)
+(* Now can simply use Map.add etc, no need for our own string keyed module *)
 let added = m |> Map.add_exn ~key:"hello" ~data:3 |> Map.to_alist
 
 (* Note that above we had to put a module type on any defined module:
@@ -307,6 +318,7 @@ let added = m |> Map.add_exn ~key:"hello" ~data:3 |> Map.to_alist
    What is Map.empty's type?  Informally it is taking a module as argument
    So, type of argument must be a module type (but in expression-land)
 
+   
 # #show Map.empty;;
 val empty : ('a, 'cmp) Map.comparator -> ('a, 'b, 'cmp) Map.t
 
@@ -342,24 +354,25 @@ module IntPairCompar = struct
   type t = int * int [@@deriving compare, sexp] 
   end
   include T
-  include Comparator.Make(T) (* Replace Comparator with Comparable and get extras like <= etc *)
+  include Comparator.Make(T) (* This makes a ton of stuff. Replace Comparator with Comparable and get extras like <= etc *)
 end
 
 let m = Map.empty (module IntPairCompar) (* Works now *)
 
 (* The above "include" pattern is clever - call all "your" stuff T temporarily, include it, 
-   and since it has a name you can now pass it to a functor which will build  and
-   include the comparators.
+   and since it has a name you can now pass it to a functor which will build and
+   include the comparators over type t.
 *)
 
 (* Observe the type of Maps are now `('a, 'b, 'cmp) Map_intf.Map.t`  
   'a is the key type
   'b is the value type
-  'cmp is the nonce to distinguish this particular modules compare function
+  'cmp is the nonce (aka phantom type) to distinguish this particular modules compare function
 
   Notice the Map.Make version lacked the nonce
   The purpose of the nonce is to allow Maps themselves to be compared
     - only works if both the key and value are same type PLUS comparison is same
+    - the nonce names the comparator to make sure is compatible
     - otherwise the results will be random
 *)
 
