@@ -98,10 +98,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>This simple encoding is in fact just “call by name”, laziness means memoizing the result.</li>
 </ul>
 
-<h4 id="the-baselazy-module">The <code>Base.Lazy</code> module</h4>
+<h4 id="the-corelazy-module">The <code>Core.Lazy</code> module</h4>
 
 <ul>
-  <li><code>Base.Lazy</code> is a much more usable sugar for the above</li>
+  <li>` Core.Lazy` is a much more usable sugar for the above</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">open</span> <span class="nc">Lazy</span><span class="p">;;</span>
@@ -119,7 +119,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span>
 <span class="k">open</span> <span class="nc">Lazy</span>
-<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Cons</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span> <span class="nn">Lazy</span><span class="p">.</span><span class="n">t</span> <span class="c">(* List MUST be infinite - ! *)</span>
+<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Cons</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">stream</span> <span class="nn">Lazy</span><span class="p">.</span><span class="n">t</span> <span class="c">(* A stream is an infinite list - no empty list case here *)</span>
 
 <span class="c">(* Programs making lazy lists look somewhat bizarre at first - doesn't this loop forever?!? *)</span>
 <span class="k">let</span> <span class="k">rec</span> <span class="n">all_ones</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">stream</span> <span class="o">=</span> <span class="nc">Cons</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="k">lazy</span><span class="p">(</span><span class="n">all_ones</span><span class="p">))</span>
@@ -144,14 +144,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>One thing not clear from the code is that a <code>Lazy</code> will not be recomputed</li>
-  <li>Once the list is “unrolled” by one call it doesn’t need to be “re-unrolled”</li>
-  <li>This is a form of caching / memoization built into <code>Lazy</code>
+  <li>As we saw above with the print, <code>lazy</code> results are cached so if it is forced a second time no need to recompute
     <ul>
-      <li>(but not in our crude encoding of it above)</li>
+      <li>Once the list is “unrolled” by one call it doesn’t need to be “re-unrolled”</li>
+      <li>This is a form of caching / memoization built into <code>Lazy</code></li>
     </ul>
   </li>
-  <li>Note that becuase of that the above nth function will in fact be linear, not exponential</li>
+  <li>Becuase of that the above <code>nth fib</code> function will in fact be linear, not exponential</li>
 </ul>
       
           </section>
@@ -159,7 +158,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       </div>
 
 				<div id="copyright">
-					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+					Web Design: TEMPLATED
 				</div>			
 
 

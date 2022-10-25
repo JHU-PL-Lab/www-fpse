@@ -45,11 +45,13 @@ let _ : bool = Map.empty(module String)
 let zip l1 l2 = match List.zip l1 l2 with Unequal_lengths -> None | Ok l -> Some l
 
 (* 
-  * Here is an artificial example of lots of hand-over fist passing of options. 
-  * Several operations can fail with a None, and in each case we need to bubble that None to the top.
-  * Yes the code is ugly!
+  Here is an artificial example of lots of hand-over fist passing of options. 
+  Several operations can fail with a None, and in each case we need to bubble that None to the top.
+  Yes the code is ugly!
 *)
-let ex l1 l2 =
+
+(* Lets zip two lists, sum pairwise, and return the 2nd element of the resulting list. *)
+let ex l1 l2 = 
   match zip l1 l2 with 
   | Some(l) -> 
     begin
@@ -73,9 +75,9 @@ let ex l1 l2 =
 *)
 
 (* 
- * The key operation of a monad is `bind` 
- * For Option it already exists as Option.bind
- * Here is its code for reference: 
+ * The key operation of a monad is `bind` which sequences side-effecting computations. 
+   For Option it already exists as Option.bind
+   Here is its code for reference (we call this one bind' to not overlap with built-in one)
  *)
 
 let bind' (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) = 
@@ -84,31 +86,32 @@ let bind' (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) =
   | Some v -> f v;;
 
 (* bind does the match "for free" compared to above 
-    - if the zip failed with `None the function is ignored
-    - if it succeeds the Some removed and the underlying data passed to f *)
-bind' (zip [1;2] [3;4]) ~f:(function (l,r)::tl -> Some(l));;
+    - if the zip failed with `None` the function is ignored
+    - if it succeeds the Some wrapper is peeled off and the underlying data passed to f *)
+bind' (zip [1;2] [3;4]) ~f:(function (l,_)::_ -> Some(l));;
 
 (* 
-  * bind more generally *sequences* two side effects
+  * bind more generally sequences ANY two functional side effects, more below on this
   * besides the bubbling of None's it is a lot like a "let" expression.
     -  bind code1 ~f:code2  first runs code1, and if it is non-None runs code2 on which can use underyling result of code1.
   * This suggests a macro:
   `let%bind x = e1 in e2`  macro expands to `bind e1 ~f:(fun x -> e2)`
-  * Using the macro, code can look more like regular code with implicit effects
+  * Using the macro, code can look more like regular code
   * We have pushed monad-land into hiding a bit
 *)
 
 (* Note we need to open a module to enable macro for Option.bind 
-   And, need #require "ppx_jane" for the macro to expand *)
+   And, need #require "ppx_jane" in top loop (or (preprocess (pps ppx_jane)) in dune) 
+   for the macro to expand *)
 
 open Option (* don't do this at home (tm) *)
-open Option.Let_syntax
+open Option.Let_syntax;;
 
-let%bind (l,r)::tl = zip [1;2] [3;4] in Some(l);;
+let%bind (l,_)::_ = zip [1;2] [3;4] in Some(l);; (* compare with above version - a bit more readable *)
 
 
 (* 
- * OK now let us redo the above example with bind (using the macro version) 
+ * OK now let us redo the zip example with bind (using the macro version) 
  * This code looks more readable than the original, right?? 
  *)
 
@@ -118,27 +121,37 @@ let ex_bind_macro l1 l2 =
   let%bind tail = List.tl m in 
   let%bind hd_tail = List.hd tail in
   return(hd_tail) (* "return to the monad" - here that means wrap in Some(..) *)
-
+let ex_real_effects l1 l2 =
+  let l = List.zip_exn l1 l2 in 
+  let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
+  let tail = List.tl_exn m in 
+  let hd_tail = List.hd_exn tail in
+  hd_tail
 (* 
  * Here is what Option.return above is
- * It is called return because it is injecting (returning) a "regular" value into the monad 
- * I have to say the name seems backwards to me but it is the traditional name
- * (in fact it has a new name in Haskell recently)
+ * It is called return because it is injecting (returning) a "regular" value to the monad 
+ * The name seems backwards perhaps since it sounds like it could be returning *from* monad-land
 *)
 let return' (v : 'a) : 'a option = Some v
 
 
-(* Let us write out the bind calls (expand the macro) to show why the macro is better: *)
+(* Let us write out the bind calls (expand the macro) to show why the macro is more readable: *)
 let ex_bind l1 l2 =
   bind (zip l1 l2) ~f:(fun l ->
       let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
       bind (List.tl m) ~f:(fun tail -> 
           bind (List.hd tail) ~f:(fun hd_tail -> 
               return(hd_tail))))
-
+(* (vs version above: *) 
+let ex_bind_macro' l1 l2 =
+  let%bind l = zip l1 l2 in 
+  let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
+  let%bind tail = List.tl m in 
+  let%bind hd_tail = List.hd tail in
+  return(hd_tail)
 (* 
   * Observe in the above that we can invoke functions which are in monad-land like zip above
-  * And, we can also invoke regular functions like List.fold; no need for bind on them
+  * And, we can also invoke non-option-returning functions like List.fold; no need for bind on them
   * Just make sure to keep track of whats in and whats out of monad-land - !
 *)
 
@@ -150,9 +163,9 @@ let ex_bind_error l1 l2 =
   let%bind tail = List.tl m in
   let%bind hd_tail = List.hd tail in
   hd_tail
-(* type error! Both of let%bind's arguments need to be in monad-land, Option.t here *)
+(* type error! Both of let%bind's arguments need to be in monad-land, `t` here now that we opened Option *)
 
-(* Note that you *could* leave out the return though merge it with last let%bind: *)
+(* Note that you *could* leave out the return -- merge it with last let%bind: *)
 let ex_bind_fixed l1 l2 =
   let%bind l = zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
@@ -160,11 +173,12 @@ let ex_bind_fixed l1 l2 =
   List.hd tail (* this is in monad-land, all good! *)
 
 (* Equivalent pipe version syntax 
-   * a >>= b is just an infix form of bind, it is nothing but bind a b
+   * a >>= b is just an infix form of bind, it is nothing but 
+     bind a b
    * a >>| b is used when b is just a "normal" function which is not returning an option.
-   - encodings:
+   - the precise encodings in fact are:
      --  a >>| b is      bind a (fun x -> return (b x))
-     --  a >>| b is also a >>= (fun x -> return(b x))
+     --  a >>| b is also a >>= (fun x -> return (b x))
    - the additional "return" "lifts" f's result back into monad-land
    - the types make this difference clear:
      # (>>|);;
@@ -180,33 +194,54 @@ let ex_piped l1 l2 =
   >>= List.tl
   >>= List.hd
 
+let ex_piped_exn l1 l2 =
+    List.zip_exn l1 l2 
+    |> List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
+    |> List.tl_exn
+    |> List.hd_exn
+  
   (* The above uses >>| when the result of the step is not in monad-land
   and so the result needs to be put back there for the pipeline 
   >>= is for the result that is in monad-land already. *)
 
 (* A subtle point is that the pipe notation is associating the sequencing in 
-a different order.  Here is parens added to the above *)
+a different manner.  Here are parens added to the above, the >>= operators are 
+left-associative:  *)
 
 let ex_piped' l1 l2 =
-  ((
-    (zip l1 l2 
-  >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
+    (
+      (
+        zip l1 l2 
+        >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)) 
+      )
+      >>= List.tl
     )
-  >>= List.tl)
-  >>= List.hd)
+    >>= List.hd
 
-(*
+
+(* Even the regular pipe |> was left-associative, and it doesn't make sense any other way
+   because the first thing in the sequence is not a function and everything else is.  Here is a 
+   parenthesized version of the example at top of this file to show how it was working.  *)
+
+let _ : bool = 
+  (((Map.empty(module String) 
+     |> Map.set ~key: "hi" ~data: 3)
+  |> Map.set ~key: "ho" ~data: 17)
+  |> Map.for_all ~f:(fun i -> i > 10) )
+
+
+(* There is something subtle going on here with the operator ordering..
    - We all know that a;(b;c) "is the same order as" (a;b);c (e.g. in OCaml they give same results)
-   - for let, the rule is a bit more convoluted:
+   - for let and let-bind, there is an analogous principle which is a touch more complex:
       let x = a in let y = b in c   =   let y = (let x = a in b) in c
-       (provided x is not in c)
-   - the let%bind notation is doing the former and the pipes the latter.
-   - Note that not all monads in OCaml have this associative property but they *should*
-   - the mathematical notion of a monad must have this, it is a *monad law* (more later)
-
+       (provided x is not in c - on the left the c won't know what x is)
+   - Key point: the let%bind notation is doing the former and the pipes the latter - !!
+   - Monads (including Option here) should have this let-bind associative property
+   - More formally this is a *monad law* for the mathematical definition of monad (more later on that)
 *)
 
-(* To show this let us turn the piped version into let%bind version: *)
+(* To show this let us turn the piped version into the exact let%bind equivalent, not the let%bind version above.
+   Look at the top-level (outermost) >>= above to understand why this is what it is meaning *)
 let ex_piped_expanded l1 l2 =
   let%bind tail = 
     let%bind m = 
@@ -214,22 +249,21 @@ let ex_piped_expanded l1 l2 =
     List.tl m in
   List.hd tail
 
-(* Note let%map is the let% analogue of |>> which just wraps resuult in return  *)
+(* Note let%map is the let% analog of |>> which just wraps result in return  *)
 
 
 (* 
-  * OK it is finally time for a "real" monad
-  * Option extended to a more general Exception monad
-  * This example also shows how we can define our own monads with Base.Monad.Make
+  OK it is finally time for a full monad -- Option extended to a more general Exception monad
+  This example also shows how we can define our own monads with Core.Monad.Make
 *)
 
 module Exception = struct
 
-  module T = struct 
+  module T = struct (* We are going to include this T below here, we just need to name this stuff *)
     type 'a t = 'a Option.t
     (* return injects a normal-land computation into monad-land *)
     let return (x: 'a) : 'a t = Some x
-    (* bind sequences two monad-land computations where the 2nd can use 1st's result *)
+    (* bind sequences two monad-land computations where the 2nd can use 1st's value result *)
     let bind (m: 'a t) ~(f: 'a -> 'b t): 'b t =
       match m with
       | None -> None 
@@ -241,29 +275,31 @@ module Exception = struct
     let the_map (m: 'a t) ~(f: 'a -> 'b): 'b t = 
       bind m ~f:(fun x -> return(f x))
     let map = `Custom(the_map) (* simpler version:  `Define_using_bind *)
-    type 'a result = 'a 
-    (* `run` is the standard name for "enter monad-land from normal-land" function 
-        and process the result back into normal-land 
+    (* `run` is the standard name for 
+        1) enter monad-land from normal-land 
+        2) run a computation in monad-land;
+        3) transfer the final result back to normal-land 
         Option.run doesn't exist, it is not the full monad package *)
+    type 'a result = 'a (* 'a result is the type transferred out of monad-land at end of run *)
     let run (m : 'a t) : 'a result =
       match m with 
       | Some x -> x 
       | None -> failwith "monad failed with None"
-    (* Some more exception-looking syntax; also not in Core.Option *)
-    let raise () : 'a t = None
+    (* Lets get more exception-looking syntax than what is in Core.Option *)
+    let raise () : 'a t = None (* we can't pass any additional payload to a raise since None has no payload; Ok/Error would though *)
     let try_with (m : 'a t) (f : unit -> 'a t): 'a t =
       match m with 
       | None -> f () 
       | Some x -> Some x
   end
   include T (* The same naming trick used here as with Comparable *)
-  include Monad.Make(T) (* Base.Monad functor to add lots of extra goodies *)
+  include Monad.Make(T) (* Core.Monad functor to add lots of extra goodies *)
 end
 
 open Exception
 open Exception.Let_syntax
 
-(* Redoing the previous example we did on Option using Exception now *)
+(* Redoing the zipping example above using Exception now *)
 let ex_exception l1 l2 =
   let%bind l = zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
@@ -271,7 +307,7 @@ let ex_exception l1 l2 =
   let%bind hd_tail = List.hd tail in
   return(hd_tail)
 
-(* And, we can "run" them from normal-land as well: *)
+(* And, we can now "run" them from normal-land as well: *)
 let _ : int = run @@ ex_exception [1;2;3] [9;8;7]
 
 (* In general all the Option examples above work in Exception *)
@@ -295,13 +331,15 @@ let oneplustwo' =
 
 let _ : int = run oneplustwo'
 
-(* Let us encode some normal OCaml code raising an exception *)
+(* Let us now encode some normal OCaml code raising an exception into Exception *)
 
+(* Here is an actual OCaml exception that is handled with try-with *)
 let test_normal_ocaml x =
   try (1 + (if x = 0 then failwith "error" else 100 / x))
   with Failure _ -> 101
 
-(* Monad near-equivalent - note the + 1 moved in, 1 must be bound if written exactly as above *)
+(* Monad near-equivalent - note the + 1 moved in, 1 must be bound if written exactly as above 
+   Remember, the key here is it "looks" like there are side effects but it is actually all functional code *)
 
 let test_monad x =
   try_with 
@@ -329,7 +367,7 @@ let f (x : int) =
 (* More Monads *)
 (* *********** *)
 
-(* Generally a monad is anything matching this module type signature *)
+(* Generally a monad is anything matching this module type *)
 
 module type Monadic = sig
   type 'a t (* a "wrapper" on 'a-typed data *)
@@ -339,7 +377,7 @@ module type Monadic = sig
   val run : 'a t -> 'a result
 end
 
-(* (Base.Monad's version also requires map but does not require run) *)
+(* ( Core.Monad's version also requires map but does not require run) *)
 (* Let us verify our version above is indeed a monad *)
 
 module Exception_test = (Exception : Monadic)
@@ -373,6 +411,7 @@ module Ident = struct
   include Monad.Make(T)
 end
 
+(* Lets replay our stupid 1+2 example in Ident *)
 open Ident
 open Ident.Let_syntax
 let oneplustwo = 
@@ -387,9 +426,9 @@ let oneplustwo =
 
 (* 
 * There is a family of monads where the effect is "return more stuff on the side"
-  i.e. the `'a t` type is `'a * ... stuff ...`
+  i.e. the `'a t` type is `'a * ... more stuff ...`
 * Here is one such simple monad, a Logger which accumulates log messages
-* A common name for these is "writer" as that is the Haskell library name.  
+* A common name for these are "writer"s since they are writing things
 *)
 module Logger = struct
   module T = struct

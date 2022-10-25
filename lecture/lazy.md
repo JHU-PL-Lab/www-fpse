@@ -24,9 +24,9 @@ thaw frozen_add;; (* 4+3 not computed until here *)
 * This simple encoding is in fact just "call by name", laziness means memoizing the result.
 
 
-#### The `Base.Lazy` module
+#### The `Core.Lazy` module
 
-* `Base.Lazy` is a much more usable sugar for the above
+* ` Core.Lazy` is a much more usable sugar for the above
 
 ```ocaml
 # open Lazy;;
@@ -45,7 +45,7 @@ Have a smiley day! (* this is printed only once, the 2nd force uses cached 5 val
 ```ocaml
 open Core
 open Lazy
-type 'a stream = Cons of 'a * 'a stream Lazy.t (* List MUST be infinite - ! *)
+type 'a stream = Cons of 'a * 'a stream Lazy.t (* A stream is an infinite list - no empty list case here *)
 
 (* Programs making lazy lists look somewhat bizarre at first - doesn't this loop forever?!? *)
 let rec all_ones : int stream = Cons(1,lazy(all_ones))
@@ -70,8 +70,7 @@ nth fib 100;; (* clearly not exponential *)
 ```
 
 
-* One thing not clear from the code is that a `Lazy` will not be recomputed
-* Once the list is "unrolled" by one call it doesn't need to be "re-unrolled"
-* This is a form of caching / memoization built into `Lazy`
-   - (but not in our crude encoding of it above)
-* Note that becuase of that the above nth function will in fact be linear, not exponential
+* As we saw above with the print, `lazy` results are cached so if it is forced a second time no need to recompute
+    - Once the list is "unrolled" by one call it doesn't need to be "re-unrolled"
+    - This is a form of caching / memoization built into `Lazy`
+* Becuase of that the above `nth fib` function will in fact be linear, not exponential

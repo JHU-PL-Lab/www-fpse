@@ -38,8 +38,8 @@ type 'a my_option = My_some of 'a | My_none
     - pretty straightforward hopefully - multiple names for the same type.
  *)
 
-type ti = int
-let f (x : ti) = x + 1
+type float_alias = float
+let f (x : float_alias) = x +. 1.
 let sid (x : String.t) = x (* String.t is aliased to be `string` via "type t = string" in String *)
 
 (*
@@ -180,16 +180,19 @@ module String_pair_smartest = Make_pair_smartest(String)
 (* (in general, the more advanced the types get the weaker the inference is) *)
 
 (* The module type for String_pair_smartest above, needed for below *)
+(* This is the type inferred for the resulting module the functor makes *)
 module type Sps_i = 
 sig
-  type lr = String_pair_smartest.lr
+  type lr = String_pair_smartest.lr (* could also say just `type lr` but this is a bit better for subtle reasons *)
   val create : string -> string -> lr
   val left : lr -> string
   val right : lr -> string
   val equal : lr -> lr -> bool
 end
 (* Let us put a module in a ref cell as a stupid example of modules-as-data
-    "(module M : M_i)" is the syntax for turning regular module into first-class one *)
+    `(module M)` is the syntax for turning regular module into first-class one
+    But often the type checker needs some help so you need to also give a type:  
+    `(module M : M_i)`  *)
 
 let mcell  =  ref (module String_pair_smartest : Sps_i)
 
@@ -204,7 +207,7 @@ let _ : string =
 
 (* Can also locally unpack it (can do this with any module) *)
 let _ : string = 
-  let p = let (module M) = !mcell in M.create "hi" "ho" in M.left p;;
+  let (module M) = !mcell in let p = M.create "hi" "ho" in M.left p;;
 
 (* Doing something a bit more useful with first-class modules *)
 (* Lets make some heterogenous data structures *)
@@ -212,13 +215,13 @@ module type Item_i =
 sig 
   type t
   val item : t
-  val to_sexpr : unit -> Sexp.t
+  val to_string : unit -> string
 end
 
 module Int_item : Item_i = struct
   type t = Int.t
   let item = 33 (* Yes a bit overwrought, a module just to hold a single number *)
-  let to_sexpr () = Int.sexp_of_t item
+  let to_string () = Int.to_string item
 end
 
 (* Better: let us write a function to make the above module for any int i 
@@ -226,31 +229,29 @@ end
 let make_int_item (i : int) = (module struct
   type t = Int.t
   let item = i
-  let to_sexpr () = Int.sexp_of_t item
+  let to_string () = Int.to_string item
 end : Item_i)
 
-(* And similarly for strings *)
+(* And similarly for strings (or ANY other type) *)
 let make_string_item (s : string) = (module struct
   type t = String.t
   let item = s
-  let to_sexpr () = String.sexp_of_t item
+  let to_string () = item
 end : Item_i)
 
 (* Since the type t is 100.0% hidden in Item_i we can make a heterogenous list! *)
 let item_list = [make_string_item "hi"; make_int_item 5]
 
 (* Inspect the type above, OCaml still sees a uniform list
-   Observe that abstract types like t in module types are
-   "exists t"'s - each t underlying in the list is different but 
-   OCaml just sees "exists a t" for each one and that is OK! 
-   Only when types are 100% hidden are they "exists" 
-   So, there is not a lot we can do with such data structures *)
+   Observe that abstract types like t in module types are "exists t"'s - each t underlying in the list is different but OCaml just sees "exists a t" for each one and that is OK! Only when types are 100% hidden are they "exists" So, there is not a lot we can do with such data structures *)
 
 
-let to_sexpr_items (il : (module Item_i) list)  = 
-  List.map ~f:(fun it -> let (module M) = it in M.to_sexpr()) il
+let to_string_items (il : (module Item_i) list)  = 
+  List.map ~f:(fun it -> let (module M) = it in M.to_string()) il
 
-(* This example is not particularly useful, but there are many useful examples
+  let _ = to_string_items item_list;;   
+  
+  (* This example is not practically useful, but there are many useful examples
    See e.g. https://dev.realworldocaml.org/first-class-modules.html 's query handling example *)
 
 
@@ -276,25 +277,12 @@ let to_sexpr_items (il : (module Item_i) list)  =
 
    #show Map.Make;;
    module Make :
-   functor (Key : Core_kernel.Map.Key) -> sig (* .. tons of stuff *) end
+   functor (Key : Core.Map.Key) -> sig (* .. tons of stuff *) end
 
-   So let us look at what the module type of Key is, i.e. what we need to provide.
+   So let us look at what the module type Core.Map.Key is, i.e. what we need to provide:
+   see https://ocaml.org/p/core/v0.15.0/doc/Core/Map_intf/module-type-Key/index.html 
 
-   #show Core_kernel.Map.Key;;
-   module type Key = Core_kernel__.Map_intf.Key
-
-   - it is just a type alias, so let us follow the alias chain:
-
-   #show Core_kernel__.Map_intf.Key;;
-   module type Key =
-   sig
-    type t
-    val compare : t -> t -> int
-    val t_of_sexp : Sexp.t -> t
-    val sexp_of_t : t -> Sexp.t
-   end
-
-   - it needs to have a compare as well as to/from S-expression functions.  Example:
+   - it needs `compare` and to/from s-expression stuff.  So let us use `[@@deriving]` to make those.
 *)
 
 module IntPair = struct
@@ -303,7 +291,9 @@ end
 
 module PairMap = Map.Make(IntPair)
 
-(* Let us reconsider the first-class modules method for making Maps
+(* Now the annoying thing about this is we need to make a new module for every different Map key type .. annoying. *)
+
+(* Let us now look in details the first-class modules method for making Maps
    now that we know the syntax
 *)
 (* make an empty module with string key; type of m is funky more below on that *)
@@ -324,11 +314,14 @@ val empty : ('a, 'cmp) Map.comparator -> ('a, 'b, 'cmp) Map.t
 
 # #show_type Map.comparator;;
 type nonrec ('k, 'cmp) comparator =
-    (module Core_kernel__.Comparator.S with type comparator_witness = 'cmp and type t = 'k)
+    (module Core__.Comparator.S with type comparator_witness = 'cmp and type t = 'k)
 
--- notice how we can also put "module" on a module type to make it an expresion type - !
+-- notice how putting "module" on a module type makes it an expresion type
+-- the parameters 'k and 'cmp are the key type and a special "nonce" type naming a module
+    -- it is a type named in the module, we never use it for expressions
+    -- these are called "phantom types"
 
-Example:
+Example to show how a String module in expression-space is typed:
 
 # let m : ((string,String.comparator_witness) Map.comparator) = (module String);;
 val m : (string, String.comparator_witness) Map.comparator = <module>
@@ -346,8 +339,8 @@ val sps : (module Sps_i) = <module>
 
 let m = Map.empty (module IntPair)
 
-(* Gives an error, needs a comparator and a comparator_witness *)
-(* Solution: here is the somewhat-magical way to add those *)
+(* Gives an error, module needs a comparator and a comparator_witness *)
+(* Solution: here is the somewhat-magical way to add those to IntPair module *)
 
 module IntPairCompar = struct
   module T = struct 
@@ -365,36 +358,26 @@ let m = Map.empty (module IntPairCompar) (* Works now *)
 *)
 
 (* Observe the type of Maps are now `('a, 'b, 'cmp) Map_intf.Map.t`  
-  'a is the key type
+  'a is the key type, always <KeyModule>.t for <KeyModule> being the module for keys, e.g. IntPairCompar above
   'b is the value type
-  'cmp is the nonce (aka phantom type) to distinguish this particular modules compare function
+  'cmp is the nonce (aka phantom type) to uniquely "name" the key module; it is always <KeyModule>.comparator_witness
 
   Notice the Map.Make version lacked the nonce
   The purpose of the nonce is to allow Maps themselves to be compared
-    - only works if both the key and value are same type PLUS comparison is same
-    - the nonce names the comparator to make sure is compatible
-    - otherwise the results will be random
+    - only will make sense to compare maps if both the key and value are same type PLUS `compare` function is same
+    - the nonce uniquely names the `compare` since it had to be defined in the same module
+    - without the nonce it would be possible to compare two maps
 *)
 
-(* Here is in fact what Comparator.Make is adding more or less: *)
+(* Here is in fact what Comparator.Make is adding more or less.  The `compare` and `comparator_witness`
+   are in the same module so the latter serves as unique signature of the former 
+   Note this code in fact will not run since Core doesn't want users doing this themselves *)
 module IntPairComparDirect = struct
-  module T = struct 
   type t = int * int [@@deriving compare, sexp] 
   end
-  include T
-  type comparator_witness (* an empty type, just a name aka nonce *)
+  type comparator_witness (* an empty type, just a name aka nonce, also called a phantom type *)
   let comparator : ('a, 'witness) Comparator.t = { compare = T.compare; sexp_of_t = T.sexp_of_t}
 end
-
-(* But, this does not 100% work:
-  You need to use the functor as above since Comparator.t has the record declared "private"
-  private types cannot be created outside of the module they are declared in 
-  See e.g. https://caml.inria.fr/pub/docs/manual-ocaml/privatetypes.html 
-  They can be *used* outside, just not created. So, only partial hiding. 
-  
-  Core uses private here to force us to use Comparator.Make *)
-
-let r = IntPairCompar.comparator.sexp_of_t;; (* can access fields of private record *)
 
 (* **************** *)
 (* **** I/O ******* *)
@@ -422,7 +405,8 @@ open CamlinternalFormatBasics (* shorten what is printed *)
 let fmt : (int -> 'a, 'b, 'c) format =  "%i is the number \n"
 
 (* observe the first parameter is a function taking an int - that is extracted from the %i 
-  by the compiler.  Note the function will be inferred if we leave it out. *)
+  by the compiler.  Ignore the other parameters, they are for internal use.
+  Note the function will be inferred if we leave it out. *)
 let fmt2 : ('a, 'b, 'c) format =  "%i is the number \n"
 
 let () = printf fmt 5;; (* Finally we can pass the format string as a parameter *)

@@ -5,7 +5,7 @@ For the projects you are to conceive, design, and implement your own standalone 
 ### Requirements
 Here are some high-level requirements for the projects.
 
-* All the code must be in OCaml obviously (excepting small bits of glue code or explicit excpetions if you petition)
+* All the code must be in OCaml obviously (excepting small bits of glue code or explicit exceptions if you petition)
 * Use the standard course libraries -- `Core`, `Lwt`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 1-3 people; non-singleton project groups are preferred.
 * A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count as part of your grade.
@@ -94,7 +94,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * [Owl](https://ocaml.xyz/book/) is a very well-documented numerical processing library.
 * [ocaml-torch](https://github.com/LaurentMazare/ocaml-torch) PyTorch bindings for OCaml
 * [tensorflow-ocaml](https://github.com/LaurentMazare/tensorflow-ocaml) TensorFlow bindings for OCaml
-* [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.
+* [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.  This library has been difficult for some people to install properly so please test it out well before committing to it.
 
 #### And more!
 
