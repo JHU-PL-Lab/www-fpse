@@ -415,6 +415,11 @@ end
 open Ident
 open Ident.Let_syntax
 let oneplustwo = 
+  bind (return 1) 
+    ~f:(fun onev -> 
+        bind (return 2) 
+          ~f:(fun twov -> return (onev + twov)))
+let oneplustwo = 
   let%bind onev = return 1 in 
   let%bind twov = return 2 in 
   return (onev + twov)
@@ -663,30 +668,37 @@ end
 
 open State_int
 open State_int.Let_syntax
-
-(* Here is an OCaml example of how state is implicitly threaded along *)
-
+(* Here is an OCaml state example of how state is implicitly threaded along *)
 let r = ref 0 in
-let () = r := !r + 1 in
-let result = !r in result (* r implicitly has latest value *)
+let rv = !r in
+let () = r := rv + 1 in !r
 
-(* Here is the same example in the State_int monad *)
+(* Here is how we would have done this manually, like with the Map example above..
+   * make the state explicit via a variable (i/i' here)
+   * hand-over-fist threading of state from one operation to next: *)
+    let i = 0 in
+    let rv = i in
+    let i' = rv + 1 in i'
+  
+(* Here is the same example in the State_int monad
+   * under the hood the code is similar to this manual hand-over-fist code
+   * but, we hide that so programmer can view like native state
+   * which lets programmer think at a higher level (hopefully) *)
 
 let simple_state () = 
   (* let r = ref 0 is implicit - initial value at run time *)
   let%bind rv = (get() : int t) in
-  let%bind () = (set(rv + 1) : int t) in
-  let%bind result = (get() : int t) in return(result)
+  let%bind () = (set(rv + 1) : int t) in 
+  (get() : int t)
 
 run @@ simple_state ();;
 
-(* inlining the above let%bind *)
+(* turning the above let%bind into the underlying bind to be more explicit *)
 
 let simple_state () = 
   (* let r = ref 0 is implicit - initial value at run time *)
   bind (get()) ~f:(fun rv ->
-  bind (set(rv + 1)) ~f:(fun () ->
-  bind (get()) ~f:(fun result -> return(result))))
+  bind (set(rv + 1)) ~f:(fun () ->get()))
 
 run @@ simple_state ();;
 
