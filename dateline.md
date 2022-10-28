@@ -537,13 +537,13 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
 	<tr> 
           <td width="8%"> 
-            <div align="center" class="body">Dec 14-22</div>
+            <div align="center" class="body">Dec 19</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">TBA</div>
+            <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;<strong>Project Demos (exact dates set when finals schedule posted)</strong></div>
+            <div align="left" class="body">&nbsp;<strong>Project Demos</strong></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

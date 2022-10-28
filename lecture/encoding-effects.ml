@@ -300,6 +300,9 @@ open Exception
 open Exception.Let_syntax
 
 (* Redoing the zipping example above using Exception now *)
+
+let zip l1 l2 = match List.zip l1 l2 with Unequal_lengths -> raise () | Ok l -> return l
+
 let ex_exception l1 l2 =
   let%bind l = zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
@@ -341,15 +344,17 @@ let test_normal_ocaml x =
 (* Monad near-equivalent - note the + 1 moved in, 1 must be bound if written exactly as above 
    Remember, the key here is it "looks" like there are side effects but it is actually all functional code *)
 
-let test_monad x =
+let test_exn_monad x =
   try_with 
     (if x = 0 then raise () else return(1 + 100 / x))
     (fun () -> return(101))
 
-let _ : int = run @@ test_monad 4
-let _ : int = run @@ test_monad 0
+let _ : int = run @@ test_exn_monad 4
+let _ : int = run @@ test_exn_monad 0
 
-(* While moving the 1 + in is the right thing to do for the above code, sometimes you can't..
+(* While moving the 1 + in is the right thing to do for the above code, sometimes you can't.
+   First, if you just copied the normal OCaml way it would not work - the first try-with argument
+     needs to be a monadic value (a Some/None here)
    Lets as an exercise keep the 1 + in the original spot with bind (using let%bind syntax)
 *)
 
@@ -464,8 +469,9 @@ open Logger.Let_syntax
 
 let log_abs n = 
   if n >= 0 
-  then let%bind _ = log "positive" in return n
-  else let%bind _ = log "negative" in return (-n)
+  then let%bind () = log "positive" in return n
+  else let%bind () = log "negative" in 
+       let%bind () = log "yup" in return (-n)
 
 (* another simple example, add log messages to 1+2 example above *)
 let oneplustwo_logged = 
@@ -525,7 +531,7 @@ let oneplustwo_again =
   return (onev + twov)
 
 (* Now let us actually use the monad *)
-(* Here is a simple environment type, think of it as global constants *)
+(* Here is a simple environment type, think of it as a set of global constants *)
 type d = {
   name: string;
   age: int;
@@ -543,17 +549,17 @@ let _ : bool = run is_retired {name = "Gobo"; age = 88}
 (* 
   * To *really* be a monad you need to satisfy some invariants:
 
-    1) bind (return a) ~f  =  f a 
-    2) bind a ~f:(fun x -> return x)  =  a
-    3) bind a (fun x -> bind b ~f:(fun y -> c))  =  
+    1) bind (return a) ~f  ~=  f a 
+    2) bind a ~f:(fun x -> return x)  ~=  a
+    3) bind a (fun x -> bind b ~f:(fun y -> c))  ~=  
        bind (bind a ~f:(fun x -> b)) ~f:(fun y -> c)
 
     equivalent let%bind versions:
-    1) let%bind x = return(a) in f a  =  f a
-    2) let%bind x = a in return(x)  =  a
-    3) let%bind x = a in let%bind y = b in c =
+    1) let%bind x = return(a) in f x  ~=  f a
+    2) let%bind x = a in return(x)  ~=  a
+    3) let%bind x = a in let%bind y = b in c ~=
        let%bind y = (let%bind x = a in b) in c
-  * (Note "=" here means we can replace one with the other and notice no difference)
+  * (Note "~=" here means we can replace one with the other and notice no difference)
   * These are called the "Monad Laws"
   * The last one is the trickiest but we hit on it earlier, it is associativity of bind
   * The first two are mostly intuitive properties of injecting normal values into a monad
@@ -673,7 +679,7 @@ let r = ref 0 in
 let rv = !r in
 let () = r := rv + 1 in !r
 
-(* Here is how we would have done this manually, like with the Map example above..
+(* Here is how we would have done this manually, like with the Map and zip examples above..
    * make the state explicit via a variable (i/i' here)
    * hand-over-fist threading of state from one operation to next: *)
     let i = 0 in
@@ -688,7 +694,7 @@ let () = r := rv + 1 in !r
 let simple_state () = 
   (* let r = ref 0 is implicit - initial value at run time *)
   let%bind rv = (get() : int t) in
-  let%bind () = (set(rv + 1) : int t) in 
+  let%bind () = (set(rv + 1) : unit t) in 
   (get() : int t)
 
 run @@ simple_state ();;
@@ -763,6 +769,8 @@ module State = struct
       fun (s : 'a m) -> ((),Map.set ~key:k ~data:v s)
     let get (r : string) : ('a, 'v) t =
       fun (s : 'a m) -> (Map.find_exn s r, s)
+    let dump : 'a m -> 'a m * 'a m =
+      fun (s : 'a m) -> (s, s)    
   end
   include T
   include Monad.Make2(T)
@@ -782,6 +790,38 @@ let sumlist l =
   in sum l
 
 let _ : int = run (sumlist [1;2;3;4;5])
+
+(* Let us revisit the above Map example to show how hand-over-fist is behind the scenes *)
+(* Here is what we had above *)
+let _ : bool = Map.empty(module String) 
+               |> Map.set ~key: "hi" ~data: 3 
+               |> Map.set ~key: "ho" ~data: 17
+               |> Map.for_all ~f:(fun i -> i > 10)
+
+(* Let's put this back in let form to make clear all the hand-over-fist passing we had to do *)
+let _ : bool = 
+  let m0 = Map.empty(module String) in
+  let m1 = Map.set ~key: "hi" ~data: 3 m0 in 
+  let m2 = Map.set ~key: "ho" ~data: 17 m1 in
+  Map.for_all ~f:(fun i -> i > 10) m2
+
+(* OK now lets use our State instead. Observe that there is no m1/m2 threading needed. *)
+
+let map_eg_state =
+  let%bind () = set "hi" 3 in
+  let%bind () = set "ho" 17 in
+  let%bind d = dump in (* dump dumps the whole state contents out, needed for the Map.forall *)
+  return(Map.for_all ~f:(fun i -> i > 10) d)
+
+let _ = run map_eg_state 
+
+  let rec sum = function
+    | [] -> get "r"
+    | hd :: tl -> 
+      let%bind n = get "r" in 
+      let%bind _ = set "r" (n + hd) in
+      sum tl
+  in sum l
 
 
 (* Type-directed monads 
