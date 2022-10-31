@@ -64,8 +64,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Concurrency is needed for two main reasons</p>
 <ol>
-  <li>You want to run things in parallel for speed gain (multi-core, cluster, etc)</li>
-  <li>You are waiting for a result from an I/O action
+  <li>You want to run things in <strong>parallel</strong> for speed gain (multi-core, cluster, etc)</li>
+  <li>You are <strong>waiting</strong> for a result from an I/O action
     <ul>
       <li>Disk read/write, network request, remote API call, etc</li>
       <li>(Sometimes also awaiting for internal actions such as time-outs)</li>
@@ -75,10 +75,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>In OCaml</p>
 <ul>
-  <li>Concurrency for speed gain is a work in progress: <strong>multi-core OCaml</strong>
+  <li>Concurrency for speed gain is a work in progress: <strong>OCaml 5</strong> (in beta now)
     <ul>
-      <li>Should be released in a year or so</li>
-      <li>We plan on covering parts of the beta</li>
+      <li>We will cover a bit of OCaml 5 tomorrow</li>
     </ul>
   </li>
   <li>
@@ -91,13 +90,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>But, threads are notoriously difficult to debug due to number of interleavings
     <ul>
-      <li>100’s of patches have been added to help (channels, monitors, locks, ownership types, etc etc etc) but still hard</li>
+      <li>Can’t test all of the exponentially many ways parallel computations can interleave</li>
+      <li>100’s of patches have been added to limit resource contention (channels, monitors, locks, ownership types, etc etc etc) but still hard</li>
     </ul>
   </li>
   <li>So, often better to use a simpler system focused on waiting for I/O if that is all you really need</li>
-  <li>Key difference is no preemption - routine runs un-interrupted until it <em>chooses</em> to “yield”/”pause”.</li>
+  <li>Key difference is <strong>no preemption</strong> - routine runs un-interrupted until it <em>chooses</em> to “yield”/”pause”.</li>
   <li>Means that computations are still <em>deterministic</em>, much easier to debug!</li>
-  <li>Such an approach is known as <em>coroutines</em></li>
+  <li>Such an approach is called <em>coroutines</em> due to that term being used in some early PLs.</li>
 </ul>
 
 <h3 id="coroutines-in-different-languages">Coroutines in different languages</h3>
@@ -120,8 +120,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="principles-of-coroutines">Principles of Coroutines</h3>
 
 <ul>
-  <li>The key use of coroutines is for I/O operations which may block</li>
-  <li><em>and</em>, they are not required to be run in a dependent sequence.
+  <li>The key use of coroutines is in the presence of I/O operations which may block</li>
+  <li><em>and</em>, there are multiple I/O operations which are not required to be run in a fixed sequence.
     <ul>
       <li>For example if you need to read one file and write a tranform to another file and that is it, there is no concurrency, no need for coroutines.</li>
       <li>But if there are some independent actions or events they are very useful, it will allow the actions to proceed concurrently in the OS layer.</li>
@@ -129,20 +129,21 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h4 id="motivating-the-need">Motivating the Need</h4>
+<h4 id="motivating-the-need-photomontage-app">Motivating the Need: Photomontage App</h4>
 
 <ul>
-  <li>Suppose you want to read a bunch of images from different places on the Internet.</li>
-  <li>You can process them in the order they show up, no need to wait for all the images to come in</li>
-  <li>Also (<strong>key</strong>), if one load is slow don’t block all the subsequent loads
+  <li>Suppose you want to read a bunch of images from different URLs on the Internet and make a collage of them</li>
+  <li>You would like to process them in the order they show up, no need to wait for all the images to come in</li>
+  <li>Also if one load is slow don’t block all the subsequent loads
     <ul>
-      <li>kick them all off at the start, then process as they come in.</li>
+      <li>Kick them all off at the start, then process as they come in</li>
+      <li>Some loads could be from dead URLs so will need to time out on those</li>
     </ul>
   </li>
-  <li>There could also be some sequencing requirements as well
+  <li>There are some sequencing requirements as well
     <ul>
-      <li>e.g. once all images are in and processed or timed out, a collage is created.</li>
-      <li>(note that implicit in the “timed out” is a timer which can abort some loads as well)</li>
+      <li>Process each image as it comes in (e.g. make 100x100)</li>
+      <li>Once all images are in and processed or timed out, a collage is created.</li>
     </ul>
   </li>
 </ul>
@@ -150,11 +151,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="idea-of-the-implementation">Idea of the implementation</h4>
 
 <p>Q: How do we allow these loads to happen concurrently without fork/threads/parallelism?<br />
-A: Split such I/O actions in two:</p>
+A: Use coroutines to split I/O actions in two:</p>
 <ol>
-  <li>Issue image request and <code>pause</code></li>
-  <li>Package up the processing code (the <em>continuation</em>) which will run when the load completes as a function</li>
-  <li>Run the function when the load is done.</li>
+  <li>Issue each image request</li>
+  <li>Package up the processing code (the <em>continuation</em>) as a function which will run when each load completes</li>
+  <li>The coroutine system will run the continuation function when the load is done.</li>
 </ol>
 
 <p>It might seem awkward to package up the continuation as a function but we already did that!</p>
@@ -163,7 +164,7 @@ A: Split such I/O actions in two:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
 <span class="n">bind</span> <span class="c">(* code to issue image request and pause *)</span> 
-     <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* processing code to run after this image loaded*)</span>
+     <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* processing code to run after this image loaded *)</span> <span class="p">)</span>
 </code></pre></div></div>
 <p>which is, in <code>let%bind</code> notation,</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
@@ -176,6 +177,7 @@ A: Split such I/O actions in two:</p>
 <ul>
   <li>Observe how <code>bind</code> is naturally making the continuation a function</li>
   <li>So we will be using <code>bind</code> a lot when writing coroutine code in OCaml</li>
+  <li>In general <code>Lwt</code>/<code>Async</code> are <em>monads</em> as per our effect encoding lecture</li>
 </ul>
 
 <h3 id="the-full-loading-task-here">The full loading task here</h3>
@@ -206,22 +208,14 @@ A: Split such I/O actions in two:</p>
 
 <ul>
   <li>The above is some high level idea of the use of coroutines</li>
-  <li>We will now fire up <code>Lwt</code> and get into the details
-    <ul>
-      <li>It is the most commonly used coroutine library; <code>Async</code> is part of <code>Core</code> but has much less usage.</li>
-    </ul>
-  </li>
+  <li>We will now fire up <code>Lwt</code> and get into the details</li>
 </ul>
 
 <p><a name="lwt"></a></p>
 
-<p>To run <code>Lwt</code> you need to install it from the shell first:</p>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam <span class="nb">install </span>lwt
-</code></pre></div></div>
-
-<p>Then in <code>utop</code> do</p>
+<p>To run <code>Lwt</code> from <code>utop</code> do</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">require</span> <span class="s2">"lwt"</span><span class="p">;;</span>
+<span class="o">#</span><span class="n">require</span> <span class="s2">"lwt.unix"</span><span class="p">;;</span> <span class="c">(* if you also want Lwt-ized I/O functions like file read/write etc *)</span>
 </code></pre></div></div>
 
 <p>And you might also want to do this to put the functions at the top level and to enable <code>let*</code>.</p>
@@ -229,12 +223,75 @@ A: Split such I/O actions in two:</p>
 <span class="o">#</span> <span class="k">open</span> <span class="nc">Syntax</span><span class="p">;;</span>
 </code></pre></div></div>
 
+<p>This example shows the Lwt version of <code>read_line</code> in action.</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="o">*</span> <span class="n">str</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">;;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>This example looks just like the built-in <code>read_line</code> except for the <code>*</code>; here is why <code>Lwt</code> version is better:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> 
+<span class="n">printf</span> <span class="s2">"See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Stdio</span><span class="p">.</span><span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span> 
+<span class="k">let</span><span class="o">*</span> <span class="n">str</span> <span class="o">=</span> <span class="n">p</span> <span class="k">in</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">;;</span>
+</code></pre></div></div>
+
+<p>What is going on here??</p>
+
+<ul>
+  <li>The first line <em>immediately</em> completes and returns a <em>promise</em>, <code>p</code>, of type <code>string Lwt.t</code>
+    <ul>
+      <li>“I promise I will <em>eventually</em> turn into a <s>pumpkin</s> string”</li>
+      <li>We can use <code>Lwt.state</code> to look at what the state the promise <code>p</code> is on the way to completion
+        <ul>
+          <li><code>Sleep</code> means nothing has happened yet (no input)</li>
+          <li><code>Return v</code> means it has been fulfilled with <code>v</code> as the value (the input string in above case)</li>
+          <li><code>Fail exn</code> means it failed with exception condition <code>exn</code>.</li>
+          <li>Both <code>Return</code> and <code>Fail</code> are <em>resolved</em> (finished) promises</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>The <code>let*</code> above is <code>let%bind</code> but for <code>Lwt</code> - syntactic sugar for <code>bind</code>
+    <ul>
+      <li><code>Lwt</code> is a monad where <code>'a Lwt.t</code> is a promise for a <code>'a</code> value.</li>
+      <li>As in any monad, <code>let* x = &lt;a promise&gt; in .. x normal here .. </code> will take a promise back to normal-land</li>
+      <li>To do this, the <code>in</code> of the <code>let*</code> will need to block until that resolution.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Here is a top-loop example showing some of these promise states; code is a bit convoluted to be able to see results.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">let</span> <span class="n">s</span><span class="o">,</span><span class="n">p</span> <span class="o">=</span> <span class="k">let</span> <span class="n">p0</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> <span class="p">(</span><span class="n">state</span> <span class="n">p0</span><span class="o">,</span> <span class="n">p0</span><span class="p">);;</span> <span class="c">(* state is Sleep - input not read yet*)</span>
+ <span class="c">(* type something at utop and hit return now - not shown for some reason - this is the input *)</span>
+ <span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* returns `Return &lt;the string you typed&gt;` *)</span>
+ <span class="c">(* Here is a failure state.  It is an exception internal to `Lwt`, it doesn't get `raise`d in OCaml except at top *)</span>
+ <span class="k">let</span> <span class="n">p'</span> <span class="o">=</span> <span class="n">fail</span> <span class="nc">Exit</span> <span class="k">in</span> <span class="n">state</span> <span class="n">p'</span><span class="p">;;</span>
+</code></pre></div></div>
+
+<p>We can make our own promises; this also shows what <code>Lwt_io.read_line</code> et al are doing in their code</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="n">return</span> <span class="s2">"done"</span><span class="p">;;</span> <span class="c">(* This is the return of Lwt monad - inject a regular value as a "fulfilled" promise *)</span>
+<span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* indeed it is already resolved to a `Return`. *)</span>
+<span class="k">let</span> <span class="n">p</span><span class="o">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">wait</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* `wait` starts a promise aSleep; r is a resolver used to resolve it later *)</span>
+<span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* Sleep *)</span>
+<span class="n">wakeup_exn</span> <span class="n">r</span> <span class="nc">Exit</span><span class="p">;;</span> <span class="c">(* `wakeup_exn` makes p a failure  *)</span>
+<span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* Now a `Fail Exit`.  Note once resolved it is all done, can't Sleep/Return *)</span>
+
+<span class="k">let</span> <span class="n">p</span><span class="o">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">wait</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* another one, lets resolve this one positively *)</span>
+<span class="n">wakeup</span> <span class="n">r</span> <span class="s2">"hello"</span><span class="p">;;</span>
+<span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* now a Return "hello" *)</span>
+</code></pre></div></div>
+
 <p>We will now review</p>
 
 <ul>
-  <li><a href="https://ocsigen.org/lwt/latest/manual/manual">Some of the manual</a></li>
+  <li><a href="https://ocsigen.org/lwt/latest/manual/manual">Some of the manual</a> (join/choose, Lwt_unit.run, etc)</li>
   <li><a href="https://raphael-proust.github.io/code/lwt-part-1.html">this <code>Lwt</code> tutorial</a> which gets into how the internals work in Part 2.</li>
 </ul>
+
+<h3 id="examples">Examples</h3>
 
 <p><a name="async"></a></p>
 
@@ -372,7 +429,7 @@ A: Split such I/O actions in two:</p>
       </div>
 
 				<div id="copyright">
-					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+					Web Design: TEMPLATED
 				</div>			
 
 

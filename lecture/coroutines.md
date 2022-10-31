@@ -2,64 +2,65 @@
 ## Coroutines for Asynchronous Concurrent Programming
 
 Concurrency is needed for two main reasons
- 1. You want to run things in parallel for speed gain (multi-core, cluster, etc)
- 2. You are waiting for a result from an I/O action
+ 1. You want to run things in **parallel** for speed gain (multi-core, cluster, etc)
+ 2. You are **waiting** for a result from an I/O action
      - Disk read/write, network request, remote API call, etc
      - (Sometimes also awaiting for internal actions such as time-outs)
 
 In OCaml
-  * Concurrency for speed gain is a work in progress: **multi-core OCaml**
-    - Should be released in a year or so
-    - We plan on covering parts of the beta
+  * Concurrency for speed gain is a work in progress: **OCaml 5** (in beta now)
+    - We will cover a bit of OCaml 5 tomorrow
   * Concurrency to support asynchronous waiting: The `Lwt` and `Async` libraries
 
 
  * Local concurrency for speed is usually done via *threads*
    - fork off another computation with its own runtime stack etc but share the heap
  * But, threads are notoriously difficult to debug due to number of interleavings
-   - 100's of patches have been added to help (channels, monitors, locks, ownership types, etc etc etc) but still hard
+   - Can't test all of the exponentially many ways parallel computations can interleave
+   - 100's of patches have been added to limit resource contention (channels, monitors, locks, ownership types, etc etc etc) but still hard
  * So, often better to use a simpler system focused on waiting for I/O if that is all you really need
- * Key difference is no preemption - routine runs un-interrupted until it *chooses* to "yield"/"pause".
+ * Key difference is **no preemption** - routine runs un-interrupted until it *chooses* to "yield"/"pause".
  * Means that computations are still *deterministic*, much easier to debug!
- * Such an approach is known as *coroutines*
+ * Such an approach is called *coroutines* due to that term being used in some early PLs.
 
 ### Coroutines in different languages
 
 Coroutines are found in most modern PLs
-* Python has the built-in [asyncio library](https://docs.python.org/3/library/asyncio-task.html)
-* JavaScript has built-in `async/await` syntax
-* All other commonly-used languages have some third-party library
+ * Python has the built-in [asyncio library](https://docs.python.org/3/library/asyncio-task.html)
+ * JavaScript has built-in `async/await` syntax
+ * All other commonly-used languages have some third-party library
 
 In OCaml there are currently two competing libraries
-* `Async` - a Jane Street library, very compatible with `Core` but not widely used so fewer other libraries use it.
-* `Lwt` - the standard library for coroutines in OCaml.
-* We will cover `Lwt` primarily since you will likely have the most success with it on your projects.
-* They are more or less the same in principle
+ * `Async` - a Jane Street library, very compatible with `Core` but not widely used so fewer other libraries use it.
+ * `Lwt` - the standard library for coroutines in OCaml.
+ * We will cover `Lwt` primarily since you will likely have the most success with it on your projects.
+ * They are more or less the same in principle
 
 ### Principles of Coroutines
 
-* The key use of coroutines is for I/O operations which may block
-* *and*, they are not required to be run in a dependent sequence.
+* The key use of coroutines is in the presence of I/O operations which may block
+* *and*, there are multiple I/O operations which are not required to be run in a fixed sequence.
   - For example if you need to read one file and write a tranform to another file and that is it, there is no concurrency, no need for coroutines.
   - But if there are some independent actions or events they are very useful, it will allow the actions to proceed concurrently in the OS layer.
 
-#### Motivating the Need
+#### Motivating the Need: Photomontage App
 
-* Suppose you want to read a bunch of images from different places on the Internet.
-* You can process them in the order they show up, no need to wait for all the images to come in
-* Also (**key**), if one load is slow don't block all the subsequent loads
-  - kick them all off at the start, then process as they come in.
-* There could also be some sequencing requirements as well
-  - e.g. once all images are in and processed or timed out, a collage is created.
-  - (note that implicit in the "timed out" is a timer which can abort some loads as well)
+* Suppose you want to read a bunch of images from different URLs on the Internet and make a collage of them
+* You would like to process them in the order they show up, no need to wait for all the images to come in
+* Also if one load is slow don't block all the subsequent loads
+  - Kick them all off at the start, then process as they come in
+  - Some loads could be from dead URLs so will need to time out on those
+* There are some sequencing requirements as well
+  - Process each image as it comes in (e.g. make 100x100)
+  - Once all images are in and processed or timed out, a collage is created.
 
 #### Idea of the implementation
 
 Q: How do we allow these loads to happen concurrently without fork/threads/parallelism?
-A: Split such I/O actions in two:
-  1. Issue image request and `pause`
-  2. Package up the processing code (the *continuation*) which will run when the load completes as a function
-  3. Run the function when the load is done.
+A: Use coroutines to split I/O actions in two:
+  1. Issue each image request
+  2. Package up the processing code (the *continuation*) as a function which will run when each load completes
+  3. The coroutine system will run the continuation function when the load is done.
 
 It might seem awkward to package up the continuation as a function but we already did that!
 
@@ -68,7 +69,7 @@ Monad-think on the above:
 ```ocaml
 let img_load url =
 bind (* code to issue image request and pause *) 
-     (fun img -> (* processing code to run after this image loaded*)
+     (fun img -> (* processing code to run after this image loaded *) )
 ```
 which is, in `let%bind` notation,
 ```ocaml
@@ -81,6 +82,7 @@ let%bind img = (* code to issue image request and pause *) in
 
 * Observe how `bind` is naturally making the continuation a function
 * So we will be using `bind` a lot when writing coroutine code in OCaml
+* In general `Lwt`/`Async` are *monads* as per our effect encoding lecture
 
 ### The full loading task here
  * Suppose for simplicity there are only two images.
@@ -107,19 +109,13 @@ let* load2 = p2 in ...
 
 * The above is some high level idea of the use of coroutines
 * We will now fire up `Lwt` and get into the details
-  - It is the most commonly used coroutine library; `Async` is part of `Core` but has much less usage.
 
 <a name="lwt"></a>
 
-To run `Lwt` you need to install it from the shell first:
-
-```sh
-opam install lwt
-```
-
-Then in `utop` do
+To run `Lwt` from `utop` do
 ```ocaml
 #require "lwt";;
+#require "lwt.unix";; (* if you also want Lwt-ized I/O functions like file read/write etc *)
 ```
 
 And you might also want to do this to put the functions at the top level and to enable `let*`.
@@ -128,22 +124,64 @@ And you might also want to do this to put the functions at the top level and to 
 # open Syntax;;
 ```
 
+This example shows the Lwt version of `read_line` in action.
+```ocaml
+let* str = Lwt_io.read_line Lwt_io.stdin in Lwt_io.printf "You typed %S\n" str;;
+```
+
+- This example looks just like the built-in `read_line` except for the `*`; here is why `Lwt` version is better:
+
+```ocaml
+let p = Lwt_io.read_line Lwt_io.stdin in 
+printf "See how read not blocking now\n"; Stdio.Out_channel.flush stdout; 
+let* str = p in Lwt_io.printf "You typed %S\n" str;;
+```
+
+What is going on here??
+
+* The first line *immediately* completes and returns a *promise*, `p`, of type `string Lwt.t`
+  - "I promise I will *eventually* turn into a <s>pumpkin</s> string"
+  - We can use `Lwt.state` to look at what the state the promise `p` is on the way to completion
+    - `Sleep` means nothing has happened yet (no input)
+    - `Return v` means it has been fulfilled with `v` as the value (the input string in above case)
+    - `Fail exn` means it failed with exception condition `exn`.
+    - Both `Return` and `Fail` are *resolved* (finished) promises
+* The `let*` above is `let%bind` but for `Lwt` - syntactic sugar for `bind`
+    - `Lwt` is a monad where `'a Lwt.t` is a promise for a `'a` value.
+    - As in any monad, `let* x = <a promise> in .. x normal here .. ` will take a promise back to normal-land
+    - To do this, the `in` of the `let*` will need to block until that resolution.
+
+Here is a top-loop example showing some of these promise states; code is a bit convoluted to be able to see results.
+
+```ocaml
+ let s,p = let p0 = Lwt_io.read_line Lwt_io.stdin in (state p0, p0);; (* state is Sleep - input not read yet*)
+ (* type something at utop and hit return now - not shown for some reason - this is the input *)
+ state p;; (* returns `Return <the string you typed>` *)
+ (* Here is a failure state.  It is an exception internal to `Lwt`, it doesn't get `raise`d in OCaml except at top *)
+ let p' = fail Exit in state p';;
+```
+
+We can make our own promises; this also shows what `Lwt_io.read_line` et al are doing in their code
+
+```ocaml
+let p = return "done";; (* This is the return of Lwt monad - inject a regular value as a "fulfilled" promise *)
+state p;; (* indeed it is already resolved to a `Return`. *)
+let p, r = wait ();; (* `wait` starts a promise aSleep; r is a resolver used to resolve it later *)
+state p;; (* Sleep *)
+wakeup_exn r Exit;; (* `wakeup_exn` makes p a failure  *)
+state p;; (* Now a `Fail Exit`.  Note once resolved it is all done, can't Sleep/Return *)
+
+let p, r = wait ();; (* another one, lets resolve this one positively *)
+wakeup r "hello";;
+state p;; (* now a Return "hello" *)
+```
+
 We will now review 
 
-* [Some of the manual](https://ocsigen.org/lwt/latest/manual/manual)
+* [Some of the manual](https://ocsigen.org/lwt/latest/manual/manual) (join/choose, Lwt_unit.run, etc)
 * [this `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html) which gets into how the internals work in Part 2.
 
-
-
-
-
-
-
-
-
-
-
-
+### Examples
 
 
 <a name="async"></a>
