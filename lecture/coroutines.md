@@ -205,7 +205,7 @@ let* s = p1 in return s;; (* this hangs in the top-loop: p1 is still a`Sleep` *)
 
 * Playing with `Lwt` in the top loop is a bit cheating, in a standalone executable you are staying in the `Lwt` monad
 * For example, `return "hello";;` is of type `string Lwt.t` but in fact in the top-loop it will return a string only.
-* That is because thing in the top-loop are implicitly wrapped in `Lwt_main.run` so `return "hello";;` is in fact doing 
+* That is because things in the top-loop are implicitly wrapped in `Lwt_main.run` so `return "hello";;` is in fact doing 
 
 ```ocaml
 Lwt_main.run (return "hello")

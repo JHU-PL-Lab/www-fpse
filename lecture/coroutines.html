@@ -323,7 +323,7 @@ A: Use coroutines to split I/O actions in two:</p>
 <ul>
   <li>Playing with <code>Lwt</code> in the top loop is a bit cheating, in a standalone executable you are staying in the <code>Lwt</code> monad</li>
   <li>For example, <code>return "hello";;</code> is of type <code>string Lwt.t</code> but in fact in the top-loop it will return a string only.</li>
-  <li>That is because thing in the top-loop are implicitly wrapped in <code>Lwt_main.run</code> so <code>return "hello";;</code> is in fact doing</li>
+  <li>That is because things in the top-loop are implicitly wrapped in <code>Lwt_main.run</code> so <code>return "hello";;</code> is in fact doing</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span> <span class="p">(</span><span class="n">return</span> <span class="s2">"hello"</span><span class="p">)</span>
