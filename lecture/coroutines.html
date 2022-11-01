@@ -223,6 +223,8 @@ A: Use coroutines to split I/O actions in two:</p>
 <span class="o">#</span> <span class="k">open</span> <span class="nc">Syntax</span><span class="p">;;</span>
 </code></pre></div></div>
 
+<h3 id="promise-basics">Promise basics</h3>
+
 <p>This example shows the Lwt version of <code>read_line</code> in action.</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="o">*</span> <span class="n">str</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">;;</span>
 </code></pre></div></div>
@@ -270,7 +272,8 @@ A: Use coroutines to split I/O actions in two:</p>
  <span class="k">let</span> <span class="n">p'</span> <span class="o">=</span> <span class="n">fail</span> <span class="nc">Exit</span> <span class="k">in</span> <span class="n">state</span> <span class="n">p'</span><span class="p">;;</span>
 </code></pre></div></div>
 
-<p>We can make our own promises; this also shows what <code>Lwt_io.read_line</code> et al are doing in their code</p>
+<h2 id="making-our-own-promises">Making our own promises</h2>
+<p>We can make (and directly resolve) our own promises; this also shows what <code>Lwt_io.read_line</code> et al are doing under the hood</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="n">return</span> <span class="s2">"done"</span><span class="p">;;</span> <span class="c">(* This is the return of Lwt monad - inject a regular value as a "fulfilled" promise *)</span>
 <span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* indeed it is already resolved to a `Return`. *)</span>
@@ -284,26 +287,74 @@ A: Use coroutines to split I/O actions in two:</p>
 <span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* now a Return "hello" *)</span>
 </code></pre></div></div>
 
-<p>We will now review</p>
+<h3 id="more-operations-on-promises">More operations on Promises</h3>
 
 <ul>
-  <li><a href="https://ocsigen.org/lwt/latest/manual/manual">Some of the manual</a> (join/choose, Lwt_unit.run, etc)</li>
-  <li><a href="https://raphael-proust.github.io/code/lwt-part-1.html">this <code>Lwt</code> tutorial</a> which gets into how the internals work in Part 2.</li>
+  <li>One common operation is when you have launched a bunch of I/O requests to be able to respond when only one of them has come back</li>
+  <li>The <code>Lwt</code> combinator for that is <code>choose</code> which picks a resolved promise from a list of promises</li>
 </ul>
 
-<h3 id="examples">Examples</h3>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p1</span><span class="o">,</span> <span class="n">r1</span> <span class="o">=</span> <span class="n">wait</span> <span class="bp">()</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">p2</span><span class="o">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">wait</span> <span class="bp">()</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">pc</span> <span class="o">=</span> <span class="n">choose</span> <span class="p">[</span><span class="n">p1</span><span class="p">;</span> <span class="n">p2</span><span class="p">];;</span>
+<span class="n">state</span> <span class="n">pc</span><span class="p">;;</span>
+<span class="n">wakeup</span> <span class="n">r2</span> <span class="s2">"Good morning"</span><span class="p">;;</span>
+<span class="n">state</span> <span class="n">pc</span><span class="p">;;</span> <span class="c">(* pc chooses r2 here since it is the only resolved one *)</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">s</span> <span class="o">=</span> <span class="n">pc</span> <span class="k">in</span> <span class="n">return</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* resolved so immediately returns *)</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">s</span> <span class="o">=</span> <span class="n">p1</span> <span class="k">in</span> <span class="n">return</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* this hangs in the top-loop: p1 is still a`Sleep` *)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>If you use <code>join</code> instead of <code>choose</code> above it will block until all are resolved.
+    <ul>
+      <li>They don’t return any value with <code>join</code>, unlike with <code>choose</code></li>
+    </ul>
+  </li>
+  <li>You can also create promises which can be cancelled; use <code>task</code> instead of <code>wait</code> to make those
+    <ul>
+      <li>Anything waiting on that promise (e.g. any <code>let*</code> on it etc) are recursively cancelled</li>
+      <li>See the manual for how you can cancel promises created with <code>task</code>.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="running-a-main-program">Running a main program</h3>
+
+<ul>
+  <li>Playing with <code>Lwt</code> in the top loop is a bit cheating, in a standalone executable you are staying in the <code>Lwt</code> monad</li>
+  <li>For example, <code>return "hello";;</code> is of type <code>string Lwt.t</code> but in fact in the top-loop it will return a string only.</li>
+  <li>That is because thing in the top-loop are implicitly wrapped in <code>Lwt_main.run</code> so <code>return "hello";;</code> is in fact doing</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span> <span class="p">(</span><span class="n">return</span> <span class="s2">"hello"</span><span class="p">)</span>
+</code></pre></div></div>
+<ul>
+  <li>This runs the <code>'a Lwt.t</code> computation supplied until all promises are resolved, and returns the final value if any.</li>
+  <li>Any main executable using <code>Lwt</code> usually calls this at the top, and when all promises are resolved the app can terminate.</li>
+  <li>Note its type: <code>'a t -&gt; 'a</code> which is what <code>run</code> should be in monad-land: get us out of the monad somehow
+    <ul>
+      <li>A common error is to try to call <code>Lwt_main.run</code> on your own to get out of monad-land but that won’t work, it will destroy all the previous promises.</li>
+      <li>Moral: once in monad-land, always in monad-land when using <code>Lwt</code> in an executable.  Or at least til all I/O done.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>We will now skim</p>
+
+<ul>
+  <li><a href="https://ocsigen.org/lwt/latest/manual/manual">The manual</a> (we covered the key ideas above already)</li>
+  <li><a href="https://raphael-proust.github.io/code/lwt-part-1.html">This <code>Lwt</code> tutorial</a> which gets into the internals of how promises are stored etc (may not have time for this)</li>
+</ul>
 
 <p><a name="async"></a></p>
 
 <h2 id="async"><code>Async</code></h2>
 
-<p>Here are some notes on <code>Async</code> which we don’t plan on covering in lecture.</p>
+<p>Here are some notes on <code>Async</code> which we don’t plan on covering in lecture.  If you use a library over <code>Async</code> it may be helpful for you to read this.</p>
 
 <ul>
-  <li><code>Async</code> is another Jane Street library</li>
-  <li>It is based on the notion of a <em>promise</em></li>
-  <li>Promises have been around for a very long time but are gaining in popularity</li>
-  <li>Many languages have libraries implementing some form</li>
+  <li><code>Async</code> is the Jane Street (<code>Core</code> people) version of <code>Lwt</code>.</li>
+  <li>It is also based on the notion of a <em>promise</em></li>
   <li>In <code>Async</code> they are called deferreds, of type <code>Deferred.t</code></li>
 </ul>
 

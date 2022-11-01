@@ -124,6 +124,8 @@ And you might also want to do this to put the functions at the top level and to 
 # open Syntax;;
 ```
 
+### Promise basics
+
 This example shows the Lwt version of `read_line` in action.
 ```ocaml
 let* str = Lwt_io.read_line Lwt_io.stdin in Lwt_io.printf "You typed %S\n" str;;
@@ -161,7 +163,8 @@ Here is a top-loop example showing some of these promise states; code is a bit c
  let p' = fail Exit in state p';;
 ```
 
-We can make our own promises; this also shows what `Lwt_io.read_line` et al are doing in their code
+## Making our own promises 
+We can make (and directly resolve) our own promises; this also shows what `Lwt_io.read_line` et al are doing under the hood
 
 ```ocaml
 let p = return "done";; (* This is the return of Lwt monad - inject a regular value as a "fulfilled" promise *)
@@ -176,24 +179,57 @@ wakeup r "hello";;
 state p;; (* now a Return "hello" *)
 ```
 
-We will now review 
+### More operations on Promises
 
-* [Some of the manual](https://ocsigen.org/lwt/latest/manual/manual) (join/choose, Lwt_unit.run, etc)
-* [this `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html) which gets into how the internals work in Part 2.
+* One common operation is when you have launched a bunch of I/O requests to be able to respond when only one of them has come back
+* The `Lwt` combinator for that is `choose` which picks a resolved promise from a list of promises
 
-### Examples
+```ocaml
+let p1, r1 = wait ();;
+let p2, r2 = wait ();;
+let pc = choose [p1; p2];;
+state pc;;
+wakeup r2 "Good morning";;
+state pc;; (* pc chooses r2 here since it is the only resolved one *)
+let* s = pc in return s;; (* resolved so immediately returns *)
+let* s = p1 in return s;; (* this hangs in the top-loop: p1 is still a`Sleep` *)
+```
+
+* If you use `join` instead of `choose` above it will block until all are resolved.
+  - They don't return any value with `join`, unlike with `choose`
+* You can also create promises which can be cancelled; use `task` instead of `wait` to make those
+  - Anything waiting on that promise (e.g. any `let*` on it etc) are recursively cancelled
+  - See the manual for how you can cancel promises created with `task`.
+
+### Running a main program
+
+* Playing with `Lwt` in the top loop is a bit cheating, in a standalone executable you are staying in the `Lwt` monad
+* For example, `return "hello";;` is of type `string Lwt.t` but in fact in the top-loop it will return a string only.
+* That is because thing in the top-loop are implicitly wrapped in `Lwt_main.run` so `return "hello";;` is in fact doing 
+
+```ocaml
+Lwt_main.run (return "hello")
+```
+* This runs the `'a Lwt.t` computation supplied until all promises are resolved, and returns the final value if any.
+* Any main executable using `Lwt` usually calls this at the top, and when all promises are resolved the app can terminate.
+* Note its type: `'a t -> 'a` which is what `run` should be in monad-land: get us out of the monad somehow
+  - A common error is to try to call `Lwt_main.run` on your own to get out of monad-land but that won't work, it will destroy all the previous promises.
+  - Moral: once in monad-land, always in monad-land when using `Lwt` in an executable.  Or at least til all I/O done.
+
+We will now skim 
+
+* [The manual](https://ocsigen.org/lwt/latest/manual/manual) (we covered the key ideas above already)
+* [This `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html) which gets into the internals of how promises are stored etc (may not have time for this)
 
 
 <a name="async"></a>
 
 ## `Async`
 
-Here are some notes on `Async` which we don't plan on covering in lecture. 
+Here are some notes on `Async` which we don't plan on covering in lecture.  If you use a library over `Async` it may be helpful for you to read this.
 
- * `Async` is another Jane Street library
- * It is based on the notion of a *promise*
- * Promises have been around for a very long time but are gaining in popularity
- * Many languages have libraries implementing some form
+ * `Async` is the Jane Street (`Core` people) version of `Lwt`.
+ * It is also based on the notion of a *promise*
  * In `Async` they are called deferreds, of type `Deferred.t`
 
 #### Deferreds
