@@ -15,15 +15,16 @@
 
 You will need to install a whole new OCaml as resumable exceptions are only in a beta version now.  From your shell you need to use `opam switch create` to do that:
 
-$ opam switch create 4.12.0+domains+effects
+opam update
+opam switch create 5.0.0~beta1
 
 which will take a long time.  You then need to do the usual `eval $(opam env)`
 to update your path. 
 
-(to switch back to the non-beta, say `opam switch 4.12.0` and do the eval)
+(to switch back to the non-beta, type `opam switch 4.14.0` and do the eval it tells you to do)
 (Note that Core etc libraries are not installed as it is a whole new install.  For our little experiments we will not use `Core` but we will use `utop`.)
 
-All of the code in this file will work in 4.12.0+domains+effects only.
+All of the code in this file will work in 5.0 (only).
 
 *)
 
@@ -36,52 +37,66 @@ All of the code in this file will work in 4.12.0+domains+effects only.
        (of course could "pause" again in the future from another point.)
 *)
 
-effect Div_failure : int -> int (* read "effect" as "resumable_exception" *)
-
-(* int -> here is what you pass up for raise
-   -> int is what comes back for resumption *)
+open Effect
+open Effect.Deep
 
 (* Let's redefine integer division so we can keep things going if we
    divide by zero. *)
-let (/) n m =
-  try Stdlib.(n / m) with
-    (* perform is "resumable_raise" aka "pause" in the intuition above *)
-    | Division_by_zero -> let r = perform (Div_failure n) in 
-      (* if we "continue" later the perform result will be the new value *)
-      Printf.printf  "Resuming the movie, value is now %n\n" r; r
 
-(* Stupid function to turn [n;m;p] to n/(m/(p/1)) etc 
+type _ Effect.t += Divz: int t
+
+(* first we make an adaptor on existing "/" to perform this effect *)
+let newdiv x y = match y with 
+| 0 -> perform (Divz)     (* perform is "resumable_raise" *)
+| _ -> Stdlib.(x / y)
+
+let _ = newdiv 33 0 (* This just changes the exception raised *)
+let (/) n m =
+  try_with (fun () -> newdiv n m) ()
+  { effc = fun (type a) (eff: a t) -> match eff with
+    | Divz ->     (* if we "continue" later the perform result will be the new value *)
+         Printf.printf  "Div by 0, forcing return of 1\n"; Out_channel.flush stdout;
+         Some (fun (k: (a, _) continuation) ->
+         continue k 1 (* continue lets us RESUME as perform point -- return 1 for n/0 value *)) 
+    | _ -> None }
+
+let _ = (3/0) + (8/0) + 1 (* same as 1 + 1 + 1 *)
+
+(* Function to turn [n;m;p] to n/(m/(p/1)) etc 
    But, use above division to allow for recovery *)      
 let rec div_list (l : int list) : int =
-  List.fold_right (fun n d -> n / d) l 1 
+  List.fold_right ~f:(fun n d -> n / d) l ~init:1 
 
 let _ = div_list [1000;100;2];; (* 1000/(100/2), no failures *)
-let _ = div_list [100;2;4];;  (* failure, not caught *)
-let recover_div l =
-  try div_list l with (* try is overloaded, also is resumable_try *)
-      (* effect here catches a resumable exception;
-       k is the pause point name, k is for kontinuation (the rest after) *)
-  | effect (Div_failure n) k ->
-      Printf.fprintf stderr "Div failure on %n / 0!\n" n; flush_all ();
-      continue k 1 (* Go back to the movie - resume from pause point k *)
-
-
-let _ = recover_div [1000;100;2];; (* 1000/(100/2), no failures *)
-let _ = recover_div [100;2;4];; (* 100/(2/4) so 100/0 so 1  *)
-let _ = recover_div [1000;100;2];; (* 1000/100/2 so 100/1 so 100 *)
-let _ = recover_div [20;4;2;1000;100;2;4];; (* multiple failures here *)
+let _ = div_list [1000;100;2;4];;  (* 1000/(100/(2/4)) is 1000/(100/1) *)
+let _ = div_list [20;4;2;1000;100;2;4];; (* multiple failures here *)
 
 (* The above exception can only be resumed (continued) once;
    thus it is a **one-shot** resumable exception *)
 
-let recover_div_bad l =
-  try div_list l with
-  | effect (Div_failure n) k -> 
-      Printf.fprintf stderr "Div failure on %n / 0!\n" n; flush_all ();
-      (continue k 1) + (continue k 1) (* trying to resume twice *)
+let dont_do_this_div n m =
+  try_with (fun () -> newdiv n m) ()
+  { effc = fun (type a) (eff: a t) -> match eff with
+    | Divz ->     (* if we "continue" later the perform result will be the new value *)
+         Printf.printf  "Div by 0, forcing return of 1\n"; Out_channel.flush stdout;
+         Some (fun (k: (a, _) continuation) ->
+         (continue k 1) + (continue k 2) (* try to resume twice *)) 
+    | _ -> None }
 
-let _ = recover_div_bad [100;2;4];;  (* No go -- throws error *)
+let _ = dont_do_this_div  4 0 (* No go -- throws Continuation_already_resumed *)
 
+(* Note it is also possible to add to the top-level computation when you pop out *)
+
+let adding_div n m =
+  try_with (fun () -> newdiv n m) ()
+  { effc = fun (type a) (eff: a t) -> match eff with
+    | Divz ->     (* if we "continue" later the perform result will be the new value *)
+         Printf.printf  "Div by 0, forcing return of 1\n"; Out_channel.flush stdout;
+         Some (fun (k: (a, _) continuation) ->
+         (continue k 1) + 77 (* add 77 to was-final result *)) 
+    | _ -> None }
+
+let _ = (adding_div 3 0) + (adding_div 8 0) + 1
 
 (* How is this implemented?  It is fairly intuitive. 
   1) For each try/with which might raise an effect, run the try on its own stack
@@ -89,7 +104,7 @@ let _ = recover_div_bad [100;2;4];;  (* No go -- throws error *)
   3) Run the effect handler code
   4) If there is a continue, thaw the frozen stack/pc and re-start
 
-  Note there is also a `discontinue` syntax which is for the case you want to
+  Note there is also a `discontinue` which is for the case you want to
   keep raising the failure as an actual exception.
 
 *)
@@ -100,11 +115,9 @@ let _ = recover_div_bad [100;2;4];;  (* No go -- throws error *)
 *)
 
 
-(* Encoding state with resumable exceptions 
+(* Encoding state with resumable exceptions
 
-We will be covering a simplified version of  https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/solved/state2.ml code below.
-
-The idea of the encoding is as follows:
+The high level idea of the encoding is as follows:
 
 1) at the very top level we have a try block as with the previous example
 2) for any state operation we throw a resumable exception
@@ -112,32 +125,26 @@ The idea of the encoding is as follows:
 4) where we can (functionally) make any state operations and 
 5) resume possibly returning the get result if needed.
 
+It ends up being more complex because the state had to get threaded along
+
 *)
 
-open Printf
+type _ Effect.t += Get: int t
+let get () = perform Get
+type _ Effect.t += Put: int -> int t
+let put v = perform (Put v)
 
-module type STATE = sig
-  type t
-  val put     : t -> unit
-  val get     : unit -> t
-  val run : (unit -> unit) -> init:t -> unit
-end
+(* Note this run function currently does not compile in OCaml 5  :-( *)
 
-module State (S : sig type t end) : STATE with type t = S.t = struct
-  type t = S.t
-  effect Get : t (* nothing up, only a t down *)
-  let get () = perform Get
-  effect Put : t -> unit
-  let put v = perform (Put v)
-  let run f ~init =
-    let comp : t -> unit =
-      match f () with
-      | () -> (fun _ -> ())
-      | effect Get k -> printf "Getting\n"; (fun s : t -> (continue k s) s)
-      | effect (Put s) k -> printf "Setting\n"; (fun _ : t -> (continue k ()) s)
+let run (f : unit -> int) ~(init: int) : int =
+  let comp : int -> int =
+    let _ = try_with f () { effc = fun (type a) (eff: a t) -> match eff with
+    | Get -> Some (fun (k: (a, int -> int) continuation) -> (fun s : int -> (continue k s) s))
+    | (Put s) -> Some (fun (k: (a, int -> int) continuation) -> (fun _ : int -> (continue k 0) s)) 
+    | _ -> None }
+    in (fun _ -> 0)
     in comp init
-end
-
+        
 (* The above run function is quite subtle
    - the match always returns a function
       (note also that we can use match for both values & effects simult.)
@@ -151,46 +158,24 @@ end
    - And, the resulting code "looks like" the ref/:=/! code of OCaml, no let%bind
 
 *)
-module IS = State (struct type t = int end)
 
 let super_simple () : unit = ()
 
-let _ = IS.run super_simple 0
+let _ = run super_simple 0
 
 let sorta_simple () : unit =
-  let open IS in
   assert (0 = get ());
 
-let _ = IS.run sorta_simple 0
+let _ = run sorta_simple 0
 
 
 let simple () : unit =
-  let open IS in
   assert (0 = get ());
   put 42;
   assert (42 = get ());
 
 
-let _ = IS.run simple 0
-
-
-(* Bigger example *)
-
-module SS = State (struct type t = string end)
-
-let foo () : unit =
-  assert (0 = IS.get ());
-  IS.put 42;
-  assert (42 = IS.get ());
-  IS.put 21;
-  assert (21 = IS.get ());
-  SS.put "hello";
-  assert ("hello" = SS.get ());
-  SS.put "world";
-  assert ("world" = SS.get ());
-
-let _ = IS.run (fun () -> SS.run foo "") 0
-
+let _ = run simple 0
 
 (* Lastly is it even possible to do coroutines in this setting 
 
