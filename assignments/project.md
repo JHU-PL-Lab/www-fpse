@@ -46,7 +46,7 @@ $ # etc
 * For all command-line apps some ways to beef them up once the basic app is working include
   1. Replace the command line with a RESTful web server using [`Dream`](https://aantron.github.io/dream) mentioned below.
   2. In addition to 2., `Dream` supports html templates and you could "reply" to the `http` queries with html and so you can run your app in the browser.
-  3. If you know JavaScript you can beef up 2. a bit with some dynamic content.
+  3. If you know JavaScript you can beef up 2. a bit with some dynamic content.  Better yet, use Rescript and React to make an OCaml front-end in the browser, see below for links.
   4. Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
   5. Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use `yojson` to convert back and forth.  
     - You should do this from the beginning in fact, it will be easier and more robust.
@@ -84,6 +84,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * We recomend [`Dream`](https://aantron.github.io/dream) for web applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
 * [`Opium`](https://github.com/rgrinberg/opium) is a good alternative to `Dream` to consider as well.  Both are built on `Lwt`.
 * `Cohttp` also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation. 
+* For the client, it is possible to code your client in "OCaml" using [ReScript](https://rescript-lang.org) which is OCaml but with a  different looking syntax that compiles tpo JavaScript and which has bindings for React.  ReScript front-ends will count toward your "OCaml code" whereas JavaScript front-ends will not.
 
 #### Persistence
 
@@ -93,7 +94,6 @@ Here is a list of well-maintained libraries we recommend using for the above app
 #### Data Processing
 * [Owl](https://ocaml.xyz/book/) is a very well-documented numerical processing library.
 * [ocaml-torch](https://github.com/LaurentMazare/ocaml-torch) PyTorch bindings for OCaml
-* [tensorflow-ocaml](https://github.com/LaurentMazare/tensorflow-ocaml) TensorFlow bindings for OCaml
 * [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.  This library has been difficult for some people to install properly so please test it out well before committing to it.
 
 #### And more!
@@ -107,7 +107,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 
 ### Submissions
 
-* There will be FOUR submission points in Gradescope, one ungraded one for initial group and idea, one for the design, one for a code checkpoint and one for the final code.  For each group only one person needs to submit to Gradescope.
+* There will be FOUR submission points in Gradescope, one ungraded, one for initial group and idea, one for the design, one for a code checkpoint, and one for the final code.  For each group only one person should submit to Gradescope, as a group submission.
 
 #### Initial Group and Idea(s) 
  
@@ -124,7 +124,8 @@ The design submission must include
   4. Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.
   5. Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.
   6. Also include a brief list of what order you will implement features.
-  7. You may also include any other information which will make it easier to understand your project.
+  7. If your project is an OCaml version of some other app in another language or a projust you did in another course etc please cite this other project.  In general any code that inspired your code needs to be cited in your submissions.
+  8. You may also include any other information which will make it easier to understand your project.
 
 #### Code Checkpoint
 
