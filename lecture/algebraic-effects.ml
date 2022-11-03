@@ -125,30 +125,42 @@ The high level idea of the encoding is as follows:
 4) where we can (functionally) make any state operations and 
 5) resume possibly returning the get result if needed.
 
-It ends up being more complex because the state had to get threaded along
+It ends up being more complex because the state has to get threaded along
 
 *)
 
-type _ Effect.t += Get: int t | Put: int -> unit t
+type _ Effect.t += Get: int t | Put: int -> unit t (* Get gets int back, Put passes int up *)
 let get () = perform Get
 let put v = perform (Put v)
-let run (f : unit -> int) (init: int) : int =
+let run (f : unit -> unit) (init: int) : unit =
   let comp  : int -> int =
     try_with (fun () -> (let _ = f () in fun (x : int) -> x)) () 
     { effc = fun  (type a)(eff: a Effect.t) -> match eff with
       | (Get) -> Some (fun (k: (a, _) continuation) -> (fun s : int -> (continue k (s : int)) s)) 
       | (Put s) -> Some (fun (k: (a, _) continuation) -> (fun _ : int -> (continue k ()) s))
       | _ -> None} 
-  in comp init    
+  in ignore(comp init)
 
-let simple () : int =
-  assert (0 = get ()); 
-  put 42;
-  assert (42 = get ()); 0
+
+(* The above run function is quite subtle
+
+   - the overall value of the computation `comp` is a function int -> int
+     - the input int is the state, which will be fed in by `comp init`
+   - Every time we "come up for air" in an exception we will have the state value
+     - and, we will then build a new function expecting the state value as the result
+   - With all of the above there is a cascade of state passing
+   - And, the resulting code "works just like" the ref/:=/! code of OCaml, no let%bind needed.
+
+*)
+
+let simple () : unit =
+  assert (0 = perform Get); 
+  perform (Put 42);
+  assert (42 = perform Get)
 
 let test = run simple 0
 
-(* Now some more general imperative code like this in OCaml:
+(* Now a larger example of how to encode some imperative OCaml such as this:
 
 let x = ref 0 in
 while !x < 10 do
@@ -157,37 +169,19 @@ while !x < 10 do
 done;;
 
 but without any actual state - !
+We use `get` and `put` functions to make it look a bit more like !/:=
+
+The state here has just one cell but we generally can make the int be any type such as a Map etc.
 
 *)
 let counter () = 
   while get() < 10 do
   printf "count is %i ...\n" (get ());
   put(get() + 1);
-  done; 0
+  done
+
 let test2 = run counter 0
 
-
-
-(* The above run function is quite subtle
-   - the match always returns a function
-      (note also that we can use match for both values & effects simult.)
-   - that function will get fed the "current" state s as argument
-   - comp init is the bootstrapping case for s
-   - every time we "pop up for air"  with set/get effects we get a function
-     - the result of that computation we will in turn need to feed
-       the (possibly revised) state to, the final s in the continue's
-
-   - With all of the above there is a cascade of state passing
-   - And, the resulting code "looks like" the ref/:=/! code of OCaml, no let%bind
-
-*)
-
-let simple () : int =
-  assert (0 = get ()); 
-  let _ = put 42 in 
-  assert (42 = get ()); 0
-
-let test = run simple 0
 
 
 (* Lastly is it even possible to do coroutines in this setting 
