@@ -129,19 +129,43 @@ It ends up being more complex because the state had to get threaded along
 
 *)
 
-
-type _ Effect.t += Get: int -> int t | Put: int -> int t
-let get () = perform (Get 0) (* 0 is a dummy argument here *)
+type _ Effect.t += Get: int t | Put: int -> unit t
+let get () = perform Get
 let put v = perform (Put v)
-
 let run (f : unit -> int) (init: int) : int =
   let comp  : int -> int =
     try_with (fun () -> (let _ = f () in fun (x : int) -> x)) () 
     { effc = fun  (type a)(eff: a Effect.t) -> match eff with
-      | (Get _) -> Some (fun (k: (a, _) continuation) -> (fun s : int -> (continue k (s+0)) s)) 
-      | (Put s) -> Some (fun (k: (a, _) continuation) -> (fun _ : int -> (continue k s) s))
+      | (Get) -> Some (fun (k: (a, _) continuation) -> (fun s : int -> (continue k (s : int)) s)) 
+      | (Put s) -> Some (fun (k: (a, _) continuation) -> (fun _ : int -> (continue k ()) s))
       | _ -> None} 
   in comp init    
+
+let simple () : int =
+  assert (0 = get ()); 
+  put 42;
+  assert (42 = get ()); 0
+
+let test = run simple 0
+
+(* Now some more general imperative code like this in OCaml:
+
+let x = ref 0 in
+while !x < 10 do
+  printf "count is %i ...\n" !x;
+  x := !x + 1;
+done;;
+
+but without any actual state - !
+
+*)
+let counter () = 
+  while get() < 10 do
+  printf "count is %i ...\n" (get ());
+  put(get() + 1);
+  done; 0
+let test2 = run counter 0
+
 
 
 (* The above run function is quite subtle
