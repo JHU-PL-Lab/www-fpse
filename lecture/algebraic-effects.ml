@@ -1,13 +1,9 @@
-(* Algebraic Effects 
-   aka resumable exceptions
+(* 
+  Algebraic Effects aka resumable exceptions
    aka (more precisely) *one-shot* resumable exceptions 
    aka The mother of all side effects
-   aka better-than-monad-ism (no bind macro layer like monads)
-
-   We are going to call these resumable exceptions since that is all they are.
+ -- another way to encode state, coroutines, etc but instead of with pure functions have only one side-effect
    
-   The following code uses examples based on or found in the tutorial at
-   https://github.com/ocamllabs/ocaml-effects-tutorial
 *)
 
 
@@ -31,26 +27,30 @@ All of the code in this file will work in 5.0 (only).
 (* First let us just play with a "resumable exception"
    
    Think of it as the "Pause" button on the movie you are watching.
-     - You can go off and do anything else
+     - You can go off and do anything else and that movie stays on pause
      - But, you can resume the movie any time in the future from same spot!
      - Also, when you resume the old "pause point is gone", no re-resuming.
        (of course could "pause" again in the future from another point.)
 *)
 
+(* Uses the Effect system of OCaml 5 *)
 open Effect
 open Effect.Deep
 
 (* Let's redefine integer division so we can keep things going if we
    divide by zero. *)
 
+(* First we make a new effect named Divz; like an exception but resumable *)
 type _ Effect.t += Divz: int t
 
-(* first we make an adaptor on existing "/" to perform this effect *)
+(* Now we make an adaptor on existing "/" to perform this effect instead of default one *)
 let newdiv x y = match y with 
 | 0 -> perform (Divz)     (* perform is "resumable_raise" *)
 | _ -> Stdlib.(x / y)
 
-let _ = newdiv 33 0 (* This just changes the exception raised *)
+let _ = newdiv 33 0 (* See how this just changes the exception raised *)
+
+(* Now we can make a new division to turn division by 0 into a 1 result *)
 let (/) n m =
   try_with (fun () -> newdiv n m) ()
   { effc = fun (type a) (eff: a t) -> match eff with
@@ -67,8 +67,8 @@ let _ = (3/0) + (8/0) + 1 (* same as 1 + 1 + 1 *)
 let rec div_list (l : int list) : int =
   List.fold_right ~f:(fun n d -> n / d) l ~init:1 
 
-let _ = div_list [1000;100;2];; (* 1000/(100/2), no failures *)
-let _ = div_list [1000;100;2;4];;  (* 1000/(100/(2/4)) is 1000/(100/1) *)
+let _ = div_list [1000;100;2];; (* 1000/(100/(2/1)), no failures *)
+let _ = div_list [1000;100;2;4];;  (* 1000/(100/(2/4)) is 1000/1 *)
 let _ = div_list [20;4;2;1000;100;2;4];; (* multiple failures here *)
 
 (* The above exception can only be resumed (continued) once;
@@ -129,22 +129,21 @@ It ends up being more complex because the state had to get threaded along
 
 *)
 
-type _ Effect.t += Get: int t
-let get () = perform Get
-type _ Effect.t += Put: int -> int t
+
+type _ Effect.t += Get: int -> int t | Put: int -> int t
+let get () = perform (Get 0) (* 0 is a dummy argument here *)
 let put v = perform (Put v)
 
-(* Note this run function currently does not compile in OCaml 5  :-( *)
+let run (f : unit -> int) (init: int) : int =
+  let comp  : int -> int =
+    try_with (fun () -> (let _ = f () in fun (x : int) -> x)) () 
+    { effc = fun  (type a)(eff: a Effect.t) -> match eff with
+      | (Get _) -> Some (fun (k: (a, _) continuation) -> (fun s : int -> (continue k (s+0)) s)) 
+      | (Put s) -> Some (fun (k: (a, _) continuation) -> (fun _ : int -> (continue k s) s))
+      | _ -> None} 
+  in comp init    
 
-let run (f : unit -> int) ~(init: int) : int =
-  let comp : int -> int =
-    let _ = try_with f () { effc = fun (type a) (eff: a t) -> match eff with
-    | Get -> Some (fun (k: (a, int -> int) continuation) -> (fun s : int -> (continue k s) s))
-    | (Put s) -> Some (fun (k: (a, int -> int) continuation) -> (fun _ : int -> (continue k 0) s)) 
-    | _ -> None }
-    in (fun _ -> 0)
-    in comp init
-        
+
 (* The above run function is quite subtle
    - the match always returns a function
       (note also that we can use match for both values & effects simult.)
@@ -159,23 +158,13 @@ let run (f : unit -> int) ~(init: int) : int =
 
 *)
 
-let super_simple () : unit = ()
+let simple () : int =
+  assert (0 = get ()); 
+  let _ = put 42 in 
+  assert (42 = get ()); 0
 
-let _ = run super_simple 0
+let test = run simple 0
 
-let sorta_simple () : unit =
-  assert (0 = get ());
-
-let _ = run sorta_simple 0
-
-
-let simple () : unit =
-  assert (0 = get ());
-  put 42;
-  assert (42 = get ());
-
-
-let _ = run simple 0
 
 (* Lastly is it even possible to do coroutines in this setting 
 
