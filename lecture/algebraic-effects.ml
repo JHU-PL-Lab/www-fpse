@@ -127,17 +127,18 @@ The high level idea of the encoding is as follows:
 
 It ends up being more complex because the state has to get threaded along
 
+Note for this example we will have a global state consisting of one integer only, but in
+general that `int` could be any OCaml type.
+
 *)
 
 type _ Effect.t += Get: int t | Put: int -> unit t (* Get gets int back, Put passes int up *)
-let get () = perform Get
-let put v = perform (Put v)
 let run (f : unit -> unit) (init: int) : unit =
-  let comp  : int -> int =
-    try_with (fun () -> (let _ = f () in fun (x : int) -> x)) () 
+  let comp  : int -> unit =
+    try_with (fun () -> (f (); fun (x : int) -> ())) () 
     { effc = fun  (type a)(eff: a Effect.t) -> match eff with
-      | (Get) -> Some (fun (k: (a, _) continuation) -> (fun s : int -> (continue k (s : int)) s)) 
-      | (Put s) -> Some (fun (k: (a, _) continuation) -> (fun _ : int -> (continue k ()) s))
+      | (Get) -> Some (fun (k: (a, _) continuation) -> (fun (s : int) -> (continue k s) s)) 
+      | (Put s) -> Some (fun (k: (a, _) continuation) -> (fun (_ : int) -> (continue k ()) s))
       | _ -> None} 
   in ignore(comp init)
 
@@ -171,16 +172,17 @@ done;;
 but without any actual state - !
 We use `get` and `put` functions to make it look a bit more like !/:=
 
-The state here has just one cell but we generally can make the int be any type such as a Map etc.
-
 *)
+
+let get () = perform Get
+let put v = perform (Put v)
 let counter () = 
   while get() < 10 do
   printf "count is %i ...\n" (get ());
   put(get() + 1);
   done
 
-let test2 = run counter 0
+let test_counter = run counter 0
 
 
 
