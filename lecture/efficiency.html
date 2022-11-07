@@ -61,18 +61,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h2 id="efficiency-in-functional-programming">Efficiency in Functional Programming</h2>
 
-<ul>
-  <li>Functional data structures:
-    <ul>
-      <li>at first they may feel super-inefficient</li>
-      <li>but they are usually in practice fine even if asymptotic behavior is worse</li>
-      <li>and, they are better in a few cases because past states “persist for free”</li>
-    </ul>
-  </li>
-</ul>
+<p>Functional data structures: <br />
+    - Feel very inefficient at first<br />
+    - This is supported by asymptotics<br />
+    - But they are often fine in practice even if asymptotic behavior is worse<br />
+    - in a few cases they are better because past states “persist for free”</p>
+
+<p>We covered some of this in the <a href="https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency">idiomatic FP lecture</a></p>
 
 <h3 id="functional-lists">Functional lists</h3>
-<p>Let us review the most common OCaml data structure, <code>'a list</code>.</p>
+<p>Let us warm up reviewing <code>'a list</code> efficiency</p>
 
 <ul>
   <li><code>hd</code> and <code>tl</code> are O(1)</li>
@@ -89,7 +87,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li><code>l2</code> and <code>l3</code> share <code>l1</code> and all the above is O(1)</li>
-  <li>if lists were mutable such sharing would not usually be possible!</li>
+  <li>if lists were mutable such sharing would not generally be possible!</li>
   <li>In general this shows there is a trade-off in that in some cases functional wins
     <ul>
       <li>more on this below
@@ -101,25 +99,25 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Assume a grid of n elements (a square-root n by square-root n grid)</li>
 </ul>
 
-<p>Our imperative implementation using a 2D array (<a href="../examples/mine_array.ml">this one</a>)</p>
+<p>Our imperative implementation using a 2D array (<a href="https://pl.cs.jhu.edu/fpse/examples/mine_array.ml">this one</a>)</p>
 <ul>
   <li>O(1) for each inc operation so O(n) in total.</li>
 </ul>
 
 <p>Hypothetic monadic state version</p>
 <ul>
-  <li>Take the imperative 2D array version, implement as state monad on list-of-strings (<a href="../examples/mine_monadic.ml">code in fact is here</a>)</li>
+  <li>Take the imperative 2D array version, implement as state monad on list-of-strings (<a href="https://pl.cs.jhu.edu/fpse/examples/mine_monadic.ml">code is here, we will glimpse</a>)</li>
   <li>Each grid square increment will take O(n) since the whole grid has to be rebuilt with one change
     <ul>
-      <li>can in fact share rhs of parts not incremented (as in append above) but means 1/2 n = O(n)</li>
+      <li>there is some functional sharing of parts not incremented (as in list append above) but means 1/2 n = O(n)</li>
     </ul>
   </li>
   <li>O(n) inc’s are performed total so it will be O(n^2).</li>
 </ul>
 
-<p>Alternative monad implementation as a Core.Map from keys (i,j) to characters:</p>
+<p>Imagine an alternative monad implementation using a <code>Board</code> implemented as a <code>Core.Map</code> from keys <code>(i,j)</code> to characters:</p>
 <ul>
-  <li>lookup and increment will be O(log n) on average since Core.Map is implemented as a balanced search tree
+  <li>lookup and increment will be O(log n) on average since <code>Core.Map</code> is implemented as a balanced binary search tree
     <ul>
       <li>one change to a Map’s tree is only log n because only one path in tree is changed, rest can be re-used</li>
       <li>(yes, one path down a binary tree is only 1/(log n)-th of the tree nodes, and the sub-trees can be reused)</li>
@@ -131,9 +129,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Conclusion</p>
 <ul>
   <li>For Minesweeper, O(n^2) is in fact fine as the grids are always “tiny” in a CPU sense</li>
-  <li>But clearly in your “big data” app such a penalty could be intolerable</li>
-  <li>In general there are some results indicating it should be possible to “only” pay a log n penalty on any data structure if one is clever.</li>
-  <li>But, sometimes you need to get out the imperative <code>Array</code> and <code>Hashset</code> etc in OCaml.</li>
+  <li>But if this grid was instead a large image (pixel grid) this would be intolerable</li>
+  <li>With correct functional data structure choices you can usually pay a log n “fee” which will often be fine</li>
+  <li>But, sometimes you just need to get out the imperative <code>Array</code>, <code>Hashset</code> etc.</li>
 </ul>
 
 <h4 id="when-fp-wins-many-related-worlds-algorithms">When FP wins: Many Related Worlds Algorithms</h4>
@@ -144,7 +142,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>So if an algorithm has many related stores in it the FP version can be superior</li>
-  <li>Example: a simple transactional store monad (here is pseudocode)</li>
+  <li>Example: a simple transactional store monad (here is pseudocode)
+    <ul>
+      <li>a transactional store is a memory where you might want to undo (“roll back”) some writes</li>
+      <li>it is what is at the heart of a database implementation: if transactions conflict, roll back to past store</li>
+    </ul>
+  </li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Transactional_store</span> <span class="o">=</span> <span class="k">struct</span>
@@ -170,17 +173,25 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>If the <code>store</code> in the above is say a Map, the <code>s1</code> and <code>s2</code> maps should be “nearly all shared” on average.</li>
   <li>So, copying and memory use minimized.</li>
   <li>The real benefit comes when there are <code>n</code> stores <code>s1</code>, …, <code>sn</code> with sharing</li>
-  <li>Real World OCaml has a similar example comparing an <a href="https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables">(immutable) Map vs a (mutable) Hashtable</a></li>
+  <li>Real World OCaml has a similar example comparing an <a href="https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables">(immutable) Map vs a (mutable) Hashtable</a> which we looked at earlier</li>
 </ul>
 
 <h4 id="fp-and-paralellism">FP and paralellism</h4>
 
 <ul>
-  <li>If we know there are no side effects, any independent computation can be done in parallel</li>
-  <li>Common example: <code>List.map</code> and other <code>.map</code>’s can apply <code>f</code> in parallel</li>
-  <li>Multiple function arguments can be evaluated in parallel if they contain no effects</li>
-  <li>… Referential transparency in general makes parallelism much easier</li>
-  <li>Multicore OCaml is in beta, and will be released soon.</li>
+  <li>In pure FP with no side effects, any independent computation can be done in parallel</li>
+  <li>Example: <code>List.map</code> could apply <code>f</code> on the list elements in parallel
+    <ul>
+      <li>but, reconstructing the list has to be in-order so only useful for slow-running <code>f</code>’s</li>
+      <li>Also <code>fold</code> and the like can’t be easily parallelized since the <code>accum</code> needs to be passed along sequentially</li>
+    </ul>
+  </li>
+  <li>Multiple function arguments can be evaluated in parallel if they contain no effects
+    <ul>
+      <li>Referential transparency in general makes parallelism much easier to get right</li>
+    </ul>
+  </li>
+  <li>OCaml 5 has parallelism (threads with shared memory); we will take a <a href="https://github.com/ocaml-multicore/parallel-programming-in-multicore-ocaml">glimpse at a tutorial</a> to see how <code>Task</code> pools and <code>parallel_for</code> work.</li>
 </ul>
 
 <h3 id="writing-more-efficient-functions">Writing more efficient functions</h3>
@@ -206,61 +217,23 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>Note that memoization implicitly needs a store for this past history</li>
-  <li>Could use mutable store, but could also do the “state monad thing”
+  <li>Could use mutable store, but could also use a state monad
     <ul>
       <li>pass in and return the store in the memoized function</li>
     </ul>
   </li>
 </ul>
 
-<h3 id="coding-with-tail-recursion">Coding with tail recursion</h3>
+<h3 id="tail-recursion-and-cps">Tail recursion and CPS</h3>
 
 <ul>
   <li>As we discussed earlier in the <a href="idiomatic-fp.html#tail-recursion">idiomatic fp topic</a>, left fold is tail-recursive whereas right fold is not</li>
-  <li>In general it is somewhat random whether a given algorithm is tail-recursive or not</li>
-  <li>But, we can re-factor many algorithms to be tail recursive</li>
-  <li>A classic technique for this is <em>continuation passing style</em> aka CPS</li>
-</ul>
-
-<h4 id="continuation-passing-style-cps">Continuation Passing Style (CPS)</h4>
-
-<ul>
-  <li>Idea: pass the “rest of the computation” as an additional argument <code>c</code> to a function</li>
-  <li>The last line of the function will be <code>c(..)</code> – call <code>c</code>.</li>
-  <li>If <code>c</code> is the current function itself, it will be a tail call - efficient!
+  <li>And tail-recursive functions get optimized to not make call frames
     <ul>
-      <li>in general, if a whole series of calls is in CPS, no stack is needed.</li>
+      <li>Not only is memory saved but cache coherency is better so faster!</li>
     </ul>
   </li>
-  <li>See file <a href="../examples/continuation-trees.ml">continuation-trees.ml</a> for how to code tree fold using CPS.</li>
-</ul>
-
-<h4 id="cps-and-coroutines">CPS and coroutines</h4>
-
-<ul>
-  <li>We also saw continuations in <code>Lwt</code> where the “callback code” after an I/O operation was a function invoked later:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Hello,"</span> <span class="k">in</span>
-<span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"world!"</span> <span class="k">in</span>
-<span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
-</code></pre></div></div>
-
-<p>is really</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bind</span><span class="p">(</span><span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Hello,"</span><span class="p">)</span> 
-    <span class="p">(</span><span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="n">bind</span><span class="p">(</span><span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"world!"</span><span class="p">)</span> 
-                   <span class="p">(</span><span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span><span class="p">))</span>
-</code></pre></div></div>
-
-<p>– each of the 2nd arguments to bind is “the rest of the work”, the continuation.</p>
-
-<ul>
-  <li>In Algebraic Effects world we had explicit <code>'a continuation</code> types: the system packed up all the “rest of the work” code for us
-    <ul>
-      <li>they are not <em>encoded</em> as functions there, the continuations are <em>built-in</em></li>
-    </ul>
-  </li>
+  <li>Moral: if efficiency is important try to re-factor to be tail recursive</li>
 </ul>
       
           </section>
@@ -268,7 +241,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       </div>
 
 				<div id="copyright">
-					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+					Web Design: TEMPLATED
 				</div>			
 
 

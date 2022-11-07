@@ -69,7 +69,7 @@ Here is a list of idioms, many of which are review as we touched on them before
     - Also a small function called only once or twice may read better inlined
     - Conversely, make more `let` definitions if the code is too convoluted
 
-
+<a name ="efficiency"></a>
 ## Efficiency
 
 * Our main goal is conciseness, but in some cases efficiency does matter
