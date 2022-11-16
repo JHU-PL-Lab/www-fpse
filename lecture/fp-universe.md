@@ -1,29 +1,30 @@
 The Functional Programming Language Universe
 ============================================
 
-* "This is the Dawn of the Age of FP", there are now many choices of languages
-* There are both viable functional-focused languages as well as FP extensions to existing languages.
+* "This is the Dawn of the Age of FP", there are now many choices of FP languages
+* There are both viable functional-focused languages as well as FP extensions to existing languages
+* We review the landscape here so you can throw in some FP on your next Python/Java/C++/... project
 
 ## Functional-focused languages
 
-* These are languages designed with FP style in mind from the start
+* These are languages designed with FP in mind from the start
 * Key features include
   - Immutable variables by default
-  - Many immutable data structures in libraries
+  - Libraries have immutable data structures
   - Full higher-order functions (can pass and return functions to functions), currying, anonymous (`fun x -> ` functions), etc.
-  - (Often also includes pattern matching and type inference)
+  - Often also includes pattern matching and type inference
 * Note that you may see the term "persistent data structure", we have been calling these "pure functional" or "immutable" data structures.
-  - The term "persistent" has a longstanding meaning of surviving over multiple runs of a program so I personally view "persistent data structure" as a misleading term.
-* There are generally two "schools"
-    - ML school: static types, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, etc)
-    - Lisp school: dynamically typed (Lisp, Scheme, Clojure, etc)
+  - The term "persistent" has a longstanding meaning of surviving over multiple runs of a program so I  view "persistent data structure" as a very misleading term for immutable structure.
+* There are roughly two "schools"
+    - ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, etc)
+    - Lisp school: dynamically typed, flexible but no type-directed programming (Lisp, Scheme, Clojure, etc)
 * All of these functional languages should be very easy to learn now that you know OCaml.
 
-### OCaml and Standard ML
+## ML Dialects
 
-* OCaml .. perhaps you heard of that?? :-)
-* Standard ML is another variant of ML
-  - it has very limited popularity these days
+* OCaml .. perhaps you have heard of that? :-)
+* Standard ML is another variant of ML, but it has limited popularity these days
+* F#, ReScript, and Elm are other ML-descended languages we cover briefly now
 
 ### F#
 
@@ -63,14 +64,8 @@ printfn "The area of the square is %f" (getArea square)
   - But, with a somewhat different syntax not so loaded with historical oddities and kludges
   - Compiler takes `.res` to `.bs.js` which can in turn run in a browser
   - [Here](https://rescript-lang.org/try) is a playground where you can see how `.res` is turned into `.js.bs`.
+  - [This playground](https://reasonml.github.io/en/try) shows the close relation of ReScript and OCaml (and JavaScript) (it is in fact a Reason playground, the predecessor of ReScript)
   - [Some small code examples](https://rescript-lang.org/docs/manual/latest/newcomer-examples) to get an idea of the syntax
-
-* ReScript is a fork of [Reason](https://reasonml.github.io) but Reason seems to be languishing now
-  - Reason is "full OCaml" (every single feature) but with a more modern syntax
-  - [This playground](https://reasonml.github.io/en/try) shows the close relation of Reason, OCaml, and JavaScript
-     - ReScript doesn't have this perfect tie to OCaml but is close
-     - You can still use this demo to paste in OCaml and see what the likely ReScript code will be, or vice-versa.
-
 
 #### ReScriptReact
 
@@ -95,14 +90,13 @@ printfn "The area of the square is %f" (getArea square)
 
 * Haskell is an ML descendant, it shares a lot of the same syntax
 * It is hard-core FP: no direct side effects at all, must use monads for every side-effect (ouch!)
-* It was gaining in popularity a lot but not so much recently, too hard-core for your average programmer
-
-(Note to self: add more on Haskell novelties, including laziness, type classes, monad uses)
+* It was gaining in popularity but not as much recently, too hard-core for your average programmer
+* Has some very cool features that OCaml does not have, e.g. type classes for principled operator overloading
 ### Lisp / Scheme / Racket
 
 * Lisp was the very first functional programming language, from the late 50's
   - inspired by Church's Lambda Calculus, circa 1934 - functional programming on paper
-  - Lisp is dynamically typed, there are no type declarations or inference and all errors caught at runtime.
+  - Lisp is dynamically typed, the ancestor of all modern dynamically-typed languages such as Python, JavaScript, etc.  No type-directed programming in any of these!!
   - Allows mutation everywhere (no immutable `let` or immutable lists), but "only mutate when really needed".
 * Scheme was a clean-up of Lisp in the 70's-80's, there were several errors in the Lisp design
   - e.g. dynamic scoping -- closures were not computed in Lisp. (see [closures tangent below](./fp-universe.html#closures))
@@ -112,6 +106,7 @@ printfn "The area of the square is %f" (getArea square)
      - Avoids race conditions on stateful data strutures
   - Runs on the Java JVM so lots of libraries
 * Additionally, Smalltalk, Ruby, Python, and JavaScript are descended from Lisp (more below on those)
+* The Lisp school is generally in decline these days, `(the syntax (sucks) (since everything is just an s-expression (like this)))`
 
 ## FP in YourFavoriteLang
 
@@ -178,7 +173,7 @@ plusfour = add(4)
   - [tutorial](https://www.python.org/dev/peps/pep-0636/)
 
 
-### FP In JavaScript
+### FP In JavaScript or TypeScript
 
 * JavaScript is similar to Python, it has the basics built-in already
 
@@ -211,5 +206,14 @@ val f : int -> int = <fun> (* f is at runtime the closure "<fun y code, {x |-> 4
 
 * Note how `x` is a function parameter and is remembered in spite of function returning, means `x` needs to be remembered, in the closure
 
+* Here is an encoding of the above idea in OCaml
+```ocaml
+let f = (fun x -> (fun (x,y) -> x + y), x) in (* return pair of function and non-local value *)
+let apply_closure (f,x) y = f (x,y) in (* function application needs to pass in x from the closure *)
+let add3 = f 3 in (* example of partial application: only one argument given *)
+apply_closure add3 5;;
+```
+
 * Closures are the key thing missing from C: C has *function pointers* you can pass around, but no closures.
   - It also doesn't allow you to write anonymous functions (`fun x -> ..`), etc, etc.
+* In C++ there is an issue of what format non-locals like `x` are: references, copies, or what.

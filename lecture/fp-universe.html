@@ -62,45 +62,43 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <h1 id="the-functional-programming-language-universe">The Functional Programming Language Universe</h1>
 
 <ul>
-  <li>“This is the Dawn of the Age of FP”, there are now many choices of languages</li>
-  <li>There are both viable functional-focused languages as well as FP extensions to existing languages.</li>
+  <li>“This is the Dawn of the Age of FP”, there are now many choices of FP languages</li>
+  <li>There are both viable functional-focused languages as well as FP extensions to existing languages</li>
+  <li>We review the landscape here so you can throw in some FP on your next Python/Java/C++/… project</li>
 </ul>
 
 <h2 id="functional-focused-languages">Functional-focused languages</h2>
 
 <ul>
-  <li>These are languages designed with FP style in mind from the start</li>
+  <li>These are languages designed with FP in mind from the start</li>
   <li>Key features include
     <ul>
       <li>Immutable variables by default</li>
-      <li>Many immutable data structures in libraries</li>
+      <li>Libraries have immutable data structures</li>
       <li>Full higher-order functions (can pass and return functions to functions), currying, anonymous (<code>fun x -&gt; </code> functions), etc.</li>
-      <li>(Often also includes pattern matching and type inference)</li>
+      <li>Often also includes pattern matching and type inference</li>
     </ul>
   </li>
   <li>Note that you may see the term “persistent data structure”, we have been calling these “pure functional” or “immutable” data structures.
     <ul>
-      <li>The term “persistent” has a longstanding meaning of surviving over multiple runs of a program so I personally view “persistent data structure” as a misleading term.</li>
+      <li>The term “persistent” has a longstanding meaning of surviving over multiple runs of a program so I  view “persistent data structure” as a very misleading term for immutable structure.</li>
     </ul>
   </li>
-  <li>There are generally two “schools”
+  <li>There are roughly two “schools”
     <ul>
-      <li>ML school: static types, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, etc)</li>
-      <li>Lisp school: dynamically typed (Lisp, Scheme, Clojure, etc)</li>
+      <li>ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, etc)</li>
+      <li>Lisp school: dynamically typed, flexible but no type-directed programming (Lisp, Scheme, Clojure, etc)</li>
     </ul>
   </li>
   <li>All of these functional languages should be very easy to learn now that you know OCaml.</li>
 </ul>
 
-<h3 id="ocaml-and-standard-ml">OCaml and Standard ML</h3>
+<h2 id="ml-dialects">ML Dialects</h2>
 
 <ul>
-  <li>OCaml .. perhaps you heard of that?? :-)</li>
-  <li>Standard ML is another variant of ML
-    <ul>
-      <li>it has very limited popularity these days</li>
-    </ul>
-  </li>
+  <li>OCaml .. perhaps you have heard of that? :-)</li>
+  <li>Standard ML is another variant of ML, but it has limited popularity these days</li>
+  <li>F#, ReScript, and Elm are other ML-descended languages we cover briefly now</li>
 </ul>
 
 <h3 id="f">F#</h3>
@@ -144,18 +142,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>But, with a somewhat different syntax not so loaded with historical oddities and kludges</li>
       <li>Compiler takes <code>.res</code> to <code>.bs.js</code> which can in turn run in a browser</li>
       <li><a href="https://rescript-lang.org/try">Here</a> is a playground where you can see how <code>.res</code> is turned into <code>.js.bs</code>.</li>
+      <li><a href="https://reasonml.github.io/en/try">This playground</a> shows the close relation of ReScript and OCaml (and JavaScript) (it is in fact a Reason playground, the predecessor of ReScript)</li>
       <li><a href="https://rescript-lang.org/docs/manual/latest/newcomer-examples">Some small code examples</a> to get an idea of the syntax</li>
-    </ul>
-  </li>
-  <li>ReScript is a fork of <a href="https://reasonml.github.io">Reason</a> but Reason seems to be languishing now
-    <ul>
-      <li>Reason is “full OCaml” (every single feature) but with a more modern syntax</li>
-      <li><a href="https://reasonml.github.io/en/try">This playground</a> shows the close relation of Reason, OCaml, and JavaScript
-        <ul>
-          <li>ReScript doesn’t have this perfect tie to OCaml but is close</li>
-          <li>You can still use this demo to paste in OCaml and see what the likely ReScript code will be, or vice-versa.</li>
-        </ul>
-      </li>
     </ul>
   </li>
 </ul>
@@ -199,17 +187,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Haskell is an ML descendant, it shares a lot of the same syntax</li>
   <li>It is hard-core FP: no direct side effects at all, must use monads for every side-effect (ouch!)</li>
-  <li>It was gaining in popularity a lot but not so much recently, too hard-core for your average programmer</li>
-</ul>
-
-<p>(Note to self: add more on Haskell novelties, including laziness, type classes, monad uses)</p>
-<h3 id="lisp--scheme--racket">Lisp / Scheme / Racket</h3>
-
-<ul>
+  <li>It was gaining in popularity but not as much recently, too hard-core for your average programmer</li>
+  <li>Has some very cool features that OCaml does not have, e.g. type classes for principled operator overloading
+    <h3 id="lisp--scheme--racket">Lisp / Scheme / Racket</h3>
+  </li>
   <li>Lisp was the very first functional programming language, from the late 50’s
     <ul>
       <li>inspired by Church’s Lambda Calculus, circa 1934 - functional programming on paper</li>
-      <li>Lisp is dynamically typed, there are no type declarations or inference and all errors caught at runtime.</li>
+      <li>Lisp is dynamically typed, the ancestor of all modern dynamically-typed languages such as Python, JavaScript, etc.  No type-directed programming in any of these!!</li>
       <li>Allows mutation everywhere (no immutable <code>let</code> or immutable lists), but “only mutate when really needed”.</li>
     </ul>
   </li>
@@ -230,6 +215,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>Additionally, Smalltalk, Ruby, Python, and JavaScript are descended from Lisp (more below on those)</li>
+  <li>The Lisp school is generally in decline these days, <code>(the syntax (sucks) (since everything is just an s-expression (like this)))</code></li>
 </ul>
 
 <h2 id="fp-in-yourfavoritelang">FP in YourFavoriteLang</h2>
@@ -324,7 +310,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h3 id="fp-in-javascript">FP In JavaScript</h3>
+<h3 id="fp-in-javascript-or-typescript">FP In JavaScript or TypeScript</h3>
 
 <ul>
   <li>JavaScript is similar to Python, it has the basics built-in already</li>
@@ -365,12 +351,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>
     <p>Note how <code>x</code> is a function parameter and is remembered in spite of function returning, means <code>x</code> needs to be remembered, in the closure</p>
   </li>
-  <li>
-    <p>Closures are the key thing missing from C: C has <em>function pointers</em> you can pass around, but no closures.</p>
+  <li>Here is an encoding of the above idea in OCaml
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span><span class="o">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">in</span> <span class="c">(* return pair of function and non-local value *)</span>
+<span class="k">let</span> <span class="n">apply_closure</span> <span class="p">(</span><span class="n">f</span><span class="o">,</span><span class="n">x</span><span class="p">)</span> <span class="n">y</span> <span class="o">=</span> <span class="n">f</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="p">)</span> <span class="k">in</span> <span class="c">(* function application needs to pass in x from the closure *)</span>
+<span class="k">let</span> <span class="n">add3</span> <span class="o">=</span> <span class="n">f</span> <span class="mi">3</span> <span class="k">in</span> <span class="c">(* example of partial application: only one argument given *)</span>
+<span class="n">apply_closure</span> <span class="n">add3</span> <span class="mi">5</span><span class="p">;;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Closures are the key thing missing from C: C has <em>function pointers</em> you can pass around, but no closures.
     <ul>
       <li>It also doesn’t allow you to write anonymous functions (<code>fun x -&gt; ..</code>), etc, etc.</li>
     </ul>
   </li>
+  <li>In C++ there is an issue of what format non-locals like <code>x</code> are: references, copies, or what.</li>
 </ul>
       
           </section>
@@ -378,7 +371,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       </div>
 
 				<div id="copyright">
-					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+					Web Design: TEMPLATED
 				</div>			
 
 
