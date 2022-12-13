@@ -149,14 +149,14 @@ For the demo you should be prepared to have a 5-10 minute presentation on your p
 The final code submission should include 
   1. All of the code of course! (And no binaries - please `dune clean` before zipping)
   2. It should include a `dune` file which successfuly builds your project with `dune build`
-  3. It should include a top-level `Readme.md` outlining how to build and run the project.  If any other system-level installs are needed outside of the offical course list, describe them in your `Readme.md`.
+  3. It should include a top-level `Readme.md` briefly describing the project and outlining how to build and run it.  If any other system-level installs are needed outside of the offical course list, describe them in your `Readme.md`.
   4. In order to be clear on what `opam` packages your project depends on you are required to include information to build a `.opam` file in your project root. This is described below in more detail.
   5. You will also need to include a test suite with good coverage which runs automatically via `dune test` from the top-level directory.
 
 
 Here are some clarifications.
   1. For test coverage, you should have very good coverage on your core logic.  Make sure to cover the corner cases in the code with tests.
-  2. You do not need to cover I/O aspects of the code, those fall under acceptance tests and we are only requiring unit tests at this point.  There is no need to mark all of your I/O code as coverage off.
+  2. You do not need to cover I/O aspects of the code, those fall under acceptance tests and we are only requiring unit tests at this point.  There is no need to mark all of your I/O code as `[@@@ coverage off]`, but you can if you want to.
 
 #### Making and testing an `.opam` package file
  As was mentioned above you will need to make an `.opam` file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any `opam` dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your `dune-project` file and edit as appropriate.  Make sure to include any `opam` packages you are using in the `depends` section.
@@ -169,8 +169,8 @@ Here are some clarifications.
    (synopsis "An OCaml library for Helpful Helloing")
    (description "A longer description")
    (depends
-    (ounit2 (> 2.0)) ; for each opam dependency list the version
-    (core (> 0.14.1)) ; `opam list core` will display which version of core you have
+    (ounit2 (> 2.2.6)) ; for each opam dependency list the version
+    (core (> 0.15.0)) ; `opam list core` will display which version of core you have
  ))
  ```
  
@@ -179,7 +179,7 @@ With these lines, `dune build` will build a file `<your_project>.opam`.  You can
 Note that any non-`opam` dependencies you will need to list in your `Readme.md` file.  You can in fact add them to the `.opam` file with `depexts` but it is not trivial to do so we will not require it.
 
 #### Code Submissions
-We will put up two submission points in Gradescope for you to upload your zipped hierarchies for the Design and Final submissions.  Please include all the source files needed to build the project but no binary or other built files - run a `dune clean` before zipping!
+We will put up three submission points in Gradescope for you to upload your zipped hierarchies for the Design, Checkpoint, and Final submissions.  Please include all the source files needed to build the project but **no binary or other built files** - run a `dune clean` before zipping!  If you have large datasets in files please put them on Google Drive or similar and provide a link - Gradescope gets unhappy if the submission is too large.
 
 
 ## The FPSE Labs

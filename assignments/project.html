@@ -253,7 +253,7 @@ BOOM!
 <ol>
   <li>All of the code of course! (And no binaries - please <code>dune clean</code> before zipping)</li>
   <li>It should include a <code>dune</code> file which successfuly builds your project with <code>dune build</code></li>
-  <li>It should include a top-level <code>Readme.md</code> outlining how to build and run the project.  If any other system-level installs are needed outside of the offical course list, describe them in your <code>Readme.md</code>.</li>
+  <li>It should include a top-level <code>Readme.md</code> briefly describing the project and outlining how to build and run it.  If any other system-level installs are needed outside of the offical course list, describe them in your <code>Readme.md</code>.</li>
   <li>In order to be clear on what <code>opam</code> packages your project depends on you are required to include information to build a <code>.opam</code> file in your project root. This is described below in more detail.</li>
   <li>You will also need to include a test suite with good coverage which runs automatically via <code>dune test</code> from the top-level directory.</li>
 </ol>
@@ -261,7 +261,7 @@ BOOM!
 <p>Here are some clarifications.</p>
 <ol>
   <li>For test coverage, you should have very good coverage on your core logic.  Make sure to cover the corner cases in the code with tests.</li>
-  <li>You do not need to cover I/O aspects of the code, those fall under acceptance tests and we are only requiring unit tests at this point.  There is no need to mark all of your I/O code as coverage off.</li>
+  <li>You do not need to cover I/O aspects of the code, those fall under acceptance tests and we are only requiring unit tests at this point.  There is no need to mark all of your I/O code as <code>[@@@ coverage off]</code>, but you can if you want to.</li>
 </ol>
 
 <h4 id="making-and-testing-an-opam-package-file">Making and testing an <code>.opam</code> package file</h4>
@@ -274,8 +274,8 @@ BOOM!
    <span class="p">(</span><span class="nf">synopsis</span> <span class="s">"An OCaml library for Helpful Helloing"</span><span class="p">)</span>
    <span class="p">(</span><span class="nf">description</span> <span class="s">"A longer description"</span><span class="p">)</span>
    <span class="p">(</span><span class="nf">depends</span>
-    <span class="p">(</span><span class="nf">ounit2</span> <span class="p">(</span><span class="nb">&gt;</span> <span class="mf">2.0</span><span class="p">))</span> <span class="c1">; for each opam dependency list the version</span>
-    <span class="p">(</span><span class="nf">core</span> <span class="p">(</span><span class="nb">&gt;</span> <span class="mf">0.14</span><span class="o">.</span><span class="mi">1</span><span class="p">))</span> <span class="c1">; `opam list core` will display which version of core you have</span>
+    <span class="p">(</span><span class="nf">ounit2</span> <span class="p">(</span><span class="nb">&gt;</span> <span class="mf">2.2</span><span class="o">.</span><span class="mi">6</span><span class="p">))</span> <span class="c1">; for each opam dependency list the version</span>
+    <span class="p">(</span><span class="nf">core</span> <span class="p">(</span><span class="nb">&gt;</span> <span class="mf">0.15</span><span class="o">.</span><span class="mi">0</span><span class="p">))</span> <span class="c1">; `opam list core` will display which version of core you have</span>
  <span class="p">))</span>
 </code></pre></div></div>
 
@@ -284,7 +284,7 @@ BOOM!
 <p>Note that any non-<code>opam</code> dependencies you will need to list in your <code>Readme.md</code> file.  You can in fact add them to the <code>.opam</code> file with <code>depexts</code> but it is not trivial to do so we will not require it.</p>
 
 <h4 id="code-submissions">Code Submissions</h4>
-<p>We will put up two submission points in Gradescope for you to upload your zipped hierarchies for the Design and Final submissions.  Please include all the source files needed to build the project but no binary or other built files - run a <code>dune clean</code> before zipping!</p>
+<p>We will put up three submission points in Gradescope for you to upload your zipped hierarchies for the Design, Checkpoint, and Final submissions.  Please include all the source files needed to build the project but <strong>no binary or other built files</strong> - run a <code>dune clean</code> before zipping!  If you have large datasets in files please put them on Google Drive or similar and provide a link - Gradescope gets unhappy if the submission is too large.</p>
 
 <h2 id="the-fpse-labs">The FPSE Labs</h2>
 <p><a name="labs"></a></p>
