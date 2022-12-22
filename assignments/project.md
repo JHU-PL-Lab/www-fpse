@@ -169,12 +169,12 @@ Here are some clarifications.
    (synopsis "An OCaml library for Helpful Helloing")
    (description "A longer description")
    (depends
-    (ounit2 (> 2.2.6)) ; for each opam dependency list the version
-    (core (> 0.15.0)) ; `opam list core` will display which version of core you have
+    (ounit2 (>= 2.2.6)) ; for each opam dependency list the version
+    (core (>= 0.15.0)) ; `opam list core` will display which version of core you have
  ))
  ```
  
-With these lines, `dune build` will build a file `<your_project>.opam`.  You can then use command `opam install .` to attempt to install your project as a local opam package; this will install any of the `opam` dependencies if they are not already installed.  We will use this command to install all of your `opam` dependencies.  See [dune opam integration](https://dune.readthedocs.io/en/stable/opam.html) for details on this dune file format, and [opam packaging](https://opam.ocaml.org/doc/Packaging.html) for details on the `.opam` file format.
+With these lines, `dune build` will build a file `<your_project>.opam`.  You can then use command `opam install . --deps-only --working-dir` to install any of the `opam` dependencies if they are not already installed.  We will use this command to install all of your `opam` dependencies.  See [dune opam integration](https://dune.readthedocs.io/en/stable/opam.html) for details on this dune file format, and [opam packaging](https://opam.ocaml.org/doc/Packaging.html) for details on the `.opam` file format.
 
 Note that any non-`opam` dependencies you will need to list in your `Readme.md` file.  You can in fact add them to the `.opam` file with `depexts` but it is not trivial to do so we will not require it.
 
