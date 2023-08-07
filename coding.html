@@ -92,9 +92,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>You will need to run some terminal commands to set up the basics:</p>
 <ol>
   <li><code>opam init</code> will initialize OPAM (we suggest you answer <code>y</code> to the question <code>Do you want opam to modify ~/.profile? [N/y/f]</code>);</li>
-  <li>
-    <p>If you didn’t get that question or said <code>N</code>, you will need to add line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</p>
-  </li>
+  <li>If you didn’t get that question or said <code>N</code>, you will need to add line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
+  <li>After any <code>opam switch</code> command it will instruct you to reset your path with some instructions like “Run <code>eval $(opam env)</code> to update the current shell environment” – follow those instructions and copy/paste the in the command into the shell (if you are on <code>zsh</code> replace the <code>$(...)</code> with back-quotes <code>`...`</code>).</li>
   <li><code>opam switch create 5.0.0</code> (this will take awhile) will build OCaml version 5.0.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to <code>opam update</code> before this <code>switch</code> to make sure OPAM is aware of the latest version);</li>
 </ol>
 
@@ -104,7 +103,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Once you have <code>opam</code> and <code>ocaml</code> 5.0.0 installed, run the following <code>opam</code> command to install additional necessary packages for the class:</p>
 
-<pre><code>opam install ocaml-lsp-server ocamlformat-rpc utop ounit2 async lwt ppx_deriving_yojson ppx_deriving bisect_ppx base_quickcheck
+<pre><code>opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 async lwt ppx_deriving_yojson ppx_deriving bisect_ppx base_quickcheck
 </code></pre>
 
 <p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, create  or edit the file <code>~/.ocamlinit</code> to contain the lines below.  The lines in this file are input to the top loop when it first starts.  <code>topfind</code> really should be built-in, it allows you to load libraries.  The <code>require</code> command is one thing <code>topfind</code> adds, here it is loading the <code>Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code>Core</code> as they are improved versions.</p>

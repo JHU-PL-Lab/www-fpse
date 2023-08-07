@@ -2,7 +2,7 @@
 
 ### Lecture Schedule
 
-Lectures will be 1:30-2:45 on Mondays and Wednesdays in Shaffer 300.
+Lectures will be 1:30-2:45 on Mondays and Wednesdays in Hackemann B-17.
 ### Syllabus
 
 See the [Dateline](dateline.html) for the schedule and the topics that will be covered.
@@ -26,7 +26,7 @@ All assignments are linked from the [dateline](dateline.html). They will all be 
 
 ### Exams
 
-There will be no exams.
+There will be no exams.  There may be a quiz 2/3 of the way through the course.
 
 ### Project
 
