@@ -13,7 +13,7 @@ See the [Dateline](dateline.html) for the schedule and the topics that will be c
 
 ### Courselore Q&A board
 
-We will be using the [Courselore Q&A board](https://courselore.org/courses/0644001341) for online discussions. A registration link will be emailed so you can sign up, and it will also be posted as an announcement on Canvas.  All information not on this website, such as locations of Panopto recordings, office hours, etc will be posted on Courselore.
+We will be using the [Courselore Q&A board](https://courselore.org/courses/1191913911) for online discussions. A registration link will be emailed if you are either registered or on the wait list, and the link will also be posted as an announcement on Canvas if you signed up late and missed the email.  All information not on this website, such as locations of Panopto recordings, office hours, etc will be posted on Courselore.
 
 Note we are not using Canvas for anything so don't try accessing things like Gradescope or Panopto from within there as it probably won't work.
 
@@ -40,7 +40,7 @@ Please make sure to consult the course [Academic Integrity Policy](integrity.htm
 
 #### Late HW Policy
 
-You will be given the same number of "late days" as there are assignment submission deadlines (around 9 total based on the planned dateline; if Part I and Part II are on different due dates they each give one late day). For each deadline you can use up to three of your late days quota, each one allowing you to submit the assignment one day later.  **The quantum of lateness is the day, so if you are 15 seconds late that counts as a day late.** If you have a cold or flu you can use the late days for such absences; if you have an extended excused absence contact Staff on Courselore and we can work something out.
+You will be given ten total late days. For each unique due date submission point in Gradescope you can use up to three of your late days quota, each one allowing you to submit the assignment one day later.  **The quantum of lateness is the day, so if you are 15 seconds late that counts as a day late.** If you have a cold or flu you can use the late days for such absences; if you have an extended excused absence contact Staff on Courselore and we can work something out.  The late days are for the individual assignments, not the project submissions.
 
 ### Office hours
 

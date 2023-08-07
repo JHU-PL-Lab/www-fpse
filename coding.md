@@ -1,8 +1,8 @@
 ## OCaml Coding Information
 
-We are using [OCaml](https://ocaml.org) version 4.14.0.
+We are using [OCaml](https://ocaml.org) version 5.0.0.
 
-### Installing OCaml 4.14.0 and associated tools
+### Installing OCaml 5.0.0 and associated tools
 
 
 We require that you use the [opam packaging system](https://opam.ocaml.org) for installing OCaml and its extensions.  Once you get `opam` installed and working, everything else should be easy to install .. so the only hard part is the first step.
@@ -21,17 +21,17 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
 You will need to run some terminal commands to set up the basics:
    1.  `opam init` will initialize OPAM (we suggest you answer `y` to the question `Do you want opam to modify ~/.profile? [N/y/f]`);
    2.  If you didn't get that question or said `N`, you will need to add line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
-   3.  Type command `eval $(opam env)` to your shell to let it know where the opam files are (zsh users on Macs type ``eval `opam env` `` instead)
-   4.  `opam switch create 4.14.0` (this will take awhile) will build OCaml version 4.14.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this `switch` to make sure OPAM is aware of the latest version);
 
-If you already have an earlier version of OCaml installed via `opam`, start on step 2. above to update to 4.14.0.  Make sure to do the `opam update` step first or your install won't know that 4.14.0 even exists.  Please don't blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.
+   4.  `opam switch create 5.0.0` (this will take awhile) will build OCaml version 5.0.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this `switch` to make sure OPAM is aware of the latest version);
+
+If you already have an earlier version of OCaml installed via `opam`, start on step 2. above to update to 5.0.0.  Make sure to do the `opam update` step first or your install won't know that 5.0.0 even exists.  Please don't blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.
 
 
 #### Required OPAM Standard packages
 
-Once you have `opam` and `ocaml` 4.14.0 installed, run the following `opam` command to install additional necessary packages for the class:
+Once you have `opam` and `ocaml` 5.0.0 installed, run the following `opam` command to install additional necessary packages for the class:
 
-    opam install merlin ocaml-lsp-server ocamlformat-rpc utop ounit2 async lwt ppx_deriving_yojson ppx_deriving bisect_ppx base_quickcheck
+    opam install ocaml-lsp-server ocamlformat-rpc utop ounit2 async lwt ppx_deriving_yojson ppx_deriving bisect_ppx base_quickcheck
 
 
 Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, create  or edit the file `~/.ocamlinit` to contain the lines below.  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
@@ -106,6 +106,7 @@ VSCode has very good OCaml support and is the "officially recommended editor".
 * The [Real World OCaml](https://dev.realworldocaml.org/index.html) book has a fairly good overlap with what we will cover, and can be used as a supplementary resource.
    - It documents many of the extensions we will be using, the `Core` libraries in particular.
 * [Cornell cs3110 book](https://cs3110.github.io/textbook/cover.html) is the online text for a somewhat-related course at Cornell.  They have recently added many videos if you like watching videos to learn.  Note that they are not using `Core`.
+* [OCaml from the very beginning](https://johnwhitington.net/ocamlfromtheverybeginning/) is a free online book.
 
 ### Coding Style
 

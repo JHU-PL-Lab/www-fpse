@@ -10,17 +10,17 @@ Please send private questions for course staff only as a new Conversion setting 
 
 For Course Assistants we are fortunate to have several course alums and two PhD students with lots of OCaml knowledge.
 
-**Head Course Assistant** James Wang, **email** jwang380 --at-- jhu.edu
+**Head Course Assistant** Brandon Stride
 
 **Course Assistant** Robert Zhang
-
-**Course Assistant** Brandon Stride
-
-**Course Assistant** Kyle Wu
 
 **Course Assistant** Shiwei Weng
 
 **Course Assistant** Earl Wu
+
+**Course Assistant** TBA
+
+**Course Assistant** TBA
 
 
 ### Office Hours
