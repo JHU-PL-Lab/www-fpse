@@ -21,8 +21,8 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
 You will need to run some terminal commands to set up the basics:
    1.  `opam init` will initialize OPAM (we suggest you answer `y` to the question `Do you want opam to modify ~/.profile? [N/y/f]`);
    2.  If you didn't get that question or said `N`, you will need to add line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
-   3.  After any `opam switch` command it will instruct you to reset your path with some instructions like "Run `eval $(opam env)` to update the current shell environment" -- follow those instructions and copy/paste the in the command into the shell (if you are on `zsh` replace the `$(...)` with back-quotes `` `...` ``).
-   4.  `opam switch create 5.0.0` (this will take awhile) will build OCaml version 5.0.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this `switch` to make sure OPAM is aware of the latest version);
+   3.  `opam switch create 5.0.0` (this will take awhile) will build OCaml version 5.0.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to `opam update` before this `switch` to make sure OPAM is aware of the latest version);
+   4.  After any `opam switch` command it will instruct you to reset your path with some instructions like "Run `eval $(opam env)` to update the current shell environment" -- follow those instructions and copy/paste the in the command into the shell (if you are on `zsh` replace the `$(...)` with back-quotes `` `...` ``).
 
 If you already have an earlier version of OCaml installed via `opam`, start on step 2. above to update to 5.0.0.  Make sure to do the `opam update` step first or your install won't know that 5.0.0 even exists.  Please don't blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.
 
@@ -95,9 +95,9 @@ VSCode has very good OCaml support and is the "officially recommended editor".
 
 * If you are on Windows and using WSL2, you need to run Visual Studio "in WSL2 space" to get OCaml syntax highlighting and other nice features. See the [Remote WSL Extension Docs](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode) for details on how to set up the VSCode-WSL2 connection.  If you are having trouble look at the [Additional Resources](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode#additional-resources) on that page.  Once you have the above set up, install the OCaml Platform as described above and you should have syntax highlighting etc working.
 
-**vim**: If you use `vim`, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell commands `opam install user-setup` and `opam user-setup install` after doing the above  default `opam` install to set up syntax highlighting, tab completion, displaying types, etc. See [here](https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt) for some dense documentation.
+**vim**: If you use `vim`, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell commands `opam install merlin user-setup` and `opam user-setup install` after doing the above default `opam` install to set up syntax highlighting, tab completion, displaying types, etc. See [here](https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt) for some dense documentation.
 
-**emacs**: See vim. Note you will need to also `opam install tuareg` to get emacs to work, and follow the instructions the install prints out.
+**emacs**: See vim. You will need to also `opam install tuareg` to get emacs to work, and follow the instructions the install prints out.
 
 ### Books
 
