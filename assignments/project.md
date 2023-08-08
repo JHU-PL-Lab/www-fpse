@@ -3,14 +3,15 @@ The FPSE Projects
 
 For the projects you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.  
 ### Requirements
-Here are some high-level requirements for the projects.
+Here are the high-level requirements for the projects.
 
-* All the code must be in OCaml obviously (excepting small bits of glue code or explicit exceptions if you petition)
-* Use the standard course libraries -- `Core`, `Lwt`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
+* All the code must be in OCaml obviously (excepting small bits of glue code, or explicit exceptions if you petition)
+* You must use the standard course libraries -- `Core`, `Lwt`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 1-3 people; non-singleton project groups are preferred.
-* A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count as part of your grade.
+* OCaml excels for non-trivial algorithms and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help with.
+* A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.
 
-### Potential Project Topic Thrusts
+### Project Topic Thrusts
 
 * You will need to make a standalone application as you did/will do in assignments 2 and 4.
 * Here are are three approaches to give some potential directions; feel free to do whatever you like though.
@@ -92,9 +93,10 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * If you are familiar with databases, the [sqlite3-ocaml](https://github.com/mmottl/sqlite3-ocaml) and [postgresql-ocaml](https://mmottl.github.io/postgresql-ocaml/) bindings should work for accessing SQLite or Postgres databases from within OCaml.
 
 #### Data Processing
-* [Owl](https://ocaml.xyz/book/) is a very well-documented numerical processing library.
-* [ocaml-torch](https://github.com/LaurentMazare/ocaml-torch) PyTorch bindings for OCaml
-* [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.  This library has been difficult for some people to install properly so please test it out well before committing to it.
+There are some good libraries here but they don't have many users and we have had **many issues with people being able to install these libraries in the past**.  If you wanted to base your project around one of these libraries **you will be required to** (1) get the library successfully installed on all your team members' computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.
+* [Owl](https://ocaml.xyz/) is a very well-documented numerical processing library.
+* [ocaml-torch](https://github.com/LaurentMazare/ocaml-torch) PyTorch bindings for OCaml.
+* [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.
 
 #### And more!
 
@@ -118,6 +120,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 The design submission must include
   1. An overview of the purpose of the project
   2. A list of libraries you plan on using
+    - Additionally if any of the libraries are either not listed above or are in the data processing category above, you will also be required to have successfully installed the library on all team member computers and have a small demo app working to verify the library really works.  We require this because OCaml libraries can be flakey.
   3. Commented module type declarations (`.mli` files) which will provide you with an initial specification to code to
     - You can obviously change this later and don't need every single detail filled out
     - But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.

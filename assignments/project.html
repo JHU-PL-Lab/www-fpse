@@ -41,7 +41,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
           <li><a href="/fpse/assignments/">Assignments</a>
-          <li><a href="https://courselore.org/courses/0644001341">Q&A</a></li>
+          <li><a href="https://courselore.org/courses/1191913911">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -63,16 +63,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>For the projects you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.</p>
 <h3 id="requirements">Requirements</h3>
-<p>Here are some high-level requirements for the projects.</p>
+<p>Here are the high-level requirements for the projects.</p>
 
 <ul>
-  <li>All the code must be in OCaml obviously (excepting small bits of glue code or explicit exceptions if you petition)</li>
-  <li>Use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
+  <li>All the code must be in OCaml obviously (excepting small bits of glue code, or explicit exceptions if you petition)</li>
+  <li>You must use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 1-3 people; non-singleton project groups are preferred.</li>
-  <li>A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count as part of your grade.</li>
+  <li>OCaml excels for non-trivial algorithms and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help with.</li>
+  <li>A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.</li>
 </ul>
 
-<h3 id="potential-project-topic-thrusts">Potential Project Topic Thrusts</h3>
+<h3 id="project-topic-thrusts">Project Topic Thrusts</h3>
 
 <ul>
   <li>You will need to make a standalone application as you did/will do in assignments 2 and 4.</li>
@@ -179,10 +180,11 @@ BOOM!
 </ul>
 
 <h4 id="data-processing">Data Processing</h4>
+<p>There are some good libraries here but they don’t have many users and we have had <strong>many issues with people being able to install these libraries in the past</strong>.  If you wanted to base your project around one of these libraries <strong>you will be required to</strong> (1) get the library successfully installed on all your team members’ computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.</p>
 <ul>
-  <li><a href="https://ocaml.xyz/book/">Owl</a> is a very well-documented numerical processing library.</li>
-  <li><a href="https://github.com/LaurentMazare/ocaml-torch">ocaml-torch</a> PyTorch bindings for OCaml</li>
-  <li><a href="https://github.com/zshipko/ocaml-bimage">ocaml-bimage</a> is an image processing library.  This library has been difficult for some people to install properly so please test it out well before committing to it.</li>
+  <li><a href="https://ocaml.xyz/">Owl</a> is a very well-documented numerical processing library.</li>
+  <li><a href="https://github.com/LaurentMazare/ocaml-torch">ocaml-torch</a> PyTorch bindings for OCaml.</li>
+  <li><a href="https://github.com/zshipko/ocaml-bimage">ocaml-bimage</a> is an image processing library.</li>
 </ul>
 
 <h4 id="and-more">And more!</h4>
@@ -212,7 +214,8 @@ BOOM!
 <p>The design submission must include</p>
 <ol>
   <li>An overview of the purpose of the project</li>
-  <li>A list of libraries you plan on using</li>
+  <li>A list of libraries you plan on using<br />
+    - Additionally if any of the libraries are either not listed above or are in the data processing category above, you will also be required to have successfully installed the library on all team member computers and have a small demo app working to verify the library really works.  We require this because OCaml libraries can be flakey.</li>
   <li>Commented module type declarations (<code>.mli</code> files) which will provide you with an initial specification to code to<br />
     - You can obviously change this later and don’t need every single detail filled out<br />
     - But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.</li>

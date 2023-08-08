@@ -98,7 +98,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>After any <code>opam switch</code> command it will instruct you to reset your path with some instructions like “Run <code>eval $(opam env)</code> to update the current shell environment” – follow those instructions and copy/paste the in the command into the shell (if you are on <code>zsh</code> replace the <code>$(...)</code> with back-quotes <code>`...`</code>).</li>
 </ol>
 
-<p>If you already have an earlier version of OCaml installed via <code>opam</code>, start on step 2. above to update to 5.0.0.  Make sure to do the <code>opam update</code> step first or your install won’t know that 5.0.0 even exists.  Please don’t blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.</p>
+<p>If you already have an earlier version of OCaml installed via <code>opam</code>, start on step 3. above to update to 5.0.0.</p>
 
 <h4 id="required-opam-standard-packages">Required OPAM Standard packages</h4>
 
@@ -156,6 +156,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><a href="https://github.com/janestreet/ppx_jane"><code>ppx_jane</code></a> adds boilerplate functions to type definitions as well as many other macros.  Unfortunately it is not documented, but <code>[@@deriving equal, compare, sexp]</code> for example will add equal and compare on a type, and to/from s-expression convertor functions.</li>
 </ul>
 
+<p>All of the above packages have documentation, but you may also want to try <a href="https://doc.sherlocode.com/">sherlodocs</a> where you can find documentation on all opam package details in one spot.  For example typing <code>Core.Array</code> into the search will give all the documentation for the <code>Array</code> module in <code>Core</code>.  Another documentation compilation is <a href="https://docs.ocaml.pro/about.html">The OCaml Documentation Hub</a>.</p>
+
 <p>The above tools will be our “bread and butter”, we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.</p>
 
 <ul>
@@ -211,7 +213,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li><a href="https://exercism.io/tracks/ocaml/exercises">Exercism OCaml Track</a> has a large set of programming problems to solve which have solutions by many other programmers as well.  We will reference some of these examples in lecture.</li>
-  <li><a href="https://ocaml.org/learn/tutorials/99problems.html">99 problems</a> solves 99 basic OCaml tasks.</li>
+  <li><a href="https://ocaml.org/problems">99 problems</a> solves 99 basic OCaml tasks.</li>
   <li><a href="https://ocaml-sf.org/learn-ocaml-public/#activity%3Dexercises">Learn OCaml</a> has a large number of exercises to solve.  The <a href="https://github.com/ocaml-sf/learn-ocaml-corpus/tree/master/exercises">solutions are online</a>.</li>
 </ul>
       

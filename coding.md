@@ -4,7 +4,6 @@ We are using [OCaml](https://ocaml.org) version 5.0.0.
 
 ### Installing OCaml 5.0.0 and associated tools
 
-
 We require that you use the [opam packaging system](https://opam.ocaml.org) for installing OCaml and its extensions.  Once you get `opam` installed and working, everything else should be easy to install .. so the only hard part is the first step.
 
 -  For Linux or Mac see [The OPAM install page](https://opam.ocaml.org/doc/Install.html) for install instructions. 
@@ -25,8 +24,7 @@ You will need to run some terminal commands to set up the basics:
    4. `opam switch create 5.0.0` will build OCaml version 5.0.;
    5.  After any `opam switch` command it will instruct you to reset your path with some instructions like "Run `eval $(opam env)` to update the current shell environment" -- follow those instructions and copy/paste the in the command into the shell (if you are on `zsh` replace the `$(...)` with back-quotes `` `...` ``).
 
-If you already have an earlier version of OCaml installed via `opam`, start on step 2. above to update to 5.0.0.  Make sure to do the `opam update` step first or your install won't know that 5.0.0 even exists.  Please don't blaze ahead with an earlier version hoping to get away with it, you will run into trouble later in the class with obscure compatibility errors.
-
+If you already have an earlier version of OCaml installed via `opam`, start on step 3. above to update to 5.0.0.
 
 #### Required OPAM Standard packages
 
@@ -76,6 +74,8 @@ Here are all the tools we will be using.  You are required to have a build for w
 * [OUnit](https://github.com/gildor478/ounit) is the unit tester for OCaml.  The opam package is called `ounit2` for obscure reasons.
 * [`ppx_jane`](https://github.com/janestreet/ppx_jane) adds boilerplate functions to type definitions as well as many other macros.  Unfortunately it is not documented, but `[@@deriving equal, compare, sexp]` for example will add equal and compare on a type, and to/from s-expression convertor functions.
 
+All of the above packages have documentation, but you may also want to try [sherlodocs](https://doc.sherlocode.com/) where you can find documentation on all opam package details in one spot.  For example typing `Core.Array` into the search will give all the documentation for the `Array` module in `Core`.  Another documentation compilation is [The OCaml Documentation Hub](https://docs.ocaml.pro/about.html).
+
 The above tools will be our "bread and butter", we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.
 
 * [Bisect](https://github.com/aantron/bisect_ppx) will be used for code coverage.
@@ -115,5 +115,5 @@ VSCode has very good OCaml support and is the "officially recommended editor".
 One of the best ways to learn to write elegant OCaml is to study well-written OCaml code.
 
 * [Exercism OCaml Track](https://exercism.io/tracks/ocaml/exercises) has a large set of programming problems to solve which have solutions by many other programmers as well.  We will reference some of these examples in lecture.
-* [99 problems](https://ocaml.org/learn/tutorials/99problems.html) solves 99 basic OCaml tasks.
+* [99 problems](https://ocaml.org/problems) solves 99 basic OCaml tasks.
 * [Learn OCaml](https://ocaml-sf.org/learn-ocaml-public/#activity%3Dexercises) has a large number of exercises to solve.  The [solutions are online](https://github.com/ocaml-sf/learn-ocaml-corpus/tree/master/exercises).
