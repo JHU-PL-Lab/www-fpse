@@ -26,7 +26,7 @@ All assignments are linked from the [dateline](dateline.html). They will all be 
 
 ### Exams
 
-There will be no exams.  There may be a quiz 2/3 of the way through the course.
+There will be no exam.  There will be a quiz around 2/3rds of the way through the course.
 
 ### Project
 

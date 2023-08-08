@@ -2,7 +2,7 @@
 
 Lecture material and assigments are under the indicated links.  
 
-Note that lecture material will be updated as topics are covered so consider the below just a draft until the lecture has in fact happened.  Assignment links will likely be dead until the assignment is posted.
+Note that lecture material will be updated as topics are covered so consider the below just a draft until the lecture has in fact happened.  Assignment links will be dead until the assignment is posted.
 
 <table class="date" width="100%" border="1" cellspacing="0" cellpadding="0" bordercolor="#CCCCCC">
         <tr> 
