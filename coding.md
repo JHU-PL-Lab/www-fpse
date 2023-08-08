@@ -37,7 +37,6 @@ Once you have `opam` and `ocaml` 5.0.0 installed, run the following `opam` comma
 Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, create  or edit the file `~/.ocamlinit` to contain the lines below.  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
 ```ocaml
 #use "topfind";;
-#thread;;
 #require "core.top";;
 open Core;;
 ```
@@ -59,7 +58,7 @@ The OCaml manual is [here](https://ocaml.org/manual/).
 #### Core
 `Core` is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a "more modern" version of lists, sets, hash tables, etc, with lots of little improvements in many places.  `Core` itself an extension of `Base` and many modules in `Core` are directly lifted from `Base`.
 
-* [Core documentation](https://ocaml.org/p/core/v0.15.0/doc/index.html)
+* [Core documentation](https://ocaml.org/p/core/latest/doc/index.html)
 * The [Real World OCaml](https://dev.realworldocaml.org/index.html) book gives tutorial introductions to many of the `Core`/`Base` features.
 * **Important note**: if you use a search engine to look up e.g. "OCaml Set" to see how the OCaml Set module is defined you will likely not get the `Core` version and it can be very confusing as it is similar.  Even if you search "OCaml Set Core" you will likely get an outdated version of `Core.Set`.  So, *bookmark the above* and avoid countless hours of fruitless debugging because you are using the wrong docs.
 
@@ -81,7 +80,6 @@ The above tools will be our "bread and butter", we will be using them on many as
 * [Bisect](https://github.com/aantron/bisect_ppx) will be used for code coverage.
 * [base_quickcheck](https://opensource.janestreet.com/base_quickcheck/) is a fuzz tester / automated test generator for OCaml.
 * [Lwt](https://ocsigen.org/lwt/latest/api/Lwt) is a non-preempting asychronous threads library.
-* [OCaml 5](https://github.com/kayceesrk/ocaml5-tutorial/) includes significant new features for concurrent programming: multi-core programming and effect handlers.  OCaml 5 is currently in alpha.
 
 ### Development Environments for OCaml
 

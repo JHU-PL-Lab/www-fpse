@@ -1,6 +1,6 @@
 # OCaml Style Guide for Functional Programming in Software Engineering
 
-Author: Kelvin Qian (with updates by Scott Smith)
+Authors: Kelvin Qian and Scott Smith
 
 ## Preface
 

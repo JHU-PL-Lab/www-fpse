@@ -108,7 +108,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, create  or edit the file <code>~/.ocamlinit</code> to contain the lines below.  The lines in this file are input to the top loop when it first starts.  <code>topfind</code> really should be built-in, it allows you to load libraries.  The <code>require</code> command is one thing <code>topfind</code> adds, here it is loading the <code>Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code>Core</code> as they are improved versions.</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">use</span> <span class="s2">"topfind"</span><span class="p">;;</span>
-<span class="o">#</span><span class="n">thread</span><span class="p">;;</span>
 <span class="o">#</span><span class="n">require</span> <span class="s2">"core.top"</span><span class="p">;;</span>
 <span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span>
 </code></pre></div></div>
@@ -136,7 +135,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p><code>Core</code> is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a “more modern” version of lists, sets, hash tables, etc, with lots of little improvements in many places.  <code>Core</code> itself an extension of <code>Base</code> and many modules in <code>Core</code> are directly lifted from <code>Base</code>.</p>
 
 <ul>
-  <li><a href="https://ocaml.org/p/core/v0.15.0/doc/index.html">Core documentation</a></li>
+  <li><a href="https://ocaml.org/p/core/latest/doc/index.html">Core documentation</a></li>
   <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book gives tutorial introductions to many of the <code>Core</code>/<code>Base</code> features.</li>
   <li><strong>Important note</strong>: if you use a search engine to look up e.g. “OCaml Set” to see how the OCaml Set module is defined you will likely not get the <code>Core</code> version and it can be very confusing as it is similar.  Even if you search “OCaml Set Core” you will likely get an outdated version of <code>Core.Set</code>.  So, <em>bookmark the above</em> and avoid countless hours of fruitless debugging because you are using the wrong docs.</li>
 </ul>
@@ -162,7 +161,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><a href="https://github.com/aantron/bisect_ppx">Bisect</a> will be used for code coverage.</li>
   <li><a href="https://opensource.janestreet.com/base_quickcheck/">base_quickcheck</a> is a fuzz tester / automated test generator for OCaml.</li>
   <li><a href="https://ocsigen.org/lwt/latest/api/Lwt">Lwt</a> is a non-preempting asychronous threads library.</li>
-  <li><a href="https://github.com/kayceesrk/ocaml5-tutorial/">OCaml 5</a> includes significant new features for concurrent programming: multi-core programming and effect handlers.  OCaml 5 is currently in alpha.</li>
 </ul>
 
 <h3 id="development-environments-for-ocaml">Development Environments for OCaml</h3>
