@@ -93,7 +93,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ol>
   <li><code>opam init</code> will initialize OPAM (we suggest you answer <code>y</code> to the question <code>Do you want opam to modify ~/.profile? [N/y/f]</code>);</li>
   <li>If you didn’t get that question or said <code>N</code>, you will need to add line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
-  <li><code>opam switch create 5.0.0</code> (this will take awhile) will build OCaml version 5.0.0 (the initial install is usually a slightly outdated version; also, if you already had an OPAM install you need to <code>opam update</code> before this <code>switch</code> to make sure OPAM is aware of the latest version);</li>
+  <li><code>opam update</code> to make sure your <code>opam</code> is aware of all the versions of OCaml that are out there;</li>
+  <li><code>opam switch create 5.0.0</code> will build OCaml version 5.0.;</li>
   <li>After any <code>opam switch</code> command it will instruct you to reset your path with some instructions like “Run <code>eval $(opam env)</code> to update the current shell environment” – follow those instructions and copy/paste the in the command into the shell (if you are on <code>zsh</code> replace the <code>$(...)</code> with back-quotes <code>`...`</code>).</li>
 </ol>
 
@@ -103,7 +104,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Once you have <code>opam</code> and <code>ocaml</code> 5.0.0 installed, run the following <code>opam</code> command to install additional necessary packages for the class:</p>
 
-<pre><code>opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 async lwt ppx_deriving_yojson ppx_deriving bisect_ppx base_quickcheck
+<pre><code>opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 base base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_ppx
 </code></pre>
 
 <p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, create  or edit the file <code>~/.ocamlinit</code> to contain the lines below.  The lines in this file are input to the top loop when it first starts.  <code>topfind</code> really should be built-in, it allows you to load libraries.  The <code>require</code> command is one thing <code>topfind</code> adds, here it is loading the <code>Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code>Core</code> as they are improved versions.</p>
@@ -149,7 +150,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><a href="https://ocaml.org/manual/comp.html"><code>ocamlc</code></a> is the standalone compiler which we will be invoking via the <code>dune</code> build tool.</li>
   <li><a href="https://opam.ocaml.org/blog/about-utop/"><code>utop</code></a> is the  read/eval/print loop.  It is a replacement for the original <a href="https://ocaml.org/manual/toplevel.html"><code>ocaml</code></a> command, with many more features such as command history, replay, etc.</li>
   <li><a href="https://opensource.janestreet.com/core/"><code>Core</code></a> was described above</li>
-  <li><a href="https://ocaml.org/manual/ocamldoc.html"><code>ocamldoc</code></a> is the documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.</li>
+  <li><a href="https://ocaml.github.io/odoc/odoc/index.html"><code>odoc</code></a> is the OCaml documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.</li>
   <li><a href="https://dune.build"><code>dune</code></a> is the build tool (think <code>make</code>) that we will be using.</li>
   <li><a href="https://github.com/gildor478/ounit">OUnit</a> is the unit tester for OCaml.  The opam package is called <code>ounit2</code> for obscure reasons.</li>
   <li><a href="https://github.com/janestreet/ppx_jane"><code>ppx_jane</code></a> adds boilerplate functions to type definitions as well as many other macros.  Unfortunately it is not documented, but <code>[@@deriving equal, compare, sexp]</code> for example will add equal and compare on a type, and to/from s-expression convertor functions.</li>
