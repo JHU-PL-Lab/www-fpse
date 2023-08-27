@@ -7,7 +7,7 @@ Here are the high-level requirements for the projects.
 
 * All the code must be in OCaml obviously (excepting small bits of glue code, or explicit exceptions if you petition)
 * You must use the standard course libraries -- `Core`, `Lwt`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
-* Project groups can be from 1-3 people; non-singleton project groups are preferred.
+* Project groups can be from 2-4 people.
 * OCaml excels for non-trivial algorithms and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help with.
 * A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.
 
