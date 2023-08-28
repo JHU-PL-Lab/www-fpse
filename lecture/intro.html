@@ -77,11 +77,31 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>It is a style of programming where functions are the centerpiece</li>
   <li>A key dimension is functions-as-data aka higher-order functions: functions can be passed to and returned from functions</li>
-  <li>It emphasizes <em>immutability</em>: data structures that cannot be changed after being created</li>
-  <li>Mathematical functions are implicitly immutable so FP aligns closely with math
+</ul>
+
+<h3 id="lack-of-side-effects">Lack of Side Effects</h3>
+<ul>
+  <li>FP emphasizes <em>immutability</em>: data structures that cannot be changed after being created</li>
+  <li>More generally than limited mutation, most functions only return data, they have no other behaviors on the side (no “side effects”)
     <ul>
-      <li>Think about creating an <em>algebra</em> for the domain you are coding over</li>
+      <li>No printing, I/O, mutating, raising exceptions, etc.</li>
+    </ul>
+  </li>
+  <li>Lack of side effects is called “referential transparency” - variable values don’t change out from under you (follows how math behaves).</li>
+  <li>Standard data structures are analogues of imperative ones: dictionaries, lists, etc, but can be <em>immutable</em> - instead of mutating, make a fresh copy.</li>
+</ul>
+
+<h3 id="fp-and-math">FP and Math</h3>
+<ul>
+  <li>Mathematical functions are implicitly immutable (think about it - no “assignment”!) so FP aligns closely with math
+    <ul>
+      <li>Think about programming as creating an <em>algebra</em> for the domain you are coding over</li>
       <li>It is much easier to write completely correct programs in an FP style for this reason</li>
+    </ul>
+  </li>
+  <li>Allows for powerful new programming paradigms using functions as data.
+    <ul>
+      <li>Simple example is function composition operation: <code>g o f (x) = g(f(x))</code>: <code>o</code> takes two functions and returns a new function, their composition</li>
     </ul>
   </li>
 </ul>
@@ -140,15 +160,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="functional-fp">Functional (FP)</h3>
 
 <ul>
-  <li>As mentioned above, a key aspect is lack of mutation: more like a mathematical function, the output only depends on the input and it’s only output is the codomain value, not any side effects like printing, mutating, raising exceptions, etc.</li>
-  <li>Lack of side effects is called “referential transparency” - variable values don’t change out from under you (follows how math behaves).</li>
-  <li>Standard data structures not too different from imperative case: dictionaries, lists, etc, but can be <em>immutable</em> - instead of mutating, make a fresh copy.</li>
-  <li>Allows for powerful new programming paradigms using functions as data.
-    <ul>
-      <li>Simple example is function composition operation: <code>g o f (x) = g(f(x))</code>: <code>o</code> takes two functions and returns a new function, their composition</li>
-    </ul>
-  </li>
-  <li>Less good at supporting extension, no notion of subclass in common functional paradigms</li>
+  <li>Advantages described above: declarative nature and correctness, more composable</li>
+  <li>Sometimes less good at supporting extension, no notion of subclass in common functional paradigms</li>
 </ul>
 
 <h3 id="who-wins">Who wins?</h3>

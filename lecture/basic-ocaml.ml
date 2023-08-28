@@ -22,7 +22,7 @@ true || false;;
 'c';; (* characters *)
 "and of course strings";;
 
-let squared x = x * x;; (* returns     val squared : int -> int = <fun>     *)
+let squared x = x * x;; (* returns   val squared : int -> int = <fun>     *)
 squared 4;; (* to call a function -- separate arguments with S P A C E S *)
 
 let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)

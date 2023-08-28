@@ -118,7 +118,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>The actual compiler is <code>ocamlc</code> or <code>ocamlopt</code>, but we will not be directly invoking it</li>
-  <li>Instead we will operate at a higer level and use build tool <code>dune</code> to invoke the compiler</li>
+  <li>Instead we will operate at a higher level and use build tool <code>dune</code> to invoke the compiler</li>
   <li><code>dune</code> is a modern <code>make</code>/<code>Makefile</code> equivalent for OCaml which is very powerful.</li>
   <li>So, in same directory, there should be a <code>dune</code> file with the following contents:
     <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>             <span class="c1">; create an executable</span>
@@ -172,12 +172,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="simple-functions-on-integers">Simple functions on integers</h4>
 
 <p>To declare a function <code>squared</code> with <code>x</code> its one parameter.  <code>return</code> is  implicit.</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">squared</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;;</span> <span class="c">(* returns     val squared : int -&gt; int = &lt;fun&gt;     *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">squared</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;;</span> <span class="c">(* returns   val squared : int -&gt; int = &lt;fun&gt;     *)</span>
 <span class="n">squared</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* to call a function -- separate arguments with S P A C E S *)</span>
 </code></pre></div></div>
 <ul>
   <li>OCaml has no <code>return</code> statement; value of the whole body-expression is what gets returned</li>
-  <li>Type is automatically <strong>inferred</strong> and printed as domain <code>-&gt;</code> range; <code>int -&gt; int</code> here.</li>
+  <li>Type is automatically <strong>inferred</strong> and printed as <code>domain -&gt; range</code>; <code>int -&gt; int</code> here.</li>
   <li>OCaml functions in fact always take only one argument - !  multiple arguments can be encoded (covered later)</li>
 </ul>
 
