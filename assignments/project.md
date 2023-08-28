@@ -20,7 +20,7 @@ Here are the high-level requirements for the projects.
 * The idea here is to make some application where all the interaction is via the command line.
 * Persistent data across command invocations could be saved in a file using the `Stdio` library.
 * This path is the most straightforward of the three choices.
-* Here is a very simplistic example, you would need **much** more than this
+* Here is a ridiculously simple example, you would need **much much** more than this
 
 * A minesweeper game.  Here is a mock of such a game:
 ```sh

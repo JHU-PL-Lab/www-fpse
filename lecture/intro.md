@@ -23,6 +23,7 @@ See the [Dateline](../dateline.html)
   - &lambda;-calculus is elegant, build a PL around it
   - Goal application space: artificial intelligence programming
   - Added list data to &lambda; functions: **Lis**t **P**rocessing
+  - Lisp is the ancestor of modern dynamically-typed languages: Python, JavaScript, etc.
 * Typed functional languages, 70's & 80's: Milner's ML and its descendents Haskell and OCaml
   - We will be using OCaml
 * Modern era: add FP as possibility in mainstream PLs: Python, JavaScript, Java, C++, etc.
