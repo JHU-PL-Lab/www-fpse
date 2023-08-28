@@ -11,7 +11,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <meta name="description" content="" />
  <meta name="keywords" content="" />
  <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
- <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.min.js"></script>
  <script src="/fpse/js/jquery.dropotron.min.js"></script>
  <script src="/fpse/js/skel.min.js"></script>
  <script src="/fpse/js/skel-layers.min.js"></script>
@@ -40,8 +40,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li><a href="/fpse/logistics.html">Logistics</a></li>
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
-          <li><a href="/fpse/assignments/">Assignments</a>
-          <li><a href="https://courselore.org/courses/1191913911">Q&A</a></li>
+            <li><a href="">Assignments</a>
+                <ul class="menu">
+                <li><a href="/fpse/assignments/assignment1.html">Assignment 1</a></li>
+                <li><a href="/fpse/assignments/assignment2.html">Assignment 2</a></li>
+                <li><a href="/fpse/assignments/assignment3.html">Assignment 3</a></li>
+                <li><a href="/fpse/assignments/assignment4.html">Assignment 4</a></li>
+                <li><a href="/fpse/assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/project.html">Project</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1191913911">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -68,7 +75,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>All the code must be in OCaml obviously (excepting small bits of glue code, or explicit exceptions if you petition)</li>
   <li>You must use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
-  <li>Project groups can be from 1-3 people; non-singleton project groups are preferred.</li>
+  <li>Project groups can be from 2-4 people.</li>
   <li>OCaml excels for non-trivial algorithms and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help with.</li>
   <li>A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.</li>
 </ul>

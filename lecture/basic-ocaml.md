@@ -4,8 +4,8 @@
 ### Installing
 
  * See [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) for install instructions and lots of other information.  
- * Make sure to use the required 4.14.0 version of OCaml, install the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
-    - This will let us all "play in the same sandbox" and avoid confusions
+ * Make sure to use the required version of OCaml, 5.0, install all the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
+    - This will let us all "play in the same sandbox" and avoid confusion
 
 ### The Ecosystem via Hello World in OCaml
 
@@ -14,6 +14,7 @@
 #### The top loop
 
 * Top loops allow you to type in small snippets of code which will run and produce a result.
+  - e.g. shells like `bash`, Python's `python3`, JavaScript `node`, etc.
 * The OCaml top loop is the shell command `utop`.  
 * We will run the OCaml top loop and show you you can enter expressions such as `3+4`, follow with `;;` to indicate end of input (`;;` is **required**), and hit return to get the result
 
@@ -25,8 +26,8 @@ utop # 3+4;;
 * Control-D will exit `utop`.
 #### The compile/run system
 
-* The compile/run view is the standard `cc`/`gcc`/`javac` view and is also used in OCaml
-* In OCaml we will more generally live in **both worlds**: play with code in top loop, but use compiler to compile it.
+* The compile/run mode is the `cc`/`gcc`/`javac` view and is also used in OCaml
+* In OCaml we can live in **both worlds**: both play with code in top loop, *and* can use a compiler to compile it to a binary.
 * Let's cover how we will compile in OCaml.  Suppose the following is in a file `helloworld.ml`:
 
 ```ocaml
@@ -36,7 +37,7 @@ printf "the string is %s\n" hw
 ```
 
 * The actual compiler is `ocamlc` or `ocamlopt`, but we will not be directly invoking it
-* Instead we will operate at a higer level and use `dune` to invoke it for us
+* Instead we will operate at a higer level and use build tool `dune` to invoke the compiler
 * `dune` is a modern `make`/`Makefile` equivalent for OCaml which is very powerful.
 * So, in same directory, there should be a `dune` file with the following contents:
 ```scheme
@@ -47,7 +48,7 @@ printf "the string is %s\n" hw
 )
 ```
 * This is the **build file**, specifying how to compile/test/run the program.  The notation is S-expressions.
-* Also a file `dune-project` is needed with only `(lang dune 3.4)` in it.
+* Also a file `dune-project` is needed with only `(lang dune 3.10)` in it.
 * Now, type `dune build` to compile this `helloworld.ml` code as an executable.
 * All of the results are placed in the `_build/` directory
 * Then, run with `dune exec ./helloworld.exe` - same as typing `_build/default/helloworld.exe`

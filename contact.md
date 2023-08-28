@@ -18,7 +18,7 @@ For Course Assistants we are fortunate to have several course alums and two PhD 
 
 **Course Assistant** Earl Wu
 
-**Course Assistant** TBA
+**Course Assistant** Julia Bian
 
 **Course Assistant** TBA
 

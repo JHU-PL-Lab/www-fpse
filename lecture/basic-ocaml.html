@@ -11,7 +11,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <meta name="description" content="" />
  <meta name="keywords" content="" />
  <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
- <script src="/pl/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.min.js"></script>
  <script src="/fpse/js/jquery.dropotron.min.js"></script>
  <script src="/fpse/js/skel.min.js"></script>
  <script src="/fpse/js/skel-layers.min.js"></script>
@@ -40,8 +40,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li><a href="/fpse/logistics.html">Logistics</a></li>
           <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
           <li><a href="/fpse/coding.html">Coding</a>
-          <li><a href="/fpse/assignments/">Assignments</a>
-          <li><a href="https://courselore.org/courses/0644001341">Q&A</a></li>
+            <li><a href="">Assignments</a>
+                <ul class="menu">
+                <li><a href="/fpse/assignments/assignment1.html">Assignment 1</a></li>
+                <li><a href="/fpse/assignments/assignment2.html">Assignment 2</a></li>
+                <li><a href="/fpse/assignments/assignment3.html">Assignment 3</a></li>
+                <li><a href="/fpse/assignments/assignment4.html">Assignment 4</a></li>
+                <li><a href="/fpse/assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/project.html">Project</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1191913911">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -66,9 +73,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>See <a href="https://pl.cs.jhu.edu/fpse/coding.html">the Coding page</a> for install instructions and lots of other information.</li>
-  <li>Make sure to use the required 4.14.0 version of OCaml, install the libraries listed via <code>opam</code>, and change your <code>.ocamlinit</code> file as mentioned on that page.
+  <li>Make sure to use the required version of OCaml, 5.0, install all the libraries listed via <code>opam</code>, and change your <code>.ocamlinit</code> file as mentioned on that page.
     <ul>
-      <li>This will let us all “play in the same sandbox” and avoid confusions</li>
+      <li>This will let us all “play in the same sandbox” and avoid confusion</li>
     </ul>
   </li>
 </ul>
@@ -82,7 +89,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="the-top-loop">The top loop</h4>
 
 <ul>
-  <li>Top loops allow you to type in small snippets of code which will run and produce a result.</li>
+  <li>Top loops allow you to type in small snippets of code which will run and produce a result.
+    <ul>
+      <li>e.g. shells like <code>bash</code>, Python’s <code>python3</code>, JavaScript <code>node</code>, etc.</li>
+    </ul>
+  </li>
   <li>The OCaml top loop is the shell command <code>utop</code>.</li>
   <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result</li>
 </ul>
@@ -95,8 +106,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Control-D will exit <code>utop</code>.
     <h4 id="the-compilerun-system">The compile/run system</h4>
   </li>
-  <li>The compile/run view is the standard <code>cc</code>/<code>gcc</code>/<code>javac</code> view and is also used in OCaml</li>
-  <li>In OCaml we will more generally live in <strong>both worlds</strong>: play with code in top loop, but use compiler to compile it.</li>
+  <li>The compile/run mode is the <code>cc</code>/<code>gcc</code>/<code>javac</code> view and is also used in OCaml</li>
+  <li>In OCaml we can live in <strong>both worlds</strong>: both play with code in top loop, <em>and</em> can use a compiler to compile it to a binary.</li>
   <li>Let’s cover how we will compile in OCaml.  Suppose the following is in a file <code>helloworld.ml</code>:</li>
 </ul>
 
@@ -107,7 +118,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>The actual compiler is <code>ocamlc</code> or <code>ocamlopt</code>, but we will not be directly invoking it</li>
-  <li>Instead we will operate at a higer level and use <code>dune</code> to invoke it for us</li>
+  <li>Instead we will operate at a higer level and use build tool <code>dune</code> to invoke the compiler</li>
   <li><code>dune</code> is a modern <code>make</code>/<code>Makefile</code> equivalent for OCaml which is very powerful.</li>
   <li>So, in same directory, there should be a <code>dune</code> file with the following contents:
     <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>             <span class="c1">; create an executable</span>
@@ -118,7 +129,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div>    </div>
   </li>
   <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.  The notation is S-expressions.</li>
-  <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.4)</code> in it.</li>
+  <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.10)</code> in it.</li>
   <li>Now, type <code>dune build</code> to compile this <code>helloworld.ml</code> code as an executable.</li>
   <li>All of the results are placed in the <code>_build/</code> directory</li>
   <li>Then, run with <code>dune exec ./helloworld.exe</code> - same as typing <code>_build/default/helloworld.exe</code></li>
@@ -442,7 +453,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
       </div>
 
 				<div id="copyright">
-					Web Design: <a href="http://templated.co">TEMPLATED</a> Images: <a href="http://unsplash.com">Unsplash</a> (<a href="http://unsplash.com/cc0">CC0</a>)
+					Web Design: TEMPLATED
 				</div>			
 
 

@@ -59,7 +59,7 @@ The OCaml manual is [here](https://ocaml.org/manual/).
 
 * [Core documentation](https://ocaml.org/p/core/latest/doc/index.html)
 * The [Real World OCaml](https://dev.realworldocaml.org/index.html) book gives tutorial introductions to many of the `Core`/`Base` features.
-* **Important note**: if you use a search engine to look up e.g. "OCaml Set" to see how the OCaml Set module is defined you will likely not get the `Core` version and it can be very confusing as it is similar.  Even if you search "OCaml Set Core" you will likely get an outdated version of `Core.Set`.  So, *bookmark the above* and avoid countless hours of fruitless debugging because you are using the wrong docs.
+* **Important note**: if you use a search engine to look up e.g. "OCaml Set" to see how the OCaml Set module is defined you will likely not get the `Core` version and it can be very confusing as it is similar.  Even if you search "OCaml Set Core" you will likely get an outdated version of `Core.Set`.  So, please **bookmark the above use it, and avoid countless hours of fruitless debugging because you are using the wrong library docs**.
 
 ### The FPSE OCaml Toolbox
 
