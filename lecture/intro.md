@@ -8,10 +8,20 @@ See the [Dateline](../dateline.html)
 
 * It is a style of programming where functions are the centerpiece
 * A key dimension is functions-as-data aka higher-order functions: functions can be passed to and returned from functions
-* It emphasizes *immutability*: data structures that cannot be changed after being created
-* Mathematical functions are implicitly immutable so FP aligns closely with math
-  - Think about creating an *algebra* for the domain you are coding over
+
+### Lack of Side Effects
+* FP emphasizes *immutability*: data structures that cannot be changed after being created
+* More generally than limited mutation, most functions only return data, they have no other behaviors on the side (no "side effects") 
+  - No printing, I/O, mutating, raising exceptions, etc.
+* Lack of side effects is called "referential transparency" - variable values don't change out from under you (follows how math behaves).
+* Standard data structures are analogues of imperative ones: dictionaries, lists, etc, but can be *immutable* - instead of mutating, make a fresh copy.
+
+### FP and Math
+* Mathematical functions are implicitly immutable (think about it - no "assignment"!) so FP aligns closely with math
+  - Think about programming as creating an *algebra* for the domain you are coding over
   - It is much easier to write completely correct programs in an FP style for this reason
+* Allows for powerful new programming paradigms using functions as data.
+  - Simple example is function composition operation: `g o f (x) = g(f(x))`: `o` takes two functions and returns a new function, their composition
 
 ### History in brief
 
@@ -49,12 +59,8 @@ See the [Dateline](../dateline.html)
 
 ### Functional (FP)
 
-* As mentioned above, a key aspect is lack of mutation: more like a mathematical function, the output only depends on the input and it's only output is the codomain value, not any side effects like printing, mutating, raising exceptions, etc.
-* Lack of side effects is called "referential transparency" - variable values don't change out from under you (follows how math behaves).
-* Standard data structures not too different from imperative case: dictionaries, lists, etc, but can be *immutable* - instead of mutating, make a fresh copy.
-* Allows for powerful new programming paradigms using functions as data.
-  - Simple example is function composition operation: `g o f (x) = g(f(x))`: `o` takes two functions and returns a new function, their composition
-* Less good at supporting extension, no notion of subclass in common functional paradigms
+* Advantages described above: declarative nature and correctness, more composable
+* Sometimes less good at supporting extension, no notion of subclass in common functional paradigms
 
 ### Who wins?
 Thesis:

@@ -37,7 +37,7 @@ printf "the string is %s\n" hw
 ```
 
 * The actual compiler is `ocamlc` or `ocamlopt`, but we will not be directly invoking it
-* Instead we will operate at a higer level and use build tool `dune` to invoke the compiler
+* Instead we will operate at a higher level and use build tool `dune` to invoke the compiler
 * `dune` is a modern `make`/`Makefile` equivalent for OCaml which is very powerful.
 * So, in same directory, there should be a `dune` file with the following contents:
 ```scheme
@@ -92,11 +92,11 @@ true || false;;
 
 To declare a function `squared` with `x` its one parameter.  `return` is  implicit.
 ```ocaml
-let squared x = x * x;; (* returns     val squared : int -> int = <fun>     *)
+let squared x = x * x;; (* returns   val squared : int -> int = <fun>     *)
 squared 4;; (* to call a function -- separate arguments with S P A C E S *)
 ```
  *  OCaml has no `return` statement; value of the whole body-expression is what gets returned
- *  Type is automatically **inferred** and printed as domain `->` range; `int -> int` here.
+ *  Type is automatically **inferred** and printed as `domain -> range`; `int -> int` here.
  *  OCaml functions in fact always take only one argument - !  multiple arguments can be encoded (covered later)
 
 #### Fibonacci series example - `0 1 1 2 3 5 8 13 ...` 
