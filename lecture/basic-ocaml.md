@@ -57,7 +57,7 @@ printf "the string is %s\n" hw
 
 ### OCaml Language Basics in `utop`
 
-* We will be running many small programs in lecture - best done in the top loop.
+* We will be running many small programs in lecture now - something best done in the top loop.
 * All the following are typed as input into `utop` with `;;` ending input.
  
 ###  Integers
