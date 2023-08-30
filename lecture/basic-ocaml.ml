@@ -87,7 +87,7 @@ let l5 = [];; (* empty list *)
 0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to [0;1;2;3] *)
 [1; 2; 3] @ [4; 5];; (* appending lists - slower, needs to cons 3/2/1 on front of [4;5] *)
 let z = [2; 4; 6];;
-let y = 0 :: z;;
+let y = 0 :: z;; (* in y, 0 is the *head* (first elt) of the list and z is the *tail* (rest of list) *)
 z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
 
 let tl_exn l =
