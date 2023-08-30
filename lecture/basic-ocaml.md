@@ -150,7 +150,7 @@ add3 20;;
 Conclusion: add is a function taking an integer, and returning a **function** which takes ints to ints.
 So, add is a **higher-order function**: it either takes a function as an argument, or returns a function as result.
 
-Observe `int -> int -> int` is parenthesized as `int -> (int -> int)` -- unusual **right** associativity
+Observe `int -> int -> int` is parenthesized as `int -> (int -> int)` -- **right** associativity which is opposite of arithmetic operators
 
 Be careful on operator precedence with this goofy (aka stupid) way that function application doesn't need parens!
 ```ocaml
@@ -168,7 +168,7 @@ Float.(=) 3.3 4.4;; (* Solution: use the Float module's = function for floats *)
 
 ### Simple Structured Data Types: Option and Result
 
-* Before getting into "bigger" data types and how to declare our own, let's use one of the simplest structured data types, the built-in `option` type.
+* Before getting into "bigger" data types like lists and trees, let's use one of the simplest structured data types, the built-in `option` type.
 
 ```ocaml
 Some 5;;
@@ -176,6 +176,7 @@ Some 5;;
 ```
 
 * All this does is "wrap" the 5 in the `Some` tag
+* Observe the type is `int option`, it is "optionally an integer".
 
 ```ocaml
 None;;
@@ -218,13 +219,13 @@ Error: This expression has type int but an expression was expected of type
 - The `then` and `else` branches must return the same type, here they do not.
 - The `int` and `int option` types have no overlap of members!  Generally true across OCaml.
 - `null` or similar value can sneak in to a type in other languages, but no such sneaking in OCaml.
-
+- It can make a little more code sometimes but it is more exact/rigorous/debuggable
 #### Using pattern matching to use `nice_div`
 
 Here is how we can in fact use `nice_div`:
 ```ocaml
 # match (nice_div 5 2) with 
-   | Some i -> i + 7 (* i is bound to the result, 2 here *)
+   | Some i -> i + 7 (* the div result is (Some 2) and i is bound to the 2 by this pattern *)
    | None -> failwith "This should never happen, we divided by 2";;
 - : int = 9
 ```
@@ -235,7 +236,7 @@ Here is how we can in fact use `nice_div`:
 
 #### Result
 
-An "even nicer" version of the above would be to use the `result` type, which is very similar to `option` but is specialized just for error handling.
+A similar approach to the above is to use the `result` type, which like `option` but is specialized for error handling.
 
 ```ocaml
 # let nicer_div m n = if n = 0 then Error "Divide by zero" else Ok (m / n);;
@@ -243,9 +244,10 @@ val nicer_div : int -> int -> (int, string) result = <fun>
 ```
 * The `result` type is explicitly intended for this case of failure-result
     - `Ok` means the normal result
-    - `Error` is the error case, which unlike none can include failure data, usually a string.
+    - `Error` is the error case, which unlike `None` can include failure data, often a string.
 * Again we can do the same kind of pattern match on `Ok/Error` as above.
 * This is a "more well-typed" version of the C approach of returning `-1` or `NULL` to indicate failure.
+* The `Core` libraries use both `result` and `option` for error cases
 
 ```ocaml
 # match (nicer_div 5 2) with 
@@ -254,7 +256,7 @@ val nicer_div : int -> int -> (int, string) result = <fun>
 - : int = 9
 ```
 
-Lastly, the function could itself raise an exception
+Lastly, the function could itself raise an exception in OCaml:
 
 ```ocaml
 let div_exn m n = if n = 0 then failwith "divide by zero is bad!" else m / n;;
@@ -267,11 +269,12 @@ div_exn 3 4;;
 * The above examples show how exceptional conditions can either be handled via exceptions or in the return value; 
    - A key dimension of this course is this side effect vs direct trade-off
    - Many bugs, security leaks, etc are due to ignorance of side effects; the `Error/Ok` approach keeps them "in your face" as a programmer
-
+   - Also recall `Error/Ok` keeps us completely in math-land, the return result tells everything.
 ### Lists
 
+* Finally a real data structure to write some real programs!
 * Lists are the most common data structure in OCaml, similar to dictionaries/objects for Python/JavaScript.
-* They are **immutable** so while they look something like arrays or vectors they are not
+* They are **immutable** so while they look something like arrays or vectors they are **not**
 
 ```ocaml
 let l1 = [1; 2; 3];;
@@ -302,7 +305,7 @@ z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
 let tl_exn l =
   match l with
   |  [] -> invalid_arg "empty lists have no tail"
-  |  x :: xs -> Ok xs  (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
+  |  x :: xs -> xs  (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
 ;;
 let l = [1;2;3];; 
 let l' = tl_exn l;;
@@ -345,6 +348,7 @@ Fortunately many common operations are already in the `List` module in the `Core
 ```
 * This library uses the `option` type instead of raising an exception like we did
 * `List.nth_exn` raises an exception like ours does.  Both versions are useful.
-* Note on the HW you can use libraries on some questions but not others, read instructions.
+   - Note this function is also `Core.List.nth_exn` but we always `open Core;;` to make `Core` module all available
+* Note on the HW you can use libraries on some questions but not others, read the instructions.
 
 

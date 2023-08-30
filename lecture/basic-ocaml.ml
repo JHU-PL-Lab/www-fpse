@@ -93,7 +93,7 @@ z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
 let tl_exn l =
   match l with
   |  [] -> invalid_arg "empty lists have no tail"
-  |  x :: xs -> Ok xs  (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
+  |  x :: xs -> xs  (* the pattern x :: xs  binds x to the first elt, xs to ALL the others *)
 ;;
 let l = [1;2;3];; 
 let l' = tl_exn l;;
