@@ -9,6 +9,7 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
 -  For Linux or Mac see [The OPAM install page](https://opam.ocaml.org/doc/Install.html) for install instructions. 
 -  For Mac users, the above requires [Homebrew](https://brew.sh) (a package manager for Linux-ish libraries) so here is a more detailed suggestion of some copy/paste that should work.
 	- Mac without homebrew installed:`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` will install Homebrew 
+   - if you get  "Error: homebrew-core is a shallow clone." from the above follow the instructions and be prepared to wait awhile (the whole git history needs to be loaded thanks to github idiocy)
 	- Mac with Homebrew already installed: `brew update; brew install gpatch; brew install opam`
 -   For Windows you should use WSL2, the Windows Subsystem for Linux.  It creates a Linux-like system from within Windows.
     - Once you install [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/) you will be able to follow the Linux Ubuntu install instructions linked above. 
