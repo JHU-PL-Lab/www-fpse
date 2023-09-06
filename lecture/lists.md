@@ -153,7 +153,7 @@ List.zip [1;2;3] [4;5;6];;
 - : (int * int) list List.Or_unequal_lengths.t =
 Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
 ```
-* The strange result is dealing with the case where the lists supplied may not be same length
+* The strange result type is dealing with the case where the lists supplied may not be same length
 * This type and value are hard to read, let us take a crack at it.
 * `((int * int) list) List.Or_unequal_lengths.t` is the proper parentheses.
 * `List.Or_unequal_lengths.t` is referring to the type `t` found in the `List.Or_unequal_lengths` module (a small module within the `List` module)
@@ -164,7 +164,8 @@ Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
 # #show_type List.Or_unequal_lengths.t;;
 type nonrec 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
 ```
-* This means the value is either `Ok(..)` or `Unequal_lenghts`, very similar to `result`
+* This means the value is either `Ok(..)` or `Unequal_lenghts`, very similar to `result` or `option`
+  - (Why don't they just use one of those two here instead?? No idea!)
 * The `'a` here is the type parameter, more on those later so don't sweat it now
 * The latter case is for zipping lists of different lengths:
 
@@ -261,6 +262,8 @@ let compose = (fun g -> (fun f -> (fun x -> g(f x))));;
 #### `List` module functions which take function arguments
 
 * So far we have done the "easier" functions in `List`; the real meat are the functions taking other functions
+* Think of these as "recursion patterns", they will recurse over the list so you don't have to `let rec`
+  - makes functional code a lot easier to read once you are familiar with these "recursion combinators"
 * Lets warm up with `List.filter`: remove all elements not meeting a condition which we supply a function to check
 
 ```ocaml
@@ -325,7 +328,7 @@ List.map ~f:(fun (x,y) -> x + y) [(1,2);(3,4)];; (* turns list of number pairs i
 
 * The `~f`  parameter is the binary operation to put between list elements, `+` in this example;
 * The `~init` is needed because `+` is a binary operator so an initial value is needed to fold for 0/1 length lists
-* For `fold_right` the `~init` is on the **right**, that is why it is called a "fold **right**"
+* For `fold_right` the `+` is parenthesized in **right**-associative form, that is the "right".  There is also a `fold_left`, below
 * For the list `[1;2;3]`, `fold_right [1;2;3] ~f ~init` generally computes `f 1 (f 2 (f 3 init))`
 * In general, `fold_right [a1; ...; an] ~f ~init` computes `f a1 (f a2 (... (f an init) ...))`.
 

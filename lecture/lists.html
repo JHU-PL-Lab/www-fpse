@@ -252,7 +252,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="nn">Core</span><span class="p">.</span><span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="nc">Ok</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">4</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">5</span><span class="p">);</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">6</span><span class="p">)]</span>
 </code></pre></div></div>
 <ul>
-  <li>The strange result is dealing with the case where the lists supplied may not be same length</li>
+  <li>The strange result type is dealing with the case where the lists supplied may not be same length</li>
   <li>This type and value are hard to read, let us take a crack at it.</li>
   <li><code>((int * int) list) List.Or_unequal_lengths.t</code> is the proper parentheses.</li>
   <li><code>List.Or_unequal_lengths.t</code> is referring to the type <code>t</code> found in the <code>List.Or_unequal_lengths</code> module (a small module within the <code>List</code> module)
@@ -267,7 +267,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">type</span> <span class="k">nonrec</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nc">Ok</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">|</span> <span class="nc">Unequal_lengths</span>
 </code></pre></div></div>
 <ul>
-  <li>This means the value is either <code>Ok(..)</code> or <code>Unequal_lenghts</code>, very similar to <code>result</code></li>
+  <li>This means the value is either <code>Ok(..)</code> or <code>Unequal_lenghts</code>, very similar to <code>result</code> or <code>option</code>
+    <ul>
+      <li>(Why don’t they just use one of those two here instead?? No idea!)</li>
+    </ul>
+  </li>
   <li>The <code>'a</code> here is the type parameter, more on those later so don’t sweat it now</li>
   <li>The latter case is for zipping lists of different lengths:</li>
 </ul>
@@ -369,6 +373,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>So far we have done the “easier” functions in <code>List</code>; the real meat are the functions taking other functions</li>
+  <li>Think of these as “recursion patterns”, they will recurse over the list so you don’t have to <code>let rec</code>
+    <ul>
+      <li>makes functional code a lot easier to read once you are familiar with these “recursion combinators”</li>
+    </ul>
+  </li>
   <li>Lets warm up with <code>List.filter</code>: remove all elements not meeting a condition which we supply a function to check</li>
 </ul>
 
@@ -436,7 +445,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>The <code>~f</code>  parameter is the binary operation to put between list elements, <code>+</code> in this example;</li>
   <li>The <code>~init</code> is needed because <code>+</code> is a binary operator so an initial value is needed to fold for 0/1 length lists</li>
-  <li>For <code>fold_right</code> the <code>~init</code> is on the <strong>right</strong>, that is why it is called a “fold <strong>right</strong>”</li>
+  <li>For <code>fold_right</code> the <code>+</code> is parenthesized in <strong>right</strong>-associative form, that is the “right”.  There is also a <code>fold_left</code>, below</li>
   <li>For the list <code>[1;2;3]</code>, <code>fold_right [1;2;3] ~f ~init</code> generally computes <code>f 1 (f 2 (f 3 init))</code></li>
   <li>In general, <code>fold_right [a1; ...; an] ~f ~init</code> computes <code>f a1 (f a2 (... (f an init) ...))</code>.</li>
 </ul>
