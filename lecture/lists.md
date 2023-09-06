@@ -363,6 +363,7 @@ List.fold ["a";"b";"c"] ~init:0 ~f:(fun accum -> fun elt -> accum + 1);;`
 * Recall using the above expansion that this `fold` computes `f (f (f 0 "a") "b") "c"` 
 where `f` is `(fun accum -> fun elt -> accum + 1)`
 * Parameter `elt` is the list *element* and `accum` is the *accumulator*, the result thus far.
+  - **Think inductively about folding**: you can assume `accum` properly accumulated the result you want on the tail, just take the head (`elt`) and combine with `accum` in the `f` body to get the final result and you are good.
 * Let us incrementally compute the above: `f 0 "a"` is going to throw away the `"a"` and return `0+1` so it is `1`.
 * this result `1` is then the first parameter to `f` in the next call, `f (1) "b"` - it is the `accum`-ulated value.
 * each call to `f` returns accum incremented by one and in the end we have computed the length of the initial list.

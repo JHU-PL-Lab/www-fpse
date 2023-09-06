@@ -489,7 +489,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Recall using the above expansion that this <code>fold</code> computes <code>f (f (f 0 "a") "b") "c"</code> <br />
 where <code>f</code> is <code>(fun accum -&gt; fun elt -&gt; accum + 1)</code></li>
-  <li>Parameter <code>elt</code> is the list <em>element</em> and <code>accum</code> is the <em>accumulator</em>, the result thus far.</li>
+  <li>Parameter <code>elt</code> is the list <em>element</em> and <code>accum</code> is the <em>accumulator</em>, the result thus far.
+    <ul>
+      <li><strong>Think inductively about folding</strong>: you can assume <code>accum</code> properly accumulated the result you want on the tail, just take the head (<code>elt</code>) and combine with <code>accum</code> in the <code>f</code> body to get the final result and you are good.</li>
+    </ul>
+  </li>
   <li>Let us incrementally compute the above: <code>f 0 "a"</code> is going to throw away the <code>"a"</code> and return <code>0+1</code> so it is <code>1</code>.</li>
   <li>this result <code>1</code> is then the first parameter to <code>f</code> in the next call, <code>f (1) "b"</code> - it is the <code>accum</code>-ulated value.</li>
   <li>each call to <code>f</code> returns accum incremented by one and in the end we have computed the length of the initial list.</li>
