@@ -25,7 +25,7 @@ Here is a reminder of some resources at your disposal.
 -   [Real World OCaml Chapter 1](https://dev.realworldocaml.org/guided-tour.html) is another tutorial introdution in a somewhat different order than we are doing.
 -   If you are looking for how some standard library function is expressed in OCaml, like not equal, etc, consult the [Caml Stdlib](https://v2.ocaml.org/manual/stdlib.html) which are the predefined functions available in OCaml.
     - Note that `Core` overrides some of these including the comparison operations which only work on `int`s.  To perform `=`, `<` or the like on e.g. floats you need to write `Float.(=) 3.2 4.7` for example to check for equality on `3.2` and `4.7`, and similarly for `<` etc.  To see what is actually loaded look at the (Core documentation)[https://ocaml.org/p/core/latest/doc/index.html].
-- Use `Core`'s `List` module functions for the Part II questions we indicate; those functions are generally described under the [`Core` list docs](https://ocaml.org/p/core/latest/doc/Core/List/index.html)``.
+- Use `Core`'s `List` module functions for the Part II questions we indicate; those functions are generally described under the [`Core` list docs](https://ocaml.org/p/core/latest/doc/Core/List/index.html).
 -   You are strongly encouraged to work with other people on the assignment. You just need to list the names of people you worked with. However remember that you should submit your own write up of the answers. **Copying of solutions is not allowed**. For the full collaboration policy see [here](https://pl.cs.jhu.edu/fpse/integrity.html).
 -   Come to office hours to get help from Prof and CAs.  Office hours are posted on Courselore.
 -   Use Courselore for online help and question clarification.
