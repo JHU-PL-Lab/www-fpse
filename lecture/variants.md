@@ -58,7 +58,8 @@ type complex = CZero | Nonzero of float * float;;
 
 let com = Nonzero(3.2,11.2);;
 let zer = CZero;;
-let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing glitch; use @@ instead of " " *)
+let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing error, it views as (Fn.id Nonzero)(3.2,11.2) *)
+let ocaml_annoyance = Fn.id @@ Nonzero(3.2,11.2);; (* so use @@ instead of " " *)
 ```
 
 #### An Example of Variants plus List. libraries
@@ -268,7 +269,7 @@ let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent 
 * Here is an example of how to sort a string list with `List.sort`:
 
 ```ocaml
-List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* pass string's comparison function as argument *)
+List.sort ["Zoo";"Hey";"Abba"] ~compare:(String.compare);; (* pass string's comparison function as argument *)
 (* insight into OCaml expected behavior for compare: *)
 # String.compare "Ahh" "Ahh";; )(* =  returns 0 *)
 - : int = 0
@@ -281,14 +282,14 @@ List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* pass string's comparison fu
 So, a general tree insert would follow the lead of `List.sort`:
 
 ```ocaml
-let rec insert x bt compare =
+let rec insert x bt ~compare =
    match bt with
    | Leaf -> Node(x, Leaf, Leaf)
    | Node(y, left, right) ->
        if (compare x y) <= 0 then Node(y, insert x left compare, right)
        else Node(y, left, insert x right compare)
 ;;
-let bt' = insert 4 bt (Int.compare);;
+let bt' = insert 4 bt ~compare:(Int.compare);;
 ```
 
 * In general all the built-in types have both `compare` and `equal` (which is same as `(=)`) defined
@@ -309,8 +310,8 @@ let bt' = insert 4 bt (Int.compare);;
 * But the "`>`" in the type means *there could be other variants showing up in the future*.
 
 ```ocaml
-# [`Zinger 3; `Zanger "hi"];;
-- : [> `Zanger of string | `Zinger of int ] list = [`Zinger 3; `Zanger "hi"]
+# let f b = if b then [`Zinger 3] else [`Zanger "hi"];;
+val f : bool -> [> `Zanger of string | `Zinger of int ] list = <fun>
 ```
 
 * We can of course pattern match as well:

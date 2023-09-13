@@ -121,14 +121,17 @@ List.map ~f:(fun (x,y) -> x + y) [(1,2);(3,4)];; (* turns list of number pairs i
 # List.fold_right ~f:(+) ~init:0 [3; 5; 7];; (* this computes 3 + (5 + (7 + 0))  *)
 - : int = 15
 
+List.fold_right ~f:(fun elt accum -> elt + accum) ~init:0 [3; 5; 7];;
+
 # List.fold ~f:(+) ~init:0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
 - : int = 15
 
-List.fold ["a";"b";"c"] ~init:0 ~f:(fun accum -> fun elt -> accum + 1);;`
+# List.fold ~f:(fun accum elt -> accum + elt) ~init:0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
+- : int = 15
 
-List.fold_right ["a";"b";"c"] ~init:0 ~f:(fun elt -> fun accum -> accum + 1);;`
+List.fold ['a';'b';'c'] ~init:"" ~f:(fun accum -> fun elt -> accum^(Char.to_string elt));;
 
-let map l ~f = List.fold ~f:(fun accum elt -> accum @ [f elt]) ~init:[] l
+utop # List.fold_right ['a';'b';'c'] ~init:"" ~f:(fun elt -> fun accum -> (Char.to_string elt)^accum);;
 
 let exists l ~f =  (* Note: ~f is **declaring** a named argument f *)
   List.map ~f l    (* ~f as an argument is shorthand for ~f:f *)
@@ -138,10 +141,17 @@ let exists l ~f =  (* Note: ~f is **declaring** a named argument f *)
 # exists ~f:(fun x -> x >= 0) [1;-2];;
 - : bool = true
 
+let exists l ~f = 
+  List.fold l ~f:(fun accum elt -> accum || f elt) ~init:false;;
+
+let map l ~f = List.fold ~f:(fun accum elt -> accum @ [f elt]) ~init:[] l
+
+let map_right l ~f = List.fold_right ~f:(fun elt accum -> [f elt] @ accum) ~init:[] l;;
+
 let rec fold_right ~f l ~init =
   match l with
   | [] -> init
-  | hd::tl -> f hd (fold_right ~f tl ~init)
+  | hd::tl -> f hd (fold_right ~f tl ~init) (* observe it is invoking f after the recursive call *)
 
 let summate_til_zero l =
   List.fold_until l ~init:0

@@ -24,7 +24,8 @@ type complex = CZero | Nonzero of float * float;;
 
 let com = Nonzero(3.2,11.2);;
 let zer = CZero;;
-let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing glitch; use @@ instead of " " *)
+let ocaml_annoyance = Fn.id Nonzero(3.2,11.2);; (* this is a parsing error, it views as (Fn.id Nonzero)(3.2,11.2) *)
+let ocaml_annoyance = Fn.id @@ Nonzero(3.2,11.2);; (* so use @@ instead of " " *)
 
 (* Example derived from 
    https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
@@ -133,7 +134,7 @@ let rec insert_int (x : int) (bt : int bin_tree) : (int bin_tree) =
 let bt' = insert_int 4 bt;;
 let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent insert *)
 
-List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* pass string's comparison function as argument *)
+List.sort ["Zoo";"Hey";"Abba"] ~compare:(String.compare);; (* pass string's comparison function as argument *)
 (* insight into OCaml expected behavior for compare: *)
 # String.compare "Ahh" "Ahh";; )(* =  returns 0 *)
 - : int = 0
@@ -142,20 +143,20 @@ List.sort ["Zoo";"Hey";"Abba"] (String.compare);; (* pass string's comparison fu
 # String.compare "Ahh" "Ack";; (* > returns 1 *)
 - : int = 1
 
-let rec insert x bt compare =
+let rec insert x bt ~compare =
    match bt with
    | Leaf -> Node(x, Leaf, Leaf)
    | Node(y, left, right) ->
        if (compare x y) <= 0 then Node(y, insert x left compare, right)
        else Node(y, left, insert x right compare)
 ;;
-let bt' = insert 4 bt (Int.compare);;
+let bt' = insert 4 bt ~compare:(Int.compare);;
 
 # `Zinger(3);; (* prefix constructors with a backtick for the inferred variants *)
 - : [> `Zinger of int ] = `Zinger 3
 
-# [`Zinger 3; `Zanger "hi"];;
-- : [> `Zanger of string | `Zinger of int ] list = [`Zinger 3; `Zanger "hi"]
+# let f b = if b then [`Zinger 3] else [`Zanger "hi"];;
+val f : bool -> [> `Zanger of string | `Zinger of int ] list = <fun>
 
 # let zing_zang z = 
 match z with
