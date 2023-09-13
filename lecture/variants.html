@@ -340,7 +340,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Like lists operations this is not mutating – it returns a whole new tree.</li>
+  <li>Like list operations this is not mutating – it returns a whole new tree.</li>
+  <li>Well, recall for lists that if we have list <code>l</code> then <code>0 :: l</code> can share the <code>l</code> due to immutability</li>
+  <li>So, for here, only one path through tree is not shared: on average only log n new nodes need to be made.  <a href="efficiency.html">More later in lecture on efficiency</a>.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">bt'</span> <span class="o">=</span> <span class="n">insert_int</span> <span class="mi">4</span> <span class="n">bt</span><span class="p">;;</span>
@@ -348,7 +350,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>For non-integers however, we need to explicitly supply any equal or comparison function.
+  <li>For non-integers , we need to explicitly supply any equal or comparison function.
     <ul>
       <li>recall <code>=</code> in <code>Core</code> works on integers only.</li>
     </ul>
@@ -360,15 +362,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">sort</span> <span class="p">[</span><span class="s2">"Zoo"</span><span class="p">;</span><span class="s2">"Hey"</span><span class="p">;</span><span class="s2">"Abba"</span><span class="p">]</span> <span class="o">~</span><span class="n">compare</span><span class="o">:</span><span class="p">(</span><span class="nn">String</span><span class="p">.</span><span class="n">compare</span><span class="p">);;</span> <span class="c">(* pass string's comparison function as argument *)</span>
 <span class="c">(* insight into OCaml expected behavior for compare: *)</span>
-<span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Ahh"</span><span class="p">;;</span> <span class="p">)(</span><span class="o">*</span> <span class="o">=</span>  <span class="n">returns</span> <span class="mi">0</span> <span class="o">*</span><span class="p">)</span>
+<span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Ahh"</span><span class="p">;;</span> <span class="c">(* =  returns 0 : equal *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Bee"</span><span class="p">;;</span> <span class="c">(* &lt; returns -1 *)</span>
+<span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Bee"</span><span class="p">;;</span> <span class="c">(* &lt; returns -1 : less *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-<span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Ack"</span><span class="p">;;</span> <span class="c">(* &gt; returns 1 *)</span>
+<span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Ack"</span><span class="p">;;</span> <span class="c">(* &gt; returns 1 : greater *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div></div>
 
-<p>So, a general tree insert would follow the lead of <code>List.sort</code>:</p>
+<p>So, our more general tree insert should follow the lead of <code>List.sort</code>:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">insert</span> <span class="n">x</span> <span class="n">bt</span> <span class="o">~</span><span class="n">compare</span> <span class="o">=</span>
    <span class="k">match</span> <span class="n">bt</span> <span class="k">with</span>
@@ -385,6 +387,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Define your own compare/equal for your own types if you need it</li>
   <li>Appending <code>[@@ppx_deriving equal]</code> to  type decl as we saw above in Hamming DNA example will automatically define function <code>equal_mytype</code> for your type <code>mytype</code></li>
   <li>Appending <code>[@@ppx_deriving compare]</code> is similar but will define function <code>compare_mytype</code>.</li>
+  <li>Appending <code>[@@ppx_deriving equal compare]</code> will get both</li>
 </ul>
 
 <h3 id="polymorphic-variants-briefly">Polymorphic Variants Briefly</h3>

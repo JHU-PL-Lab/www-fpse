@@ -255,14 +255,16 @@ let rec insert_int (x : int) (bt : int bin_tree) : (int bin_tree) =
 ;;
 ```
 
-* Like lists operations this is not mutating -- it returns a whole new tree.
+* Like list operations this is not mutating -- it returns a whole new tree.
+* Well, recall for lists that if we have list `l` then `0 :: l` can share the `l` due to immutability
+* So, for here, only one path through tree is not shared: on average only log n new nodes need to be made.  [More later in lecture on efficiency](efficiency.html).
 
 ```ocaml
 let bt' = insert_int 4 bt;;
 let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent insert *)
 ```
 
-* For non-integers however, we need to explicitly supply any equal or comparison function.
+* For non-integers , we need to explicitly supply any equal or comparison function.
    - recall `=` in `Core` works on integers only.
 * Library functions needing to compare will in fact take a comparision operation as argument
 * For example in the `List` library, the [`List.sort` function](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort)
@@ -271,15 +273,15 @@ let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent 
 ```ocaml
 List.sort ["Zoo";"Hey";"Abba"] ~compare:(String.compare);; (* pass string's comparison function as argument *)
 (* insight into OCaml expected behavior for compare: *)
-# String.compare "Ahh" "Ahh";; )(* =  returns 0 *)
+# String.compare "Ahh" "Ahh";; (* =  returns 0 : equal *)
 - : int = 0
-# String.compare "Ahh" "Bee";; (* < returns -1 *)
+# String.compare "Ahh" "Bee";; (* < returns -1 : less *)
 - : int = -1
-# String.compare "Ahh" "Ack";; (* > returns 1 *)
+# String.compare "Ahh" "Ack";; (* > returns 1 : greater *)
 - : int = 1
 ```
 
-So, a general tree insert would follow the lead of `List.sort`:
+So, our more general tree insert should follow the lead of `List.sort`:
 
 ```ocaml
 let rec insert x bt ~compare =
@@ -296,6 +298,7 @@ let bt' = insert 4 bt ~compare:(Int.compare);;
 * Define your own compare/equal for your own types if you need it
  - Appending `[@@ppx_deriving equal]` to  type decl as we saw above in Hamming DNA example will automatically define function `equal_mytype` for your type `mytype`
  - Appending `[@@ppx_deriving compare]` is similar but will define function `compare_mytype`.
+ - Appending `[@@ppx_deriving equal compare]` will get both
 
 ### Polymorphic Variants Briefly
 

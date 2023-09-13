@@ -136,11 +136,11 @@ let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent 
 
 List.sort ["Zoo";"Hey";"Abba"] ~compare:(String.compare);; (* pass string's comparison function as argument *)
 (* insight into OCaml expected behavior for compare: *)
-# String.compare "Ahh" "Ahh";; )(* =  returns 0 *)
+# String.compare "Ahh" "Ahh";; (* =  returns 0 : equal *)
 - : int = 0
-# String.compare "Ahh" "Bee";; (* < returns -1 *)
+# String.compare "Ahh" "Bee";; (* < returns -1 : less *)
 - : int = -1
-# String.compare "Ahh" "Ack";; (* > returns 1 *)
+# String.compare "Ahh" "Ack";; (* > returns 1 : greater *)
 - : int = 1
 
 let rec insert x bt ~compare =

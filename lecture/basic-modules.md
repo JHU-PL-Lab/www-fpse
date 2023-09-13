@@ -32,6 +32,7 @@ let rec contains (x: 'a) (s: 'a t) (equal : 'a -> 'a -> bool) : bool =
 
 ```
 * The above code defines module `Simple_set` since it is in the file `simple_set.ml`
+  - Capitalize first letter (only) in file name and remove `.ml` to get module name
 * Modules are just collections of top-level definable things (things you could type into top loop)
 * Assignment 1 file `submission.ml` is in fact making a module as well, named `Submission`.
 * This particular set module is just a set implemented as a list; it is in fact a multiset
@@ -39,7 +40,7 @@ let rec contains (x: 'a) (s: 'a t) (equal : 'a -> 'a -> bool) : bool =
    - below we will show how to *hide* the fact that it is a list.
 * Naming a type just `t` is the standard for "the" underlying type of a module
     - When outsiders use this module the type will be `Simple_set.t`, read "Simple set's type"
-    - `Core` extensively uses this convention in libraries
+    - `Core` extensively uses this convention in libraries: `List.t`, `Set.t` etc.
 * Notice how the functions needing `=` we have to pass it in explicitly to be polymorphic
     - In `Core.Set` there is in fact a much better solution but involves fancier modules which we cover later
 #### Building the library
@@ -63,10 +64,8 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 - : int list = [4]
 ```
 
-* Notice how the file name is `simple_set.ml` and it produces a module `Simple_set`
- - This is the standard, capitalize the first letter (only) going from file to module
 * One thing potentially annoying here is the fact that we used a list gets exposed here
- - But, we can use type abstraction to hide this; next topic
+ - But, we can use *type abstraction* to hide this; next topic
 
 #### Other ways to load a module into the top loop besides `dune utop`
 
@@ -78,7 +77,8 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 
 ### Information Hiding with Module Signatures
 
-* Modules also have types, they are called *signatures*
+* Modules also have types, they are called either *module types* or *signatures*
+  - The latter term is used in math, e.g. "a DFA has signature D = (S, Σ, τ, s0, F)"
 * When a module is defined in a file `simple_set.ml`, make a file `simple_set.mli` for its corresponding signature
     - the added "`i`" is for "interface"
 * You don't need an `.mli` file if there is nothing to hide, the type will be inferred
@@ -108,7 +108,7 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 * Also notice that the value is `<abstr>`, not `[4]` like before; since the type is hidden so are the values
 * This is both 
   - advantageous (program to interfaces, not implementations)
-  - not adventageous (sometimes hard to see what is going on)
+  - not adventageous (sometimes hard to see what is going on, also can make it harder to test)
 * We will come back to this topic later in the course
 
 ### Making an OCaml executable
@@ -132,7 +132,7 @@ Here is what we need to add to the `dune` file along with the above to build the
 
 * `set_main.ml` uses the `In_channel` module to read in file contents
 * It is part of the `Stdio` module (which is itself included in `Core` so `Core.In_channel` is the same as `Stdio.In_channel`)
-* The Documentation is [here](https://ocaml.org/p/stdio/v0.15.0/doc/Stdio/index.html); we will go through it to observe a few points
+* The Documentation is [here](https://ocaml.org/p/stdio/latest/doc/Stdio/index.html); we will go through it to observe a few points
   - First, now that we covered abstract types we can see there is an abstract type `t` here
   - As with our own set, it is "the underlinying data" for the module, in this case file handles
   - It is hidden though so we don't get access to the details of how "files are handled"
@@ -164,7 +164,7 @@ val f : ?x:int -> int -> int = <fun>
 #### The `Sys` library
 
 * We are using this library to read in the command line args, via `Sys.get_argv`.
-* We will also take a quick look at its documentation [here](https://ocaml.org/p/core/v0.15.0/doc/Core/Sys/index.html)
+* We will also take a quick look at its documentation [here](https://ocaml.org/p/core/latest/doc/Core/Sys/index.html)
   - Notice how this particular module has no carrier type `t`, it is just a collection of utility functions.
 
 #### Running executables

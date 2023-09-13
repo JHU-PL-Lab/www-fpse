@@ -103,7 +103,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 </code></pre></div></div>
 <ul>
-  <li>The above code defines module <code>Simple_set</code> since it is in the file <code>simple_set.ml</code></li>
+  <li>The above code defines module <code>Simple_set</code> since it is in the file <code>simple_set.ml</code>
+    <ul>
+      <li>Capitalize first letter (only) in file name and remove <code>.ml</code> to get module name</li>
+    </ul>
+  </li>
   <li>Modules are just collections of top-level definable things (things you could type into top loop)</li>
   <li>Assignment 1 file <code>submission.ml</code> is in fact making a module as well, named <code>Submission</code>.</li>
   <li>This particular set module is just a set implemented as a list; it is in fact a multiset</li>
@@ -115,7 +119,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Naming a type just <code>t</code> is the standard for “the” underlying type of a module
     <ul>
       <li>When outsiders use this module the type will be <code>Simple_set.t</code>, read “Simple set’s type”</li>
-      <li><code>Core</code> extensively uses this convention in libraries</li>
+      <li><code>Core</code> extensively uses this convention in libraries: <code>List.t</code>, <code>Set.t</code> etc.</li>
     </ul>
   </li>
   <li>Notice how the functions needing <code>=</code> we have to pass it in explicitly to be polymorphic
@@ -145,10 +149,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Notice how the file name is <code>simple_set.ml</code> and it produces a module <code>Simple_set</code></li>
-  <li>This is the standard, capitalize the first letter (only) going from file to module</li>
   <li>One thing potentially annoying here is the fact that we used a list gets exposed here</li>
-  <li>But, we can use type abstraction to hide this; next topic</li>
+  <li>But, we can use <em>type abstraction</em> to hide this; next topic</li>
 </ul>
 
 <h4 id="other-ways-to-load-a-module-into-the-top-loop-besides-dune-utop">Other ways to load a module into the top loop besides <code>dune utop</code></h4>
@@ -167,7 +169,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="information-hiding-with-module-signatures">Information Hiding with Module Signatures</h3>
 
 <ul>
-  <li>Modules also have types, they are called <em>signatures</em></li>
+  <li>Modules also have types, they are called either <em>module types</em> or <em>signatures</em>
+    <ul>
+      <li>The latter term is used in math, e.g. “a DFA has signature D = (S, Σ, τ, s0, F)”</li>
+    </ul>
+  </li>
   <li>When a module is defined in a file <code>simple_set.ml</code>, make a file <code>simple_set.mli</code> for its corresponding signature
     <ul>
       <li>the added “<code>i</code>” is for “interface”</li>
@@ -207,7 +213,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>This is both
     <ul>
       <li>advantageous (program to interfaces, not implementations)</li>
-      <li>not adventageous (sometimes hard to see what is going on)</li>
+      <li>not adventageous (sometimes hard to see what is going on, also can make it harder to test)</li>
     </ul>
   </li>
   <li>We will come back to this topic later in the course</li>
@@ -238,7 +244,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li><code>set_main.ml</code> uses the <code>In_channel</code> module to read in file contents</li>
   <li>It is part of the <code>Stdio</code> module (which is itself included in <code>Core</code> so <code>Core.In_channel</code> is the same as <code>Stdio.In_channel</code>)</li>
-  <li>The Documentation is <a href="https://ocaml.org/p/stdio/v0.15.0/doc/Stdio/index.html">here</a>; we will go through it to observe a few points
+  <li>The Documentation is <a href="https://ocaml.org/p/stdio/latest/doc/Stdio/index.html">here</a>; we will go through it to observe a few points
     <ul>
       <li>First, now that we covered abstract types we can see there is an abstract type <code>t</code> here</li>
       <li>As with our own set, it is “the underlinying data” for the module, in this case file handles</li>
@@ -281,7 +287,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>We are using this library to read in the command line args, via <code>Sys.get_argv</code>.</li>
-  <li>We will also take a quick look at its documentation <a href="https://ocaml.org/p/core/v0.15.0/doc/Core/Sys/index.html">here</a>
+  <li>We will also take a quick look at its documentation <a href="https://ocaml.org/p/core/latest/doc/Core/Sys/index.html">here</a>
     <ul>
       <li>Notice how this particular module has no carrier type <code>t</code>, it is just a collection of utility functions.</li>
     </ul>
