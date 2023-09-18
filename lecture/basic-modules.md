@@ -172,3 +172,19 @@ val f : ?x:int -> int -> int = <fun>
 * If you declared an executable in `dune` as above, it will make a file `my_main_module.exe` so in our case that is `set_main.exe`
 * To exec it you can do `dune exec ./src/set_main.exe "open Core" src/simple_set.ml`
 * Which is really just `_build/default/src/set_main.exe "open Core" src/simple_set.ml`
+
+### Modules within modules
+
+* It is often useful to have modules inside of modules for further code "modularization"
+* The way it is declared is in e.g. `foo.ml` (which defines the items in module `Foo`) add
+  ```ocaml
+  module Sub = struct 
+   let blah = ...
+   ...
+  end
+  ```
+  where the `...` are the same kinds of declarations that are in files like `foo.ml`.
+* In the remainder of the file you can access the contents of `Sub` as `Sub.blah`, and outside of the `foo.ml` file `Foo.Sub.blah` will access.
+* We in fact used nested modules in the assignments thus far to divvy into sections
+  - We also included lines `include Section1` etc after defining module `Section1` which pastes the contents into the top level to avoid the need to nest.
+  - Assignment 2 also includes some nested modules, this time with more purpose; we will take a look.

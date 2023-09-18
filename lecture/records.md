@@ -1,6 +1,6 @@
 
 ### Records
-  - Records are like tuples, a data combiner, but with label names added for readability
+  - Records are like tuples, an and-data combiner (this-and-this-and-this), but with label names added for readability
     - Yes it is only about readability but it can make a big difference in code quality
   - Record types must be declared just like OCaml variants.
   - Again the fields are immutable by default (but there is a way to make them mutable ..)
@@ -59,11 +59,10 @@ let add_ratio r1 r2 = {num = r1.num * r2.denom + r2.num * r1.denom;
                       denom = r1.denom * r2.denom};;
 add_ratio {num = 1; denom = 3} {num = 2; denom = 5};;
 ```
-Pattern equivalent (can't pun here because there are two records of same type):
+Preferred pattern equivalent (can't pun here because there are two records of same type):
 ```ocaml
 let add_ratio {num = n1; denom = d1} {num = n2; denom = d2} = 
 {num = n1 * d2 + n2 * d1; denom = d1 * d2};;
-add_ratio {num = 1; denom = 3} {num = 2; denom = 5};;
 ```
 
 Annoying shadowing issue when using dot: there is one global namespace of record labels
@@ -72,7 +71,7 @@ type newratio = {num: int; coeff: float};; (* shadows ratio's label num *)
 
 fun x -> x.num;; (* x is inferred a newratio, the most recent num field defined *)
 ```
-Solution is to generally avoid dot; or declare `x`'s type if needed.  
+Solution is to generally avoid dot; or, declare `x`'s type if needed.  
 
 ```ocaml
 fun (x : ratio) -> x.num;; (* x is declared a ratio, avoiding previous shadowing *)
@@ -86,8 +85,8 @@ make_ratio 1 2;;
 ```
 
 * Here is a shorthand for changing just some of the fields: `{r with ...}`
-  - Very useful for records with many fields, not so much here though
-  - Note "change" is not mutation again, it constructs a new record.
+  - Very useful for records with many fields
+  - Note "change" is not mutation, it constructs a new record.
 
  ```ocaml
 let clear_bad_denom r =

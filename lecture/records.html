@@ -69,7 +69,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     
 <h3 id="records">Records</h3>
 <ul>
-  <li>Records are like tuples, a data combiner, but with label names added for readability
+  <li>Records are like tuples, an and-data combiner (this-and-this-and-this), but with label names added for readability
     <ul>
       <li>Yes it is only about readability but it can make a big difference in code quality</li>
     </ul>
@@ -126,10 +126,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                       <span class="n">denom</span> <span class="o">=</span> <span class="n">r1</span><span class="o">.</span><span class="n">denom</span> <span class="o">*</span> <span class="n">r2</span><span class="o">.</span><span class="n">denom</span><span class="p">};;</span>
 <span class="n">add_ratio</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">3</span><span class="p">}</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">5</span><span class="p">};;</span>
 </code></pre></div></div>
-<p>Pattern equivalent (can’t pun here because there are two records of same type):</p>
+<p>Preferred pattern equivalent (can’t pun here because there are two records of same type):</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add_ratio</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="n">n1</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d1</span><span class="p">}</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="n">n2</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d2</span><span class="p">}</span> <span class="o">=</span> 
 <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="n">n1</span> <span class="o">*</span> <span class="n">d2</span> <span class="o">+</span> <span class="n">n2</span> <span class="o">*</span> <span class="n">d1</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d1</span> <span class="o">*</span> <span class="n">d2</span><span class="p">};;</span>
-<span class="n">add_ratio</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">3</span><span class="p">}</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">5</span><span class="p">};;</span>
 </code></pre></div></div>
 
 <p>Annoying shadowing issue when using dot: there is one global namespace of record labels</p>
@@ -137,7 +136,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">num</span><span class="p">;;</span> <span class="c">(* x is inferred a newratio, the most recent num field defined *)</span>
 </code></pre></div></div>
-<p>Solution is to generally avoid dot; or declare <code>x</code>’s type if needed.</p>
+<p>Solution is to generally avoid dot; or, declare <code>x</code>’s type if needed.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fun</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="n">ratio</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">num</span><span class="p">;;</span> <span class="c">(* x is declared a ratio, avoiding previous shadowing *)</span>
 </code></pre></div></div>
@@ -153,8 +152,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Here is a shorthand for changing just some of the fields: <code>{r with ...}</code>
     <ul>
-      <li>Very useful for records with many fields, not so much here though</li>
-      <li>Note “change” is not mutation again, it constructs a new record.</li>
+      <li>Very useful for records with many fields</li>
+      <li>Note “change” is not mutation, it constructs a new record.</li>
     </ul>
   </li>
 </ul>

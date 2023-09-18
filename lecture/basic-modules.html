@@ -301,6 +301,27 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>To exec it you can do <code>dune exec ./src/set_main.exe "open Core" src/simple_set.ml</code></li>
   <li>Which is really just <code>_build/default/src/set_main.exe "open Core" src/simple_set.ml</code></li>
 </ul>
+
+<h3 id="modules-within-modules">Modules within modules</h3>
+
+<ul>
+  <li>It is often useful to have modules inside of modules for further code “modularization”</li>
+  <li>The way it is declared is in e.g. <code>foo.ml</code> (which defines the items in module <code>Foo</code>) add
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Sub</span> <span class="o">=</span> <span class="k">struct</span> 
+ <span class="k">let</span> <span class="n">blah</span> <span class="o">=</span> <span class="o">...</span>
+ <span class="o">...</span>
+<span class="k">end</span>
+</code></pre></div>    </div>
+    <p>where the <code>...</code> are the same kinds of declarations that are in files like <code>foo.ml</code>.</p>
+  </li>
+  <li>In the remainder of the file you can access the contents of <code>Sub</code> as <code>Sub.blah</code>, and outside of the <code>foo.ml</code> file <code>Foo.Sub.blah</code> will access.</li>
+  <li>We in fact used nested modules in the assignments thus far to divvy into sections
+    <ul>
+      <li>We also included lines <code>include Section1</code> etc after defining module <code>Section1</code> which pastes the contents into the top level to avoid the need to nest.</li>
+      <li>Assignment 2 also includes some nested modules, this time with more purpose; we will take a look.</li>
+    </ul>
+  </li>
+</ul>
       
           </section>
         </div>
