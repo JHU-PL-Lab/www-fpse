@@ -159,11 +159,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">clear_bad</span> <span class="n">r</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">clear_bad_denom</span> <span class="n">r</span> <span class="o">=</span>
 <span class="k">match</span> <span class="n">r</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="p">{</span><span class="n">denom</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">}</span> <span class="o">-&gt;</span>  <span class="p">{</span><span class="n">r</span> <span class="k">with</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span><span class="p">}</span>
+  <span class="o">|</span> <span class="p">{</span><span class="n">denom</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">}</span> <span class="o">-&gt;</span>  <span class="p">{</span><span class="n">r</span> <span class="k">with</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span><span class="p">}</span> <span class="c">(* can leave off ignored fields in pattern *)</span>
   <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="p">;;</span>
-<span class="n">clear_bad</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">0</span><span class="p">};;</span>
+<span class="n">clear_bad_denom</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">0</span><span class="p">};;</span>
 </code></pre></div></div>
 
 <ul>
@@ -179,7 +179,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Let’s re-visit our binary tree type and use record notation instead.</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">binnier_tree</span> <span class="o">=</span> <span class="nc">Leaf</span> <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="p">{</span><span class="n">data</span> <span class="o">:</span><span class="k">'</span><span class="n">a</span> <span class="p">;</span> <span class="n">left</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">binnier_tree</span><span class="p">;</span> <span class="n">right</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">binnier_tree</span><span class="p">}</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="o">=</span> <span class="nc">Leaf</span> <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="p">{</span><span class="n">data</span> <span class="o">:</span><span class="k">'</span><span class="n">a</span> <span class="p">;</span> <span class="n">left</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">;</span> <span class="n">right</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">}</span>
 </code></pre></div></div>
 
 <ul>

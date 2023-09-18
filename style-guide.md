@@ -139,7 +139,7 @@ One thing to point out is that it's bad form to over-indent. These tools should 
 
 3. Both of the previous points hint at how over-documentation is a thing.  Over-documentation clutters the code and can make it unreadable.  For example, you should not spam the body of your functions with comments describing every little thing it does; instead, the bulk of the explaining should be done by the code.  That said, do put comments if the code isn't clear enough, or if there's unusual behavior, weird edge cases, interesting algorithms, etc. in your functions, but make sure to do so judiciously.
 
-4. In `.mli` files, you should follow ocamldoc syntax when writing comments that describe functions or types - i.e. start your comments with `(**` instead of `(*`, and use square brackets to contain OCaml values (e.g. `(** [compare x y] compares two values in a certain way *)`).  For other comments, using `(*` is perfectly acceptable and ocamldoc syntax isn't required.
+4. In `.mli` files, you should follow [`odoc`](https://ocaml.github.io/odoc/odoc/index.html) syntax when writing comments that describe functions or types - i.e. start your comments with `(**` instead of `(*`, and use square brackets to contain OCaml values (e.g. `(** [compare x y] compares two values in a certain way *)`).  For other comments, using `(*` is perfectly acceptable and odoc syntax isn't required.
 
 ## Miscellaneous
 
@@ -147,14 +147,14 @@ One thing to point out is that it's bad form to over-indent. These tools should 
 
 1. On the other hand, _do_ use parentheses around tuples: while writing `x, y, z` is legal OCaml syntax, you should write `(x, y, z)` to clearly indicate that the value is a tuple.  (That said, you are free to omit parentheses around a tuple when you are _immediately_ destructuring that tuple, e.g. in let or match statements like `let x, y = tuple_fn 0 in ...` or `match x, y with 0, 0 -> ...`.)
 
-2. Use `@@` or `begin ... end` syntax to control too many parentheses.
+2. Use `@@` or `begin ... end` syntax to avoid too many parentheses.
 
 3. `match ... with ...` is not the only pattern matching syntax around; you can perform destructuring using `let` bindings if there's only one case to match. `let` destructuring is often more concise than using `match ... with ...`.  For anonymous functions you can also directly pattern match in what was the argument position if you use the `function` keyword: `function [] -> [] | x :: xs -> xs`.
 
-4. Use `|>` liberally, since it makes a "pipeline" of function operations easier to intuitively understand as an assembly line.
+4. Use `|>` **very** liberally, since it makes a "pipeline" of function operations which is much easier to intuitively understand.
 
 5. Tuples should be short and simple.  Do not write tuples with many elements.  A five-element tuple should instead be a record with named fields.
 
 6. Take advantage of label punning.  For labeled arguments, `my_fun ~compare x y` is more concise than `my_fun ~compare:compare x y`.  For record labels, `let {num, denom} = rational` is a more concise version of `let {num=num, denom=denom} = rational`.
 
-7. If you have large records, use the `with` keyword if you only need to update a few values.  Do not rewrite all fifteen of your record fields!
+7. If you have large records, use the `with` keyword if you only need to update a few values.

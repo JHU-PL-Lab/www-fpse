@@ -235,7 +235,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <p>Both of the previous points hint at how over-documentation is a thing.  Over-documentation clutters the code and can make it unreadable.  For example, you should not spam the body of your functions with comments describing every little thing it does; instead, the bulk of the explaining should be done by the code.  That said, do put comments if the code isn’t clear enough, or if there’s unusual behavior, weird edge cases, interesting algorithms, etc. in your functions, but make sure to do so judiciously.</p>
   </li>
   <li>
-    <p>In <code>.mli</code> files, you should follow ocamldoc syntax when writing comments that describe functions or types - i.e. start your comments with <code>(**</code> instead of <code>(*</code>, and use square brackets to contain OCaml values (e.g. <code>(** [compare x y] compares two values in a certain way *)</code>).  For other comments, using <code>(*</code> is perfectly acceptable and ocamldoc syntax isn’t required.</p>
+    <p>In <code>.mli</code> files, you should follow <a href="https://ocaml.github.io/odoc/odoc/index.html"><code>odoc</code></a> syntax when writing comments that describe functions or types - i.e. start your comments with <code>(**</code> instead of <code>(*</code>, and use square brackets to contain OCaml values (e.g. <code>(** [compare x y] compares two values in a certain way *)</code>).  For other comments, using <code>(*</code> is perfectly acceptable and odoc syntax isn’t required.</p>
   </li>
 </ol>
 
@@ -249,13 +249,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <p>On the other hand, <em>do</em> use parentheses around tuples: while writing <code>x, y, z</code> is legal OCaml syntax, you should write <code>(x, y, z)</code> to clearly indicate that the value is a tuple.  (That said, you are free to omit parentheses around a tuple when you are <em>immediately</em> destructuring that tuple, e.g. in let or match statements like <code>let x, y = tuple_fn 0 in ...</code> or <code>match x, y with 0, 0 -&gt; ...</code>.)</p>
   </li>
   <li>
-    <p>Use <code>@@</code> or <code>begin ... end</code> syntax to control too many parentheses.</p>
+    <p>Use <code>@@</code> or <code>begin ... end</code> syntax to avoid too many parentheses.</p>
   </li>
   <li>
     <p><code>match ... with ...</code> is not the only pattern matching syntax around; you can perform destructuring using <code>let</code> bindings if there’s only one case to match. <code>let</code> destructuring is often more concise than using <code>match ... with ...</code>.  For anonymous functions you can also directly pattern match in what was the argument position if you use the <code>function</code> keyword: <code>function [] -&gt; [] | x :: xs -&gt; xs</code>.</p>
   </li>
   <li>
-    <p>Use <code>|&gt;</code> liberally, since it makes a “pipeline” of function operations easier to intuitively understand as an assembly line.</p>
+    <p>Use <code>|&gt;</code> <strong>very</strong> liberally, since it makes a “pipeline” of function operations which is much easier to intuitively understand.</p>
   </li>
   <li>
     <p>Tuples should be short and simple.  Do not write tuples with many elements.  A five-element tuple should instead be a record with named fields.</p>
@@ -264,7 +264,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <p>Take advantage of label punning.  For labeled arguments, <code>my_fun ~compare x y</code> is more concise than <code>my_fun ~compare:compare x y</code>.  For record labels, <code>let {num, denom} = rational</code> is a more concise version of <code>let {num=num, denom=denom} = rational</code>.</p>
   </li>
   <li>
-    <p>If you have large records, use the <code>with</code> keyword if you only need to update a few values.  Do not rewrite all fifteen of your record fields!</p>
+    <p>If you have large records, use the <code>with</code> keyword if you only need to update a few values.</p>
   </li>
 </ol>
       

@@ -90,11 +90,11 @@ make_ratio 1 2;;
   - Note "change" is not mutation again, it constructs a new record.
 
  ```ocaml
-let clear_bad r =
+let clear_bad_denom r =
 match r with
-  | {denom = 0 } ->  {r with num = 0}
+  | {denom = 0 } ->  {r with num = 0} (* can leave off ignored fields in pattern *)
   | _ -> r;;
-clear_bad {num = 4; denom = 0};;
+clear_bad_denom {num = 4; denom = 0};;
 ``` 
 
 * One more nice feature: labeling components of variants with records
@@ -108,7 +108,7 @@ type gbu = | Good of { sugar : string; units : int} | Bad of { spice: string; un
 Let's re-visit our binary tree type and use record notation instead.
 
 ```ocaml
-type 'a binnier_tree = Leaf | Node of {data :'a ; left : 'a binnier_tree; right : 'a binnier_tree}
+type 'a bin_tree = Leaf | Node of {data :'a ; left : 'a bin_tree; right : 'a bin_tree}
 ```
 
 * Using this version we don't have to remember the order of the triple
