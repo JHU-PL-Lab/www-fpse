@@ -1,8 +1,8 @@
 ## Side effects
 
 * Side effects are operations which do more than return a result
-* So far we have not seen many side effects but a few have snuck in
-* Principle of idiomatic OCaml (and style for this class): **avoid effects**, unless it is critically needed.
+* So far we have not seen many side effects but a few have snuck in: printing, file input, exceptions
+* Principle of idiomatic OCaml (and style for this class): **avoid effects**, unless they are a real improvement.
 
 Side effects of OCaml include
 * Mutatable state - *changing* the contents of a memory location intead of making a new one
@@ -14,7 +14,7 @@ Side effects of OCaml include
 
 ### State
  * Variables in OCaml are *still* not directly mutable
- * They can hold a *reference* to mutable memory (and a way to mutate said reference)
+ * But, they can hold a *reference* to mutable memory (and a way to mutate said reference)
  * i.e. it is only indirect mutability - variable itself can't change, but what it points to can.
  * OCaml invariant: items are immutable unless their mutability is explicitly declared
 
@@ -112,7 +112,7 @@ type 'a mtree = MLeaf | MNode of 'a * 'a mtree ref * 'a mtree ref;;
 type 'a mtree = MLeaf | MNode of { data : 'a; mutable left : 'a mtree; mutable right : 'a mtree};;
 ```
 
-- Note that in this `mtree` we can only mutate the subtrees, not the data
+- Note that in this `mtree` we can only mutate the subtrees, *not* the data
 - Also, cannot replace a leaf at top of tree with a non-leaf.
 - The idea is to put mutablility only where you are doing mutation, no more no less.
 
@@ -199,11 +199,12 @@ Warning 10: this expression should have type unit.
 * To silence warning (once you are clear you are doing the right thing):
 
 ```ocaml
-# ignore(incr()) ; incr()
+# ignore(incr()) ; incr() (* or, can use let _ = incr() in incr() *)
 ```
 
 * `for` and `while` loops are useful with mutable state
 * But, don't fall back into old state habits; good OCaml style is functional by default
+* You hardly ever for or while, usually use a list or data structure iterator like map fold etc.
 * Here is a `while .. do .. done` loop; `for` syntax also standard
 
 ```ocaml
@@ -216,7 +217,7 @@ done;;
 
 * Fact: while loops are useless without mutation: would either never loop or infinitely loop
 * Same for `e1 ; e2` --  if `e1` has no side effects may as well delete it, it is dead code!
-* May help to know `e1; e2` is basically the same as `let () = e1 in e2`
+* Note that `e1; e2` is equivalent to `let () = e1 in e2`
 
 ### Arrays
  - Entered and shown as `[| 1; 2; 3 |]` (added "`|`") in top-loop to distinguish from lists.
@@ -246,7 +247,7 @@ let l = Array.to_list a;;
   - If the handler is far away it can lead to buggy code
   - We will aim for idiomatic use of OCaml exceptions in FPSE: local necessary ones only.
 * `Core` discourages over-use of exceptions in its library function signatures
-  - Avoid the `blah_exn` named ones unless really needed!
+  - Avoid the `blah_exn` library functions unless the handler is close by
 
 There are a few simple built-in exceptions which we used some already:
 
@@ -283,7 +284,7 @@ g ();;
 ```
 
 * Exceptions are in fact first-class data, all of the single type `exn`  
- - This is rarely useful.
+ - But, this feature is rarely useful.
 
 ```ocaml
 # let ex = Boom "oops";;

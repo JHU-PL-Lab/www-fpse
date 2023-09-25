@@ -69,20 +69,20 @@ let are_balanced_exn s =
    https://exercism.io/tracks/ocaml/exercises/matching-brackets/solutions/ac5921390cb14120b44f049ef1a09186
 *)
 
-let are_balanced_functional s =
-  String.fold_until s ~init:[]
-    ~f:(fun acc c ->
-      match (c, acc) with
-      | '(', _ | '[', _ | '{', _ -> Continue (c :: acc)
+let are_balanced_functional str =
+  String.fold_until str ~init:[]
+    ~f:(fun stk ch ->
+      match (ch, stk) with
+      | '(', _ | '[', _ | '{', _ -> Continue (ch :: stk)
       | ')', '(' :: tl | ']', '[' :: tl | '}', '{' :: tl -> Continue tl
       | ')', _ | ']', _ | '}', _ -> Stop false
-      | _ -> Continue acc)
+      | _ -> Continue stk)
     ~finish:List.is_empty
 
-(* Here is a simpler example of fold_until to better understand the above *)
+(* Here is a simpler example of fold_until we covered earlier, to better understand the above *)
 
-let summate_til_zero s =
-  List.fold_until s ~init:0
+let summate_til_zero l =
+  List.fold_until l ~init:0
     ~f:(fun acc i ->
       match i with 0 -> Stop acc | _ -> Continue (i + acc))
     ~finish:Fn.id

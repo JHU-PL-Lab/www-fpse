@@ -35,8 +35,8 @@ val equal_n_queue : n_queue -> n_queue -> bool = <fun>
 * Notice that the `Core` libraries are designed to play well as they have `List.equal`, `Queue.equal` built in
   - But, `List.equal : ('a -> 'a -> bool) -> 'a list -> 'a list -> bool` -- it needs `=` on the underlying list data.
   - This is a bit annoying as you keep having to pass `=` for members to check `'` for lists
-  - .. one goal of this lecture is eventuall y we will fix this
-* Note that in general for a component type that is the `t` of a module, the name looked for is `My_module.equal` instead of `t_equal`
+  - .. we will eventually make a solid fix to this below
+* Note that in general for a component type that is the `t` of a module, the name looked for is `My_module.equal` instead of `t_equal` - you can say `Float.equal` and don't need to say `Float.t_equal`.
 
 ### Some other useful `@@deriving` type accessor extensions in ppx_jane
 
@@ -60,6 +60,7 @@ val sexp_of_n_list : n_list -> Sexp.t = fun
 ```
 
 * `[@@deriving compare]` is analogous to `equal` except it makes a `compare` function instead of `equal`
+* We covered this in the variants lecture
 
 ```ocaml
 # type nucleotide = A | C | G | T [@@deriving compare];;
@@ -101,7 +102,7 @@ val n_list_of_yojson :
 ## Defining Modules in the top loop
 
 * We will now cover how you can define modules in the top loop.
-* The main reason we are covering this is it will help us understand nested modules and functors (functions on modules), even when in files
+* We mostly saw this already as the syntax is the same as how you defined a nested module
 * Basic idea to input a module in top-loop: write `module My_module = struct ... end` with file contents inserted into the ".." part
 * `struct` stands for structure, modules used to be called that in OCaml; view a `struct` as a synonym of a module.
 * Simple set example put in top-loop syntax:
@@ -160,12 +161,7 @@ and it will define the module with the above signature on it
 
 ## Nested modules
 
-* Lets define *modules within modules*, which are very useful when libraries / applications are larger
-* We are using many nested modules already, e.g. `Core.List.map` means `List` is just a module inside `Core`.
-* Modules nest exactly as you would expect, just write a `module My_module = struct .. end` declaration
- within a (file-based *or* top-loop-defined) module
-* Here is an example 
-    - (note we will do top-loop version here, could remove top/bottom two lines and put in file)
+* We previously defined nested modules in files, now lets define one in the top loop.
 
 ```ocaml
 module Super_simple_core = struct
@@ -174,13 +170,20 @@ module Super_simple_core = struct
 end
 ```
 
+This would produce the same nested module as if we had a file `super_simple_core.ml` with only 
+```ocaml
+module Simple_set = Simple_set (* assumes we have simple_set on the library path in the dune file *)
+module List = Core.List
+```
+in it.
 ### Functors
 
 * Functors are simply parametric modules, i.e. functions from modules to modules
 * They let us define a generic code library to which we can plug in some concrete code
     - in other words, just like what higher-order functions do except for modules
-* Note that you don't want to make every dependent module a parameter, instead use the normal convention in most PLs of referencing one module in another
-   - `dune` automatically makes referenced libraries available
+    - the main advantage is we get to include *types* as parameters since modules have types in them: very powerful!!
+* Note that you don't want to make every dependent module a parameter as that would get too confusing.
+   - `dune` automatically makes referenced libraries available so most of the time that is the way one module uses another.
 * Functors are needed when the parameter module can be more than one thing.
 #### Simple Functors Example
 
@@ -407,6 +410,8 @@ type 'a intpairmaptree =
 #### `include`
 
 * `include` is pretty straightforward, it "copies/pastes" one module or module type's definitions inside a new definition.
+* We used this in the earlier homeworks so you already saw it.
+* It is a bit like inheritance in O-O languages
 ```ocaml
 # module Sized_set = struct 
   include Simple_set 

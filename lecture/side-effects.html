@@ -70,8 +70,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Side effects are operations which do more than return a result</li>
-  <li>So far we have not seen many side effects but a few have snuck in</li>
-  <li>Principle of idiomatic OCaml (and style for this class): <strong>avoid effects</strong>, unless it is critically needed.</li>
+  <li>So far we have not seen many side effects but a few have snuck in: printing, file input, exceptions</li>
+  <li>Principle of idiomatic OCaml (and style for this class): <strong>avoid effects</strong>, unless they are a real improvement.</li>
 </ul>
 
 <p>Side effects of OCaml include</p>
@@ -90,7 +90,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="state">State</h3>
 <ul>
   <li>Variables in OCaml are <em>still</em> not directly mutable</li>
-  <li>They can hold a <em>reference</em> to mutable memory (and a way to mutate said reference)</li>
+  <li>But, they can hold a <em>reference</em> to mutable memory (and a way to mutate said reference)</li>
   <li>i.e. it is only indirect mutability - variable itself can’t change, but what it points to can.</li>
   <li>OCaml invariant: items are immutable unless their mutability is explicitly declared</li>
 </ul>
@@ -203,7 +203,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Note that in this <code>mtree</code> we can only mutate the subtrees, not the data</li>
+  <li>Note that in this <code>mtree</code> we can only mutate the subtrees, <em>not</em> the data</li>
   <li>Also, cannot replace a leaf at top of tree with a non-leaf.</li>
   <li>The idea is to put mutablility only where you are doing mutation, no more no less.</li>
 </ul>
@@ -299,12 +299,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>To silence warning (once you are clear you are doing the right thing):</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="n">ignore</span><span class="p">(</span><span class="n">incr</span><span class="bp">()</span><span class="p">)</span> <span class="p">;</span> <span class="n">incr</span><span class="bp">()</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="n">ignore</span><span class="p">(</span><span class="n">incr</span><span class="bp">()</span><span class="p">)</span> <span class="p">;</span> <span class="n">incr</span><span class="bp">()</span> <span class="c">(* or, can use let _ = incr() in incr() *)</span>
 </code></pre></div></div>
 
 <ul>
   <li><code>for</code> and <code>while</code> loops are useful with mutable state</li>
   <li>But, don’t fall back into old state habits; good OCaml style is functional by default</li>
+  <li>You hardly ever for or while, usually use a list or data structure iterator like map fold etc.</li>
   <li>Here is a <code>while .. do .. done</code> loop; <code>for</code> syntax also standard</li>
 </ul>
 
@@ -318,7 +319,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Fact: while loops are useless without mutation: would either never loop or infinitely loop</li>
   <li>Same for <code>e1 ; e2</code> –  if <code>e1</code> has no side effects may as well delete it, it is dead code!</li>
-  <li>May help to know <code>e1; e2</code> is basically the same as <code>let () = e1 in e2</code></li>
+  <li>Note that <code>e1; e2</code> is equivalent to <code>let () = e1 in e2</code></li>
 </ul>
 
 <h3 id="arrays">Arrays</h3>
@@ -357,7 +358,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li><code>Core</code> discourages over-use of exceptions in its library function signatures
     <ul>
-      <li>Avoid the <code>blah_exn</code> named ones unless really needed!</li>
+      <li>Avoid the <code>blah_exn</code> library functions unless the handler is close by</li>
     </ul>
   </li>
 </ul>
@@ -400,7 +401,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Exceptions are in fact first-class data, all of the single type <code>exn</code></li>
-  <li>This is rarely useful.</li>
+  <li>But, this feature is rarely useful.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">ex</span> <span class="o">=</span> <span class="nc">Boom</span> <span class="s2">"oops"</span><span class="p">;;</span>
