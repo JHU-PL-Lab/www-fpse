@@ -68,7 +68,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h2 id="more-modules-and-libraries">More Modules and Libraries</h2>
 
-<h3 id="tangent-ppx_jane-and-deriving">Tangent: <code>ppx_jane</code> and <code>deriving</code></h3>
+<h3 id="tangent-more-on-ppx_jane-and-deriving">Tangent: more on <code>ppx_jane</code> and <code>deriving</code></h3>
 
 <ul>
   <li>Recall <code>[@@deriving equal]</code> in the nucleotide example to get an <code>=</code> on that type “for free”:</li>
@@ -101,7 +101,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">#</span> <span class="n">equal_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">]</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">A</span><span class="p">];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span>
 <span class="o">#</span> <span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Queue</span><span class="p">.</span><span class="n">t</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Core_kernel</span><span class="p">.</span><span class="nn">Queue</span><span class="p">.</span><span class="n">t</span>
+<span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Core</span><span class="p">.</span><span class="nn">Queue</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">equal_n_queue</span> <span class="o">:</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 <ul>
@@ -135,6 +135,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">val</span> <span class="n">sexp_of_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
 <span class="o">#</span> <span class="n">sexp_of_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">G</span><span class="p">];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="nc">A</span> <span class="nc">G</span> <span class="nc">G</span><span class="p">)</span> <span class="c">(* this is the "S-Expression" version of a list.. parens and spaces *)</span>
+<span class="o">#</span> <span class="n">n_list_of_sexp</span> <span class="p">(</span><span class="nn">Sexp</span><span class="p">.</span><span class="n">of_string</span> <span class="s2">"(A G G)"</span><span class="p">);;</span> <span class="c">(* how to convert in the other direction *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">=</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span> <span class="nc">G</span><span class="p">;</span> <span class="nc">G</span><span class="p">]</span>
 </code></pre></div></div>
 
 <ul>
@@ -150,9 +152,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">utop</span> <span class="o">#</span> <span class="n">compare_nucleotide</span> <span class="nc">C</span> <span class="nc">A</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div></div>
+
+<h3 id="json-format-manipulation">JSON format manipulation</h3>
+
 <ul>
-  <li><code>Core</code> does not have libraries for dealing with JSON unfortunately.</li>
-  <li>But, someone else has made such a macro library, <code>ppx_deriving_yojson</code> which works with the <code>yojson</code> library to do something like what <code>deriving sexp</code> above did.</li>
+  <li><code>Core</code> does not have libraries for dealing with JSON unfortunately.
+    <ul>
+      <li><code>sexp</code> is the “JSON of the OCaml universe”</li>
+    </ul>
+  </li>
+  <li>But, if you need it, someone else has made such a macro library, <code>ppx_deriving_yojson</code> which works with the <code>yojson</code> library to do something like what <code>deriving sexp</code> above did.</li>
   <li>With these libraries you can trivially define a to/from JSON format function on any type</li>
   <li>this will save wear and tear on your fingers, no need to convert.</li>
 </ul>
@@ -180,11 +189,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>See the docs for more examples, in particular for records which is the bread and butter of JSON data: key-value collections.</li>
   <li><strong>Aside</strong>: <code>ppx_deriving_yojson</code> is not compatible with <code>ppx_jane</code> so if you want to derive equality and comparisons along with <code>yojson</code> you need to use <code>#require "ppx_deriving.eq";; / [@@deriving eq]</code> and <code>#require "ppx_deriving.ord";; / [@@deriving ord]</code> in place of the <code>equal/compare</code> deriving in <code>ppx_jane</code>.
-    <h2 id="defining-modules-in-the-top-loop">Defining Modules in the top loop</h2>
+    <h2 id="defining-modules-in-the-top-loop-or-nesting-them-in-a-file">Defining Modules in the top loop or nesting them in a file</h2>
   </li>
-  <li>We will now cover how you can define modules in the top loop.</li>
-  <li>We mostly saw this already as the syntax is the same as how you defined a nested module</li>
-  <li>Basic idea to input a module in top-loop: write <code>module My_module = struct ... end</code> with file contents inserted into the “..” part</li>
+  <li>Modules can be defined in the top loop just like how we had defined nested modules in a <code>my_module.ml</code> file</li>
+  <li>Basic idea to input a module in top-loop: write <code>module My_module = struct ... end</code> with <code>my_module.ml</code> file contents inserted into the “…” part</li>
   <li><code>struct</code> stands for structure, modules used to be called that in OCaml; view a <code>struct</code> as a synonym of a module.</li>
   <li>Simple set example put in top-loop syntax:</li>
 </ul>
@@ -219,13 +227,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Notice how it infers a module type (aka signature – <code>sig</code> at the start is for signature)</li>
+  <li>Notice how it infers a module type (aka signature, the old name for a module type – <code>sig</code> at the start is for signature)</li>
   <li>We can also declare module types and explicitly declare along with the module</li>
+  <li>Modules are to <code>.ml</code> files as Module types are to <code>.mli</code> files</li>
   <li>Use <code>module type Type_name_here = ... type here ...</code> to declare module types (<code>.mli</code> file equivalents):</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="k">type</span> <span class="nc">Simple_set</span> <span class="o">=</span> <span class="c">(* module and module type namespaces are distinct, can re-use name *)</span>
-  <span class="k">sig</span> <span class="c">(* everything up to end below is what would be in an .mli file *)</span>
+  <span class="k">sig</span> 
+    <span class="c">(* everything before the end below is what would be in an equivalent .mli file declaring this type *)</span>
     <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="c">(* Do some type hiding here *)</span>
     <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
     <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
@@ -237,26 +247,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Then can replace <code>module Simple_set = struct .. end</code> with</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Simple_set</span> <span class="o">:</span> <span class="nc">Simple_set</span> <span class="o">=</span> <span class="k">struct</span> <span class="o">...</span> <span class="k">end</span>
 </code></pre></div></div>
-
 <p>and it will define the module with the above signature on it</p>
 
-<h2 id="nested-modules">Nested modules</h2>
-
-<ul>
-  <li>We previously defined nested modules in files, now lets define one in the top loop.</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Super_simple_core</span> <span class="o">=</span> <span class="k">struct</span>
-  <span class="k">module</span> <span class="nc">Simple_set</span> <span class="o">=</span> <span class="nc">Simple_set</span> <span class="c">(* previously typed in above *)</span>
-  <span class="k">module</span> <span class="nc">List</span> <span class="o">=</span> <span class="nn">Core</span><span class="p">.</span><span class="nc">List</span> <span class="c">(* just borrow Core's list for our Super_simple_core *)</span>
-<span class="k">end</span>
-</code></pre></div></div>
-
-<p>This would produce the same nested module as if we had a file <code>super_simple_core.ml</code> with only</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Simple_set</span> <span class="o">=</span> <span class="nc">Simple_set</span> <span class="c">(* assumes we have simple_set on the library path in the dune file *)</span>
-<span class="k">module</span> <span class="nc">List</span> <span class="o">=</span> <span class="nn">Core</span><span class="p">.</span><span class="nc">List</span>
-</code></pre></div></div>
-<p>in it.</p>
 <h3 id="functors">Functors</h3>
 
 <ul>

@@ -1,6 +1,6 @@
 ## More Modules and Libraries
 
-### Tangent: `ppx_jane` and `deriving`
+### Tangent: more on `ppx_jane` and `deriving`
 
 * Recall `[@@deriving equal]` in the nucleotide example to get an `=` on that type "for free":
 
@@ -29,7 +29,7 @@ val equal_n_list : n_list -> n_list -> bool = <fun>
 # equal_n_list [A;A;A] [A;G;A];;
 - : bool = false
 # type n_queue = nucleotide Queue.t [@@deriving equal];;
-type n_queue = nucleotide Core_kernel.Queue.t
+type n_queue = nucleotide Core.Queue.t
 val equal_n_queue : n_queue -> n_queue -> bool = <fun>
 ```
 * Notice that the `Core` libraries are designed to play well as they have `List.equal`, `Queue.equal` built in
@@ -57,6 +57,8 @@ val n_list_of_sexp : Sexp.t -> n_list = fun
 val sexp_of_n_list : n_list -> Sexp.t = fun
 # sexp_of_n_list [A;G;G];;
 - : Sexp.t = (A G G) (* this is the "S-Expression" version of a list.. parens and spaces *)
+# n_list_of_sexp (Sexp.of_string "(A G G)");; (* how to convert in the other direction *)
+- : n_list = [A; G; G]
 ```
 
 * `[@@deriving compare]` is analogous to `equal` except it makes a `compare` function instead of `equal`
@@ -71,8 +73,13 @@ val compare_nucleotide : nucleotide -> nucleotide -> int = fun
 utop # compare_nucleotide C A;;
 - : int = 1
 ```
+
+
+### JSON format manipulation
+
 * `Core` does not have libraries for dealing with JSON unfortunately.
-* But, someone else has made such a macro library, `ppx_deriving_yojson` which works with the `yojson` library to do something like what `deriving sexp` above did.
+  - `sexp` is the "JSON of the OCaml universe"
+* But, if you need it, someone else has made such a macro library, `ppx_deriving_yojson` which works with the `yojson` library to do something like what `deriving sexp` above did.
 * With these libraries you can trivially define a to/from JSON format function on any type
  - this will save wear and tear on your fingers, no need to convert.
 
@@ -99,11 +106,10 @@ val n_list_of_yojson :
 ```
 * See the docs for more examples, in particular for records which is the bread and butter of JSON data: key-value collections.
 * **Aside**: `ppx_deriving_yojson` is not compatible with `ppx_jane` so if you want to derive equality and comparisons along with `yojson` you need to use `#require "ppx_deriving.eq";; / [@@deriving eq]` and `#require "ppx_deriving.ord";; / [@@deriving ord]` in place of the `equal/compare` deriving in `ppx_jane`. 
-## Defining Modules in the top loop
+## Defining Modules in the top loop or nesting them in a file
 
-* We will now cover how you can define modules in the top loop.
-* We mostly saw this already as the syntax is the same as how you defined a nested module
-* Basic idea to input a module in top-loop: write `module My_module = struct ... end` with file contents inserted into the ".." part
+* Modules can be defined in the top loop just like how we had defined nested modules in a `my_module.ml` file
+* Basic idea to input a module in top-loop: write `module My_module = struct ... end` with `my_module.ml` file contents inserted into the "..." part
 * `struct` stands for structure, modules used to be called that in OCaml; view a `struct` as a synonym of a module.
 * Simple set example put in top-loop syntax:
 
@@ -137,13 +143,15 @@ module Simple_set :
 - : 'a list = []
 ```
 
-* Notice how it infers a module type (aka signature -- `sig` at the start is for signature)
+* Notice how it infers a module type (aka signature, the old name for a module type -- `sig` at the start is for signature)
 * We can also declare module types and explicitly declare along with the module
+* Modules are to `.ml` files as Module types are to `.mli` files
 * Use `module type Type_name_here = ... type here ...` to declare module types (`.mli` file equivalents):
 
 ```ocaml
 module type Simple_set = (* module and module type namespaces are distinct, can re-use name *)
-  sig (* everything up to end below is what would be in an .mli file *)
+  sig 
+    (* everything before the end below is what would be in an equivalent .mli file declaring this type *)
     type 'a t (* Do some type hiding here *)
     val emptyset : 'a t
     val add : 'a -> 'a t -> 'a t
@@ -156,26 +164,8 @@ Then can replace `module Simple_set = struct .. end` with
 ```ocaml
 module Simple_set : Simple_set = struct ... end
 ```
-
 and it will define the module with the above signature on it
 
-## Nested modules
-
-* We previously defined nested modules in files, now lets define one in the top loop.
-
-```ocaml
-module Super_simple_core = struct
-  module Simple_set = Simple_set (* previously typed in above *)
-  module List = Core.List (* just borrow Core's list for our Super_simple_core *)
-end
-```
-
-This would produce the same nested module as if we had a file `super_simple_core.ml` with only 
-```ocaml
-module Simple_set = Simple_set (* assumes we have simple_set on the library path in the dune file *)
-module List = Core.List
-```
-in it.
 ### Functors
 
 * Functors are simply parametric modules, i.e. functions from modules to modules
