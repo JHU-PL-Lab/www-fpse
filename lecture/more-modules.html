@@ -410,6 +410,23 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <span class="k">module</span> <span class="nc">String_set_hidden</span> <span class="o">=</span> <span class="nc">Simple_set_functor_hidden</span><span class="p">(</span><span class="nc">String</span><span class="p">);;</span>
 </code></pre></div></div>
 
+<h3 id="file-based-functors-and-type-hiding">File-based functors and type hiding</h3>
+
+<ul>
+  <li>In making real software we are putting all the code in the <code>.ml</code> files</li>
+  <li>So for functors just put the <code>Simple_set_functor</code> in the file, say file <code>simple_set.ml</code>
+    <ul>
+      <li>but, we will rename it <code>Make</code> so <code>Simple_set.Make(Float)</code> for example will make a <code>Simple_set</code></li>
+    </ul>
+  </li>
+  <li>Then to hide information make a <code>simple_set.mli</code> file which lists the types of everything
+    <ul>
+      <li>There is a specific naming convention on how to do this which is subtle</li>
+      <li>We will review <a href="../examples/set-example-functor.zip">set-example-functor.zip</a> which is our old set example redone as a functor</li>
+    </ul>
+  </li>
+</ul>
+
 <h3 id="cores-set-map-hash-table-etc"><code>Core</code>’s Set, Map, Hash table, etc</h3>
 
 <ul>
@@ -419,15 +436,22 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>Here for example is how you make a map where the key is a built-in type (which has an associated module)</li>
+  <li><code>Map.Make</code> is a functor just like our <code>Simple_set.Make</code> above</li>
+  <li>We need to supply the type of <em>keys</em> as we need to compare on them; the types of values is arbitrary so we let it be <code>'a</code> as in a list</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">FloatMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="nc">Float</span><span class="p">);;</span> <span class="c">(* Or Char/Int/String/Bool/etc *)</span>
 <span class="k">module</span> <span class="nc">FloatMap</span> <span class="o">:</span>
   <span class="k">sig</span> <span class="o">...</span> <span class="k">end</span>
+<span class="o">#</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">empty</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span> <span class="c">(* The Float keys are hardwired and the map values are 'a (unconstrained when map empty) *)</span>
+<span class="o">#</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">singleton</span> <span class="mi">4</span><span class="o">.</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* make a singleton map with a float mapping to an int - fixes 'a to be int *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
 <ul>
-  <li>Note it requires a bit more than just the type and comparison to be in <code>Float</code> for this to work with <code>Core</code></li>
+  <li>Note it requires a bit more than just the type and <code>compare</code><code> to be in </code>Float<code> for this to work with </code>Core`</li>
+  <li><code>#show Map.Make;;</code> will show the functor type and we can look at what <code>Map.Make</code>s argument expects</li>
   <li>to/from S-expression conversions needed; use <code>[@@deriving compare, sexp]</code> on your own type:</li>
 </ul>
 
@@ -499,6 +523,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <span class="nc">Leaf</span>
   <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="nn">IPMap</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span>
 </code></pre></div></div>
+<ul>
+  <li>Notice how we refer to our pair map type as <code>'a IPMap.t</code>, its a bit of a mouthful to see at first
+    <ul>
+      <li>but if it was a list it would be <code>'a list</code> here and <code>'a List.t</code> is just an alias for that.</li>
+    </ul>
+  </li>
+</ul>
 
 <h3 id="larger-example-using-coremap">Larger Example Using Core.Map</h3>
 <ul>
@@ -513,34 +544,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h3 id="a-few-other-module-features-include-and-with">A few other module features: <code>include</code> and <code>with</code></h3>
-
-<h4 id="include"><code>include</code></h4>
-
-<ul>
-  <li><code>include</code> is pretty straightforward, it “copies/pastes” one module or module type’s definitions inside a new definition.</li>
-  <li>We used this in the earlier homeworks so you already saw it.</li>
-  <li>It is a bit like inheritance in O-O languages
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">Sized_set</span> <span class="o">=</span> <span class="k">struct</span> 
-<span class="k">include</span> <span class="nc">Simple_set</span> 
-<span class="k">let</span> <span class="n">size</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">s</span>
-<span class="k">end</span>
-</code></pre></div>    </div>
-  </li>
-  <li>This will make a new module <code>Sized_set</code> which is the same as <code>Simple_set</code> but with an added <code>size</code> function.</li>
-  <li>Observe how <code>'a t</code> works to refer to a type in <code>Simple_set</code>, just like we had pasted all that stuff in.</li>
-</ul>
-
-<p>Similarly module types (and also functors) can use <code>include</code></p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="k">type</span> <span class="nc">Size_set</span> <span class="o">=</span>
-  <span class="k">sig</span>
-    <span class="k">include</span> <span class="nc">Simple_set</span>
-    <span class="k">val</span> <span class="n">size</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
-  <span class="k">end</span>
-</code></pre></div></div>
-
-<h4 id="with"><code>with</code></h4>
+<h3 id="the-with-type-refinement-operation">The <code>with</code> type refinement operation</h3>
 
 <ul>
   <li><code>with</code> is sometimes needed when you have a module type with an abstract <code>type t</code> (just the type name, no explicit definition)</li>
@@ -608,6 +612,13 @@ Error: This expression has type int but an expression was expected of type<br />
     <span class="k">val</span> <span class="n">left</span> <span class="o">:</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">l</span>
     <span class="k">val</span> <span class="n">right</span> <span class="o">:</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span>
   <span class="k">end</span>
+</code></pre></div></div>
+
+<p>Sometimes we also want to inline the types: use <code>:=</code> in place of <code>=</code> for that:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">Matched_pair</span> <span class="o">=</span> <span class="p">(</span><span class="nc">Pair</span> <span class="o">:</span> <span class="nc">Pair</span> <span class="k">with</span> <span class="k">type</span> <span class="n">l</span> <span class="o">:=</span> <span class="kt">int</span> <span class="k">with</span> <span class="k">type</span> <span class="n">r</span> <span class="o">:=</span> <span class="kt">string</span><span class="p">);;</span>
+<span class="k">module</span> <span class="nc">Matched_pair</span> <span class="o">:</span>
+  <span class="k">sig</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">string</span> <span class="k">val</span> <span class="n">left</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="k">val</span> <span class="n">right</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="k">end</span>
 </code></pre></div></div>
 
 <h3 id="other-data-structures-in-core">Other Data Structures in <code>Core</code></h3>

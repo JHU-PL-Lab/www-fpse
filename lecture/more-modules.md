@@ -302,19 +302,35 @@ module type SSF_hidden = functor (M : Eq) ->
     module String_set_hidden = Simple_set_functor_hidden(String);;
 ```
 
+### File-based functors and type hiding
+
+* In making real software we are putting all the code in the `.ml` files
+* So for functors just put the `Simple_set_functor` in the file, say file `simple_set.ml`
+  - but, we will rename it `Make` so `Simple_set.Make(Float)` for example will make a `Simple_set`
+* Then to hide information make a `simple_set.mli` file which lists the types of everything
+  - There is a specific naming convention on how to do this which is subtle
+  - We will review [set-example-functor.zip](../examples/set-example-functor.zip) which is our old set example redone as a functor
+
 ### `Core`'s Set, Map, Hash table, etc
 
 * The `Core` advanced data structures support something similar to what we did above
   - "plug in the comparison in an initialization phase and then forget about it"
 * Here for example is how you make a map where the key is a built-in type (which has an associated module)
+* `Map.Make` is a functor just like our `Simple_set.Make` above
+ - We need to supply the type of *keys* as we need to compare on them; the types of values is arbitrary so we let it be `'a` as in a list
 
 ```ocaml
 # module FloatMap = Map.Make(Float);; (* Or Char/Int/String/Bool/etc *)
 module FloatMap :
   sig ... end
+# FloatMap.empty;;
+- : 'a FloatMap.t = <abstr> (* The Float keys are hardwired and the map values are 'a (unconstrained when map empty) *)
+# FloatMap.singleton 4. 5;; (* make a singleton map with a float mapping to an int - fixes 'a to be int *)
+- : int FloatMap.t = <abstr>
 ```
 
-* Note it requires a bit more than just the type and comparison to be in `Float` for this to work with `Core`
+* Note it requires a bit more than just the type and `compare`` to be in `Float` for this to work with `Core`
+ - `#show Map.Make;;` will show the functor type and we can look at what `Map.Make`s argument expects
  - to/from S-expression conversions needed; use `[@@deriving compare, sexp]` on your own type:
 
 ```ocaml
@@ -386,6 +402,8 @@ type 'a intpairmaptree =
     Leaf
   | Node of 'a IPMap.t * 'a intpairmaptree * 'a intpairmaptree
 ```
+* Notice how we refer to our pair map type as `'a IPMap.t`, its a bit of a mouthful to see at first
+  - but if it was a list it would be `'a list` here and `'a List.t` is just an alias for that.
 
 ### Larger Example Using Core.Map
 * We will go over the code of [school.ml](../examples/school.ml), simple code that uses a `Core.Map`.
@@ -395,33 +413,8 @@ type 'a intpairmaptree =
   - Imagine if for every `List` type we had to make an `IntList`, `StringList` etc module - painful!
   - (`List` itself avoids this problem by not being comparison-friendly, we had to pass in `compare` to `List.sort` for example)
 
-### A few other module features: `include` and `with`
+### The `with` type refinement operation
 
-#### `include`
-
-* `include` is pretty straightforward, it "copies/pastes" one module or module type's definitions inside a new definition.
-* We used this in the earlier homeworks so you already saw it.
-* It is a bit like inheritance in O-O languages
-```ocaml
-# module Sized_set = struct 
-  include Simple_set 
-  let size (s : 'a t) = List.length s
-end
-```
- * This will make a new module `Sized_set` which is the same as `Simple_set` but with an added `size` function.
- * Observe how `'a t` works to refer to a type in `Simple_set`, just like we had pasted all that stuff in.
-
- Similarly module types (and also functors) can use `include`
-
-```ocaml
-module type Size_set =
-  sig
-    include Simple_set
-    val size : 'a t -> int
-  end
-```
-
-#### `with`
 
 * `with` is sometimes needed when you have a module type with an abstract `type t` (just the type name, no explicit definition)
  - Sometimes you made it just `type t` not to hide it like we did in `simple_set.mli`, but because **we didn't know it** - it is a generic type.
@@ -489,6 +482,14 @@ module type Pair_int_string =
     val left : l * r -> l
     val right : l * r -> r
   end
+```
+
+Sometimes we also want to inline the types: use `:=` in place of `=` for that:
+
+```ocaml
+# module Matched_pair = (Pair : Pair with type l := int with type r := string);;
+module Matched_pair :
+  sig type t = int * string val left : t -> int val right : t -> string end
 ```
 
 ### Other Data Structures in `Core`
