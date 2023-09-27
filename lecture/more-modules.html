@@ -450,9 +450,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Note it requires a bit more than just the type and <code>compare</code><code> to be in </code>Float<code> for this to work with </code>Core`</li>
+  <li>Note it requires a bit more than just the type and <code>compare</code> to be in <code>Float</code> for this to work with <code>Core</code></li>
   <li><code>#show Map.Make;;</code> will show the functor type and we can look at what <code>Map.Make</code>s argument expects</li>
-  <li>to/from S-expression conversions needed; use <code>[@@deriving compare, sexp]</code> on your own type:</li>
+  <li>In particular to/from S-expression conversions are also needed; use <code>[@@deriving compare, sexp]</code> on your own type:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_jane"</span><span class="p">;;</span>
@@ -463,7 +463,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="k">sig</span>
     <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span>
     <span class="k">val</span> <span class="n">compare</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
-    <span class="k">val</span> <span class="n">t_of_sexp</span> <span class="o">:</span> <span class="nn">Sexplib0</span><span class="p">.</span><span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+    <span class="k">val</span> <span class="n">t_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
     <span class="k">val</span> <span class="n">sexp_of_t</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span>
   <span class="k">end</span>
 <span class="o">#</span> <span class="k">module</span> <span class="nc">IPMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="nc">IntPair</span><span class="p">);;</span>
@@ -614,7 +614,7 @@ Error: This expression has type int but an expression was expected of type<br />
   <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Sometimes we also want to inline the types: use <code>:=</code> in place of <code>=</code> for that:</p>
+<p>Sometimes we also want to inline the types we are instantiating in <code>with</code>: use <code>:=</code> in place of <code>=</code> for that:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">Matched_pair</span> <span class="o">=</span> <span class="p">(</span><span class="nc">Pair</span> <span class="o">:</span> <span class="nc">Pair</span> <span class="k">with</span> <span class="k">type</span> <span class="n">l</span> <span class="o">:=</span> <span class="kt">int</span> <span class="k">with</span> <span class="k">type</span> <span class="n">r</span> <span class="o">:=</span> <span class="kt">string</span><span class="p">);;</span>
 <span class="k">module</span> <span class="nc">Matched_pair</span> <span class="o">:</span>

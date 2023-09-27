@@ -329,9 +329,9 @@ module FloatMap :
 - : int FloatMap.t = <abstr>
 ```
 
-* Note it requires a bit more than just the type and `compare`` to be in `Float` for this to work with `Core`
+* Note it requires a bit more than just the type and `compare` to be in `Float` for this to work with `Core`
  - `#show Map.Make;;` will show the functor type and we can look at what `Map.Make`s argument expects
- - to/from S-expression conversions needed; use `[@@deriving compare, sexp]` on your own type:
+ - In particular to/from S-expression conversions are also needed; use `[@@deriving compare, sexp]` on your own type:
 
 ```ocaml
 #require "ppx_jane";;
@@ -342,7 +342,7 @@ module IntPair :
   sig
     type t = int * int
     val compare : t -> t -> int
-    val t_of_sexp : Sexplib0.Sexp.t -> t
+    val t_of_sexp : Sexp.t -> t
     val sexp_of_t : t -> Sexp.t
   end
 # module IPMap = Map.Make(IntPair);;
@@ -484,7 +484,7 @@ module type Pair_int_string =
   end
 ```
 
-Sometimes we also want to inline the types: use `:=` in place of `=` for that:
+Sometimes we also want to inline the types we are instantiating in `with`: use `:=` in place of `=` for that:
 
 ```ocaml
 # module Matched_pair = (Pair : Pair with type l := int with type r := string);;

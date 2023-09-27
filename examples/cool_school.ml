@@ -33,7 +33,7 @@ let add grade stud (school : t) =  Map.add_multi school ~key:grade ~data:stud
 let sort (school : t) : t = 
   Map.fold school
     ~init:empty 
-    ~f:(fun ~key -> fun ~data -> fun scl -> Map.add_exn scl ~key ~data:(List.sort data ~compare:(String.compare) ))
+    ~f:(fun ~key ~data scl -> Map.add_exn scl ~key ~data:(List.sort data ~compare:(String.compare) ))
 
 (** Note that Map.map is a better way; it maps over the values only, keeping key structure intact **)
 let sort_better_with_map (school : t) : t = 
