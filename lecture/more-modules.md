@@ -350,7 +350,7 @@ module IPMap :
   sig ... end
 # module IPSet = Set.Make(IntPair);;  (* Sets in Core also need compare (sorts internally) *)
 ...
-# IPSet.(empty |> Fn.flip add (1,2) |> Fn.flip add (3,2) |> Fn.flip add (3,2) |> to_list);;
+# IPSet.empty |> Fn.flip Set.add (1,2) |> Fn.flip Set.add (3,2) |> Fn.flip Set.add (3,2) |> Set.to_list;;
 - : IntPair.t list = [(1, 2); (3, 2)]
 ```
 
