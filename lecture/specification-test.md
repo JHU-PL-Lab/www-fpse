@@ -16,7 +16,6 @@
 * In practice all of these modes can be fruitful depending on the project and how mission-critical it is.
 
 ### Forms of specification
-
 Specifications can range from informal to completely rigorous and unambiguous
 
 * Requirements and Design documents: high-level informal descriptions of what the app should do
@@ -121,7 +120,9 @@ val count_parties : voter list -> int * int = <fun>
 
 Conclusion: Don't **wrestle** with OCaml's types, *dance* with them
 
-### Preconditions and Postconditions
+<a name="specs"></a>
+
+### Preconditions Postconditions and Data Structure Invariants
 
 * Types are fine for high-level structural information, but cannot express deeper properties.
   - "a function only takes non-negative input"

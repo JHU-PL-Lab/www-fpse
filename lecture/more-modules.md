@@ -323,10 +323,10 @@ module type SSF_hidden = functor (M : Eq) ->
 # module FloatMap = Map.Make(Float);; (* Or Char/Int/String/Bool/etc *)
 module FloatMap :
   sig ... end
-# FloatMap.empty;;
-- : 'a FloatMap.t = <abstr> (* The Float keys are hardwired and the map values are 'a (unconstrained when map empty) *)
-# FloatMap.singleton 4. 5;; (* make a singleton map with a float mapping to an int - fixes 'a to be int *)
-- : int FloatMap.t = <abstr>
+# let mm = FloatMap.empty;;
+val mm : 'a FloatMap.t = <abstr> (* mm itself encapsulates that it is a Float map *)
+# Map.add_exn mm ~key:0.4 ~data:5 |> Fn.flip Map.find_exn 0.4 ;; (* Can just use Map. interface since mm defines key type *)
+- : int = 5
 ```
 
 * Note it requires a bit more than just the type and `compare` to be in `Float` for this to work with `Core`
