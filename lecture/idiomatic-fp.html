@@ -68,10 +68,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     
 <h2 id="idiomatic-functional-programming">Idiomatic Functional Programming</h2>
-<p>This a major theme of the course; we have already covered some of this but let’s put it all together now.</p>
+<p>This a major theme of the course; we covered some of this already but let’s put it all together.</p>
 
 <ul>
-  <li>design principles, design patterns, refactoring (OO) = principles &amp; idioms (FP)</li>
+  <li>Design principles, design patterns, refactoring (OO) = principles &amp; idioms (FP)</li>
   <li><strong>Principles</strong>: overarching principles; <strong>Idioms</strong>: more focused ideas to aid in achieving principles</li>
 </ul>
 
@@ -83,7 +83,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Goal of making code as short as possible</li>
       <li>From the classic Strunk and White English writing guide:
         <blockquote>
-          <p>A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts (<strong>and, code should have no unnecessary constructs</strong>).</p>
+          <p>A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts (<strong>and, we add that code should have no unnecessary constructs</strong>).</p>
         </blockquote>
       </li>
       <li>Concise code means on a larger program more will fit in your brain’s working set</li>
@@ -99,7 +99,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>Recall how pure functional code is referentially transparent, the behavior is all in the interface with no “hidden” actions.</li>
       <li>Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on</li>
-      <li>But, if the pipeline metaphor is failing, considewr adding side effects</li>
+      <li>But, if the pipeline metaphor is failing, side effects may make it overall more concise</li>
     </ul>
   </li>
   <li>Speed
@@ -111,7 +111,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority<br />
     - <strong>But</strong>, sometimes speed really matters</li>
       <li>When data sets get large or algorithms get complex</li>
-      <li>Do generally avoid high polynomial or exponential algorithms on potentially lare inputs</li>
+      <li>Do generally avoid high polynomial or exponential algorithms on potentially large inputs</li>
       <li>Also pay more attention when data sets get extremely large, even n vs n log n gets noticeable there.</li>
     </ul>
   </li>
@@ -136,7 +136,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>If a function is not local to a single function but is not used outside its module, leave it out of the module type (e.g. <code>.mli</code> file) which will hide it to module users</li>
-  <li>Make a new module for a new data type, include operations on the type (only) in it
+  <li>Make a new module for a new data type, and include operations on the type (only) in it
     <ul>
       <li>This is not just for generic data structures lke <code>Map</code>/<code>Set</code>, it is for app-specific data structures</li>
       <li>Example: <code>ChessBoard</code> is a nontrivial data type for a chess game, make it its own module</li>
@@ -189,12 +189,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Our main goal is conciseness, but in some cases efficiency does matter</li>
-  <li>So, here is an initial discussion of some efficiency issues in FP; more later as well</li>
+  <li>We already discussed this issue a bit (e.g. cons vs append, tail recursion), here is a bit more and we will cover even more later.</li>
 </ul>
 
 <h3 id="tail-recursion">Tail recursion</h3>
 
 <ul>
+  <li>We largely covered this earlier</li>
   <li>A tail-recursive function is a function where there is no work to do after returning from recursive calls
     <ul>
       <li>Just bubble up the result</li>
@@ -257,26 +258,26 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Adding an element to the front (extending list) is constant time for list, O(n) for array
     <ul>
+      <li>array needs to be copied to get more memory</li>
       <li>different lists can share tail due to referential transparency</li>
     </ul>
   </li>
-  <li>But, instead of adding to array you are usually updating in-place which is constant</li>
-  <li>Updating one element of a list is worst-case O(n) - re-build whole list</li>
+  <li>Update of one element in an array is O(1); updating one element of a list is worst-case O(n) - re-build whole list</li>
   <li>Random access of nth element: O(n) list, O(1) array.</li>
-  <li>If you want fast random access to a “list” that is not growing / shrinking / changing, can use an <code>array</code>.</li>
+  <li>If you want fast random access to a “list” that is not growing / shrinking / changing, can in fact use an <code>array</code>.</li>
 </ul>
 
 <p><code>Map</code> vs <code>Hashtbl</code></p>
 <ul>
-  <li><code>Map</code> is implemented like the <code>dict</code> of the homework, but avoids the worst case of an unbalanced tree (on average the <code>dict</code> should be good but it could build a long thin tree in worst case)</li>
-  <li>O(log n) time for <code>Map</code> to look up, add, or change an entry</li>
-  <li>O(1) for <code>Hashtbl</code> - will matter for really big data sets.</li>
+  <li><code>Map</code> is implemented like the <code>dict</code> of the homework, but the tree is rebalanced always</li>
+  <li>O(log n) worst case time for <code>Map</code> to look up, add, or change an entry</li>
+  <li>“O(1) amortized” for <code>Hashtbl</code> - will only matter for really big data sets.</li>
 </ul>
 
 <p><code>Set</code> vs <code>Hash_set</code></p>
 <ul>
   <li>
-    <p>See previous; again the mutable is constant and the immutable is O(log n) for common operations</p>
+    <p>See previous, <code>Set</code> is like <code>Map</code> and <code>Hash_set</code> is like <code>Hashtbl</code></p>
   </li>
   <li>
     <p><a href="https://ocaml.org/learn/tutorials/comparison_of_standard_containers.html">Here is a summary of OCaml data structure complexity</a> (for the standard OCaml library but same results as <code>Core</code> version)</p>
@@ -284,7 +285,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>
     <p>Is functional ever any better?  Yes!</p>
     <ul>
-      <li>If you have many related maps, e.g. repeatedly forking off a map into two sub-versions</li>
+      <li>If you have many closely related maps, e.g. repeatedly forking off a map into two sub-versions</li>
       <li>Due to referential transparency the cost of copying is <strong>zero</strong>!!</li>
       <li>Multiple Lists similarly can share common portions</li>
       <li>See <a href="https://dev.realworldocaml.org/maps-and-hashtables.html">Real World OCaml benchmarks (scroll down)</a> for example benchmarks of this</li>
@@ -296,9 +297,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p><a name="examples"></a></p>
 <ul>
   <li>
-    <p>Here are some codebases we will spend a whole class inspecting and critiqueing.</p>
+    <p>Here are example codebases we will spend some time inspecting and critiqueing.</p>
 
     <ul>
+      <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper">Minesweeper</a> at Exercism.io
+        <ul>
+          <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c">This functional implementation</a> shows several nice OCaml patterns. <a href="../examples/minesweeper.ml">Here</a> is the version we reviewed in class which has several variations on the original implementation.</li>
+          <li>Will look at an <a href="https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae59540d18f3c18615dcbb956">imperative approach</a> with a little too much imperative-think in it</li>
+          <li>We also made a <a href="../examples/mine_array.ml">variation on the functional version</a> to be less inefficient and with a bit of cleaning up</li>
+        </ul>
+      </li>
       <li><a href="https://github.com/UnixJunkie/dolog">dolog</a> is a very simple logging utility
         <ul>
           <li>Shows some nice use of state, <code>include</code>, and a <code>Make</code> functor.</li>
@@ -307,13 +315,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li><a href="https://github.com/marcoonroad/ocaml-cuid">ocaml-cuid</a> is a utility to generate highly random string IDs for webpages etc.
         <ul>
           <li>Lots of nice piping here</li>
-        </ul>
-      </li>
-      <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper">Minesweeper</a> at Exercism.io
-        <ul>
-          <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c">This functional implementation</a> shows several nice OCaml patterns. <a href="../examples/minesweeper.ml">Here</a> is the version we reviewed in class which has several variations on the original implementation.</li>
-          <li>Will look at an <a href="https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae59540d18f3c18615dcbb956">imperative approach</a> with a little too much imperative-think in it</li>
-          <li>We also made a <a href="../examples/mine_array.ml">variation on the functional version</a> to be less inefficient and with a bit of cleaning up</li>
         </ul>
       </li>
     </ul>

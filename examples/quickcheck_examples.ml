@@ -42,7 +42,7 @@ let int_list_gen' = [%quickcheck.generator: int list]
 (* Lists with a narrower range of integers *)
 let int_list_gen'' = List.quickcheck_generator int_gen'
 
-(* Similarly can compose two generators to generate a pair via Quickcheck.Generator.both *)
+(* Can compose two generators to generate a pair via Quickcheck.Generator.both *)
 let rand_list_pair = rand_from (Quickcheck.Generator.both int_list_gen int_list_gen)
 
 (* **************************************** *)
@@ -52,21 +52,37 @@ let rand_list_pair = rand_from (Quickcheck.Generator.both int_list_gen int_list_
 (* We could just directly use the above code to make some number of random test cases and then run them *)
 (* But, Quickcheck has some helper functions to make that easier and with lots of extra arguments possible *)
 
-(* Note that we always need to know the "correct" answer for the test so that limits what can be tested *)
+(* IMPORTANT POINT: we always need to know the "correct" answer for the test and that limits what can be tested *)
 (* So, primarily used to validate invariants or to make sure no exceptions are raised *)
 
 (* Simple failure example from Real World OCaml *)
 (* Quickcheck.test will run the ~f function on 10000 different random data items by default *)
-
-(* Replace `assert` with `OUnit2.assert_bool "test name"` and put it under fun _ -> and this code will be an OUnit test. *)
 let invariant x = assert(Sign.equal (Int.sign (Int.neg x)) (Sign.flip (Int.sign x)))
 
-let () =
+let testcode () =
   Quickcheck.test ~sexp_of:[%sexp_of: int] (* optional sexp_of needed to see failure case if any *)
     (Int.gen_incl Int.min_value Int.max_value) ~f:invariant
 
-(* Check to see if (reverse o reverse) is identity on all lists *)    
-let check_a_list_rev revver = 
+let informal_test = testcode ()
+
+(* To add to a suite we need to embed in OUnit. First change assert in invariant to OUnit version *)
+
+let ounit_invariant x = OUnit2.assert_bool "" (Sign.equal (Int.sign (Int.neg x)) (Sign.flip (Int.sign x)))
+
+(* Make a quickcheck runner for this invariant *)
+let quick_test () = Quickcheck.test ~sexp_of:[%sexp_of: int]
+           (Int.gen_incl Int.min_value Int.max_value) ~f:ounit_invariant
+
+(* Here it is packaged as an OUnit.test we can run *)
+let ounit_test = OUnit2.("sign test" >:: fun _ -> quick_test ())
+
+let _ = OUnit2.run_test_tt_main ounit_test (* run our OUnit.test in the top loop *)
+
+(* List Reverse Example *)
+
+
+(* Check to see if (reverse o reverse) is identity on all lists using int_list_gen above *)    
+let check_a_list_rev (revver : int list -> int list) = 
   Quickcheck.test ~sexp_of:[%sexp_of: int list]
     int_list_gen
     ~f:(fun l -> assert(List.equal Int.equal (revver (revver l)) l))

@@ -450,10 +450,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>There is not much in <code>OUnit2</code> per se, if you want something extra just write some higher-order functions to do it</li>
     </ul>
   </li>
-  <li>Here is your standard simple <code>tests.ml</code> file, from the simple-set example:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">OUnit2</span>
+  <li>To review, here is your standard simple <code>tests.ml</code> file, this one is from the simple-set example:
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">OUnit2</span>
 <span class="k">open</span> <span class="nc">Simple_set</span>
 
 <span class="k">let</span> <span class="n">tests</span> <span class="o">=</span> <span class="s2">"test suite for set"</span> <span class="o">&gt;:::</span> <span class="p">[</span>
@@ -463,10 +461,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="p">]</span>
 
 <span class="k">let</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">run_test_tt_main</span> <span class="n">tests</span>
-</code></pre></div></div>
-
-<ul>
-  <li>The infix <code>&gt;::</code> operator takes a string (test name) and a piece of test code under <code>fun _ -&gt;</code> (to keep it from running right away) and builds a single test of type <code>test</code>:
+</code></pre></div>    </div>
+  </li>
+  <li><code>OUnit2.assert_equal</code> is just the <code>OUnit2</code> version of <code>assert</code>, it uses <code>Poly.(=)</code> for simplicity (but be careful)</li>
+  <li>The infix <code>&gt;::</code> operator takes a string (test name) and a piece of test code under <code>fun _ -&gt;</code> (to keep it from running right away) and builds a single test of type <code>test</code> (type <code>#require "ounit2"</code> and <code>open OUnit2</code> to the top-loop before playing with this code there):
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">test1</span> <span class="o">=</span> <span class="s2">"simple test"</span> <span class="o">&gt;::</span> <span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="mi">2</span> <span class="o">::</span> <span class="bp">[]</span><span class="p">)</span> <span class="p">[</span><span class="mi">2</span><span class="p">];;</span>
   <span class="k">val</span> <span class="n">test1</span> <span class="o">:</span> <span class="n">test</span> <span class="o">=</span>
   <span class="nc">TestLabel</span> <span class="p">(</span><span class="s2">"simple test"</span><span class="o">,</span>
@@ -482,10 +480,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <span class="nc">TestCase</span> <span class="p">(</span><span class="nc">Short</span><span class="o">,</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span><span class="p">))])</span>
 </code></pre></div>    </div>
   </li>
-  <li>Then, <code>OUnit2.run_test_tt_main tests</code> will run the suite <code>tests</code></li>
+  <li>Then, <code>OUnit2.run_test_tt_main tests</code> will run the suite <code>tests</code>
+    <ul>
+      <li>(note this will work but then freeze the top loop alas; the old <code>run_test_tt</code> is no longer existing sigh)</li>
+    </ul>
+  </li>
 </ul>
 
-<h4 id="how-the-tests-run">How the tests run</h4>
+<h4 id="how-the-tests-run-when-you-say-dune-test">How the tests run when you say dune test</h4>
 <ul>
   <li>The above <code>tests.ml</code> file is just defining an executable, like <code>keywordcount.exe</code> on HW2</li>
   <li>Build and run the executable to run the tests</li>
@@ -537,7 +539,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="n">make_rev_suite</span> <span class="p">[[];[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];[</span><span class="mi">2</span><span class="p">;</span><span class="mi">44</span><span class="p">;</span><span class="mi">2</span><span class="p">];[</span><span class="mi">32</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">1</span><span class="p">]];;</span>
-<span class="k">let</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">run_test_tt_main</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* DON'T actually do this line in utop, runs but crashes utop! *)</span>
+<span class="k">let</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">run_test_tt_main</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* recall this crashes the top loop when finished *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -599,12 +601,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>We used <code>assert_equal</code> above which is the OUnit function to check things being equal</li>
   <li><code>assert_bool</code> which is like the <code>assert</code> OCaml command: <code>assert_bool "name that test" (0=0)</code> for example</li>
   <li>If you want to verify some code raises an exception, use <code>assert_raises</code></li>
-  <li>To perform acceptance testing (I/O), use <code>assert_command</code> to run a shell command and compare against output</li>
+  <li>To perform acceptance testing (I/O), use <code>assert_command</code> to run a shell command and compare against output
+    <ul>
+      <li>we are using <code>assert_command</code> to test your A2P2</li>
+    </ul>
+  </li>
   <li>If you need fixed setup/teardown code bracketing a group of tests to setup e.g. files: <code>bracket_tmpfile</code></li>
 </ul>
 
 <p>As always, see the documentation for more details: <br />
-OUnit <a href="https://ocaml.org/p/ounit2/latest/doc/index.html">API docs</a></p>
+OUnit2 <a href="https://ocaml.org/p/ounit2/latest/doc/index.html">API docs</a></p>
 
 <h3 id="bisect-for-ocaml-code-coverage">Bisect for OCaml code coverage</h3>
 
@@ -614,18 +620,27 @@ OUnit <a href="https://ocaml.org/p/ounit2/latest/doc/index.html">API docs</a></p
       <li>it can then show which lines are “hit” upon running your test suite</li>
     </ul>
   </li>
-  <li>Add <code>(preprocess (pps bisect_ppx))</code> to library or executable declaration in <code>dune</code> to decorate</li>
-  <li>Then do a <code>dune test</code> which will generate the low-level hit-lines data in a file.</li>
-  <li>Shell command <code>bisect-ppx-report html</code> generates a pretty report showing which lines hit
+  <li>Add <code>(preprocess (pps bisect_ppx))</code> to library or executable declaration in <code>dune</code> to decorate
+    <ul>
+      <li><em>don’t</em> add to your <code>(test ... )</code> dune declaration, you want to count lines hit in your code not in your test code!</li>
+    </ul>
+  </li>
+  <li>Then do a <code>dune test</code> which will generate the low-level hit-lines data in a file.
+    <ul>
+      <li>or <code>dune exe</code> and run your app if you want to see coverage there</li>
+    </ul>
+  </li>
+  <li>Shell command <code>bisect-ppx-report html</code> generates a pretty report showing which lines hit in latest execution
     <ul>
       <li>open <code>_coverage/index.html</code> in your browser to see the report</li>
+      <li>if this command is not working make sure you did the <code>opam install bisect-ppx</code> in the course required installs</li>
     </ul>
   </li>
   <li>See <a href="https://github.com/aantron/bisect_ppx">Bisect docs</a> for more details</li>
   <li>Note that if you have lines of code that you know should not be run (e.g. invariants that should not fail) you can put <code>[@@@coverage off]</code> on them.</li>
 </ul>
 
-<p>We will check how well my tests of the simple set example covered the code using Bisect</p>
+<p>We will check how well my tests of the <a href="../examples/set-example.zip">simple set example</a> covered the code using Bisect.  The only addition to code is the <code>(preprocess (pps bisect_ppx))</code> added to <code>src/dune</code> for the library.</p>
 
 <h2 id="testing-executables">Testing executables</h2>
 <ul>

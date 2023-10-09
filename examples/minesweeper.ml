@@ -1,10 +1,9 @@
-(* Directly from
+(* Derived from
     https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c
 
-   With explanatory comments added by SFS.
 *)
 
-open Base
+open Core
 
 let to_char = function
   | -1 -> '*'
@@ -19,44 +18,44 @@ let to_char = function
   | _ -> ' '
 
 module Board = struct
-  type t = string list (* board data; see test/test.ml for examples *)
+  type t = string list (* board data; see test/test.ml for examples. This is a too-low-level representation *)
 
   (* get the (x,y) character on board b.
      
-    Should return `None` in all error cases, e.g. (x,y) is not on the grid, etc.
+    Should return `None` in all error cases where (x,y) is not on grid
 
      We will write several different equivalent versions to compare. *)
 
-  let get0 (b : t) (x : int) (y : int) : char option =
+  let get (b : t) (x : int) (y : int) : char option =
     match List.nth b y with (* If y is too big or small List.nth will return None *)
     | None -> None 
     | Some(row) -> try Some(String.get row x) with Invalid_argument _ -> None  
 
 (* Let us rewrite the above using some Option library functions;
    Hover over the functions to see their types.  *)    
-  let get (b : t) (x : int) (y : int) : char option =
+  let get' (b : t) (x : int) (y : int) : char option =
     List.nth b y
     |> Option.value_map ~default:None ~f:(fun row ->
            Option.try_with (fun () -> String.get row x))
 
   (* Option.bind is like value_map but implicitly propagates None (bubbles it up) 
      This implicit bubbling is part of monadic programming, lots more later on that! *)
-  let get' (b : t) (x : int) (y : int) : char option =
+  let get'' (b : t) (x : int) (y : int) : char option =
     List.nth b y
     |> Option.bind ~f:(fun row -> Option.try_with (fun () -> String.get row x))
 
   (* Shorthand pipe notation >>=, it is just infix Option.bind; 
      need to open Option to enable *)
 
-  let get'' (b : t) (x : int) (y : int) : char option =
+  let get''' (b : t) (x : int) (y : int) : char option =
     Option.(List.nth b y >>= fun row -> try_with (fun () -> String.get row x))
 
   (* Another equivalent notation for Option.bind where you don't need to make the fun row -> ... ;
      instead use let%bind to bind the `row` here.
      let%bind allows the None case to be implicit in the background: it reads like regular code
-     Compare with the get'' version, it is just a small bit of syntax sugar
+     Compare with the get''' version, it is just a small bit of syntax sugar
  *)
-  let get''' (b : t) (x : int) (y : int) : char option =
+  let get'''' (b : t) (x : int) (y : int) : char option =
     let open Option in (* let open Option in .. is like Option.(...) *)
     let open Let_syntax in (* need to open this module to get let%bind to work *)
     let%bind row = List.nth b y in

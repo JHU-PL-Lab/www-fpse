@@ -1,8 +1,8 @@
 
 ## Idiomatic Functional Programming
-This a major theme of the course; we have already covered some of this but let's put it all together now.
+This a major theme of the course; we covered some of this already but let's put it all together.
 
-* design principles, design patterns, refactoring (OO) = principles & idioms (FP)
+* Design principles, design patterns, refactoring (OO) = principles & idioms (FP)
 * **Principles**: overarching principles; **Idioms**: more focused ideas to aid in achieving principles
 
 ### FP Principles
@@ -10,7 +10,7 @@ This a major theme of the course; we have already covered some of this but let's
 1. "Concise is nice"
  - Goal of making code as short as possible
  - From the classic Strunk and White English writing guide:
-     > A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts (**and, code should have no unnecessary constructs**).
+     > A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts (**and, we add that code should have no unnecessary constructs**).
  - Concise code means on a larger program more will fit in your brain's working set
 2. Modularity / focus of responsibility
   - Make clear divisions of responsibility between different modules and functions
@@ -18,14 +18,14 @@ This a major theme of the course; we have already covered some of this but let's
 3. Generally avoid side effects; it will help you achieve 1. and 2.
   - Recall how pure functional code is referentially transparent, the behavior is all in the interface with no "hidden" actions.
   - Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on
-  - But, if the pipeline metaphor is failing, considewr adding side effects
+  - But, if the pipeline metaphor is failing, side effects may make it overall more concise
 4. Speed
   - There is always a trade-off in programming between efficiency and elegance
   - Much of the time it is possible to prioritize concision and modularity over running time and space
       - Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority
   - **But**, sometimes speed really matters
     - When data sets get large or algorithms get complex
-    - Do generally avoid high polynomial or exponential algorithms on potentially lare inputs
+    - Do generally avoid high polynomial or exponential algorithms on potentially large inputs
     - Also pay more attention when data sets get extremely large, even n vs n log n gets noticeable there.
 
 ### FP Idioms
@@ -41,7 +41,7 @@ Here is a list of idioms, many of which are review as we touched on them before
   - If a function is auxiliary to only one other function, define it in the body of the latter.
      - i.e. `let f x = let aux y = ..<aux's body>.. in .. <f's body> ..`
   - If a function is not local to a single function but is not used outside its module, leave it out of the module type (e.g. `.mli` file) which will hide it to module users
-  - Make a new module for a new data type, include operations on the type (only) in it
+  - Make a new module for a new data type, and include operations on the type (only) in it
      - This is not just for generic data structures lke `Map`/`Set`, it is for app-specific data structures
      - Example: `ChessBoard` is a nontrivial data type for a chess game, make it its own module
   - Hide types `t` in module types if users don't need to see the details
@@ -73,10 +73,11 @@ Here is a list of idioms, many of which are review as we touched on them before
 ## Efficiency
 
 * Our main goal is conciseness, but in some cases efficiency does matter
-* So, here is an initial discussion of some efficiency issues in FP; more later as well
+* We already discussed this issue a bit (e.g. cons vs append, tail recursion), here is a bit more and we will cover even more later.
 
 ### Tail recursion
 
+* We largely covered this earlier 
 * A tail-recursive function is a function where there is no work to do after returning from recursive calls
   - Just bubble up the result
 * Observe: since there is no need to mark the call point to resume from, no stack is needed!
@@ -126,37 +127,37 @@ let concatenate l = fold_left ~f:(^) ~init:"" l
 
 `List` vs `Array`
  * Adding an element to the front (extending list) is constant time for list, O(n) for array 
+   - array needs to be copied to get more memory
    - different lists can share tail due to referential transparency
- * But, instead of adding to array you are usually updating in-place which is constant
- * Updating one element of a list is worst-case O(n) - re-build whole list
+ * Update of one element in an array is O(1); updating one element of a list is worst-case O(n) - re-build whole list
  * Random access of nth element: O(n) list, O(1) array.
- * If you want fast random access to a "list" that is not growing / shrinking / changing, can use an `array`.
+ * If you want fast random access to a "list" that is not growing / shrinking / changing, can in fact use an `array`.
 
 `Map` vs `Hashtbl`
- * `Map` is implemented like the `dict` of the homework, but avoids the worst case of an unbalanced tree (on average the `dict` should be good but it could build a long thin tree in worst case)
- * O(log n) time for `Map` to look up, add, or change an entry
- * O(1) for `Hashtbl` - will matter for really big data sets.
+ * `Map` is implemented like the `dict` of the homework, but the tree is rebalanced always
+ * O(log n) worst case time for `Map` to look up, add, or change an entry
+ * "O(1) amortized" for `Hashtbl` - will only matter for really big data sets.
 
 `Set` vs `Hash_set`
-* See previous; again the mutable is constant and the immutable is O(log n) for common operations
+* See previous, `Set` is like `Map` and `Hash_set` is like `Hashtbl`
 
 * [Here is a summary of OCaml data structure complexity](https://ocaml.org/learn/tutorials/comparison_of_standard_containers.html) (for the standard OCaml library but same results as `Core` version)
 
 * Is functional ever any better?  Yes!
-  - If you have many related maps, e.g. repeatedly forking off a map into two sub-versions
+  - If you have many closely related maps, e.g. repeatedly forking off a map into two sub-versions
   - Due to referential transparency the cost of copying is **zero**!!
   - Multiple Lists similarly can share common portions
   - See [Real World OCaml benchmarks (scroll down)](https://dev.realworldocaml.org/maps-and-hashtables.html) for example benchmarks of this
 
 ### Examples of Idiomatic FP
 <a name = "examples"></a>
-* Here are some codebases we will spend a whole class inspecting and critiqueing.
+* Here are example codebases we will spend some time inspecting and critiqueing.
 
-  * [dolog](https://github.com/UnixJunkie/dolog) is a very simple logging utility
-     - Shows some nice use of state, `include`, and a `Make` functor.
-  * [ocaml-cuid](https://github.com/marcoonroad/ocaml-cuid) is a utility to generate highly random string IDs for webpages etc.
-     - Lots of nice piping here
   * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io 
     - [This functional implementation](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c) shows several nice OCaml patterns. [Here](../examples/minesweeper.ml) is the version we reviewed in class which has several variations on the original implementation.
     - Will look at an [imperative approach](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae59540d18f3c18615dcbb956) with a little too much imperative-think in it
     - We also made a [variation on the functional version](../examples/mine_array.ml) to be less inefficient and with a bit of cleaning up
+  * [dolog](https://github.com/UnixJunkie/dolog) is a very simple logging utility
+     - Shows some nice use of state, `include`, and a `Make` functor.
+  * [ocaml-cuid](https://github.com/marcoonroad/ocaml-cuid) is a utility to generate highly random string IDs for webpages etc.
+     - Lots of nice piping here

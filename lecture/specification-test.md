@@ -274,22 +274,22 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
 * We have been using the `OUnit2` library mostly as a black box up to now
 * Now we will go through the details, which are in fact very simple
   - There is not much in `OUnit2` per se, if you want something extra just write some higher-order functions to do it
-* Here is your standard simple `tests.ml` file, from the simple-set example:
+* To review, here is your standard simple `tests.ml` file, this one is from the simple-set example:
+  ```ocaml
+  open OUnit2
+  open Simple_set
 
-```ocaml
-open OUnit2
-open Simple_set
+  let tests = "test suite for set" >::: [
+    "empty"  >:: (fun _ -> assert_equal (emptyset) (emptyset));
+    "3-elt"    >:: (fun _ -> assert_equal true (contains 5 (add 5 emptyset) (=)));
+    "1-elt nested" >:: (fun _ -> assert_equal false (contains 5 (remove 5 (add 5 emptyset) (=))(=)));
+  ]
 
-let tests = "test suite for set" >::: [
-  "empty"  >:: (fun _ -> assert_equal (emptyset) (emptyset));
-  "3-elt"    >:: (fun _ -> assert_equal true (contains 5 (add 5 emptyset) (=)));
-  "1-elt nested" >:: (fun _ -> assert_equal false (contains 5 (remove 5 (add 5 emptyset) (=))(=)));
-]
+  let () = run_test_tt_main tests
+  ```
 
-let () = run_test_tt_main tests
-```
-
-* The infix `>::` operator takes a string (test name) and a piece of test code under `fun _ ->` (to keep it from running right away) and builds a single test of type `test`:
+* `OUnit2.assert_equal` is just the `OUnit2` version of `assert`, it uses `Poly.(=)` for simplicity (but be careful)
+* The infix `>::` operator takes a string (test name) and a piece of test code under `fun _ ->` (to keep it from running right away) and builds a single test of type `test` (type `#require "ounit2"` and `open OUnit2` to the top-loop before playing with this code there):
   ```ocaml
   # let test1 = "simple test" >:: fun _ -> assert_equal (2 :: []) [2];;
     val test1 : test =
@@ -306,9 +306,10 @@ let () = run_test_tt_main tests
     [TestLabel ("simple test",
       TestCase (Short, <fun>))])
   ```
-* Then, `OUnit2.run_test_tt_main tests` will run the suite `tests`
+* Then, `OUnit2.run_test_tt_main tests` will run the suite `tests` 
+  - (note this will work but then freeze the top loop alas; the old `run_test_tt` is no longer existing sigh)
 
-#### How the tests run
+#### How the tests run when you say dune test
 * The above `tests.ml` file is just defining an executable, like `keywordcount.exe` on HW2
 * Build and run the executable to run the tests
 * Here a dune build file which would work for the simple set tests for example:
@@ -360,7 +361,7 @@ val make_rev_suite : 'a list list -> test = <fun>
 
 ```ocaml
 let s = make_rev_suite [[];[1;2;3];[2;44;2];[32;2;3;2;1]];;
-let () = run_test_tt_main s;; (* DON'T actually do this line in utop, runs but crashes utop! *)
+let () = run_test_tt_main s;; (* recall this crashes the top loop when finished *)
 ```
 
 * In general you can build an arbitrarily big tree of tests with suites of suites etc
@@ -415,23 +416,27 @@ utop # 3 ^^ 5;;
 * `assert_bool` which is like the `assert` OCaml command: `assert_bool "name that test" (0=0)` for example
 * If you want to verify some code raises an exception, use `assert_raises`
 * To perform acceptance testing (I/O), use `assert_command` to run a shell command and compare against output
+  - we are using `assert_command` to test your A2P2
 * If you need fixed setup/teardown code bracketing a group of tests to setup e.g. files: `bracket_tmpfile`
 
 As always, see the documentation for more details: 
-OUnit [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
+OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
 
 ### Bisect for OCaml code coverage
 
 * The `bisect_ppx` preprocessor can decorate your code with one hit-bit per line 
   - it can then show which lines are "hit" upon running your test suite
 * Add `(preprocess (pps bisect_ppx))` to library or executable declaration in `dune` to decorate
+  - *don't* add to your `(test ... )` dune declaration, you want to count lines hit in your code not in your test code!
 * Then do a `dune test` which will generate the low-level hit-lines data in a file.
-* Shell command `bisect-ppx-report html` generates a pretty report showing which lines hit
+  - or `dune exe` and run your app if you want to see coverage there
+* Shell command `bisect-ppx-report html` generates a pretty report showing which lines hit in latest execution
   - open `_coverage/index.html` in your browser to see the report
+  - if this command is not working make sure you did the `opam install bisect-ppx` in the course required installs
 * See [Bisect docs](https://github.com/aantron/bisect_ppx) for more details
 * Note that if you have lines of code that you know should not be run (e.g. invariants that should not fail) you can put `[@@@coverage off]` on them.
 
-We will check how well my tests of the simple set example covered the code using Bisect
+We will check how well my tests of the [simple set example](../examples/set-example.zip) covered the code using Bisect.  The only addition to code is the `(preprocess (pps bisect_ppx))` added to `src/dune` for the library.
 
 ## Testing executables
 * `OUnit` can be used to test executables: `OUnit2.assert_command` can run a shell command (e.g. your OCaml executable)
