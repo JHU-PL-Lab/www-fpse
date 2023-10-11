@@ -7,7 +7,11 @@ From https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae5
 *)
 open Core
 
+(* Better abstraction of the board cells here: *)
+
 type cell = Mine | Empty of int
+
+(* Far worse abstraction of the board, a 1D array not a 2D array - ! *)
 
 type state = { board : cell Array.t; rows : int; columns : int }
 

@@ -17,10 +17,15 @@ let to_char = function
   | 8 -> '8'
   | _ -> ' '
 
-module Board = struct
-  type t = string list (* board data; see test/test.ml for examples. This is a too-low-level representation *)
+(* A less low-level version of the above: *)  
 
-  (* get the (x,y) character on board b.
+let to_char' i = i |> Int.to_string |> (Fn.flip String.get) 0
+
+module Board = struct
+  type t = string list (* board data; see test/test.ml for examples. *)
+     (* string list is a too-low-level representation of 2D array, dimensions are not uniform *)
+
+  (* get the (x,y) character from board b.
      
     Should return `None` in all error cases where (x,y) is not on grid
 
@@ -51,7 +56,7 @@ module Board = struct
     Option.(List.nth b y >>= fun row -> try_with (fun () -> String.get row x))
 
   (* Another equivalent notation for Option.bind where you don't need to make the fun row -> ... ;
-     instead use let%bind to bind the `row` here.
+     instead use let%bind to bind the `row` here.  Need #require "ppx_jane";; for let%bind
      let%bind allows the None case to be implicit in the background: it reads like regular code
      Compare with the get''' version, it is just a small bit of syntax sugar
  *)
@@ -62,6 +67,8 @@ module Board = struct
     try_with (fun () -> String.get row x)
 
 (* Get a list of chars for all the squares adjacent to (x,y) *)    
+(* Note List.filter_map ~f:Fn.id [Some 4; None; Some 7; None; Some (-1)] is [4; 7; -1]: 
+     map Somes toss Nones *)
 
   let adjacents (b : t) (x : int) (y : int) : char list =
     let g xo yo = get b (x + xo) (y + yo) in
@@ -75,7 +82,9 @@ module Board = struct
   let is_field' c = not @@ is_mine c
 
   (* Apply a function to every element of the grid to produce a new grid 
-    f gets the x y coordinate as well as args *)
+    f gets the x y coordinate as well as args 
+    its a 2D extension of idea of the List.mapi function which lets f also see list position #:
+      List.mapi [1;2;3] ~f:(fun index i -> index + i) is  [1; 3; 5] *)
   let mapxy (b : t) ~(f : int -> int -> char -> char) : t =
     List.mapi b ~f:(fun y r ->
         String.mapi r ~f:(fun x c -> if is_field c then f x y c else c))
@@ -84,3 +93,4 @@ end
 let annotate (board : string list) =
   let count x y = Board.adjacents board x y |> List.count ~f:Board.is_mine in
   Board.mapxy board ~f:(fun x y _ -> count x y |> to_char)
+
