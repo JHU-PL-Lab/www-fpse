@@ -6,7 +6,7 @@ For the projects you are to conceive, design, and implement your own standalone 
 Here are the high-level requirements for the projects.
 
 * All the code must be in OCaml obviously (excepting small bits of glue code, or explicit exceptions if you petition)
-* You must use the standard course libraries -- `Core`, `Lwt`, `Yojson` etc -- as your basis, plus any other libraries you find useful.
+* You must use the standard course libraries -- `Core`, `Lwt`, `OUnit2` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 2-3 people, or possibly 4 if there are very distinct components.
 * OCaml excels for non-trivial algorithms and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help with.
 * You need to make a general library as part of your project, to get more experience with modules and functors in OCaml.  (This is not an absolute requirement as we don't want you to make some artificial library if there is none needed, but you will need to get an exception from us if so.)
@@ -72,8 +72,7 @@ Here are some concrete project ideas involving web client:
 This approach is for those with some background in this area.
 
 * A simple machine learning app using PyTorch or TensorFlow and possibly graphing it in Owl; see below for links to the OCaml libraries
-* Here is a [Jane Street Article](https://blog.janestreet.com/deep-learning-experiments-in-ocaml/) on use of TensorFlow within OCaml.
-* If you decide to use TensorFlow please please please get a little demo running to make sure the library works.  It is a very big library hard to get running in OCaml.
+
 
 ### Libraries Catalog
 Here is a list of well-maintained libraries we recommend using for the above approaches, as well as some lists you can find other libraries on.
@@ -96,7 +95,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 #### Data Processing
 There are some good libraries here but they don't have many users and we have had **many issues with people being able to install these libraries in the past**.  If you wanted to base your project around one of these libraries **you will be required to** (1) get the library successfully installed on all your team members' computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.
 * [Owl](https://ocaml.xyz/) is a very well-documented numerical processing library.
-* [ocaml-torch](https://github.com/LaurentMazare/ocaml-torch) PyTorch bindings for OCaml.
+* [ocaml-torch](https://github.com/janestreet/torch) PyTorch bindings for OCaml.   Note TensorFlow bindings are old and don't seem to work.
 * [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.
 
 #### And more!

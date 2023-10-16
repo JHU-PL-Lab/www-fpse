@@ -74,7 +74,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>All the code must be in OCaml obviously (excepting small bits of glue code, or explicit exceptions if you petition)</li>
-  <li>You must use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
+  <li>You must use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>OUnit2</code> etc – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 2-3 people, or possibly 4 if there are very distinct components.</li>
   <li>OCaml excels for non-trivial algorithms and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help with.</li>
   <li>You need to make a general library as part of your project, to get more experience with modules and functors in OCaml.  (This is not an absolute requirement as we don’t want you to make some artificial library if there is none needed, but you will need to get an exception from us if so.)</li>
@@ -159,8 +159,6 @@ BOOM!
 
 <ul>
   <li>A simple machine learning app using PyTorch or TensorFlow and possibly graphing it in Owl; see below for links to the OCaml libraries</li>
-  <li>Here is a <a href="https://blog.janestreet.com/deep-learning-experiments-in-ocaml/">Jane Street Article</a> on use of TensorFlow within OCaml.</li>
-  <li>If you decide to use TensorFlow please please please get a little demo running to make sure the library works.  It is a very big library hard to get running in OCaml.</li>
 </ul>
 
 <h3 id="libraries-catalog">Libraries Catalog</h3>
@@ -192,7 +190,7 @@ BOOM!
 <p>There are some good libraries here but they don’t have many users and we have had <strong>many issues with people being able to install these libraries in the past</strong>.  If you wanted to base your project around one of these libraries <strong>you will be required to</strong> (1) get the library successfully installed on all your team members’ computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.</p>
 <ul>
   <li><a href="https://ocaml.xyz/">Owl</a> is a very well-documented numerical processing library.</li>
-  <li><a href="https://github.com/LaurentMazare/ocaml-torch">ocaml-torch</a> PyTorch bindings for OCaml.</li>
+  <li><a href="https://github.com/janestreet/torch">ocaml-torch</a> PyTorch bindings for OCaml.   Note TensorFlow bindings are old and don’t seem to work.</li>
   <li><a href="https://github.com/zshipko/ocaml-bimage">ocaml-bimage</a> is an image processing library.</li>
 </ul>
 
