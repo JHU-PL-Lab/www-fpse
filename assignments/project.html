@@ -77,7 +77,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>You must use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>Yojson</code> etc – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 2-3 people, or possibly 4 if there are very distinct components.</li>
   <li>OCaml excels for non-trivial algorithms and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help with.</li>
-  <li>We <em>strongly recommend</em> that you make a general library as part of your project, to get more experience with modules and functors in OCaml.  (This is not an absolute requirement as we don’t want you to make some artificial library if there is none needed.)</li>
+  <li>You need to make a general library as part of your project, to get more experience with modules and functors in OCaml.  (This is not an absolute requirement as we don’t want you to make some artificial library if there is none needed, but you will need to get an exception from us if so.)</li>
   <li>A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.</li>
 </ul>
 
@@ -85,7 +85,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>You will need to make a standalone application as you did/will do in assignments 2 and 4.</li>
-  <li>Here are are three approaches to give some potential directions; feel free to do whatever you like though.</li>
+  <li>Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects.</li>
 </ul>
 
 <h4 id="1-a-command-line-app-with-persistence">1. A command-line app with persistence</h4>
@@ -142,7 +142,7 @@ BOOM!
       <li>see e.g. <a href="https://github.com/public-apis/public-apis">Public APIs</a> for a large list of APIs available</li>
       <li>Some free APIs there include data for shopping, weather, recipes, COVID, etc etc</li>
       <li>One concrete idea could be to grab both historical weather and COVID data for a location using two different RESTful APIs and compute the correlation between temperature and new COVID cases five days later</li>
-      <li>etc etc etc.</li>
+      <li>etc etc etc.  One advantage of such an app is you can do some non-trivial algorithms on the data.</li>
     </ul>
   </li>
   <li>A web crawler app
@@ -160,6 +160,7 @@ BOOM!
 <ul>
   <li>A simple machine learning app using PyTorch or TensorFlow and possibly graphing it in Owl; see below for links to the OCaml libraries</li>
   <li>Here is a <a href="https://blog.janestreet.com/deep-learning-experiments-in-ocaml/">Jane Street Article</a> on use of TensorFlow within OCaml.</li>
+  <li>If you decide to use TensorFlow please please please get a little demo running to make sure the library works.  It is a very big library hard to get running in OCaml.</li>
 </ul>
 
 <h3 id="libraries-catalog">Libraries Catalog</h3>
@@ -183,7 +184,7 @@ BOOM!
 <h4 id="persistence">Persistence</h4>
 
 <ul>
-  <li>For simple persistence you can just read and write from a file, via the <code>Stdio</code> Jane Street library.  Make sure to use a structured file format such as json.</li>
+  <li>For simple persistence you can just read and write from a file, via the <code>Stdio</code> Jane Street library.  Make sure to use a structured file format such as json or sexp.</li>
   <li>If you are familiar with databases, the <a href="https://github.com/mmottl/sqlite3-ocaml">sqlite3-ocaml</a> and <a href="https://mmottl.github.io/postgresql-ocaml/">postgresql-ocaml</a> bindings should work for accessing SQLite or Postgres databases from within OCaml.</li>
 </ul>
 
@@ -210,7 +211,7 @@ BOOM!
 <h3 id="submissions">Submissions</h3>
 
 <ul>
-  <li>There will be FOUR submission points in Gradescope, one ungraded, one for initial group and idea, one for the design, one for a code checkpoint, and one for the final code.  For each group only one person should submit to Gradescope, as a group submission.</li>
+  <li>There will be FOUR submission points in Gradescope, one ungraded for initial group and idea, one for the design, one for a code checkpoint, and one for the final code.  For each group only one person should submit to Gradescope, as a group submission.</li>
 </ul>
 
 <h4 id="initial-group-and-ideas">Initial Group and Idea(s)</h4>

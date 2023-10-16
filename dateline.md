@@ -305,7 +305,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/encoding-effects.ml">Encoding Effects I</a></div>
+            <div align="left" class="body"><a href="lecture/encoding_effects.ml">Encoding Effects I</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body"><a href="assignments/assignment4.html">A4</a></div>
@@ -356,7 +356,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/algebraic-effects.ml">Algebraic Effects</a></div>
+            <div align="left" class="body"><a href="lecture/algebraic_effects.ml">Algebraic Effects</a></div>
           </td>	
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
