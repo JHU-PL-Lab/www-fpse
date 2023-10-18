@@ -288,7 +288,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/advanced_modules.ml">Advanced Modules</a>, <a href="lecture/lazy.html">Laziness</a></div>
+            <div align="left" class="body"><a href="lecture/encoding_effects.ml">Encoding Effects I</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -305,7 +305,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/encoding_effects.ml">Encoding Effects I</a></div>
+            <div align="left" class="body"><a href="lecture/encoding_effects.ml">Encoding Effects II</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body"><a href="assignments/assignment4.html">A4</a></div>
@@ -322,7 +322,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/encoding-effects.ml">Encoding Effects II</a></div>
+            <div align="left" class="body"><a href="lecture/encoding-effects.ml">Encoding Effects III</a>; <a href="lecture/coroutines.html">Coroutines</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

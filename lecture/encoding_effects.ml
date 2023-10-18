@@ -23,9 +23,9 @@ let _ : bool = Map.empty(module String)
      of what would normally be a mutable structure 
 
   * Idea: make a more structured encoding which is not informal like the above
-  * Think of it as defining a macro language inside a language: "monad-land"
-  * Will allow functional code to be written which "feels" close to effectful code
-  * But it still will preserve the referential transparency etc
+  * Think of it as defining a macro language inside of OCaml in which makes it 
+    look effectful even though it isn't: "monad-land"
+  * It looks effectful, BUT is not and so still will preserve the referential transparency etc
   * The mathematical basis for this is a structure called a *monad*.
 
 *)
@@ -36,18 +36,19 @@ let _ : bool = Map.empty(module String)
 
 (* 
   * Let's start with using 'a option's Some/None to encode exception effects
-  * We already saw many examples of this
+  * We have already seen many examples of this
   * Here we want to regularize/generalize it to make an offical monad.
   * First recall how we had to "forward" a `None` if an e.g. List operation failed
 *)
 
-(* zip in fact doesn't return Some/None, let us convert it to that format here *)
+(* zip in fact doesn't return Some/None, let us convert it to that format here.
+   We need a uniformity that None is always the exceptional case and Some is the OK-case. *)
 let zip l1 l2 = match List.zip l1 l2 with Unequal_lengths -> None | Ok l -> Some l
 
 (* 
   Here is an artificial example of lots of hand-over fist passing of options. 
   Several operations can fail with a None, and in each case we need to bubble that None to the top.
-  Yes the code is ugly!
+  Yes the code is U-G-L-Y !
 *)
 
 (* Lets zip two lists, sum pairwise, and return the 2nd element of the resulting list. *)
@@ -87,8 +88,11 @@ let bind' (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) =
 
 (* bind does the match "for free" compared to above 
     - if the zip failed with `None` the function is ignored
-    - if it succeeds the Some wrapper is peeled off and the underlying data passed to f *)
-bind' (zip [1;2] [3;4]) ~f:(function (l,_)::_ -> Some(l));;
+    - if it succeeds the Some wrapper is automatically peeled off and the underlying data passed to f 
+    - the net result is the Some/None is largely hidden in the code: *)
+bind' (zip [1;2] [3;4]) ~f:(function (l,_)::_ -> Some(l));; 
+
+(* Yes there is still a `Some` at the end in the above; we will hide it as well below for 100% hiding *)
 
 (* 
   * bind more generally sequences ANY two functional side effects, more below on this
@@ -100,36 +104,39 @@ bind' (zip [1;2] [3;4]) ~f:(function (l,_)::_ -> Some(l));;
   * We have pushed monad-land into hiding a bit
 *)
 
-(* Note we need to open a module to enable macro for Option.bind 
-   And, need #require "ppx_jane" in top loop (or (preprocess (pps ppx_jane)) in dune) 
-   for the macro to expand *)
+(* let%bind in fact exists in Core for Option.bind, lets use it
+  Note we need to open a module to enable macro for Option.bind 
+  And, need #require "ppx_jane" in top loop (or (preprocess (pps ppx_jane)) in dune) 
+  for the macro to expand *)
 
-open Option (* don't do this at home (tm) *)
+open Option (* don't do this at home (tm) - in actual code use Option.(..) or let open Option in .. *)
 open Option.Let_syntax;;
 
 let%bind (l,_)::_ = zip [1;2] [3;4] in Some(l);; (* compare with above version - a bit more readable *)
 
-
 (* 
- * OK now let us redo the zip example with bind (using the macro version) 
+ * OK now let us redo the zip example with bind (using let%bind)
  * This code looks more readable than the original, right?? 
  *)
 
 let ex_bind_macro l1 l2 =
   let%bind l = zip l1 l2 in 
-  let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
+  let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in (* never None's so no bind needed here *)
   let%bind tail = List.tl m in 
   let%bind hd_tail = List.hd tail in
-  return(hd_tail) (* "return to the monad" - here that means wrap in Some(..) *)
-let ex_real_effects l1 l2 =
+  return(hd_tail) (* "return to the monad" - here that means wrap in Some(..) - removes the last Some/None*)
+
+(* Here now is the same code in normal OCaml but raising exceptions instead of bubbling none 
+   Compare the two forms, very similar *)
+  let ex_real_effects l1 l2 =
   let l = List.zip_exn l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
   let tail = List.tl_exn m in 
   let hd_tail = List.hd_exn tail in
   hd_tail
 (* 
- * Here is what Option.return above is
- * It is called return because it is injecting (returning) a "regular" value to the monad 
+ * Here is how Option.return is defined - no rocket science here.
+ * It is called return because it is injecting (returning) a "regular" value TO the monad 
  * The name seems backwards perhaps since it sounds like it could be returning *from* monad-land
 *)
 let return' (v : 'a) : 'a option = Some v
@@ -165,14 +172,22 @@ let ex_bind_error l1 l2 =
   hd_tail
 (* type error! Both of let%bind's arguments need to be in monad-land, `t` here now that we opened Option *)
 
-(* Note that you *could* leave out the return -- merge it with last let%bind: *)
+(* Note that you *could* leave out the return sytax -- merge it with last let%bind: *)
 let ex_bind_fixed l1 l2 =
   let%bind l = zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
   let%bind tail = List.tl m in
   List.hd tail (* this is in monad-land, all good! *)
 
-(* Equivalent pipe version syntax 
+
+(* In other words,   
+  let%bind hd_tail = List.hd tail in return hd_tl  ===  List.hd tail
+  - this is in fact a *Monad Law* we will discuss below, like let x = 5 in x === 5 in normal OCaml
+*)
+
+(* Now we love pipes but this is just let-like coding; how can we pipe?
+
+Answer: there is also pipe syntax
    * a >>= b is just an infix form of bind, it is nothing but 
      bind a b
    * a >>| b is used when b is just a "normal" function which is not returning an option.
@@ -186,6 +201,8 @@ let ex_bind_fixed l1 l2 =
      # (>>=);;
      - : 'a option -> ('a -> 'b option) -> 'b option = <fun>
    * If you are just sequencing a bunch of function calls as above it reads better with these two pipes
+
+   * Lets redo the example above with monad-pipes:
 *)
 
 let ex_piped l1 l2 =
@@ -194,17 +211,19 @@ let ex_piped l1 l2 =
   >>= List.tl
   >>= List.hd
 
+  (* The above uses >>| when the result of the step is not in monad-land
+  and so the result needs to be put back there for the pipeline 
+  >>= is for the result that is in monad-land already. *)
+
+  (* Contrast the above with exception-based code and normal OCaml pipes: *)
 let ex_piped_exn l1 l2 =
     List.zip_exn l1 l2 
     |> List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
     |> List.tl_exn
     |> List.hd_exn
   
-  (* The above uses >>| when the result of the step is not in monad-land
-  and so the result needs to be put back there for the pipeline 
-  >>= is for the result that is in monad-land already. *)
 
-(* A subtle point is that the pipe notation is associating the sequencing in 
+(* A very subtle point is that the pipe notation is associating the sequencing in 
 a different manner.  Here are parens added to the above, the >>= operators are 
 left-associative:  *)
 
@@ -233,11 +252,11 @@ let _ : bool =
 (* There is something subtle going on here with the operator ordering..
    - We all know that a;(b;c) "is the same order as" (a;b);c (e.g. in OCaml they give same results)
    - for let and let-bind, there is an analogous principle which is a touch more complex:
-      let x = a in let y = b in c   =   let y = (let x = a in b) in c
+      let x = a in let y = b in c   ===   let y = (let x = a in b) in c
        (provided x is not in c - on the left the c won't know what x is)
    - Key point: the let%bind notation is doing the former and the pipes the latter - !!
    - Monads (including Option here) should have this let-bind associative property
-   - More formally this is a *monad law* for the mathematical definition of monad (more later on that)
+   - More formally this is another *monad law* for the mathematical definition of monad (more later on that)
 *)
 
 (* To show this let us turn the piped version into the exact let%bind equivalent, not the let%bind version above.
@@ -251,9 +270,8 @@ let ex_piped_expanded l1 l2 =
 
 (* Note let%map is the let% analog of |>> which just wraps result in return  *)
 
-
 (* 
-  OK it is finally time for a full monad -- Option extended to a more general Exception monad
+  OK it is finally time for an actual monad -- Option extended to a more general Exception monad
   This example also shows how we can define our own monads with Core.Monad.Make
 *)
 
@@ -293,7 +311,7 @@ module Exception = struct
       | Some x -> Some x
   end
   include T (* The same naming trick used here as with Comparable *)
-  include Monad.Make(T) (* Core.Monad functor to add lots of extra goodies *)
+  include Monad.Make(T) (* Core.Monad functor to add lots of extra goodies inclduing let%bind etc*)
 end
 
 open Exception
@@ -365,7 +383,7 @@ let f (x : int) =
      return(one + ifthen))
     (fun () -> return(101))
 
-(* The monad encoding starts to get a little crufty here.. a downside of monads *)
+(* The monad encoding starts to get crufty here.. a downside of monads in general *)
 
 
 (* *********** *)
@@ -491,6 +509,7 @@ let oneplustwo_logged =
 (* 
  * All the monads up to now were "first order", the carrier type has no function types
  * Monads get *really* useful with higher-order monads, *functions* in the .t type
+ * They also get much more subtle to decipher what is actually happening
  * The simplest example is probably "Reader"
  * Don't think of it as "input", it is more like a "global "environment of values you get implicitly
  *)
@@ -674,6 +693,7 @@ end
 
 open State_int
 open State_int.Let_syntax
+
 (* Here is an OCaml state example of how state is implicitly threaded along *)
 let r = ref 0 in
 let rv = !r in
@@ -697,7 +717,7 @@ let simple_state () =
   let%bind () = (set(rv + 1) : unit t) in 
   (get() : int t)
 
-run @@ simple_state ();;
+run @@ simple_state ()
 
 (* turning the above let%bind into the underlying bind to be more explicit *)
 
@@ -706,7 +726,7 @@ let simple_state () =
   bind (get()) ~f:(fun rv ->
   bind (set(rv + 1)) ~f:(fun () ->get()))
 
-run @@ simple_state ();;
+run @@ simple_state ()
 
 
 (* Here is a bit larger example using statefulness of State_int *)

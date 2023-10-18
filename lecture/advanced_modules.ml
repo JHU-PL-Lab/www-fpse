@@ -61,7 +61,7 @@ module type Eq = sig type t val equal : t -> t -> bool end
 # #show String.t;;
 type nonrec t = string (* alias *)
 # #show Map.t;;
-type nonrec ('key, 'value, 'cmp) t = ('key, 'value, 'cmp) Map.t (* existential / hidden - j *)
+type nonrec ('key, 'value, 'cmp) t = ('key, 'value, 'cmp) Map.t (* existential / hidden *)
 
  * Moral: every time you see a type variable reference t / 'a / Int.t / etc
     first sort it into one of the above four categories
