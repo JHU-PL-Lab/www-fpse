@@ -7,11 +7,11 @@
 open Core
 
 (*
-  * We have seen so far the advantages of functional programming
+  * So far we have seen the advantages of functional programming
   * But, sometimes it is a large handicap to not have side effects
   * A middle ground is possible: *encode* effects using purely functional code
     - we already saw a bit of this with the option type replacing exceptions
-    - also the use of piping such as 
+    - also the use of piping such as:
 *)
 
 let _ : bool = Map.empty(module String) 
@@ -20,13 +20,14 @@ let _ : bool = Map.empty(module String)
                |> Map.for_all ~f:(fun i -> i > 10)
 
 (*   etc which is a concise "hand over fist passing" encoding 
-     of what would normally be a mutable structure 
+     of what would be a sequence of mutable assignments with a mutable map.
 
   * Idea: make a more structured encoding which is not informal like the above
-  * Think of it as defining a macro language inside of OCaml in which makes it 
+  * Think of it as defining a macro language inside of OCaml in which the code will 
     look effectful even though it isn't: "monad-land"
   * It looks effectful, BUT is not and so still will preserve the referential transparency etc
   * The mathematical basis for this is a structure called a *monad*.
+  * It is really just one very fancy functional programming idiom.
 
 *)
 
@@ -36,7 +37,7 @@ let _ : bool = Map.empty(module String)
 
 (* 
   * Let's start with using 'a option's Some/None to encode exception effects
-  * We have already seen many examples of this
+  * We have already seen many examples of this, e.g. Minesweeper functional example
   * Here we want to regularize/generalize it to make an offical monad.
   * First recall how we had to "forward" a `None` if an e.g. List operation failed
 *)
@@ -46,12 +47,13 @@ let _ : bool = Map.empty(module String)
 let zip l1 l2 = match List.zip l1 l2 with Unequal_lengths -> None | Ok l -> Some l
 
 (* 
-  Here is an artificial example of lots of hand-over fist passing of options. 
-  Several operations can fail with a None, and in each case we need to bubble that None to the top.
+  Here is an artificial example of lots of hand-over fist passing of options.
+  Several operations can fail with a None, and in each case we need to match to bubble that None to the top.
   Yes the code is U-G-L-Y !
 *)
 
-(* Lets zip two lists, sum pairwise, and return the 2nd element of the resulting list. *)
+(* Lets zip two lists, sum pairwise, and return the 2nd element of the resulting list. 
+   Yes this is not intended to be an interesting example.  Also we should use list patterns not this! *)
 let ex l1 l2 = 
   match zip l1 l2 with 
   | Some(l) -> 
@@ -77,7 +79,7 @@ let ex l1 l2 =
 
 (* 
  * The key operation of a monad is `bind` which sequences side-effecting computations. 
-   For Option it already exists as Option.bind
+   For Option it exists as Option.bind
    Here is its code for reference (we call this one bind' to not overlap with built-in one)
  *)
 
@@ -92,7 +94,10 @@ let bind' (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) =
     - the net result is the Some/None is largely hidden in the code: *)
 bind' (zip [1;2] [3;4]) ~f:(function (l,_)::_ -> Some(l));; 
 
-(* Yes there is still a `Some` at the end in the above; we will hide it as well below for 100% hiding *)
+(* Yes there is still a `Some` at the end in the above
+   That is because the result needs to stay in monad-land (since the first part could have None'd)
+   We will in fact hide Some below so its still there but its not explicit. 
+   In general once you get into monad-land you tend to stay there a long time .. *)
 
 (* 
   * bind more generally sequences ANY two functional side effects, more below on this
@@ -126,20 +131,21 @@ let ex_bind_macro l1 l2 =
   let%bind hd_tail = List.hd tail in
   return(hd_tail) (* "return to the monad" - here that means wrap in Some(..) - removes the last Some/None*)
 
-(* Here now is the same code in normal OCaml but raising exceptions instead of bubbling none 
-   Compare the two forms, very similar *)
+(* 
+ * Here is how Option.return is defined - no rocket science here.
+ * It is called return because it is injecting (returning) a "regular" value TO the monad 
+ * The name seems backwards perhaps since it sounds like it could be returning *from* monad-land
+ *)
+let return' (v : 'a) : 'a option = Some v
+
+(* Here now is the same code in normal OCaml but raising exceptions instead of bubbling None.
+   Compare the two forms, very similar - ! *)
   let ex_real_effects l1 l2 =
   let l = List.zip_exn l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
   let tail = List.tl_exn m in 
   let hd_tail = List.hd_exn tail in
   hd_tail
-(* 
- * Here is how Option.return is defined - no rocket science here.
- * It is called return because it is injecting (returning) a "regular" value TO the monad 
- * The name seems backwards perhaps since it sounds like it could be returning *from* monad-land
-*)
-let return' (v : 'a) : 'a option = Some v
 
 
 (* Let us write out the bind calls (expand the macro) to show why the macro is more readable: *)
@@ -314,6 +320,7 @@ module Exception = struct
   include Monad.Make(T) (* Core.Monad functor to add lots of extra goodies inclduing let%bind etc*)
 end
 
+(* Lets open these up now, overriding the open of Option we did above for the monad functions like bind *)
 open Exception
 open Exception.Let_syntax
 

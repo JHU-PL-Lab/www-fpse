@@ -441,7 +441,10 @@ end
    See e.g. https://dev.realworldocaml.org/imperative-programming.html#file-io for description
    They are mostly straightforward, but print format strings are "very special". *)
 
-let () = printf "%i is the number \n" 5;;
+(* First, printf, sprintf, fprintf tend to "just work" so you don't necessarily need to know this
+   But it can help if you are getting strange error messages to know it is complex under the hood *)
+   
+let () = printf "%i is the number and %s is the string\n" 5 "hi";;
 
 (* The compiler is doing special things with the argument here, it is converting it into
    a function which will do this particular output taking 5 as a parameter
