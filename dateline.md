@@ -540,7 +540,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Dec 19</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Mon</div>
+            <div align="center" class="body">Tues</div>
           </td>
           <td width="30%"> 
             <div align="left" class="body">&nbsp;<strong>Project Demos</strong></div>

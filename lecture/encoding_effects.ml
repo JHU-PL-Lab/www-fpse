@@ -119,6 +119,10 @@ open Option.Let_syntax;;
 
 let%bind (l,_)::_ = zip [1;2] [3;4] in Some(l);; (* compare with above version - a bit more readable *)
 
+(* vs *)
+
+let (l,_)::_ = List.zip_exn [1;2] [3;4] in l;; (* compare with above version - a bit more readable *)
+
 (* 
  * OK now let us redo the zip example with bind (using let%bind)
  * This code looks more readable than the original, right?? 
@@ -178,7 +182,7 @@ let ex_bind_error l1 l2 =
   hd_tail
 (* type error! Both of let%bind's arguments need to be in monad-land, `t` here now that we opened Option *)
 
-(* Note that you *could* leave out the return sytax -- merge it with last let%bind: *)
+(* Note that you *could* leave out the return sytax in fact -- merge it with last let%bind: *)
 let ex_bind_fixed l1 l2 =
   let%bind l = zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
@@ -258,7 +262,7 @@ let _ : bool =
 (* There is something subtle going on here with the operator ordering..
    - We all know that a;(b;c) "is the same order as" (a;b);c (e.g. in OCaml they give same results)
    - for let and let-bind, there is an analogous principle which is a touch more complex:
-      let x = a in let y = b in c   ===   let y = (let x = a in b) in c
+      let x = a in (let y = b in c)   ===   let y = (let x = a in b) in c
        (provided x is not in c - on the left the c won't know what x is)
    - Key point: the let%bind notation is doing the former and the pipes the latter - !!
    - Monads (including Option here) should have this let-bind associative property
@@ -284,7 +288,7 @@ let ex_piped_expanded l1 l2 =
 module Exception = struct
 
   module T = struct (* We are going to include this T below here, we just need to name this stuff *)
-    type 'a t = 'a Option.t
+    type 'a t = 'a option
     (* return injects a normal-land computation into monad-land *)
     let return (x: 'a) : 'a t = Some x
     (* bind sequences two monad-land computations where the 2nd can use 1st's value result *)
