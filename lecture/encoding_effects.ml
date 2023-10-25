@@ -92,7 +92,9 @@ let bind' (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) =
     - if the zip failed with `None` the function is ignored
     - if it succeeds the Some wrapper is automatically peeled off and the underlying data passed to f 
     - the net result is the Some/None is largely hidden in the code: *)
-bind' (zip [1;2] [3;4]) ~f:(function (l,_)::_ -> Some(l));; 
+bind' (zip [1;2] [3;4]) ~f:(fun l -> match l with (l,_)::_ -> Some(l));;
+
+let%bind l = zip [1;2] [3;4] in match l with (l,_)::_ -> Some(l)
 
 (* Yes there is still a `Some` at the end in the above
    That is because the result needs to stay in monad-land (since the first part could have None'd)
@@ -504,6 +506,7 @@ let log_abs n =
   if n >= 0 
   then let%bind () = log "positive" in return n
   else let%bind () = log "negative" in 
+       let%bind () = log "indeed" in 
        let%bind () = log "yup" in return (-n)
 
 (* another simple example, add log messages to 1+2 example above *)
@@ -540,12 +543,13 @@ module Reader = struct
     (* bind needs to return a `'e -> 'a` so it starts with `fun e -> ...`
        This means it gets in the envt e from its caller
        bind's job is then to pass on the envt to its two sequenced computations *)
-    (* Note f : 'a -> ('e -> 'a) in the below when expanding aliases 
+    (* Note: m : 'e -> 'a and ('b, 'e) t is 'e -> 'b 
+      Note f : 'a -> ('e -> 'b) in the below when expanding aliases 
          -- it looks like its RETURNING ('a, 'e) t,
             but it really is getting 'a AND 'e and returning only 'a 
          -- this allows the second thing in bind sequence to also see envt *)
     let bind (m : ('a, 'e) t) ~(f : 'a -> ('b,'e) t) : ('b, 'e) t = 
-      fun (e : 'e) -> (f (m e) e) (* Pass the envt e to m, and to f! *)
+      fun (e : 'e) -> ((f (m e)) e) (* Pass the envt e to m, and to f! *)
     let map = `Define_using_bind
     (* return injects non-monadic code into monad: code not using the envt *)
     let return (x : 'a) : ('a, 'e) t = fun (_: 'e) -> x
@@ -574,7 +578,7 @@ let oneplustwo_again =
 
 (* Now let us actually use the monad *)
 (* Here is a simple environment type, think of it as a set of global constants *)
-type d = {
+type globals = {
   name: string;
   age: int;
 }
@@ -583,6 +587,9 @@ let is_retired =
   let%bind r = get() in return (r.age > 65)
 
 (* again the above is just a function; need to run it to execute the code *)  
+
+let is_retired' = 
+  bind (get()) (fun r -> return (r.age > 65))
 
 let _ : bool = run is_retired {name = "Gobo"; age = 88}
 
