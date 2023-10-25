@@ -19,6 +19,7 @@ let _ : bool = Map.empty(module String)
                |> Map.set ~key: "ho" ~data: 17
                |> Map.for_all ~f:(fun i -> i > 10)
 
+
 (*   etc which is a concise "hand over fist passing" encoding 
      of what would be a sequence of mutable assignments with a mutable map.
 
@@ -93,8 +94,6 @@ let bind' (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) =
     - if it succeeds the Some wrapper is automatically peeled off and the underlying data passed to f 
     - the net result is the Some/None is largely hidden in the code: *)
 bind' (zip [1;2] [3;4]) ~f:(fun l -> match l with (l,_)::_ -> Some(l));;
-
-let%bind l = zip [1;2] [3;4] in match l with (l,_)::_ -> Some(l)
 
 (* Yes there is still a `Some` at the end in the above
    That is because the result needs to stay in monad-land (since the first part could have None'd)
@@ -310,9 +309,8 @@ module Exception = struct
         2) run a computation in monad-land;
         3) transfer the final result back to normal-land 
         Option.run doesn't exist, it is not the full monad package *)
-    type init = unit
     type 'a result = 'a (* 'a result is the type transferred out of monad-land at end of run *)
-    let run (m : init -> 'a t) : 'a result =
+    let run (m : unit -> 'a t) : 'a result =
       match m () with 
       | Some x -> x 
       | None -> failwith "monad failed with None"
@@ -411,9 +409,8 @@ module type Monadic = sig
   val return : 'a -> 'a t
   val bind : 'a t -> f:('a -> 'b t) -> 'b t
   val map : 'a t -> f:('a -> 'b) -> 'b t
-  type init
   type 'a result
-  val run : (init -> 'a t) -> 'a result
+  val run : (unit -> 'a t) -> 'a result
 end
 
 (* ( Core.Monad's version also requires map but does not require run) *)
@@ -489,7 +486,6 @@ module Logger = struct
   end
   include T
   include Monad.Make(T)
-  type init = unit
   type 'a result = 'a * log
   let run (m: unit -> 'a t): 'a result = m ()
   let log msg : unit t = ((), [msg])
@@ -602,6 +598,7 @@ let _ : bool = run is_retired {name = "Gobo"; age = 88}
     2) bind a ~f:(fun x -> return x)  ===  a
     3) bind a (fun x -> bind b ~f:(fun y -> c))  ===  
        bind (bind a ~f:(fun x -> b)) ~f:(fun y -> c)
+       (where c doesn't use x)
 
     equivalent let%bind versions:
     1) let%bind x = return(a) in f x  ===  f a
@@ -631,7 +628,7 @@ let ex_initial l1 l2 =
 
 (* The "let m" (non-bind) here could be changed to a let%bind if we wrapped
   the defined value in a return -- this is using monad law 1) right-to-left. 
-  (the "a" in the law is the List.fold .. which we called m with the let) *)    
+  (the "a" in the law is the List.fold .. which we abbreviated m with the let) *)    
 let ex_first_law_applied l1 l2 =
     let%bind l = zip l1 l2 in 
     let%bind m = return(List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc)) in
@@ -692,10 +689,29 @@ let ex_piped_version_of_previous l1 l2 =
 (* State *)
 (* ***** *)
 
-(* Let us start with a simple version, the whole state is just one integer.
-   Just imagine that int was a `Map` for a more general State (which we do below)
-*)
+(* Before doind the monad lets write some explicit threading code to show how its working *)
 
+(* previous hand-over fist map state passing functionally *)
+let _ : bool = Map.empty(module String) 
+               |> Map.set ~key: "hi" ~data: 3 
+               |> Map.set ~key: "ho" ~data: 17
+               |> Map.for_all ~f:(fun i -> i > 10)
+
+(* Lets regularize it to be a bit more how the state monad works: each Map op 
+   gets old map state, returns PAIR of value if any and new state *)
+let map_set ~key ~data = fun m -> ((),Map.set m ~key ~data)
+let map_for_all ~f = fun m -> ((Map.for_all m ~f),m)
+
+let _ : bool = 
+  let m = Map.empty(module String) in
+  let ((),m') = (fun m -> map_set m ~key: "hi" ~data: 3) m in
+  let ((),m'') = (fun m -> map_set m ~key: "hi" ~data: 3) m' in
+  let (b,_) = (fun m -> map_for_all m ~f:(fun i -> i > 10)) m''
+in b
+
+(* Let us start with a simple version, the whole state is just one integer.
+   Just imagine that int was a `Map` for a more general State (which is below)
+*)
 module State_int = struct
   module T = struct
     (* Here is the monad type: we need to *thread* the int through all computations
@@ -707,6 +723,8 @@ module State_int = struct
        3) x returns a pair with a potentially **different** state, i'
        4) Now the key to being truly stateful is to thread that latest state on to f
     *)
+    (* expanding type abreviations, x : int -> 'a * int
+                                    f : 'a -> (int -> 'b * int) *)
     let bind (x : 'a t) ~(f: 'a -> 'b t) : 'b t =
       fun (i : int) -> let (x', i') = x i in (f x') i'
     let return (x : 'a) : 'a t = fun i -> (x, i)
@@ -731,23 +749,13 @@ open State_int
 open State_int.Let_syntax;;
 
 
-(* Here is an OCaml state example of how state is implicitly threaded along *)
+(* Here is an OCaml state example for review, side effect is in compiler *)
 let r = ref 0 in
 let rv = !r in
 let () = r := rv + 1 
 in !r;;
 
-(* Here is how we would have done this manually, like with the Map and zip examples above..
-   * make the state explicit via a variable (i/i' here)
-   * hand-over-fist threading of state from one operation to next: *)
-    let i = 0 in
-    let rv = i in
-    let i' = rv + 1 in i'
-  
-(* Here is the same example in the State_int monad
-   * under the hood the code is similar to this manual hand-over-fist code
-   * but, we hide that so programmer can view like native state
-   * which lets programmer think at a higher level (hopefully) *)
+(* Here is the same example in the State_int monad *)
 
 let simple_state () = 
   (* let r = ref 0 is implicit - initial value at run time *)
@@ -768,7 +776,7 @@ let _ = run @@ simple_state ()
 
 
 (* Here is a bit larger example using statefulness of State_int 
-   -- sum the elements of a list with a mutable counter *)
+   -- sum the elements of a list with a "mutable" counter *)
 
 let rec sumlist = function
   | [] -> get ()
