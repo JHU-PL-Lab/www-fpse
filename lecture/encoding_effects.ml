@@ -680,6 +680,7 @@ let ex_piped_version_of_previous l1 l2 =
         (let%bind l = zip l1 l2 in List.tl l) in 
         return(tail)
 
+(* the following code is identical to ex_after_third_law_simpler after expanding macros of both - !*)
   let ex_after_third_law_simpler_piped l1 l2 =
       zip l1 l2
       >>= List.tl
@@ -724,7 +725,8 @@ module State_int = struct
        4) Now the key to being truly stateful is to thread that latest state on to f
     *)
     (* expanding type abreviations, x : int -> 'a * int
-                                    f : 'a -> (int -> 'b * int) *)
+                                    f : 'a -> (int -> 'b * int)
+                                    return int -> 'b * int : *)
     let bind (x : 'a t) ~(f: 'a -> 'b t) : 'b t =
       fun (i : int) -> let (x', i') = x i in (f x') i'
     let return (x : 'a) : 'a t = fun i -> (x, i)

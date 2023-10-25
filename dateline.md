@@ -339,7 +339,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/coroutines.html">Coroutines</a></div>
+            <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -356,7 +356,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/algebraic_effects.ml">Algebraic Effects</a></div>
+            <div align="left" class="body"><a href="lecture/fp-universe.html">The FP Universe</a></div>
           </td>	
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -373,7 +373,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a></div>
+            <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -424,7 +424,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/fp-universe.html">The FP Universe</a></div>
+            <div align="left" class="body">Quiz</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
