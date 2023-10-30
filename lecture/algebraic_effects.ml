@@ -53,7 +53,7 @@ let rec div_list (l : int list) : int =
 
 let _ = div_list [1000;100;2];; (* 1000/(100/(2/1)), no failures *)
 let _ = div_list [1000;100;2;4];;  (* 1000/(100/(2/4)) is 1000/1 *)
-let _ = div_list [20;4;2;1000;100;2;4];; (* multiple failures here *)
+let _ = div_list [20;4;2;1000;100;2;4];; (* multipl`e failures here *)
 
 (* The above exception can only be resumed (continued) once;
    thus it is a **one-shot** resumable exception *)

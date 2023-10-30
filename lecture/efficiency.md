@@ -107,4 +107,4 @@ Conclusion
 
 ## Algebraic Effects
 
-We will hopefully have a bit of extra time to cover [algebraic effects](algebraic_effects.ml): exceptions that can be resumed.
+We will hopefully have a bit of extra time to cover an interesting side topic of [algebraic effects](algebraic_effects.ml): exceptions that can be resumed.
