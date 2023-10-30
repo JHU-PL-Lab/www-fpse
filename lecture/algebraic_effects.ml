@@ -7,23 +7,6 @@
 *)
 
 
-(* Install and use 
-
-You will need to install a whole new OCaml as resumable exceptions are only in a beta version now.  From your shell you need to use `opam switch create` to do that:
-
-opam update
-opam switch create 5.0.0~beta1
-
-which will take a long time.  You then need to do the usual `eval $(opam env)`
-to update your path. 
-
-(to switch back to the non-beta, type `opam switch 4.14.0` and do the eval it tells you to do)
-(Note that Core etc libraries are not installed as it is a whole new install.  For our little experiments we will not use `Core` but we will use `utop`.)
-
-All of the code in this file will work in 5.0 (only).
-
-*)
-
 (* First let us just play with a "resumable exception"
    
    Think of it as the "Pause" button on the movie you are watching.
@@ -116,6 +99,7 @@ let _ = (adding_div 3 0) + (adding_div 8 0) + 1
 
 
 (* Encoding state with resumable exceptions
+   - skipping this in lecture, its complicated.
 
 The high level idea of the encoding is as follows:
 

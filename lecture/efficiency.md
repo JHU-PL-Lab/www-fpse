@@ -1,12 +1,13 @@
 ## Efficiency in Functional Programming
 
-Functional data structures: 
-    - Feel very inefficient at first
-    - This is supported by asymptotics
-    - But they are often fine in practice even if asymptotic behavior is worse
-    - in a few cases they are better because past states "persist for free"
+* We have already covered a fair amount about efficiency in the [idiomatic FP lecture](https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency) and before
 
-We covered some of this in the [idiomatic FP lecture](https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency)
+* Summary: functional data structures
+    - Feel like they should be much more inefficient but its often "at worst a log factor"
+    - In a few cases they are better because past states "persist for free"
+    - In a few cases speed is critical and mutable structures are required
+
+
 
 ### Functional lists
 Let us warm up reviewing `'a list` efficiency
@@ -24,26 +25,40 @@ let l3 = (-1) :: l1 in ..
 ```
 
 * `l2` and `l3` share `l1` and all the above is O(1)
-* if lists were mutable such sharing would not generally be possible!
-* In general this shows there is a trade-off in that in some cases functional wins
-   - more on this below
+* If lists were mutable such sharing would not generally be possible
+
 ### Case Study: Monadic Minesweeper
 
-* Let us analyze the complexity of different implementations of the imperative Minesweeper.
+* Let us analyze the complexity of different implementations of Minesweeper.
 * Assume a grid of n elements (a square-root n by square-root n grid)
 
 
-Our imperative implementation using a 2D array ([this one](https://pl.cs.jhu.edu/fpse/examples/mine_array.ml))
+Our initial implementation  [using a list of strings](https://pl.cs.jhu.edu/fpse/examples/minesweeper.ml)
+* Each call to `get x y` is O(sqrt n) since we need to march down the lists to find element (x,y)
+* So O(sqrt n) for each inc operation so O(n * sqrt n) overall.
+
+Our implementation  [using a functional 2D array](https://pl.cs.jhu.edu/fpse/examples/mine_array.ml)
+* The array is in fact never mutated, only used for random access to fixed array
+* Otherwise this implementation is the same as the above
+* `get x y` is now O(1) since it is an array -- random access.
 * O(1) for each inc operation so O(n) in total.
 
-Hypothetic monadic state version 
-* Take the imperative 2D array version, implement as state monad on list-of-strings ([code is here, we will glimpse](https://pl.cs.jhu.edu/fpse/examples/mine_monadic.ml))
-* Each grid square increment will take O(n) since the whole grid has to be rebuilt with one change
+Stateful version [using an array](https://pl.cs.jhu.edu/fpse/examples/mine_mutate.ml)
+* Instead of counting mines around each empty square once and for all, for each mine increment all its non-mine neighbors
+* It is a fundamentally mutating alternative algorithm.
+* O(n) as with the previous functional array version
+
+Monadic state version 
+* A  [state monad version of the original minesweeper](https://pl.cs.jhu.edu/fpse/examples/mine_monadic.ml)
+* We will follow the data structure of the original minesweeper, the list of strings
+* But do the imperative increment-the-mine-neighbors instead of the functional count-the-mines
+* Each grid square increment will take O(n) since the whole list of strings has to be rebuilt with one change
   - there is some functional sharing of parts not incremented (as in list append above) but means 1/2 n = O(n)
 * O(n) inc's are performed total so it will be O(n^2).
+* So a bit of a backfire
 
 Imagine an alternative monad implementation using a `Board` implemented as a `Core.Map` from keys `(i,j)` to characters:
-* lookup and increment will be O(log n) on average since `Core.Map` is implemented as a balanced binary search tree
+* Lookup and increment will be O(log n) on average since `Core.Map` is implemented as a balanced binary search tree
     - one change to a Map's tree is only log n because only one path in tree is changed, rest can be re-used
     - (yes, one path down a binary tree is only 1/(log n)-th of the tree nodes, and the sub-trees can be reused)
 * So total time is O(n log n)
@@ -51,41 +66,13 @@ Imagine an alternative monad implementation using a `Board` implemented as a `Co
 Conclusion
 * For Minesweeper, O(n^2) is in fact fine as the grids are always "tiny" in a CPU sense
 * But if this grid was instead a large image (pixel grid) this would be intolerable
-* With correct functional data structure choices you can usually pay a log n "fee" which will often be fine
-* But, sometimes you just need to get out the imperative `Array`, `Hashset` etc.
-
-#### When FP wins: Many Related Worlds Algorithms
-* Portions of immutable data structures can be shared without conflict
-  - alluded to in the list sharing example above
-* So if an algorithm has many related stores in it the FP version can be superior
-* Example: a simple transactional store monad (here is pseudocode)
-   - a transactional store is a memory where you might want to undo ("roll back") some writes
-   - it is what is at the heart of a database implementation: if transactions conflict, roll back to past store
-
-```ocaml
-module Transactional_store = struct
-    type store = (* The type of the heap data here, say it is a Map *)
-    (* In the monad type, pass two stores, one in-use one saved *)
-    type 'a t = store * store -> 'a * store * store 
-    let bind (x : 'a t) ~(f: 'a -> 'b t) : 'b t =
-      fun (s : store * store) -> let (x', s1', s2') = x s in f x' (s1', s2')
-    let return (x : 'a) : 'a t = fun ss -> (x, ss)
-    let set (v : data) =
-      fun (s1, s2) -> ((),store_put s1 v,s2) (* update s1, pass along s2 *)
-    let get () =
-      fun (s1, s2) -> (store_get s1,s1,s2) (* fetch data from s1 *)
-    let save () = 
-      fun (s1, s2) -> ((),s1,s1) (* save the current store *)
-    let rollback () = 
-      fun (s1, s2) -> ((),s2,s2) (* toss s1, rollback to the saved store s2 *)
-  end
-end
-```
-
-* If the `store` in the above is say a Map, the `s1` and `s2` maps should be "nearly all shared" on average.
-* So, copying and memory use minimized.
-* The real benefit comes when there are `n` stores `s1`, ..., `sn` with sharing
-* Real World OCaml has a similar example comparing an [(immutable) Map vs a (mutable) Hashtable](https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables) which we looked at earlier
+* With correct functional data structure choices you can often just pay a log n "fee" which will often be fine
+  - or even less, witness the functional array solution above
+* And, sometimes you just need to get out the imperative `Array`, `Hashset` etc.
+* Also recall the Real World OCaml example comparing an [(immutable) Map vs a (mutable) Hashtable](https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables)
+  - For standard uses a mutable hashtable will be "O(1)" vs O(log n) for a `Map` version
+  - But if there are many minor variations on the Map/Hashset being created the functional data structure will in fact be faster due to all the sharing.
+  - Functional can in general be a big win for certain classes of algorithms (but admitedly not most)
 
 #### FP and paralellism
 
@@ -95,30 +82,29 @@ end
   - Also `fold` and the like can't be easily parallelized since the `accum` needs to be passed along sequentially
 * Multiple function arguments can be evaluated in parallel if they contain no effects
   - Referential transparency in general makes parallelism much easier to get right
-* OCaml 5 has parallelism (threads with shared memory); we will take a [glimpse at a tutorial](https://github.com/ocaml-multicore/parallel-programming-in-multicore-ocaml) to see how `Task` pools and `parallel_for` work.
+* OCaml also now has parallelism starting with OCaml 5 - [here is a tutorial](https://github.com/ocaml-multicore/parallel-programming-in-multicore-ocaml).
 
 
 ### Writing more efficient functions
 
-* We already covered some of this with tail recursion
-  - tail recursion principle: if the last action in a function is a recursive call, compiler can optimize away the call stack
-* Let us consider that and a few other topics now.
+* We already covered tail recursion
+  - Tail recursion principle: if the last action in a function is a recursive call, compiler can optimize away the call stack
+  - Moral: optimize deep recursive functions (e.g. working on long lists) to be tail-recursive if possible
+* Let us consider one more now.
 
 #### Memoization
 
 * If a function has no side effects it can easily be *memoized*
-   - we saw in HW, took exponential fibbonicci to linear
-   - in general works when there are no effects in the function (and, we have an `=` defined on the arguments)
-   - As you know, implement by keeping a history of past input -> output pairs and look up input in table first
-   - if the function is expensive and is often invoked on the same argument it will be very effective
+   - We saw in the homework how it could take an exponential fibbonicci to linear
+   - In general memoization works when there are no effects in the function (and, we have an `=` defined on the arguments)
+   - As you saw in the homework, implement memoization by keeping a history of past input -> output pairs and look up input in table first
+   - If the function is expensive and is often invoked on the same argument it will be very effective
 
 * Note that memoization implicitly needs a store for this past history
 * Could use mutable store, but could also use a state monad
   - pass in and return the store in the memoized function
 
-### Tail recursion and CPS
 
-* As we discussed earlier in the [idiomatic fp topic](idiomatic-fp.html#tail-recursion), left fold is tail-recursive whereas right fold is not
-* And tail-recursive functions get optimized to not make call frames
-  - Not only is memory saved but cache coherency is better so faster!
-* Moral: if efficiency is important try to re-factor to be tail recursive
+## Algebraic Effects
+
+We will hopefully have a bit of extra time to cover [algebraic effects](algebraic_effects.ml): exceptions that can be resumed.

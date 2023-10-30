@@ -68,13 +68,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h2 id="efficiency-in-functional-programming">Efficiency in Functional Programming</h2>
 
-<p>Functional data structures: <br />
-    - Feel very inefficient at first<br />
-    - This is supported by asymptotics<br />
-    - But they are often fine in practice even if asymptotic behavior is worse<br />
-    - in a few cases they are better because past states “persist for free”</p>
-
-<p>We covered some of this in the <a href="https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency">idiomatic FP lecture</a></p>
+<ul>
+  <li>
+    <p>We have already covered a fair amount about efficiency in the <a href="https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency">idiomatic FP lecture</a> and before</p>
+  </li>
+  <li>
+    <p>Summary: functional data structures</p>
+    <ul>
+      <li>Feel like they should be much more inefficient but its often “at worst a log factor”</li>
+      <li>In a few cases they are better because past states “persist for free”</li>
+      <li>In a few cases speed is critical and mutable structures are required</li>
+    </ul>
+  </li>
+</ul>
 
 <h3 id="functional-lists">Functional lists</h3>
 <p>Let us warm up reviewing <code>'a list</code> efficiency</p>
@@ -94,37 +100,54 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li><code>l2</code> and <code>l3</code> share <code>l1</code> and all the above is O(1)</li>
-  <li>if lists were mutable such sharing would not generally be possible!</li>
-  <li>In general this shows there is a trade-off in that in some cases functional wins
-    <ul>
-      <li>more on this below
-        <h3 id="case-study-monadic-minesweeper">Case Study: Monadic Minesweeper</h3>
-      </li>
-    </ul>
-  </li>
-  <li>Let us analyze the complexity of different implementations of the imperative Minesweeper.</li>
+  <li>If lists were mutable such sharing would not generally be possible</li>
+</ul>
+
+<h3 id="case-study-monadic-minesweeper">Case Study: Monadic Minesweeper</h3>
+
+<ul>
+  <li>Let us analyze the complexity of different implementations of Minesweeper.</li>
   <li>Assume a grid of n elements (a square-root n by square-root n grid)</li>
 </ul>
 
-<p>Our imperative implementation using a 2D array (<a href="https://pl.cs.jhu.edu/fpse/examples/mine_array.ml">this one</a>)</p>
+<p>Our initial implementation  <a href="https://pl.cs.jhu.edu/fpse/examples/minesweeper.ml">using a list of strings</a></p>
 <ul>
+  <li>Each call to <code>get x y</code> is O(sqrt n) since we need to march down the lists to find element (x,y)</li>
+  <li>So O(sqrt n) for each inc operation so O(n * sqrt n) overall.</li>
+</ul>
+
+<p>Our implementation  <a href="https://pl.cs.jhu.edu/fpse/examples/mine_array.ml">using a functional 2D array</a></p>
+<ul>
+  <li>The array is in fact never mutated, only used for random access to fixed array</li>
+  <li>Otherwise this implementation is the same as the above</li>
+  <li><code>get x y</code> is now O(1) since it is an array – random access.</li>
   <li>O(1) for each inc operation so O(n) in total.</li>
 </ul>
 
-<p>Hypothetic monadic state version</p>
+<p>Stateful version <a href="https://pl.cs.jhu.edu/fpse/examples/mine_mutate.ml">using an array</a></p>
 <ul>
-  <li>Take the imperative 2D array version, implement as state monad on list-of-strings (<a href="https://pl.cs.jhu.edu/fpse/examples/mine_monadic.ml">code is here, we will glimpse</a>)</li>
-  <li>Each grid square increment will take O(n) since the whole grid has to be rebuilt with one change
+  <li>Instead of counting mines around each empty square once and for all, for each mine increment all its non-mine neighbors</li>
+  <li>It is a fundamentally mutating alternative algorithm.</li>
+  <li>O(n) as with the previous functional array version</li>
+</ul>
+
+<p>Monadic state version</p>
+<ul>
+  <li>A  <a href="https://pl.cs.jhu.edu/fpse/examples/mine_monadic.ml">state monad version of the original minesweeper</a></li>
+  <li>We will follow the data structure of the original minesweeper, the list of strings</li>
+  <li>But do the imperative increment-the-mine-neighbors instead of the functional count-the-mines</li>
+  <li>Each grid square increment will take O(n) since the whole list of strings has to be rebuilt with one change
     <ul>
       <li>there is some functional sharing of parts not incremented (as in list append above) but means 1/2 n = O(n)</li>
     </ul>
   </li>
   <li>O(n) inc’s are performed total so it will be O(n^2).</li>
+  <li>So a bit of a backfire</li>
 </ul>
 
 <p>Imagine an alternative monad implementation using a <code>Board</code> implemented as a <code>Core.Map</code> from keys <code>(i,j)</code> to characters:</p>
 <ul>
-  <li>lookup and increment will be O(log n) on average since <code>Core.Map</code> is implemented as a balanced binary search tree
+  <li>Lookup and increment will be O(log n) on average since <code>Core.Map</code> is implemented as a balanced binary search tree
     <ul>
       <li>one change to a Map’s tree is only log n because only one path in tree is changed, rest can be re-used</li>
       <li>(yes, one path down a binary tree is only 1/(log n)-th of the tree nodes, and the sub-trees can be reused)</li>
@@ -137,50 +160,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>For Minesweeper, O(n^2) is in fact fine as the grids are always “tiny” in a CPU sense</li>
   <li>But if this grid was instead a large image (pixel grid) this would be intolerable</li>
-  <li>With correct functional data structure choices you can usually pay a log n “fee” which will often be fine</li>
-  <li>But, sometimes you just need to get out the imperative <code>Array</code>, <code>Hashset</code> etc.</li>
-</ul>
-
-<h4 id="when-fp-wins-many-related-worlds-algorithms">When FP wins: Many Related Worlds Algorithms</h4>
-<ul>
-  <li>Portions of immutable data structures can be shared without conflict
+  <li>With correct functional data structure choices you can often just pay a log n “fee” which will often be fine
     <ul>
-      <li>alluded to in the list sharing example above</li>
+      <li>or even less, witness the functional array solution above</li>
     </ul>
   </li>
-  <li>So if an algorithm has many related stores in it the FP version can be superior</li>
-  <li>Example: a simple transactional store monad (here is pseudocode)
+  <li>And, sometimes you just need to get out the imperative <code>Array</code>, <code>Hashset</code> etc.</li>
+  <li>Also recall the Real World OCaml example comparing an <a href="https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables">(immutable) Map vs a (mutable) Hashtable</a>
     <ul>
-      <li>a transactional store is a memory where you might want to undo (“roll back”) some writes</li>
-      <li>it is what is at the heart of a database implementation: if transactions conflict, roll back to past store</li>
+      <li>For standard uses a mutable hashtable will be “O(1)” vs O(log n) for a <code>Map</code> version</li>
+      <li>But if there are many minor variations on the Map/Hashset being created the functional data structure will in fact be faster due to all the sharing.</li>
+      <li>Functional can in general be a big win for certain classes of algorithms (but admitedly not most)</li>
     </ul>
   </li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Transactional_store</span> <span class="o">=</span> <span class="k">struct</span>
-    <span class="k">type</span> <span class="n">store</span> <span class="o">=</span> <span class="c">(* The type of the heap data here, say it is a Map *)</span>
-    <span class="c">(* In the monad type, pass two stores, one in-use one saved *)</span>
-    <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span> 
-    <span class="k">let</span> <span class="n">bind</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span> <span class="o">=</span>
-      <span class="k">fun</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">store</span> <span class="o">*</span> <span class="n">store</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">let</span> <span class="p">(</span><span class="n">x'</span><span class="o">,</span> <span class="n">s1'</span><span class="o">,</span> <span class="n">s2'</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="n">s</span> <span class="k">in</span> <span class="n">f</span> <span class="n">x'</span> <span class="p">(</span><span class="n">s1'</span><span class="o">,</span> <span class="n">s2'</span><span class="p">)</span>
-    <span class="k">let</span> <span class="n">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">fun</span> <span class="n">ss</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span> <span class="n">ss</span><span class="p">)</span>
-    <span class="k">let</span> <span class="n">set</span> <span class="p">(</span><span class="n">v</span> <span class="o">:</span> <span class="n">data</span><span class="p">)</span> <span class="o">=</span>
-      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span><span class="o">,</span><span class="n">store_put</span> <span class="n">s1</span> <span class="n">v</span><span class="o">,</span><span class="n">s2</span><span class="p">)</span> <span class="c">(* update s1, pass along s2 *)</span>
-    <span class="k">let</span> <span class="n">get</span> <span class="bp">()</span> <span class="o">=</span>
-      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">store_get</span> <span class="n">s1</span><span class="o">,</span><span class="n">s1</span><span class="o">,</span><span class="n">s2</span><span class="p">)</span> <span class="c">(* fetch data from s1 *)</span>
-    <span class="k">let</span> <span class="n">save</span> <span class="bp">()</span> <span class="o">=</span> 
-      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span><span class="o">,</span><span class="n">s1</span><span class="o">,</span><span class="n">s1</span><span class="p">)</span> <span class="c">(* save the current store *)</span>
-    <span class="k">let</span> <span class="n">rollback</span> <span class="bp">()</span> <span class="o">=</span> 
-      <span class="k">fun</span> <span class="p">(</span><span class="n">s1</span><span class="o">,</span> <span class="n">s2</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">(()</span><span class="o">,</span><span class="n">s2</span><span class="o">,</span><span class="n">s2</span><span class="p">)</span> <span class="c">(* toss s1, rollback to the saved store s2 *)</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code></pre></div></div>
-
-<ul>
-  <li>If the <code>store</code> in the above is say a Map, the <code>s1</code> and <code>s2</code> maps should be “nearly all shared” on average.</li>
-  <li>So, copying and memory use minimized.</li>
-  <li>The real benefit comes when there are <code>n</code> stores <code>s1</code>, …, <code>sn</code> with sharing</li>
-  <li>Real World OCaml has a similar example comparing an <a href="https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables">(immutable) Map vs a (mutable) Hashtable</a> which we looked at earlier</li>
 </ul>
 
 <h4 id="fp-and-paralellism">FP and paralellism</h4>
@@ -198,18 +190,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Referential transparency in general makes parallelism much easier to get right</li>
     </ul>
   </li>
-  <li>OCaml 5 has parallelism (threads with shared memory); we will take a <a href="https://github.com/ocaml-multicore/parallel-programming-in-multicore-ocaml">glimpse at a tutorial</a> to see how <code>Task</code> pools and <code>parallel_for</code> work.</li>
+  <li>OCaml also now has parallelism starting with OCaml 5 - <a href="https://github.com/ocaml-multicore/parallel-programming-in-multicore-ocaml">here is a tutorial</a>.</li>
 </ul>
 
 <h3 id="writing-more-efficient-functions">Writing more efficient functions</h3>
 
 <ul>
-  <li>We already covered some of this with tail recursion
+  <li>We already covered tail recursion
     <ul>
-      <li>tail recursion principle: if the last action in a function is a recursive call, compiler can optimize away the call stack</li>
+      <li>Tail recursion principle: if the last action in a function is a recursive call, compiler can optimize away the call stack</li>
+      <li>Moral: optimize deep recursive functions (e.g. working on long lists) to be tail-recursive if possible</li>
     </ul>
   </li>
-  <li>Let us consider that and a few other topics now.</li>
+  <li>Let us consider one more now.</li>
 </ul>
 
 <h4 id="memoization">Memoization</h4>
@@ -217,10 +210,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>If a function has no side effects it can easily be <em>memoized</em>
     <ul>
-      <li>we saw in HW, took exponential fibbonicci to linear</li>
-      <li>in general works when there are no effects in the function (and, we have an <code>=</code> defined on the arguments)</li>
-      <li>As you know, implement by keeping a history of past input -&gt; output pairs and look up input in table first</li>
-      <li>if the function is expensive and is often invoked on the same argument it will be very effective</li>
+      <li>We saw in the homework how it could take an exponential fibbonicci to linear</li>
+      <li>In general memoization works when there are no effects in the function (and, we have an <code>=</code> defined on the arguments)</li>
+      <li>As you saw in the homework, implement memoization by keeping a history of past input -&gt; output pairs and look up input in table first</li>
+      <li>If the function is expensive and is often invoked on the same argument it will be very effective</li>
     </ul>
   </li>
   <li>Note that memoization implicitly needs a store for this past history</li>
@@ -231,17 +224,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h3 id="tail-recursion-and-cps">Tail recursion and CPS</h3>
+<h2 id="algebraic-effects">Algebraic Effects</h2>
 
-<ul>
-  <li>As we discussed earlier in the <a href="idiomatic-fp.html#tail-recursion">idiomatic fp topic</a>, left fold is tail-recursive whereas right fold is not</li>
-  <li>And tail-recursive functions get optimized to not make call frames
-    <ul>
-      <li>Not only is memory saved but cache coherency is better so faster!</li>
-    </ul>
-  </li>
-  <li>Moral: if efficiency is important try to re-factor to be tail recursive</li>
-</ul>
+<p>We will hopefully have a bit of extra time to cover <a href="algebraic_effects.ml">algebraic effects</a>: exceptions that can be resumed.</p>
       
           </section>
         </div>
