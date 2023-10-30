@@ -6,12 +6,11 @@
    
 *)
 
-
 (* First let us just play with a "resumable exception"
    
    Think of it as the "Pause" button on the movie you are watching.
      - You can go off and do anything else and that movie stays on pause
-     - But, you can resume the movie any time in the future from same spot!
+     - But, you can resume the movie any time in the future from the exact same spot!
      - Also, when you resume the old "pause point is gone", no re-resuming.
        (of course could "pause" again in the future from another point.)
 *)
@@ -33,14 +32,16 @@ let newdiv x y = match y with
 
 let _ = newdiv 33 0 (* See how this just changes the exception raised *)
 
-(* Now we can make a new division to turn division by 0 into a 1 result *)
+(* Now we can make a new division to turn division by 0 into a 1 result 
+   by resuming with 1 as the result when the exception is raised
+   Note the syntax for this is currently horrible, they are going to improve it *)
 let (/) n m =
   try_with (fun () -> newdiv n m) ()
   { effc = fun (type a) (eff: a t) -> match eff with
     | Divz ->     (* if we "continue" later the perform result will be the new value *)
          Printf.printf  "Div by 0, forcing return of 1\n"; Out_channel.flush stdout;
          Some (fun (k: (a, _) continuation) ->
-         continue k 1 (* continue lets us RESUME as perform point -- return 1 for n/0 value *)) 
+         continue k 1 (* continue lets us RESUME at the perform point -- return 1 for n/0 value *)) 
     | _ -> None }
 
 let _ = (3/0) + (8/0) + 1 (* same as 1 + 1 + 1 *)
@@ -48,7 +49,7 @@ let _ = (3/0) + (8/0) + 1 (* same as 1 + 1 + 1 *)
 (* Function to turn [n;m;p] to n/(m/(p/1)) etc 
    But, use above division to allow for recovery *)      
 let rec div_list (l : int list) : int =
-  List.fold_right ~f:(fun n d -> n / d) l ~init:1 
+  Core.List.fold_right ~f:(fun n d -> n / d) l ~init:1 
 
 let _ = div_list [1000;100;2];; (* 1000/(100/(2/1)), no failures *)
 let _ = div_list [1000;100;2;4];;  (* 1000/(100/(2/4)) is 1000/1 *)
@@ -94,12 +95,12 @@ let _ = (adding_div 3 0) + (adding_div 8 0) + 1
 
 (* OK hopefully one-shot resumable exceptions make some sense now.
 
-   But this is only the beginning: it turns out just about any side effect can be encoded with only resumable exceptions - !!
+   But this is only the beginning: it turns out just about any side effect can be encoded with only resumable exceptions - !
+   Its fairly complex though so we will skip in lecture.   See below if interested.
 *)
 
 
 (* Encoding state with resumable exceptions
-   - skipping this in lecture, its complicated.
 
 The high level idea of the encoding is as follows:
 
