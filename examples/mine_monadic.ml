@@ -74,7 +74,7 @@ module Board = struct
         | None -> (Some(),b)
         | Some(b') -> (Some(),b')
 
-    let get (x: int) (y: int): 'a t = 
+    let get (x: int) (y: int): char t = 
       fun (b : m) -> 
       let vo = List.nth b y |> 
                Option.value_map ~default:None ~f:(fun row -> Option.try_with (fun _ -> String.get row x))

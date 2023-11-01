@@ -339,7 +339,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a>,<a href="lecture/algebraic_effects.ml">Algebraic Effects</a></div>
+            <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a>, <a href="lecture/algebraic_effects.ml">Algebraic Effects</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

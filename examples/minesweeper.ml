@@ -19,7 +19,7 @@ let to_char = function
 
 (* A less low-level version of the above: *)  
 
-let to_char' i = i |> Int.to_string |> (Fn.flip String.get) 0
+let to_char' i = i |> Int.to_string |> (Fn.flip String.get) 0 |> fun c -> if Char.(c='-') then '*' else c
 
 module Board = struct
   type t = string list (* board data; see test/test.ml for examples. *)

@@ -24,7 +24,7 @@ module Array_2d = struct
       ]
 end
 
-let to_char i = i |> Int.to_string |> (Fn.flip String.get) 0
+let to_char i = i |> Int.to_string |> (Fn.flip String.get) 0 |> fun c -> match c with '-' -> '*' | '0' -> ' ' | _ -> c
 
 let is_mine = Char.equal '*'
 
