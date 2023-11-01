@@ -3,7 +3,9 @@ The Functional Programming Language Universe
 
 * "This is the Dawn of the Age of FP", there are now many choices of FP languages
 * There are both viable functional-focused languages as well as FP extensions to existing languages
-* We review the landscape here so you can throw in some FP on your next Python/Java/C++/... project
+* We review the landscape here so you can us some FP on your next Python/Java(Script)/C++/... project
+* Along with the FP another thing from the class which you can apply elsewhere is quickchecking
+  - Originated with Haskell but being ported to many languages now
 
 ## Functional-focused languages
 
@@ -11,13 +13,13 @@ The Functional Programming Language Universe
 * Key features include
   - Immutable variables by default
   - Libraries have immutable data structures
-  - Full higher-order functions (can pass and return functions to functions), currying, anonymous (`fun x -> ` functions), etc.
-  - Often also includes pattern matching and type inference
+  - Full higher-order functions (can pass and return functions to functions), currying, anonymous (`fun x -> ...` functions), etc.
+  - Often also includes pattern matching and type inference, but also may be dynamically-typed
 * Note that you may see the term "persistent data structure", we have been calling these "pure functional" or "immutable" data structures.
-  - The term "persistent" has a longstanding meaning of surviving over multiple runs of a program so I  view "persistent data structure" as a very misleading term for immutable structure.
+  - The term "persistent" has a longstanding meaning of surviving over multiple runs of a program so I  perfsonally find "persistent data structure" as a misleading term for immutable structure.
 * There are roughly two "schools"
     - ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, etc)
-    - Lisp school: dynamically typed, flexible but no type-directed programming (Lisp, Scheme, Clojure, etc)
+    - Lisp school: dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, etc)
 * All of these functional languages should be very easy to learn now that you know OCaml.
 
 ## ML Dialects
@@ -58,11 +60,11 @@ let square = Square 2.0
 printfn "The area of the square is %f" (getArea square)
 ```
 
-### ReScript (ex-Reason)
+### ReScript (was called Reason until a year ago)
 
 * [ReScript](https://rescript-lang.org) is an interesting beast, it is a fork of OCaml in terms of features
   - But, with a somewhat different syntax not so loaded with historical oddities and kludges
-  - Compiler takes `.res` to `.bs.js` which can in turn run in a browser
+  - Compiler (bucklescript) takes `.res` to `.bs.js` which can in turn run in a browser
   - [Here](https://rescript-lang.org/try) is a playground where you can see how `.res` is turned into `.js.bs`.
   - [This playground](https://reasonml.github.io/en/try) shows the close relation of ReScript and OCaml (and JavaScript) (it is in fact a Reason playground, the predecessor of ReScript)
   - [Some small code examples](https://rescript-lang.org/docs/manual/latest/newcomer-examples) to get an idea of the syntax
@@ -73,7 +75,7 @@ printfn "The area of the square is %f" (getArea square)
   - Compare to TypeScript which is not sound and lacks type inference
 * ReScriptReact is the ReScript version of Facebook's excellent React UI library
 * [Here](https://github.com/jihchi/rescript-react-realworld-example-app) is an example of a full browser app written in ReScriptReact.
-  - ReScriptReact counts as "OCaml" for the course projects, an option to consider if you already know React.
+  - ReScript and ReScriptReact count as OCaml for the course projects, an option to consider if you already know React.
 
 ### Elm
 
@@ -84,7 +86,7 @@ printfn "The area of the square is %f" (getArea square)
 ### Scala
 
 * Scala is a hybrid of Java and ML which runs on the JVM so can link with Java libraries
-* It is easier to do FP in compared to Java since it was built-in from the start: pattern matching, type inference, etc.
+* It is easier to do FP in compared to Java since FP was built-in from the start: pattern matching, type inference, etc.
 
 ### Haskell
 
@@ -121,13 +123,14 @@ printfn "The area of the square is %f" (getArea square)
 
 Java 8+ has **Lambdas**
 
-*   Lambdas are clunky to use due to how they were patched in.
+*   Lambdas are higher-order functions but are clunky to use due to how they were patched in.
 *   Java 8 higher-order functions  "pun" as an interface with only one method in it, `apply`.  
     - the function is taken to be the body of that single method, no need to write the method name when declaring the function then.
 *   There is also some (limited) type inference for Lambda parameters (plus type inference in general via `var`)
 *   Currying in Java, somewhat painfully: [Gist currying example](https://gist.github.com/timyates/7674005). For that example here is the [Function](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html) and [BiFunction](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/BiFunction.html) type.
 * Use `final` to declare variables immutable in Java - use it!
 * There are no immutable data structures in the Java standard library unfortunately
+ - limits the advantages of FP
 
 ### FP in C++11
 
@@ -149,12 +152,17 @@ def adder(x):
          return x + y
      return uni_adder
  
-print adder(4)(18)
+print (adder(4)(18))
+
+r = adder(4)
+print (r(18))
 ```
-* The above is a bit clunky since the intermediate function must be named
+* The above works but is a bit clunky since the intermediate function must be named
 * `map`, `filter`, `reduce` etc are already in the core libraries
+ - Note that lists are mutable unfortunately (no sharing) but you can make a list out of tuples which are immutable
 * In addition, the [`functools`](https://docs.python.org/3/library/functools.html) standard library supports other convenience higher-order function operations
 * Plus, if you want even more FP-ism, there are additional libraries such as [PyToolz](https://toolz.readthedocs.io/en/latest/index.html)
+ - has immutable data structures as well
 
 ```python
 from toolz import curry
@@ -169,8 +177,8 @@ plusfour = add(4)
 * Python is weak on immutable variables, there is no `const`/`final`
     - but the tuples and `frozenset` are immutable data structures
     - and Python 3.8 finally has `final`
-* Python 3.10 (finally!) has pattern matching - released Oct 2021.
-  - [tutorial](https://www.python.org/dev/peps/pep-0636/)
+* Python 3.10 (finally!) has pattern matching.
+  - [tutorial 1](https://www.python.org/dev/peps/pep-0636/) [tutorial 2](https://www.infoworld.com/article/3609208/how-to-use-structural-pattern-matching-in-python.html)
 
 
 ### FP In JavaScript or TypeScript
@@ -180,7 +188,7 @@ plusfour = add(4)
 ```javascript
 function adder(a) 
 { return function uni_adder(b) 
-    { return a+b;
+    { return a + b;
     };
 };
 ```
@@ -199,7 +207,7 @@ function adder(a)
 
 ```ocaml
 # let f = (fun x -> fun y -> x + y) 4;;
-val f : int -> int = <fun> (* f is at runtime the closure "<fun y code, {x |-> 4}>" *)
+val f : int -> int = <fun> (* f is at runtime the closure (pair) "<fun y code, {x |-> 4}>" *)
 # f 3;;
 - : int = 7
 ```
