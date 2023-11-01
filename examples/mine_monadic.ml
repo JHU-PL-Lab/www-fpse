@@ -108,27 +108,8 @@ let inc_adjacents (x: int) (y: int) : unit t =
   let%bind () = s 0 1 in  s 1 1
 
 
-(* Defining monadic versions of List.iteri/String.iteri to iterate an effectful function over the grid *)
-(* You can't just map the function over the list, you need to make a chain of binds to propagae effects *)
-
-let list_iteri (l : string list) ~(f: int -> string -> unit t) : unit t =
-  List.foldi l ~init:(return ()) ~f:(fun i acc a -> bind acc ~f:(fun () -> f i a))    
-let string_iteri (s : string) ~(f: int -> char -> unit t) : unit t =
-  String.foldi s ~init:(return ()) ~f:(fun i acc a -> bind acc ~f:(fun () -> f i a))
-(* iterji iterates over the whole grid applying effectful function f *)
-let iterji ~(f : int -> int -> char -> 'a t) =
-  let%bind b = dump () in
-  list_iteri b ~f:(fun y -> fun s -> string_iteri s ~f:(f y))
-
-(* With the above setup the main function is easy: call inc_adjacents on all mines *)
+(* An "imperative" version of inc_all doing nested loops - standard imperative style *)  
 let inc_all () : 'a t =
-  iterji ~f:(fun y x c -> if is_mine c then inc_adjacents x y else return ())
-
-let annotate (b : m) =
-  let (_,b') = inc_all () b in b'
-  
-(* A more "imperative" version of inc_all doing nested loops rather than list iteration *)  
-let inc_all_v2_with_let_bind () : 'a t =
   let%bind xmax = x_dim () in
   let%bind ymax = y_dim () in
   let rec do_inc (x : int) (y : int) : ('a t) = 
@@ -140,6 +121,29 @@ let inc_all_v2_with_let_bind () : 'a t =
     else do_inc (x + 1) y 
   in
   do_inc 0 0
+
+
+let annotate (b : m) =
+    let (_,b') = inc_all () b in b'
+    
+(* Now lets use folding to do the iteration.
+   * Need to define monadic versions of List.iteri/String.iteri to iterate an effectful function over the grid which will thread along the state.
+   * You can't just map the function over the list, you need to make a chain of binds to propagate effects
+   * It ends up being pretty complicated, the above traditional imperative approach reads better  *)
+
+let list_iteri (l : string list) ~(f: int -> string -> unit t) : unit t =
+  List.foldi l ~init:(return ()) ~f:(fun i acc a -> bind acc ~f:(fun () -> f i a))    
+let string_iteri (s : string) ~(f: int -> char -> unit t) : unit t =
+  String.foldi s ~init:(return ()) ~f:(fun i acc a -> bind acc ~f:(fun () -> f i a))
+(* iterji iterates over the whole grid applying effectful function f *)
+let iterji ~(f : int -> int -> char -> 'a t) =
+  let%bind b = dump () in
+  list_iteri b ~f:(fun y -> fun s -> string_iteri s ~f:(f y))
+
+(* With the above setup the main function is easy: call inc_adjacents on all mines *)
+let inc_all' () : 'a t =
+  iterji ~f:(fun y x c -> if is_mine c then inc_adjacents x y else return ())
+
 
 (* One sample test board *)
 let b = [
