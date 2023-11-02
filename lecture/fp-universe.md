@@ -83,6 +83,8 @@ printfn "The area of the square is %f" (getArea square)
 * Designed for writing web apps, it runs in the browser via translation to JS.
    - Similar to ReScriptReact in goal
 
+### Elixir
+
 ### Scala
 
 * Scala is a hybrid of Java and ML which runs on the JVM so can link with Java libraries
@@ -142,22 +144,46 @@ Java 8+ has **Lambdas**
     - e.g. `auto mydata = 22;`. `auto` is like `var` in Java.
 *   C++14 adds [generic lambdas](http://en.wikipedia.org/wiki/C++14#Generic_lambdas) which look like the polymorphic types of OCaml/Java but are really just fancy macros.
 
+### FP in Swift
+
+* Swift also has support for anonymous function definitions, closures, Currying, etc.
+* `let` is also built-in for defining immutable values (use `var` to mutate)
+* `map` and other standard functions are supported in the system libraries
+* The generic types of Swift also allow polymorphic functions to be defined like in OCaml
+* Here is a Curried add function
+```swift
+func add(_ x: Int) -> ((Int) -> Int) {
+  return { y in x + y }
+
+let r1 = add(5)(4)
+let add5 = add(5)
+let r2 = add5(4)
+}
+```
+
+Or with more sugared syntax like OCaml's implicitly Curried functions:
+```ocaml
+func add(x: Int)(y: Int) -> Int {
+  return x + y
+}
+
+let sum = add(2)(y: 3)
+```
+
+Note however that application requires a named parameter on the 2nd parameter.
+
 ### FP In Python
 
-* Python "already has" FP including closures and Currying.  Here is a Curried add function.
+* Python "already has" FP including lambda, closures and Currying.  Here is a Curried add function.
 
 ```python
-def adder(x):
-     def uni_adder(y):
-         return x + y
-     return uni_adder
- 
-print (adder(4)(18))
+adder =  lambda x: lambda y: x + y
+  
+adder(4)(18)
 
 r = adder(4)
-print (r(18))
+r(18)
 ```
-* The above works but is a bit clunky since the intermediate function must be named
 * `map`, `filter`, `reduce` etc are already in the core libraries
  - Note that lists are mutable unfortunately (no sharing) but you can make a list out of tuples which are immutable
 * In addition, the [`functools`](https://docs.python.org/3/library/functools.html) standard library supports other convenience higher-order function operations

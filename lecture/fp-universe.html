@@ -187,6 +187,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
+<h3 id="elixir">Elixir</h3>
+
 <h3 id="scala">Scala</h3>
 
 <ul>
@@ -280,24 +282,49 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>C++14 adds <a href="http://en.wikipedia.org/wiki/C++14#Generic_lambdas">generic lambdas</a> which look like the polymorphic types of OCaml/Java but are really just fancy macros.</li>
 </ul>
 
+<h3 id="fp-in-swift">FP in Swift</h3>
+
+<ul>
+  <li>Swift also has support for anonymous function definitions, closures, Currying, etc.</li>
+  <li><code>let</code> is also built-in for defining immutable values (use <code>var</code> to mutate)</li>
+  <li><code>map</code> and other standard functions are supported in the system libraries</li>
+  <li>The generic types of Swift also allow polymorphic functions to be defined like in OCaml</li>
+  <li>Here is a Curried add function<br />
+```swift<br />
+func add(_ x: Int) -&gt; ((Int) -&gt; Int) {<br />
+return { y in x + y }</li>
+</ul>
+
+<p>let r1 = add(5)(4)<br />
+let add5 = add(5)<br />
+let r2 = add5(4)<br />
+}</p>
+<pre><code>
+Or with more sugared syntax like OCaml's implicitly Curried functions:
+```ocaml
+func add(x: Int)(y: Int) -&gt; Int {
+  return x + y
+}
+
+let sum = add(2)(y: 3)
+</code></pre>
+
+<p>Note however that application requires a named parameter on the 2nd parameter.</p>
+
 <h3 id="fp-in-python">FP In Python</h3>
 
 <ul>
-  <li>Python “already has” FP including closures and Currying.  Here is a Curried add function.</li>
+  <li>Python “already has” FP including lambda, closures and Currying.  Here is a Curried add function.</li>
 </ul>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">adder</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-     <span class="k">def</span> <span class="nf">uni_adder</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
-         <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
-     <span class="k">return</span> <span class="n">uni_adder</span>
- 
-<span class="k">print</span> <span class="p">(</span><span class="n">adder</span><span class="p">(</span><span class="mi">4</span><span class="p">)(</span><span class="mi">18</span><span class="p">))</span>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">adder</span> <span class="o">=</span>  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+  
+<span class="n">adder</span><span class="p">(</span><span class="mi">4</span><span class="p">)(</span><span class="mi">18</span><span class="p">)</span>
 
 <span class="n">r</span> <span class="o">=</span> <span class="n">adder</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="k">print</span> <span class="p">(</span><span class="n">r</span><span class="p">(</span><span class="mi">18</span><span class="p">))</span>
+<span class="n">r</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
 </code></pre></div></div>
 <ul>
-  <li>The above works but is a bit clunky since the intermediate function must be named</li>
   <li><code>map</code>, <code>filter</code>, <code>reduce</code> etc are already in the core libraries</li>
   <li>Note that lists are mutable unfortunately (no sharing) but you can make a list out of tuples which are immutable</li>
   <li>In addition, the <a href="https://docs.python.org/3/library/functools.html"><code>functools</code></a> standard library supports other convenience higher-order function operations</li>
