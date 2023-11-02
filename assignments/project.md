@@ -93,7 +93,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * If you are familiar with databases, the [sqlite3-ocaml](https://github.com/mmottl/sqlite3-ocaml) and [postgresql-ocaml](https://mmottl.github.io/postgresql-ocaml/) bindings should work for accessing SQLite or Postgres databases from within OCaml.
 
 #### Data Processing
-There are some good libraries here but they don't have many users and we have had **many issues with people being able to install these libraries in the past**.  If you wanted to base your project around one of these libraries **you will be required to** (1) get the library successfully installed on all your team members' computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.
+There are some good libraries here but they don't have many users and we have had **many issues with people being able to install these libraries in the past**.  If you wanted to base your project around one of these libraries **you will be required to** (1) get the library successfully installed on all your team members' computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below. 
 * [Owl](https://ocaml.xyz/) is a very well-documented numerical processing library.
 * [ocaml-torch](https://github.com/janestreet/torch) PyTorch bindings for OCaml.   Note TensorFlow bindings are old and don't seem to work.
 * [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.
@@ -120,15 +120,14 @@ There are some good libraries here but they don't have many users and we have ha
 The design submission must include
   1. An overview of the purpose of the project
   2. A list of libraries you plan on using
-    - Additionally if any of the libraries are either not listed above or are in the data processing category above, you will also be required to have successfully installed the library on all team member computers and have a small demo app working to verify the library really works.  We require this because OCaml libraries can be flakey.
+    - Additionally if any of the libraries are either not listed above or are in the data processing category above, you will also be required to have successfully installed the library on all team member computers and have a small demo app working to verify the library really works.  We require this because OCaml libraries can be flakey.   You will need to submit this `demo/` as part of the code submission for your design.
   3. Commented module type declarations (`.mli` files) which will provide you with an initial specification to code to
     - You can obviously change this later and don't need every single detail filled out
     - But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.
   4. Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.
-  5. Make sure you have installed and verified any extra libraries will in fact work on your computer setup, by running their tutorial examples.
-  6. Also include a brief list of what order you will implement features.
-  7. If your project is an OCaml version of some other app in another language or a projust you did in another course etc please cite this other project.  In general any code that inspired your code needs to be cited in your submissions.
-  8. You may also include any other information which will make it easier to understand your project.
+  5. Also include a brief list of what order you will implement features.
+  6. If your project is an OCaml version of some other app in another language or a projust you did in another course etc please cite this other project.  In general any code that inspired your code needs to be cited in your submissions.
+  7. You may also include any other information which will make it easier to understand your project.
 
 #### Code Checkpoint
 
