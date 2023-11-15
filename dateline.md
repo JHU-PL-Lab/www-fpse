@@ -322,7 +322,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/encoding-effects.ml">Encoding Effects III</a>; <a href="lecture/coroutines.html">Coroutines</a></div>
+            <div align="left" class="body"><a href="lecture/encoding_effects.ml">Encoding Effects III</a>; <a href="lecture/coroutines.html">Coroutines</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

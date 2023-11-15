@@ -113,9 +113,10 @@ There are some good libraries here but they don't have many users and we have ha
 
 #### Initial Group and Idea(s) 
  
- The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus 3) potential libraries.  Basically, the result of one initial brainstorming session.
+ The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus 3) potential libraries.  Basically, the result of one initial brainstorming session.  This can just be a pdf file.
 
 #### Project Design Proposal
+For this and the subsequent submissions you are required to submit a GitHub repo
 
 The design submission must include
   1. An overview of the purpose of the project
