@@ -289,9 +289,9 @@ BOOM!
  <span class="p">))</span>
 </code></pre></div></div>
 
-<p>With these lines, <code>dune build</code> will build a file <code>&lt;your_project&gt;.opam</code>.  You can then use command <code>opam install . --deps-only --working-dir</code> to install any of the <code>opam</code> dependencies if they are not already installed.  We will use this command to install all of your <code>opam</code> dependencies.  See <a href="https://dune.readthedocs.io/en/stable/opam.html">dune opam integration</a> for details on this dune file format, and <a href="https://opam.ocaml.org/doc/Packaging.html">opam packaging</a> for details on the <code>.opam</code> file format.</p>
+<p>With these lines, <code>dune build</code> will build a file <code>&lt;your_project&gt;.opam</code>.  You can then use command <code>opam install . --deps-only --working-dir</code> to install any of the <code>opam</code> dependencies if they are not already installed.  We will use this command to install all of your <code>opam</code> dependencies.  See <a href="https://dune.readthedocs.io/en/stable/explanation/opam-integration.html">dune opam integration</a> for details on this dune file format, and <a href="https://opam.ocaml.org/doc/Packaging.html">opam packaging</a> for details on the <code>.opam</code> file format.</p>
 
-<p>Note that any non-<code>opam</code> dependencies you will need to list in your <code>Readme.md</code> file.  You can in fact add them to the <code>.opam</code> file with <code>depexts</code> but it is not trivial to do so we will not require it.</p>
+<p>Note that any non-<code>opam</code> dependencies you will need to list in your <code>Readme.md</code> file.  You can also add them to the <code>.opam</code> file with <code>depexts</code> but it is not trivial to do so we will not require it.</p>
 
 <h4 id="code-submissions">Code Submissions</h4>
 <p>We will put up three submission points in Gradescope for you to upload your submissions for the Design, Checkpoint, and Final submissions.  You will be required in all cases to upload via GitHub.  If you have large datasets in files please put them on Google Drive or similar and provide a link - Gradescope and/or Github may be unhappy otherwise.</p>

@@ -177,9 +177,9 @@ Here are some clarifications.
  ))
  ```
  
-With these lines, `dune build` will build a file `<your_project>.opam`.  You can then use command `opam install . --deps-only --working-dir` to install any of the `opam` dependencies if they are not already installed.  We will use this command to install all of your `opam` dependencies.  See [dune opam integration](https://dune.readthedocs.io/en/stable/opam.html) for details on this dune file format, and [opam packaging](https://opam.ocaml.org/doc/Packaging.html) for details on the `.opam` file format.
+With these lines, `dune build` will build a file `<your_project>.opam`.  You can then use command `opam install . --deps-only --working-dir` to install any of the `opam` dependencies if they are not already installed.  We will use this command to install all of your `opam` dependencies.  See [dune opam integration](https://dune.readthedocs.io/en/stable/explanation/opam-integration.html) for details on this dune file format, and [opam packaging](https://opam.ocaml.org/doc/Packaging.html) for details on the `.opam` file format.
 
-Note that any non-`opam` dependencies you will need to list in your `Readme.md` file.  You can in fact add them to the `.opam` file with `depexts` but it is not trivial to do so we will not require it.
+Note that any non-`opam` dependencies you will need to list in your `Readme.md` file.  You can also add them to the `.opam` file with `depexts` but it is not trivial to do so we will not require it.
 
 #### Code Submissions
 We will put up three submission points in Gradescope for you to upload your submissions for the Design, Checkpoint, and Final submissions.  You will be required in all cases to upload via GitHub.  If you have large datasets in files please put them on Google Drive or similar and provide a link - Gradescope and/or Github may be unhappy otherwise.
