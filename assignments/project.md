@@ -172,8 +172,8 @@ Here are some clarifications.
    (synopsis "An OCaml library for Helpful Helloing")
    (description "A longer description")
    (depends
-    (ounit2 (>= 2.2.6)) ; for each opam dependency list the version
-    (core (>= 0.15.0)) ; `opam list core` will display which version of core you have
+    (ounit2 (>= 2.2.7)) ; for each opam dependency list the version
+    (core (>= 0.16.2)) ; `opam list core` will display which version of core you have
  ))
  ```
  
@@ -182,7 +182,7 @@ With these lines, `dune build` will build a file `<your_project>.opam`.  You can
 Note that any non-`opam` dependencies you will need to list in your `Readme.md` file.  You can in fact add them to the `.opam` file with `depexts` but it is not trivial to do so we will not require it.
 
 #### Code Submissions
-We will put up three submission points in Gradescope for you to upload your zipped hierarchies for the Design, Checkpoint, and Final submissions.  Please include all the source files needed to build the project but **no binary or other built files** - run a `dune clean` before zipping!  If you have large datasets in files please put them on Google Drive or similar and provide a link - Gradescope gets unhappy if the submission is too large.
+We will put up three submission points in Gradescope for you to upload your submissions for the Design, Checkpoint, and Final submissions.  You will be required in all cases to upload via GitHub.  If you have large datasets in files please put them on Google Drive or similar and provide a link - Gradescope and/or Github may be unhappy otherwise.
 
 
 ## The FPSE Labs
