@@ -117,34 +117,48 @@ general that `int` could be any OCaml type.
 
 *)
 
-type _ Effect.t += Get: int t | Put: int -> unit t (* Get gets int back, Put passes int up *)
-let run (f : unit -> unit) (init: int) : unit =
-  let comp  : int -> unit =
-    try_with (fun () -> (f (); fun (x : int) -> ())) () 
-    { effc = fun  (type a)(eff: a Effect.t) -> match eff with
-      | (Get) -> Some (fun (k: (a, _) continuation) -> (fun (s : int) -> (continue k s) s)) 
-      | (Put s) -> Some (fun (k: (a, _) continuation) -> (fun (_ : int) -> (continue k ()) s))
-      | _ -> None} 
-  in ignore(comp init)
+type _ Effect.t += Get: int t | Set: int -> unit t (* Get gets int back, Set passes int up *)
 
+let run (type a) ~init (main : unit -> a) : int * a =
+    (match_with main ()
+      {
+        retc = (fun res x -> (x, res)); (* processes final value *)
+        exnc = raise;
+        effc =
+          (fun (type b) (e : b Effect.t) ->
+            match e with
+            | Get   -> Some (fun (k : (b, int -> int * a) continuation) 
+                                 (x : int) -> (continue k x) x)
+            | Set y -> Some (fun (k : (b, int -> int * a) continuation) 
+                                 (_ : int) -> continue k () y)
+            | _ -> None);
+      })
+      init
 
 (* The above run function is quite subtle
-
-   - the overall value of the computation `comp` is a function int -> int
-     - the input int is the state, which will be fed in by `comp init`
-   - Every time we "come up for air" in an exception we will have the state value
+   - `main` is the effectful code to be run, it is a thunk (frozen)
+   - the `match_with` thaws main to runs it handles effects as per the record
+   - the `main` code should be able to perform `Set` and `Get` operations on this integer
+   - a is the type returned by `main` program
+   - `run` returns an int * a, the heap final value plus the `main` computation final value.
+   - The record expression argument to match_with defines all the handlers for effects in running `main`
+      retc for the final value which it makes into a pair
+      exnc in case an exception is thrown by main (it just re-raies it)
+      effc is the perform handler as in previous examples
+   - The final `init` in the `run` code seeds this chain of state-expecting functions with the initial state
+   - Every time we "come up for air" in a perform handled by `effc` we will have the state value passed 
+    (init initially and after that the x or y from the previous Get or Set)
      - and, we will then build a new function expecting the state value as the result
    - With all of the above there is a cascade of state passing
    - And, the resulting code "works just like" the ref/:=/! code of OCaml, no let%bind needed.
-
 *)
 
 let simple () : unit =
   assert (0 = perform Get); 
-  perform (Put 42);
+  perform @@ Set 42;
   assert (42 = perform Get)
 
-let test = run simple 0
+let test = run ~init:0 simple
 
 (* Now a larger example of how to encode some imperative OCaml such as this:
 
@@ -160,14 +174,14 @@ We use `get` and `put` functions to make it look a bit more like !/:=
 *)
 
 let get () = perform Get
-let put v = perform (Put v)
+let put v = perform (Set v)
 let counter () = 
   while get() < 10 do
-  printf "count is %i ...\n" (get ());
+  Format.printf "count is %i ...\n" (get ());
   put(get() + 1);
   done
 
-let test_counter = run counter 0
+let test_counter = run ~init: 0 counter
 
 
 
@@ -183,3 +197,13 @@ See https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/coop
 See https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/solved/async_await.ml for full coroutines with promises etc.
 
 *)
+
+(* Appendix: another version of run for state that uses try_with *)
+let run' ~(init: int) (main : unit -> unit) : unit =
+  let comp  : int -> unit =
+    try_with (fun () -> (main (); fun (_ : int) -> ())) () 
+    { effc = fun (type a)(eff: a Effect.t) -> match eff with
+      | (Get) -> Some (fun (k: (a, _) continuation) -> (fun (s : int) -> (continue k s) s)) 
+      | (Set s) -> Some (fun (k: (a, _) continuation) -> (fun (_ : int) -> (continue k ()) s))
+      | _ -> None} 
+  in ignore(comp init)
