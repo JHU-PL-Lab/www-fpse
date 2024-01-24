@@ -139,7 +139,7 @@ One thing to point out is that it's bad form to over-indent. These tools should 
 
 3. Both of the previous points hint at how over-documentation is a thing.  Over-documentation clutters the code and can make it unreadable.  For example, you should not spam the body of your functions with comments describing every little thing it does; instead, the bulk of the explaining should be done by the code.  That said, do put comments if the code isn't clear enough, or if there's unusual behavior, weird edge cases, interesting algorithms, etc. in your functions, but make sure to do so judiciously.
 
-4. In `.mli` files, you should follow [`odoc`](https://ocaml.github.io/odoc/odoc/index.html) syntax when writing comments that describe functions or types - i.e. start your comments with `(**` instead of `(*`, and use square brackets to contain OCaml values (e.g. `(** [compare x y] compares two values in a certain way *)`).  For other comments, using `(*` is perfectly acceptable and odoc syntax isn't required.
+4. In `.mli` files, you should follow [`odoc`](https://ocaml.github.io/odoc/) syntax when writing comments that describe functions or types - i.e. start your comments with `(**` instead of `(*`, and use square brackets to contain OCaml values (e.g. `(** [compare x y] compares two values in a certain way *)`).  For other comments, using `(*` is perfectly acceptable and odoc syntax isn't required.
 
 ## Miscellaneous
 
