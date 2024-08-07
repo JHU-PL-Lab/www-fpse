@@ -359,10 +359,10 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body"><a href="lecture/fp-universe.html">The FP Universe</a></div>
           </td>	
           <td width="30%"> 
-            <div align="center" class="body"><a href="assignments/assignment8.html">A8</a></div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A7</div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
         <tr> 
@@ -396,7 +396,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A8</div>
+            <div align="center" class="body">A7</div>
           </td>
         </tr>
         <tr> 
@@ -478,7 +478,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body"><a href="assignments/assignment9.html">A9</a></div>
+            <div align="center" class="body"><a href="assignments/assignment8.html">A8</a></div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -532,7 +532,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">Code Checkpoint; A9 (Fri)</div>
+            <div align="center" class="body">Code Checkpoint; A8 (Fri)</div>
           </td>
         </tr>
 	<tr> 
