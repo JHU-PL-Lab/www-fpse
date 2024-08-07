@@ -8,19 +8,19 @@ Please send private questions for course staff only as a new Conversion setting 
 **Professor** Scott Smith
 **email** [scott@cs.jhu.edu](mailto:scott@cs.jhu.edu)
 
-For Course Assistants we are fortunate to have several course alums and two PhD students with lots of OCaml knowledge.
+For Course Assistants we are fortunate to have several course alums and some PhD students with lots of OCaml knowledge.
 
-**Head Course Assistant** Brandon Stride
+**Head Teaching Assistant** Brandon Stride
 
-**Course Assistant** Robert Zhang
+**Course Assistant** Taylor Rohovit
 
 **Course Assistant** Shiwei Weng
 
 **Course Assistant** Earl Wu
 
-**Course Assistant** Julia Bian
+**Course Assistant** Farnaz Yousefi
 
-**Course Assistant** Megan Wei
+**Course Assistant** Harry Yu
 
 
 ### Office Hours

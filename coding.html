@@ -47,8 +47,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="/fpse/assignments/assignment3.html">Assignment 3</a></li>
                 <li><a href="/fpse/assignments/assignment4.html">Assignment 4</a></li>
                 <li><a href="/fpse/assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/assignment6.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/assignment7.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/assignment8.html">Assignment 5</a></li>
                 <li><a href="/fpse/assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1191913911">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/9034692226">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -68,9 +71,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h2 id="ocaml-coding-information">OCaml Coding Information</h2>
 
-<p>We are using <a href="https://ocaml.org">OCaml</a> version 5.0.0.</p>
+<p>We are using <a href="https://ocaml.org">OCaml</a> version 5.2.0.</p>
 
-<h3 id="installing-ocaml-500-and-associated-tools">Installing OCaml 5.0.0 and associated tools</h3>
+<h3 id="installing-ocaml-520-and-associated-tools">Installing OCaml 5.2.0 and associated tools</h3>
 
 <p>We require that you use the <a href="https://opam.ocaml.org">opam packaging system</a> for installing OCaml and its extensions.  Once you get <code>opam</code> installed and working, everything else should be easy to install .. so the only hard part is the first step.</p>
 
@@ -102,15 +105,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><code>opam init</code> will initialize OPAM (we suggest you answer <code>y</code> to the question <code>Do you want opam to modify ~/.profile? [N/y/f]</code>);</li>
   <li>If you didn’t get that question or said <code>N</code>, you will need to add line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
   <li><code>opam update</code> to make sure your <code>opam</code> is aware of all the versions of OCaml that are out there;</li>
-  <li><code>opam switch create 5.0.0</code> will build OCaml version 5.0.;</li>
+  <li><code>opam switch create 5.2.0</code> will build OCaml version 5.2.0.;</li>
   <li>After any <code>opam switch</code> command it will instruct you to reset your path with some instructions like “Run <code>eval $(opam env)</code> to update the current shell environment” – follow those instructions and copy/paste the in the command into the shell (if you are on <code>zsh</code> replace the <code>$(...)</code> with back-quotes <code>`...`</code>).</li>
 </ol>
 
-<p>If you already have an earlier version of OCaml installed via <code>opam</code>, start on step 3. above to update to 5.0.0.</p>
+<p>If you already have an earlier version of OCaml installed via <code>opam</code>, start on step 3. above to update to 5.2.0.</p>
 
 <h4 id="required-opam-standard-packages">Required OPAM Standard packages</h4>
 
-<p>Once you have <code>opam</code> and <code>ocaml</code> 5.0.0 installed, run the following <code>opam</code> command to install additional necessary packages for the class:</p>
+<p>Once you have <code>opam</code> and <code>ocaml</code> 5.2.0 installed, run the following <code>opam</code> command to install additional necessary packages for the class:</p>
 
 <pre><code>opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 base base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_ppx
 </code></pre>
