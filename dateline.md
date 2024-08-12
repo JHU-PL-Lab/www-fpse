@@ -427,7 +427,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body">Quiz</div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body"><a href="assignments/assignment8.html">A8</a></div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">Project Designs (Fri)</div>
@@ -441,7 +441,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Eat Turkey or Tofurky</div>
+            <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -458,13 +458,13 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Eat More Turkey or Tofurky</div>
+            <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body">A8 (Friday)</div>
           </td>
         </tr>
         <tr> 
@@ -475,10 +475,10 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Project Lab Day</div>
+            <div align="left" class="body">Eat Turkey or Tofurky</div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body"><a href="assignments/assignment8.html">A8</a></div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -492,7 +492,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Project Lab Day</div>
+            <div align="left" class="body">Eat More Turkey or Tofurky</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -515,7 +515,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A8</div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
                 <tr> 
