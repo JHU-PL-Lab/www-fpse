@@ -44,7 +44,7 @@ Please make sure to consult the course [Academic Integrity Policy](integrity.htm
 
 #### Late HW Policy
 
-You will be given ten total late days. For each unique due date submission point in Gradescope you can use up to three of your late days quota, each one allowing you to submit the assignment one day later.  **The quantum of lateness is the day, so if you are 15 seconds late that counts as a day late.** If you have a cold or flu you can use the late days for such absences; if you have an extended excused absence contact Staff on Courselore and we can work something out.  The late days are for the individual assignments, not the project submissions.
+You will be given **eight** total late days. For each unique due date submission point in Gradescope you can use up to three of your late days quota, each one allowing you to submit the assignment one day later.  **The quantum of lateness is the day, so if you are 15 seconds late that counts as a day late.** If you have a cold or flu you can use the late days for such absences; if you have an extended excused absence contact Staff on Courselore and we can work something out.  The late days are for the individual assignments, not the project submissions.
 
 ### Office hours
 
