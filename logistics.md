@@ -2,7 +2,7 @@
 
 ### Lecture Schedule
 
-Lectures will be 1:30-2:45 on Mondays and Wednesdays in TBA.
+Lectures will be 1:30-2:45 on Mondays and Wednesdays in Hackerman B17.
 ### Syllabus
 
 See the [Dateline](dateline.html) for the schedule and the topics that will be covered.

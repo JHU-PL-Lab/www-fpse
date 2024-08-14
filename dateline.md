@@ -294,7 +294,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A6</div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
         <tr> 
@@ -308,7 +308,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body"><a href="lecture/encoding_effects.ml">Encoding Effects II</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body"><a href="assignments/assignment7.html">A7</a></div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -328,7 +328,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">Project initial idea (Fri)</div>
+            <div align="center" class="body">Project initial idea; A6 (Fri)</div>
           </td>
         </tr>
         <tr> 
@@ -342,7 +342,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a>, <a href="lecture/algebraic_effects.ml">Algebraic Effects</a></div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
+            <div align="center" class="body"><a href="assignments/assignment7.html">A7</a></div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -427,7 +427,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="left" class="body">Quiz</div>
           </td>
           <td width="30%"> 
-            <div align="center" class="body"><a href="assignments/assignment8.html">A8</a></div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
             <div align="center" class="body">Project Designs (Fri)</div>
@@ -464,7 +464,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">A8 (Friday)</div>
+            <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
         <tr> 
