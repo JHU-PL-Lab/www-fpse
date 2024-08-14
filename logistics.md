@@ -32,6 +32,10 @@ There will be no exam.  There will be a quiz around 2/3rds of the way through th
 
 There will be an independent team project at the end of the course worth around three homeworks.  Demos will be held around the course final exam day.
 
+### Grades
+
+Grades will be computed as follows: around 50% for projects, 35% for homeworks, and 15% for the quiz.  There is no curve but the cutoffs can shift based on assignment difficulty; you can assume they will likely be the standard 90-80-70 for A/B/C etc.
+
 ### Collaboration
 
 The collaboration policy for assignments is you are *encouraged* to discuss assignments with other students, but everyone **must submit their own writeup of the answers** (no emailing/DMing solutions to each other for example).  You are also required to list all collaborators on your submission.
