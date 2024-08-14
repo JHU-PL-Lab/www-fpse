@@ -430,7 +430,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">Project Designs (Fri)</div>
+            <div align="center" class="body">Project Designs</div>
           </td>
         </tr>
         <tr> 
