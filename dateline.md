@@ -424,7 +424,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Quiz</div>
+            <div align="left" class="body">Project Lab Day</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -458,7 +458,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Project Lab Day</div>
+            <div align="left" class="body">Quiz</div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
