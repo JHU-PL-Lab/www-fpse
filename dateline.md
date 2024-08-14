@@ -328,7 +328,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">Project initial idea; A6 (Fri)</div>
+            <div align="center" class="body">Project initial idea (Weds); A6 (Fri)</div>
           </td>
         </tr>
         <tr> 
