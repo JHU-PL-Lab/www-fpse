@@ -436,7 +436,7 @@ Note that lecture material will be updated as topics are covered so consider the
         <tr> 
           <td width="8%"> 
             <div align="center" class="body">Nov 18</div>
-          </td>
+          </td> 
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
           </td>
