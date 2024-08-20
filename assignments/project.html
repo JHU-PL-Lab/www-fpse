@@ -47,8 +47,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="/fpse/assignments/assignment3.html">Assignment 3</a></li>
                 <li><a href="/fpse/assignments/assignment4.html">Assignment 4</a></li>
                 <li><a href="/fpse/assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
+                <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="/fpse/assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1191913911">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/9034692226">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -68,54 +70,45 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h2 id="the-fpse-projects">The FPSE Projects</h2>
 
-<p>For the projects you are to conceive, design, and implement your own standalone application in OCaml.  This represents the culmination of what you have learned in the course.</p>
+<p>For the projects you are to conceive, design, and implement your own standalone application in OCaml. This represents the culmination of what you have learned in the course. You will submit an initial idea, a design proposal, a code checkpoint, and a final code submission. At the time of the final submission, you will give a short demo to the course staff.</p>
+
 <h3 id="requirements">Requirements</h3>
 <p>Here are the high-level requirements for the projects.</p>
 
 <ul>
-  <li>All the code must be in OCaml obviously (excepting small bits of glue code, or explicit exceptions if you petition)</li>
+  <li>All the code must be in OCaml (excepting small bits of glue code, or explicit exceptions if you petition).</li>
   <li>You must use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>OUnit2</code> etc – as your basis, plus any other libraries you find useful.</li>
-  <li>Project groups can be from 2-3 people, or possibly 4 if there are very distinct components.</li>
-  <li>OCaml excels for non-trivial algorithms and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help with.</li>
-  <li>You need to make a general library as part of your project, to get more experience with modules and functors in OCaml.  (This is not an absolute requirement as we don’t want you to make some artificial library if there is none needed, but you will need to get an exception from us if so.)</li>
+  <li>Project groups can be from 2-4 people.</li>
+  <li>OCaml excels for non-trivial algorithms, and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.</li>
+  <li>You need to make a general library as part of your project, to get more experience with modules and functors in OCaml. (This is not an absolute requirement as we don’t want you to make some artificial library if there is none needed, but you will need to get an exception from us if so.) You can do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.</li>
   <li>A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.</li>
 </ul>
 
 <h3 id="project-topic-thrusts">Project Topic Thrusts</h3>
 
-<ul>
-  <li>You will need to make a standalone application as you did/will do in assignments 2 and 4.</li>
-  <li>Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects.</li>
-</ul>
+<p>You will need to make a standalone application as in assignments 4 and 6. Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects.</p>
 
-<h4 id="1-a-command-line-app-with-persistence">1. A command-line app with persistence</h4>
+<ol>
+  <li>A command-line app with persistence.
+    <ul>
+      <li>The focus is on complex user interaction through the command line.</li>
+    </ul>
+  </li>
+  <li>A web interface app.
+    <ul>
+      <li>The focus is on interaction through a UI.</li>
+    </ul>
+  </li>
+  <li>A complex library.
+    <ul>
+      <li>The focus is on some sophisticated algorithm, and there may be a simple usage through the command line.</li>
+    </ul>
+  </li>
+</ol>
+
+<p>Note that in all three, there must be a non-trivial algorithm as a key feature. For example, in the projects linked below, we have sudoku solvers, chess AI, complex-number mathematics with a rasterizer and ASCII image generator, etc. The complexity of the user interaction makes up for lack of complexity in the algorithm and underlying behavior.</p>
+
 <ul>
-  <li>The idea here is to make some application where all the interaction is via the command line.</li>
-  <li>Persistent data across command invocations could be saved in a file using the <code>Stdio</code> library.</li>
-  <li>This path is the most straightforward of the three choices.</li>
-  <li>
-    <p>Here is a ridiculously simple example, you would need <strong>much much</strong> more than this</p>
-  </li>
-  <li>A minesweeper game.  Here is a mock of such a game:
-    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>./mine.exe init 5x4 <span class="c"># initialize a new game, 5x4 board</span>
-<span class="nt">-----</span>
-<span class="nt">-----</span>
-<span class="nt">-----</span>
-<span class="nt">-----</span>
-<span class="nv">$ </span>./mine.exe move 0,3
-<span class="nt">-----</span>
-<span class="nt">-----</span>
-12---
- 1---
-<span class="nv">$ </span>./mine.exe move 2,2
-BOOM!
-<span class="nt">-----</span>
-<span class="nt">-----</span>
-12<span class="k">*</span><span class="nt">--</span>
- 1---
-<span class="nv">$ </span><span class="c"># etc</span>
-</code></pre></div>    </div>
-  </li>
   <li>For all command-line apps some ways to beef them up once the basic app is working include
     <ol>
       <li>Replace the command line with a RESTful web server using <a href="https://aantron.github.io/dream"><code>Dream</code></a> mentioned below.</li>
@@ -127,42 +120,13 @@ BOOM!
           <li>You should do this from the beginning in fact, it will be easier and more robust.</li>
         </ul>
       </li>
-      <li>Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.  For example for Minesweeper consider adding e.g. anti-mines (subtracting one instead of adding one), lighthouses (expose mines in an area around it), etc.</li>
+      <li>Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.</li>
     </ol>
   </li>
 </ul>
 
-<h4 id="2-web-client">2. Web client</h4>
-<p>If  you want to suck down some data from a public RESTful API, <code>Cohttp</code> is a good library to use.</p>
-
-<p>Here are some concrete project ideas involving web client:</p>
-<ul>
-  <li>A command line app which would access, process, and present data from an existing RESTFul API collator/processor
-    <ul>
-      <li>see e.g. <a href="https://github.com/public-apis/public-apis">Public APIs</a> for a large list of APIs available</li>
-      <li>Some free APIs there include data for shopping, weather, recipes, COVID, etc etc</li>
-      <li>One concrete idea could be to grab both historical weather and COVID data for a location using two different RESTful APIs and compute the correlation between temperature and new COVID cases five days later</li>
-      <li>etc etc etc.  One advantage of such an app is you can do some non-trivial algorithms on the data.</li>
-    </ul>
-  </li>
-  <li>A web crawler app
-    <ul>
-      <li>starting from a URL grab it and all contained URL (up to some breadth and depth limit)</li>
-      <li>Then, compute some aspects on the pages, e.g. count how many lines of code, etc</li>
-    </ul>
-  </li>
-</ul>
-
-<h4 id="3-scientific--machine-learning">3. Scientific / Machine Learning</h4>
-
-<p>This approach is for those with some background in this area.</p>
-
-<ul>
-  <li>A simple machine learning app using PyTorch or TensorFlow and possibly graphing it in Owl; see below for links to the OCaml libraries</li>
-</ul>
-
 <h3 id="libraries-catalog">Libraries Catalog</h3>
-<p>Here is a list of well-maintained libraries we recommend using for the above approaches, as well as some lists you can find other libraries on.</p>
+<p>Here is a list of well-maintained libraries we recommend using for the above approaches, as well as some resources where you can find other libraries.</p>
 
 <h4 id="web-based">Web-based</h4>
 
@@ -176,13 +140,13 @@ BOOM!
   <li>We recomend <a href="https://aantron.github.io/dream"><code>Dream</code></a> for web applications.  (Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions. on Linux or WSL2 you will probably need to use <code>apt</code> to install similar libraries if you don’t have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, <code>Cohttp</code> (below) is also a good choice.</li>
   <li><a href="https://github.com/rgrinberg/opium"><code>Opium</code></a> is a good alternative to <code>Dream</code> to consider as well.  Both are built on <code>Lwt</code>.</li>
   <li><code>Cohttp</code> also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
-  <li>For the client, it is possible to code your client in “OCaml” using <a href="https://rescript-lang.org">ReScript</a> which is OCaml but with a  different looking syntax that compiles tpo JavaScript and which has bindings for React.  ReScript front-ends will count toward your “OCaml code” whereas JavaScript front-ends will not.</li>
+  <li>For the client, it is possible to code your client in “OCaml” using <a href="https://rescript-lang.org">ReScript</a> which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  ReScript front-ends will count toward your “OCaml code” whereas JavaScript front-ends will not.</li>
 </ul>
 
 <h4 id="persistence">Persistence</h4>
 
 <ul>
-  <li>For simple persistence you can just read and write from a file, via the <code>Stdio</code> Jane Street library.  Make sure to use a structured file format such as json or sexp.</li>
+  <li>For simple persistence you can just read and write from a file with the <code>Stdio</code> Jane Street library.  Make sure to use a structured file format such as json or sexp.</li>
   <li>If you are familiar with databases, the <a href="https://github.com/mmottl/sqlite3-ocaml">sqlite3-ocaml</a> and <a href="https://mmottl.github.io/postgresql-ocaml/">postgresql-ocaml</a> bindings should work for accessing SQLite or Postgres databases from within OCaml.</li>
 </ul>
 
@@ -190,7 +154,7 @@ BOOM!
 <p>There are some good libraries here but they don’t have many users and we have had <strong>many issues with people being able to install these libraries in the past</strong>.  If you wanted to base your project around one of these libraries <strong>you will be required to</strong> (1) get the library successfully installed on all your team members’ computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.</p>
 <ul>
   <li><a href="https://ocaml.xyz/">Owl</a> is a very well-documented numerical processing library.</li>
-  <li><a href="https://github.com/janestreet/torch">ocaml-torch</a> PyTorch bindings for OCaml.   Note TensorFlow bindings are old and don’t seem to work.</li>
+  <li><a href="https://github.com/janestreet/torch">ocaml-torch</a> PyTorch bindings for OCaml.   (Note that the OCaml TensorFlow bindings are old and don’t seem to work.)</li>
   <li><a href="https://github.com/zshipko/ocaml-bimage">ocaml-bimage</a> is an image processing library.</li>
 </ul>
 
@@ -209,125 +173,158 @@ BOOM!
 <h3 id="submissions">Submissions</h3>
 
 <ul>
-  <li>There will be FOUR submission points in Gradescope, one ungraded for initial group and idea, one for the design, one for a code checkpoint, and one for the final code.  For each group only one person should submit to Gradescope, as a group submission.</li>
+  <li>There will be <strong>four</strong> submission points in Gradescope, one ungraded for initial group and idea, one for the design, one for a code checkpoint, and one for the final code.  For each group only one person should submit to Gradescope, as a group submission.</li>
 </ul>
 
 <h4 id="initial-group-and-ideas">Initial Group and Idea(s)</h4>
 
-<p>The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus 3) potential libraries.  Basically, the result of one initial brainstorming session.  This can just be a pdf file.</p>
+<p>The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus 3) potential libraries.  Basically, the result of one initial brainstorming session.  This can just be a pdf or markdown file.</p>
+
+<p>E.g.</p>
+
+<pre><code>Group members: Earl Wu, Shiwei Weng, Brandon Stride
+
+We are going to make a Rubik's Cube solver for the 4x4x4 Rubik's Cube where the user inputs their cube through a web frontend, and they get back a sequence of moves to solve the cube.
+
+To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use Core because the Rubik's Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.
+</code></pre>
+
+<p>This submission will count for very little; its purpose is just to get your group off the ground, and to give us some direction in who to assign as your group advisor.</p>
 
 <h4 id="project-design-proposal">Project Design Proposal</h4>
-<p>For this and the subsequent submissions you are required to submit a GitHub repo</p>
+
+<p>For this submission and all subsequent submissions, you are required to submit to Gradescope via a GitHub repo. If you have large datasets in files, please put them on Google Drive or similar and provide a link - Gradescope and/or Github may be unhappy otherwise.</p>
+
+<p>You will have created a project on GitHub, and the content of this submission is found top-level in <code>Design.md</code> with module type declarations in <code>src/</code>.</p>
 
 <p>The design submission must include</p>
 <ol>
-  <li>An overview of the purpose of the project</li>
-  <li>A list of libraries you plan on using<br />
-    - Additionally if any of the libraries are either not listed above or are in the data processing category above, you will also be required to have successfully installed the library on all team member computers and have a small demo app working to verify the library really works.  We require this because OCaml libraries can be flakey.   You will need to submit this <code>demo/</code> as part of the code submission for your design.</li>
-  <li>Commented module type declarations (<code>.mli</code> files) which will provide you with an initial specification to code to<br />
-    - You can obviously change this later and don’t need every single detail filled out<br />
-    - But, do include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.</li>
+  <li>An overview of the purpose of the project.</li>
+  <li>A list of libraries you are using or plan to use in your implementation. For all non-standard libraries used in the rest of the course (e.g. if you are using <code>Dream</code>), you need to have successfully installed the library on all team member computers and have a small demo working to verify the library really works. We require this because OCaml libraries can be flaky. This will be submitted in <code>demo/</code> with a subdirectory for each library.</li>
+  <li>Commented module type declarations (<code>.mli</code> files) which will provide you with an initial specification to code to.<br />
+    - You can change this later and don’t need every single detail filled out, but it should include as many details as you can think of, and you should try to cover the entire project.<br />
+    - Include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.</li>
   <li>Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.</li>
-  <li>Also include a brief list of what order you will implement features.</li>
-  <li>If your project is an OCaml version of some other app in another language or a projust you did in another course etc please cite this other project.  In general any code that inspired your code needs to be cited in your submissions.</li>
-  <li>You may also include any other information which will make it easier to understand your project.</li>
+  <li>Also include an implementation plan: a list of the order in which you will implement features and by what date you hope to have them completed.</li>
+  <li>You may also include any other information that will make it easier to understand your project.</li>
 </ol>
+
+<p><strong>Grading rubric</strong></p>
+
+<ul>
+  <li>30% mock use: depicts each usage case clearly and accurately.</li>
+  <li>15% libraries: has a working demo folder for each library to be used in the final submission.</li>
+  <li>15% project scope: the project is not too big or too small, has enough algorithmic complexity, and (likely) has a general library.</li>
+  <li>10% plan of implementation: there is a detailed implementation plan that covers all aspects of the project.</li>
+  <li>30% module declarations: there are reasonable module interfaces for core components that are well thought-through and well designed.</li>
+</ul>
 
 <h4 id="code-checkpoint">Code Checkpoint</h4>
 
-<p>For the code checkpoint you will need to submit your current codebase</p>
+<p>On the last day of class you will submit your current codebase as a code checkpoint.</p>
+
 <ol>
-  <li>You don’t have to have anything finished</li>
-  <li>But, you should have good progress on library usage and have a some unit tests operational on your own library code.</li>
-  <li>Your project will need to be buildable with <code>dune build</code> at the top level, and testable with <code>dune test</code> If you have some non-buildable code at submission time, just comment that out.</li>
-  <li>We won’t require 97% coverage but do at least run a coverage tool and cover a few of the holes.</li>
+  <li>You don’t have to have things finished, but you should have made significant progress.</li>
+  <li>Your code should be tested.</li>
+  <li>Run a coverage tool to demonstrate test coverage.</li>
+  <li>Your project must be buildable with <code>dune build</code> at the top level and testable with <code>dune test</code>. Comment out any code that doesn’t build before your submission.</li>
+  <li>You should have a <code>Readme.md</code> that explains your progress so far: what is working, what is not, etc.</li>
 </ol>
+
+<p>The code checkpoint is an important opportunity to get feedback from your advisor and correct issues before your final submission.</p>
+
+<p><strong>Grading rubric</strong></p>
+
+<ul>
+  <li>30% progress: has made sufficient progress towards the end goal; seems close to 1/2 of the way through the project.</li>
+  <li>20% tests: there are tests covering a signficant portion of the functionality that is implemented so far.</li>
+  <li>25% module design and structure: module design is well-structured, is thought through, considers advisor’s comments from the proposal, and won’t need significant change heading forward.</li>
+  <li>25% code quality: the code that implements the module design is high quality with good types, functional data structures, lots of modules, etc.</li>
+</ul>
 
 <p><a name="demo"></a></p>
 <h4 id="demo-and-final-code-submission">Demo and Final Code Submission</h4>
 
-<p>For the demo you should be prepared to have a 5-10 minute presentation on your project.</p>
+<p>For the demo you should prepare a 5-10 minute presentation on your project.</p>
 <ol>
   <li>A Powerpoint slide deck intro might be useful depending on your project; it is not required.</li>
-  <li>Demo the project showing all the functionality.</li>
-  <li>We may ask questions during this and perhaps ask you to try additional cases</li>
+  <li>You will demonstrate the project, showing all the functionality.</li>
+  <li>We will ask questions during this and perhaps ask you to try additional cases.</li>
   <li>Code review: take us through your code, we will be commenting as we go.
     <ul>
       <li>Make sure to describe your use of libraries; if you are using a novel library we may not know, give a brief overview of it.</li>
     </ul>
   </li>
-  <li>Build and test: build your project and tests, and then review your test suite.</li>
+  <li>Build and test: build your project and tests, and then review your test suite. Show us the coverage report.</li>
 </ol>
 
 <p>The final code submission should include</p>
 <ol>
-  <li>All of the code of course! (And no binaries - please <code>dune clean</code> before zipping)</li>
-  <li>It should include a <code>dune</code> file which successfuly builds your project with <code>dune build</code></li>
-  <li>It should include a top-level <code>Readme.md</code> briefly describing the project and outlining how to build and run it.  If any other system-level installs are needed outside of the offical course list, describe them in your <code>Readme.md</code>.</li>
-  <li>In order to be clear on what <code>opam</code> packages your project depends on you are required to include information to build a <code>.opam</code> file in your project root. This is described below in more detail.</li>
+  <li>All of the code, of course! You should have a <code>.gitignore</code> so that you’re not submitting binaries or <code>_opam/</code> files.</li>
+  <li>It should include a <code>dune</code> file which successfuly builds your project with <code>dune build</code>.</li>
+  <li>A top-level <code>Readme.md</code> that describes the project and tells users how to build and run it. The <code>Readme</code> also explains how to handle any other system-level installs that are needed outside of the offical course list.</li>
+  <li>In order to be clear on what <code>opam</code> packages your project depends on, you are required to include information to build a <code>.opam</code> file in your project root. This is described below in more detail.</li>
   <li>You will also need to include a test suite with good coverage which runs automatically via <code>dune test</code> from the top-level directory.</li>
 </ol>
 
 <p>Here are some clarifications.</p>
 <ol>
   <li>For test coverage, you should have very good coverage on your core logic.  Make sure to cover the corner cases in the code with tests.</li>
-  <li>You do not need to cover I/O aspects of the code, those fall under acceptance tests and we are only requiring unit tests at this point.  There is no need to mark all of your I/O code as <code>[@@@ coverage off]</code>, but you can if you want to.</li>
+  <li>Run a coverage report, but don’t worry about turning off lines with <code>[@@@ coverage off]</code> because we won’t grade for a specific coverage percentage.</li>
 </ol>
+
+<p><strong>Grading rubric</strong></p>
+
+<ul>
+  <li>5% quality of demo presentation: project is described well, and the presentation is clear.</li>
+  <li>25% demonstration of functionality: during the demo, there is lack of errors/glitches, the UI is quality, the edge cases we ask you to try work well, etc.</li>
+  <li>30% code quality: good FP practice, following style guidelines, proper dune and opam files, good module design, etc.</li>
+  <li>15% tests: good coverage of code, runs with <code>dune test</code>.</li>
+  <li>25% accomplishment: library usage, conceptual challenge, degree of completion, general remarks.</li>
+</ul>
 
 <h4 id="making-and-testing-an-opam-package-file">Making and testing an <code>.opam</code> package file</h4>
 <p>As was mentioned above you will need to make an <code>.opam</code> file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any <code>opam</code> dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your <code>dune-project</code> file and edit as appropriate.  Make sure to include any <code>opam</code> packages you are using in the <code>depends</code> section.</p>
-<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="nf">generate_opam_files</span> <span class="nv">true</span><span class="p">)</span>
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="nf">lang</span> <span class="nv">dune</span> <span class="mf">3.16</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">generate_opam_files</span> <span class="nv">true</span><span class="p">)</span>
   <span class="p">(</span><span class="nf">authors</span> <span class="s">"Yours Truly"</span> <span class="s">"Truly Yours"</span><span class="p">)</span>
   <span class="p">(</span><span class="nf">maintainers</span> <span class="s">"your@email.org"</span><span class="p">)</span>
   <span class="p">(</span><span class="nf">package</span>
    <span class="p">(</span><span class="nf">name</span> <span class="nv">hello_world</span><span class="p">)</span> <span class="c1">; put in your own project name here</span>
+   <span class="p">(</span><span class="nf">allow_empty</span><span class="p">)</span>
    <span class="p">(</span><span class="nf">synopsis</span> <span class="s">"An OCaml library for Helpful Helloing"</span><span class="p">)</span>
    <span class="p">(</span><span class="nf">description</span> <span class="s">"A longer description"</span><span class="p">)</span>
    <span class="p">(</span><span class="nf">depends</span>
     <span class="p">(</span><span class="nf">ounit2</span> <span class="p">(</span><span class="nb">&gt;=</span> <span class="mf">2.2</span><span class="o">.</span><span class="mi">7</span><span class="p">))</span> <span class="c1">; for each opam dependency list the version</span>
-    <span class="p">(</span><span class="nf">core</span> <span class="p">(</span><span class="nb">&gt;=</span> <span class="mf">0.16</span><span class="o">.</span><span class="mi">2</span><span class="p">))</span> <span class="c1">; `opam list core` will display which version of core you have</span>
+    <span class="p">(</span><span class="nf">core</span> <span class="p">(</span><span class="nb">&gt;=</span> <span class="mf">0.17</span><span class="o">.</span><span class="mi">1</span><span class="p">))</span> <span class="c1">; `opam list core` will display which version of core you have</span>
  <span class="p">))</span>
 </code></pre></div></div>
 
 <p>With these lines, <code>dune build</code> will build a file <code>&lt;your_project&gt;.opam</code>.  You can then use command <code>opam install . --deps-only --working-dir</code> to install any of the <code>opam</code> dependencies if they are not already installed.  We will use this command to install all of your <code>opam</code> dependencies.  See <a href="https://dune.readthedocs.io/en/stable/explanation/opam-integration.html">dune opam integration</a> for details on this dune file format, and <a href="https://opam.ocaml.org/doc/Packaging.html">opam packaging</a> for details on the <code>.opam</code> file format.</p>
 
-<p>Note that any non-<code>opam</code> dependencies you will need to list in your <code>Readme.md</code> file.  You can also add them to the <code>.opam</code> file with <code>depexts</code> but it is not trivial to do so we will not require it.</p>
+<p>Note that any non-<code>opam</code> dependencies you will need to list in your <code>Readme.md</code> file. You can also add them to the <code>.opam</code> file with <code>depexts</code>, but it is not trivial to do, so we will not require it.</p>
 
-<h4 id="code-submissions">Code Submissions</h4>
-<p>We will put up three submission points in Gradescope for you to upload your submissions for the Design, Checkpoint, and Final submissions.  You will be required in all cases to upload via GitHub.  If you have large datasets in files please put them on Google Drive or similar and provide a link - Gradescope and/or Github may be unhappy otherwise.</p>
-
-<h2 id="the-fpse-labs">The FPSE Labs</h2>
+<h2 id="the-fpse-project-labs">The FPSE Project Labs</h2>
 <p><a name="labs"></a></p>
 
-<p>The goal of the labs is for your group to have plenty of time to get feedback from the course staff on all aspects of your project.</p>
+<p>The project labs are classes later in the semester where your group can collabotate on project work.  The goal of the labs is to get work done on your project, and for your group to have plenty of time to get feedback from the course staff on all aspects of your project. Your advisor will check in with you and give you feedback and advice during the lab.</p>
 
-<p>Here are some defining features.</p>
+<p>Here are some defining features of the labs.</p>
 
 <ol>
-  <li>There will be seven in-class labs.  Your group will be required to attend the first lab in-person on Nov 6th.</li>
-  <li>Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework.</li>
+  <li>There will be seven labs.  Your group will be required to attend the first lab in-person on Nov 6th.</li>
+  <li>Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework. You won’t get credit for a lab if you show up and choose to work on anything other than your FPSE project.</li>
   <li>Attendance will be taken at all labs and will be a part of your final grade.</li>
   <li>Your group is required to attend <strong>seven</strong> labs total.  Conveniently, there are seven class periods which are project labs, but you may alternatively select a CA office hour (the whole hour and it should be your group advisor if at all possible) to be a “lab”.  If you wish to do that, show up in-person at the start of the office hour and notify the CA that you are doing a lab, and they will mark you down for attendance.  At most two in-class labs can made up in this way.</li>
   <li>All labs must be attended in-person, but you may petition for an exception.</li>
   <li><strong>Attendance is all or none</strong> – for a lab to count all group members must be present.  Group work is group work.</li>
-  <li>You are of course also welcome to show up to either the class or an office hour as a “non-lab”, meaning you don’t need to work on your project for the whole period and it will not count as one of your seven labs.</li>
 </ol>
 
 <h2 id="sample-projects">Sample projects</h2>
 
-<p>Here are a few FPSE projects from past years to give you an idea of the scope etc.  Please pick a different idea.</p>
+<p>Here are a few FPSE projects from last year (2023) to give you an idea of the scope etc. Please pick a different idea.</p>
 
-<ul>
-  <li><a href="https://github.com/angibenton/spotify-song-classifier">Spotify Classifier</a></li>
-  <li><a href="https://github.com/shintyl/gomoku_fpse">Gomoku</a></li>
-  <li><a href="https://github.com/most21/mlb-hof-predictions-demo">MLB HOF Projections</a></li>
-  <li><a href="https://github.com/robertzhidealx/trade-ml">TradeML</a></li>
-  <li><a href="https://github.com/acaswell1/rubiks-wrecker">Rubiks Wrecker</a></li>
-  <li><a href="https://github.com/sallocc/ocaml-final">Connect 4</a></li>
-  <li><a href="https://github.com/XiangyuShen/FFXIV-Market-Flipper">FFXIV-Market-Flipper</a></li>
-  <li><a href="https://github.com/cldelahan/fpse_project">BROQL</a></li>
-  <li><a href="https://github.com/shaunak215/OCaml-Connect-4">Connect 4 again</a></li>
-</ul>
+<b>To Be Finished!!</b>
       
           </section>
         </div>
