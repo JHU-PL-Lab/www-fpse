@@ -80,7 +80,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>You must use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>OUnit2</code> etc – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 2-4 people.</li>
   <li>OCaml excels for non-trivial algorithms, and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.</li>
-  <li>You need to make a general library as part of your project, to get more experience with modules and functors in OCaml. (This is not an absolute requirement as we don’t want you to make some artificial library if there is none needed, but you will need to get an exception from us if so.) You can do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.</li>
+  <li>You need to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.</li>
   <li>A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.</li>
 </ul>
 
@@ -106,24 +106,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ol>
 
-<p>Note that in all three, there must be a non-trivial algorithm as a key feature. For example, in the projects linked below, we have sudoku solvers, chess AI, complex-number mathematics with a rasterizer and ASCII image generator, etc. The complexity of the user interaction makes up for lack of complexity in the algorithm and underlying behavior.</p>
+<p>Note that in all three, <strong>there must be a non-trivial algorithm as a key feature</strong>. For example, in the projects linked below, we have sudoku solvers, chess AI, complex-number mathematics with a rasterizer and ASCII image generator, etc. The complexity of the user interaction makes up for lack of complexity in the algorithm and underlying behavior and vice versa.</p>
 
-<ul>
-  <li>For all command-line apps some ways to beef them up once the basic app is working include
-    <ol>
-      <li>Replace the command line with a RESTful web server using <a href="https://aantron.github.io/dream"><code>Dream</code></a> mentioned below.</li>
-      <li>In addition to 2., <code>Dream</code> supports html templates and you could “reply” to the <code>http</code> queries with html and so you can run your app in the browser.</li>
-      <li>If you know JavaScript you can beef up 2. a bit with some dynamic content.  Better yet, use Rescript and React to make an OCaml front-end in the browser, see below for links.</li>
-      <li>Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>
-      <li>Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use <code>yojson</code> to convert back and forth.
-        <ul>
-          <li>You should do this from the beginning in fact, it will be easier and more robust.</li>
-        </ul>
-      </li>
-      <li>Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.</li>
-    </ol>
-  </li>
-</ul>
+<p>For all command-line apps, here are some ways to beef them up once the basic app is working:</p>
+
+<ol>
+  <li>Replace the command line with a RESTful web server using <a href="https://aantron.github.io/dream"><code>Dream</code></a> mentioned below.</li>
+  <li>In addition to 1., <code>Dream</code> supports html templates and you could “reply” to the <code>http</code> queries with html and so you can run your app in the browser.</li>
+  <li>Use Rescript and React to beef it up and make an OCaml front-end in the browser. You may not use JavaScript unless you petition to the course staff.</li>
+  <li>Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>
+  <li>Rather than using your own ad-hoc format for data in the file or database, make an s-expression representation and convert back and forth.  <br />
+    - You should do this from the beginning in fact, it will be easier and more robust.</li>
+  <li>Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.</li>
+</ol>
 
 <h3 id="libraries-catalog">Libraries Catalog</h3>
 <p>Here is a list of well-maintained libraries we recommend using for the above approaches, as well as some resources where you can find other libraries.</p>
@@ -137,7 +132,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_lwt_unix</code></a> for web client (API reading / crawling) applications.</li>
-  <li>We recomend <a href="https://aantron.github.io/dream"><code>Dream</code></a> for web applications.  (Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions. on Linux or WSL2 you will probably need to use <code>apt</code> to install similar libraries if you don’t have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, <code>Cohttp</code> (below) is also a good choice.</li>
+  <li>We recommend <a href="https://aantron.github.io/dream"><code>Dream</code></a> for web applications.  (Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions. on Linux or WSL2 you will probably need to use <code>apt</code> to install similar libraries if you don’t have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, <code>Cohttp</code> (below) is also a good choice.</li>
   <li><a href="https://github.com/rgrinberg/opium"><code>Opium</code></a> is a good alternative to <code>Dream</code> to consider as well.  Both are built on <code>Lwt</code>.</li>
   <li><code>Cohttp</code> also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
   <li>For the client, it is possible to code your client in “OCaml” using <a href="https://rescript-lang.org">ReScript</a> which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  ReScript front-ends will count toward your “OCaml code” whereas JavaScript front-ends will not.</li>
@@ -182,14 +177,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>E.g.</p>
 
-<pre><code>Group members: Earl Wu, Shiwei Weng, Brandon Stride
+<blockquote>
+  <p>Group members: Earl Wu, Shiwei Weng, Brandon Stride</p>
 
-We are going to make a Rubik's Cube solver for the 4x4x4 Rubik's Cube where the user inputs their cube through a web frontend, and they get back a sequence of moves to solve the cube.
+  <p>We are going to make a Rubik’s Cube solver for the 4x4x4 Rubik’s Cube where the user inputs their cube through a web frontend, and they get back a sequence of moves to solve the cube.</p>
 
-To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use Core because the Rubik's Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.
-</code></pre>
+  <p>To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use Core because the Rubik’s Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.</p>
+</blockquote>
 
 <p>This submission will count for very little; its purpose is just to get your group off the ground, and to give us some direction in who to assign as your group advisor.</p>
+
+<p>After this submission, you will have lab days to have designated time to work together and discuss with your advisor.</p>
 
 <h4 id="project-design-proposal">Project Design Proposal</h4>
 
@@ -200,21 +198,24 @@ To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backen
 <p>The design submission must include</p>
 <ol>
   <li>An overview of the purpose of the project.</li>
+  <li>A complete mock use of the application.<br />
+    - If you have a graphical user interface, show a mock up of every page and how the user can interact.<br />
+    - … similarly if you have a command line interface.<br />
+    - If the basis of your project is just some hard algorithm, take this chance to describe the algorithm and how OCaml will work with it. Show example uses and discuss desired performance.</li>
   <li>A list of libraries you are using or plan to use in your implementation. For all non-standard libraries used in the rest of the course (e.g. if you are using <code>Dream</code>), you need to have successfully installed the library on all team member computers and have a small demo working to verify the library really works. We require this because OCaml libraries can be flaky. This will be submitted in <code>demo/</code> with a subdirectory for each library.</li>
   <li>Commented module type declarations (<code>.mli</code> files) which will provide you with an initial specification to code to.<br />
     - You can change this later and don’t need every single detail filled out, but it should include as many details as you can think of, and you should try to cover the entire project.<br />
     - Include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.</li>
-  <li>Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.</li>
-  <li>Also include an implementation plan: a list of the order in which you will implement features and by what date you hope to have them completed.</li>
+  <li>An implementation plan: a list of the order in which you will implement features and by what date you hope to have them completed.</li>
   <li>You may also include any other information that will make it easier to understand your project.</li>
 </ol>
 
-<p><strong>Grading rubric</strong></p>
+<p><em>Grading rubric</em></p>
 
 <ul>
   <li>30% mock use: depicts each usage case clearly and accurately.</li>
   <li>15% libraries: has a working demo folder for each library to be used in the final submission.</li>
-  <li>15% project scope: the project is not too big or too small, has enough algorithmic complexity, and (likely) has a general library.</li>
+  <li>15% project scope: the project is not too big or too small, has enough algorithmic complexity, and has room to make a general library.</li>
   <li>10% plan of implementation: there is a detailed implementation plan that covers all aspects of the project.</li>
   <li>30% module declarations: there are reasonable module interfaces for core components that are well thought-through and well designed.</li>
 </ul>
@@ -224,22 +225,28 @@ To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backen
 <p>On the last day of class you will submit your current codebase as a code checkpoint.</p>
 
 <ol>
-  <li>You don’t have to have things finished, but you should have made significant progress.</li>
+  <li>You should have made significant progress on your project.</li>
   <li>Your code should be tested.</li>
   <li>Run a coverage tool to demonstrate test coverage.</li>
   <li>Your project must be buildable with <code>dune build</code> at the top level and testable with <code>dune test</code>. Comment out any code that doesn’t build before your submission.</li>
   <li>You should have a <code>Readme.md</code> that explains your progress so far: what is working, what is not, etc.</li>
 </ol>
 
-<p>The code checkpoint is an important opportunity to get feedback from your advisor and correct issues before your final submission.</p>
+<p>The code checkpoint is an important opportunity to get feedback from your advisor and correct issues before your final submission. Having a significant amount of code done for this checkpoint has always proven extremely helpful for groups in years past.</p>
 
-<p><strong>Grading rubric</strong></p>
+<p>Make sure it is clear where your library code is. Consider some specific requirement of the final product, and then abstract it: use functors, parametrized types, all of that.</p>
+
+<p>You should have a well-structured GitHub repository for all of your code that contains no binaries, and you submit to Gradescope with this repository. You should have a <code>.gitignore</code> so that you’re not submitting binaries or <code>_opam/</code> files, or anything else buildable from the source code.</p>
+
+<p><em>Grading rubric</em></p>
 
 <ul>
   <li>30% progress: has made sufficient progress towards the end goal; seems close to 1/2 of the way through the project.</li>
-  <li>20% tests: there are tests covering a signficant portion of the functionality that is implemented so far.</li>
-  <li>25% module design and structure: module design is well-structured, is thought through, considers advisor’s comments from the proposal, and won’t need significant change heading forward.</li>
+  <li>3% evidence of a library: there is an abstraction of features into a library, and it’s clear what the library will be by the final submission.</li>
+  <li>3% has enough algorithmic complexity: at this rate, the complexity of the project is high and will seem to meet the standard for the final submission.</li>
+  <li>24% module design and structure: module design is well-structured, is thought through, considers advisor’s comments from the proposal, and won’t need significant change heading forward.</li>
   <li>25% code quality: the code that implements the module design is high quality with good types, functional data structures, lots of modules, etc.</li>
+  <li>15% tests: there are tests covering a significant portion of the functionality that is implemented so far.</li>
 </ul>
 
 <p><a name="demo"></a></p>
@@ -249,7 +256,7 @@ To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backen
 <ol>
   <li>A Powerpoint slide deck intro might be useful depending on your project; it is not required.</li>
   <li>You will demonstrate the project, showing all the functionality.</li>
-  <li>We will ask questions during this and perhaps ask you to try additional cases.</li>
+  <li>We will ask you questions during this and perhaps ask you to try additional cases.</li>
   <li>Code review: take us through your code, we will be commenting as we go.
     <ul>
       <li>Make sure to describe your use of libraries; if you are using a novel library we may not know, give a brief overview of it.</li>
@@ -258,29 +265,32 @@ To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backen
   <li>Build and test: build your project and tests, and then review your test suite. Show us the coverage report.</li>
 </ol>
 
-<p>The final code submission should include</p>
+<p>The final submission should include</p>
 <ol>
-  <li>All of the code, of course! You should have a <code>.gitignore</code> so that you’re not submitting binaries or <code>_opam/</code> files.</li>
-  <li>It should include a <code>dune</code> file which successfuly builds your project with <code>dune build</code>.</li>
-  <li>A top-level <code>Readme.md</code> that describes the project and tells users how to build and run it. The <code>Readme</code> also explains how to handle any other system-level installs that are needed outside of the offical course list.</li>
-  <li>In order to be clear on what <code>opam</code> packages your project depends on, you are required to include information to build a <code>.opam</code> file in your project root. This is described below in more detail.</li>
-  <li>You will also need to include a test suite with good coverage which runs automatically via <code>dune test</code> from the top-level directory.</li>
+  <li>Everything in your repository, of course!</li>
+  <li>A <code>dune</code> file that successfully builds your project with <code>dune build</code> and tests it with <code>dune test</code>.</li>
+  <li>A top-level <code>Readme.md</code> that describes the project and tells users how to build and run it. The <code>Readme</code> also explains how to handle any other system-level installs that are needed outside of the official course list.</li>
+  <li>A <code>.opam</code> file in your project root: in order to be clear on what <code>opam</code> packages your project depends on, you are required to include information to build a <code>.opam</code> file. This is described below in more detail.</li>
 </ol>
 
-<p>Here are some clarifications.</p>
+<p>We should be able to run and reproduce everything from the demo just using what is submitted to Gradescope.</p>
+
+<p>A few comments on testing:</p>
 <ol>
   <li>For test coverage, you should have very good coverage on your core logic.  Make sure to cover the corner cases in the code with tests.</li>
   <li>Run a coverage report, but don’t worry about turning off lines with <code>[@@@ coverage off]</code> because we won’t grade for a specific coverage percentage.</li>
 </ol>
 
-<p><strong>Grading rubric</strong></p>
+<p><em>Grading rubric</em></p>
 
 <ul>
   <li>5% quality of demo presentation: project is described well, and the presentation is clear.</li>
-  <li>25% demonstration of functionality: during the demo, there is lack of errors/glitches, the UI is quality, the edge cases we ask you to try work well, etc.</li>
-  <li>30% code quality: good FP practice, following style guidelines, proper dune and opam files, good module design, etc.</li>
+  <li>20% demonstration of functionality: during the demo, there is lack of errors/glitches, the UI is quality, the edge cases we ask you to try work well, etc.</li>
+  <li>25% code quality: good FP practice, following style guidelines, proper dune and opam files, good module design, etc.</li>
   <li>15% tests: good coverage of code, runs with <code>dune test</code>.</li>
-  <li>25% accomplishment: library usage, conceptual challenge, degree of completion, general remarks.</li>
+  <li>20% accomplishment: library usage, conceptual challenge, degree of completion, general remarks.</li>
+  <li>8% library: the project is written with abstraction and a general library.</li>
+  <li>7% algorithmic complexity: there are significantly challenging underlying algorithms in the project.</li>
 </ul>
 
 <h4 id="making-and-testing-an-opam-package-file">Making and testing an <code>.opam</code> package file</h4>
@@ -307,7 +317,7 @@ To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backen
 <h2 id="the-fpse-project-labs">The FPSE Project Labs</h2>
 <p><a name="labs"></a></p>
 
-<p>The project labs are classes later in the semester where your group can collabotate on project work.  The goal of the labs is to get work done on your project, and for your group to have plenty of time to get feedback from the course staff on all aspects of your project. Your advisor will check in with you and give you feedback and advice during the lab.</p>
+<p>The project labs are classes later in the semester where your group can collaborate on project work.  The goal of the labs is to get work done on your project, and for your group to have plenty of time to get feedback from the course staff on all aspects of your project. Your advisor will check in with you and give you feedback and advice during the lab. Make use of your advisor and benefit from their expertise!</p>
 
 <p>Here are some defining features of the labs.</p>
 
@@ -324,8 +334,7 @@ To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backen
 
 <p>Here are a few FPSE projects from last year (2023) to give you an idea of the scope etc. Please pick a different idea.</p>
 
-<b>(To Appear Soon!)</b>
-      
+<b>(Stay tuned!)</b>
           </section>
         </div>
       </div>

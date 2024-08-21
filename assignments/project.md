@@ -10,7 +10,7 @@ Here are the high-level requirements for the projects.
 * You must use the standard course libraries -- `Core`, `Lwt`, `OUnit2` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 2-4 people.
 * OCaml excels for non-trivial algorithms, and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.
-* You need to make a general library as part of your project, to get more experience with modules and functors in OCaml. (This is not an absolute requirement as we don't want you to make some artificial library if there is none needed, but you will need to get an exception from us if so.) You can do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
+* You need to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
 * A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.
 
 ### Project Topic Thrusts
@@ -24,14 +24,15 @@ You will need to make a standalone application as in assignments 4 and 6. Here a
 3. A complex library.
     * The focus is on some sophisticated algorithm, and there may be a simple usage through the command line.
 
-Note that in all three, there must be a non-trivial algorithm as a key feature. For example, in the projects linked below, we have sudoku solvers, chess AI, complex-number mathematics with a rasterizer and ASCII image generator, etc. The complexity of the user interaction makes up for lack of complexity in the algorithm and underlying behavior.
+Note that in all three, **there must be a non-trivial algorithm as a key feature**. For example, in the projects linked below, we have sudoku solvers, chess AI, complex-number mathematics with a rasterizer and ASCII image generator, etc. The complexity of the user interaction makes up for lack of complexity in the algorithm and underlying behavior and vice versa.
 
-* For all command-line apps some ways to beef them up once the basic app is working include
+For all command-line apps, here are some ways to beef them up once the basic app is working:
+
   1. Replace the command line with a RESTful web server using [`Dream`](https://aantron.github.io/dream) mentioned below.
-  2. In addition to 2., `Dream` supports html templates and you could "reply" to the `http` queries with html and so you can run your app in the browser.
-  3. If you know JavaScript you can beef up 2. a bit with some dynamic content.  Better yet, use Rescript and React to make an OCaml front-end in the browser, see below for links.
+  2. In addition to 1., `Dream` supports html templates and you could "reply" to the `http` queries with html and so you can run your app in the browser.
+  3. Use Rescript and React to beef it up and make an OCaml front-end in the browser. You may not use JavaScript unless you petition to the course staff.
   4. Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
-  5. Rather than using your own ad-hoc format for data in the file or database, make your own JSON representation and use `yojson` to convert back and forth.  
+  5. Rather than using your own ad-hoc format for data in the file or database, make an s-expression representation and convert back and forth.  
     - You should do this from the beginning in fact, it will be easier and more robust.
   6. Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.
 
@@ -44,7 +45,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * All web-based applications may have delayed response or may fail, and so all of the web libraries below are built on an OCaml coroutine library, either `Lwt` or `Async`.  `Async` is the Core version, but it is not gaining a lot of traction so you will probably be better off with a library over `Lwt`.  
   - See the [coroutines lecture notes](../coroutines.html) for more information on using `Lwt`.
 * We recommend the simple [`Cohttp_lwt_unix`](https://github.com/mirage/ocaml-cohttp) for web client (API reading / crawling) applications.
-* We recomend [`Dream`](https://aantron.github.io/dream) for web applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
+* We recommend [`Dream`](https://aantron.github.io/dream) for web applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
 * [`Opium`](https://github.com/rgrinberg/opium) is a good alternative to `Dream` to consider as well.  Both are built on `Lwt`.
 * `Cohttp` also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation. 
 * For the client, it is possible to code your client in "OCaml" using [ReScript](https://rescript-lang.org) which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  ReScript front-ends will count toward your "OCaml code" whereas JavaScript front-ends will not.
@@ -78,15 +79,15 @@ The initial group and idea should include 1) list of names in the group and 2) a
 
 E.g.
 
-```
-Group members: Earl Wu, Shiwei Weng, Brandon Stride
-
-We are going to make a Rubik's Cube solver for the 4x4x4 Rubik's Cube where the user inputs their cube through a web frontend, and they get back a sequence of moves to solve the cube.
-
-To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use Core because the Rubik's Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.
-```
+>Group members: Earl Wu, Shiwei Weng, Brandon Stride
+>
+>We are going to make a Rubik's Cube solver for the 4x4x4 Rubik's Cube where the user inputs their cube through a web frontend, and they get back a sequence of moves to solve the cube.
+>
+>To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use Core because the Rubik's Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.
 
 This submission will count for very little; its purpose is just to get your group off the ground, and to give us some direction in who to assign as your group advisor.
+
+After this submission, you will have lab days to have designated time to work together and discuss with your advisor.
 
 
 #### Project Design Proposal
@@ -97,19 +98,22 @@ You will have created a project on GitHub, and the content of this submission is
 
 The design submission must include
   1. An overview of the purpose of the project.
-  2. A list of libraries you are using or plan to use in your implementation. For all non-standard libraries used in the rest of the course (e.g. if you are using `Dream`), you need to have successfully installed the library on all team member computers and have a small demo working to verify the library really works. We require this because OCaml libraries can be flaky. This will be submitted in `demo/` with a subdirectory for each library.
-  3. Commented module type declarations (`.mli` files) which will provide you with an initial specification to code to.
+  2. A complete mock use of the application.
+    - If you have a graphical user interface, show a mock up of every page and how the user can interact.
+    - ... similarly if you have a command line interface.
+    - If the basis of your project is just some hard algorithm, take this chance to describe the algorithm and how OCaml will work with it. Show example uses and discuss desired performance.
+  3. A list of libraries you are using or plan to use in your implementation. For all non-standard libraries used in the rest of the course (e.g. if you are using `Dream`), you need to have successfully installed the library on all team member computers and have a small demo working to verify the library really works. We require this because OCaml libraries can be flaky. This will be submitted in `demo/` with a subdirectory for each library.
+  4. Commented module type declarations (`.mli` files) which will provide you with an initial specification to code to.
     - You can change this later and don't need every single detail filled out, but it should include as many details as you can think of, and you should try to cover the entire project.
     - Include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.
-  4. Include a mock of a use of your application, along the lines of the Minesweeper example above but showing the complete protocol.
-  5. Also include an implementation plan: a list of the order in which you will implement features and by what date you hope to have them completed.
+  5. An implementation plan: a list of the order in which you will implement features and by what date you hope to have them completed.
   6. You may also include any other information that will make it easier to understand your project.
 
-**Grading rubric**
+*Grading rubric*
 
 * 30% mock use: depicts each usage case clearly and accurately.
 * 15% libraries: has a working demo folder for each library to be used in the final submission.
-* 15% project scope: the project is not too big or too small, has enough algorithmic complexity, and (likely) has a general library.
+* 15% project scope: the project is not too big or too small, has enough algorithmic complexity, and has room to make a general library.
 * 10% plan of implementation: there is a detailed implementation plan that covers all aspects of the project.
 * 30% module declarations: there are reasonable module interfaces for core components that are well thought-through and well designed.
 
@@ -117,20 +121,26 @@ The design submission must include
 
 On the last day of class you will submit your current codebase as a code checkpoint.
 
-1. You don't have to have things finished, but you should have made significant progress.
+1. You should have made significant progress on your project.
 2. Your code should be tested.
 3. Run a coverage tool to demonstrate test coverage.
 4. Your project must be buildable with `dune build` at the top level and testable with `dune test`. Comment out any code that doesn't build before your submission.
 5. You should have a `Readme.md` that explains your progress so far: what is working, what is not, etc.
 
-The code checkpoint is an important opportunity to get feedback from your advisor and correct issues before your final submission.
+The code checkpoint is an important opportunity to get feedback from your advisor and correct issues before your final submission. Having a significant amount of code done for this checkpoint has always proven extremely helpful for groups in years past.
 
-**Grading rubric**
+Make sure it is clear where your library code is. Consider some specific requirement of the final product, and then abstract it: use functors, parametrized types, all of that.
+
+You should have a well-structured GitHub repository for all of your code that contains no binaries, and you submit to Gradescope with this repository. You should have a `.gitignore` so that you're not submitting binaries or `_opam/` files, or anything else buildable from the source code.
+
+*Grading rubric*
 
 * 30% progress: has made sufficient progress towards the end goal; seems close to 1/2 of the way through the project.
-* 20% tests: there are tests covering a signficant portion of the functionality that is implemented so far.
-* 25% module design and structure: module design is well-structured, is thought through, considers advisor's comments from the proposal, and won't need significant change heading forward.
+* 3% evidence of a library: there is an abstraction of features into a library, and it's clear what the library will be by the final submission.
+* 3% has enough algorithmic complexity: at this rate, the complexity of the project is high and will seem to meet the standard for the final submission.
+* 24% module design and structure: module design is well-structured, is thought through, considers advisor's comments from the proposal, and won't need significant change heading forward.
 * 25% code quality: the code that implements the module design is high quality with good types, functional data structures, lots of modules, etc.
+* 15% tests: there are tests covering a significant portion of the functionality that is implemented so far.
 
 <a name="demo"></a>
 #### Demo and Final Code Submission
@@ -138,30 +148,32 @@ The code checkpoint is an important opportunity to get feedback from your adviso
 For the demo you should prepare a 5-10 minute presentation on your project.
   1. A Powerpoint slide deck intro might be useful depending on your project; it is not required.
   2. You will demonstrate the project, showing all the functionality.
-  3. We will ask questions during this and perhaps ask you to try additional cases.
+  3. We will ask you questions during this and perhaps ask you to try additional cases.
   4. Code review: take us through your code, we will be commenting as we go.  
      - Make sure to describe your use of libraries; if you are using a novel library we may not know, give a brief overview of it.
   5. Build and test: build your project and tests, and then review your test suite. Show us the coverage report.
 
-The final code submission should include 
-  1. All of the code, of course! You should have a `.gitignore` so that you're not submitting binaries or `_opam/` files.
-  2. It should include a `dune` file which successfuly builds your project with `dune build`.
-  3. A top-level `Readme.md` that describes the project and tells users how to build and run it. The `Readme` also explains how to handle any other system-level installs that are needed outside of the offical course list.
-  4. In order to be clear on what `opam` packages your project depends on, you are required to include information to build a `.opam` file in your project root. This is described below in more detail.
-  5. You will also need to include a test suite with good coverage which runs automatically via `dune test` from the top-level directory.
+The final submission should include 
+  1. Everything in your repository, of course!
+  2. A `dune` file that successfully builds your project with `dune build` and tests it with `dune test`.
+  3. A top-level `Readme.md` that describes the project and tells users how to build and run it. The `Readme` also explains how to handle any other system-level installs that are needed outside of the official course list.
+  4. A `.opam` file in your project root: in order to be clear on what `opam` packages your project depends on, you are required to include information to build a `.opam` file. This is described below in more detail.
 
+We should be able to run and reproduce everything from the demo just using what is submitted to Gradescope.
 
-Here are some clarifications.
+A few comments on testing:
   1. For test coverage, you should have very good coverage on your core logic.  Make sure to cover the corner cases in the code with tests.
   2. Run a coverage report, but don't worry about turning off lines with `[@@@ coverage off]` because we won't grade for a specific coverage percentage.
 
-**Grading rubric**
+*Grading rubric*
 
 * 5% quality of demo presentation: project is described well, and the presentation is clear.
-* 25% demonstration of functionality: during the demo, there is lack of errors/glitches, the UI is quality, the edge cases we ask you to try work well, etc.
-* 30% code quality: good FP practice, following style guidelines, proper dune and opam files, good module design, etc.
+* 20% demonstration of functionality: during the demo, there is lack of errors/glitches, the UI is quality, the edge cases we ask you to try work well, etc.
+* 25% code quality: good FP practice, following style guidelines, proper dune and opam files, good module design, etc.
 * 15% tests: good coverage of code, runs with `dune test`.
-* 25% accomplishment: library usage, conceptual challenge, degree of completion, general remarks.
+* 20% accomplishment: library usage, conceptual challenge, degree of completion, general remarks.
+* 8% library: the project is written with abstraction and a general library.
+* 7% algorithmic complexity: there are significantly challenging underlying algorithms in the project.
 
 #### Making and testing an `.opam` package file
  As was mentioned above you will need to make an `.opam` file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any `opam` dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your `dune-project` file and edit as appropriate.  Make sure to include any `opam` packages you are using in the `depends` section.
@@ -189,7 +201,7 @@ Note that any non-`opam` dependencies you will need to list in your `Readme.md` 
 ## The FPSE Project Labs
 <a name="labs"></a>
 
-The project labs are classes later in the semester where your group can collabotate on project work.  The goal of the labs is to get work done on your project, and for your group to have plenty of time to get feedback from the course staff on all aspects of your project. Your advisor will check in with you and give you feedback and advice during the lab.
+The project labs are classes later in the semester where your group can collaborate on project work.  The goal of the labs is to get work done on your project, and for your group to have plenty of time to get feedback from the course staff on all aspects of your project. Your advisor will check in with you and give you feedback and advice during the lab. Make use of your advisor and benefit from their expertise!
 
 Here are some defining features of the labs.
 
