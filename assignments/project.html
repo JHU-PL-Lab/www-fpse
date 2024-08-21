@@ -113,7 +113,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ol>
   <li>Replace the command line with a RESTful web server using <a href="https://aantron.github.io/dream"><code>Dream</code></a> mentioned below.</li>
   <li>In addition to 1., <code>Dream</code> supports html templates and you could “reply” to the <code>http</code> queries with html and so you can run your app in the browser.</li>
-  <li>Use Rescript and React to beef it up and make an OCaml front-end in the browser. You may not use JavaScript unless you petition to the course staff.</li>
+  <li>Use <a href="https://rescript-lang.org">ReScript</a> and React to beef it up and make an OCaml front-end in the browser. Rescript is basically OCaml with somewhat different syntax that compiles to JavaScript and can run in the browser.</li>
   <li>Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>
   <li>Rather than using your own ad-hoc format for data in the file or database, make an s-expression representation and convert back and forth.  <br />
     - You should do this from the beginning in fact, it will be easier and more robust.</li>
@@ -135,7 +135,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>We recommend <a href="https://aantron.github.io/dream"><code>Dream</code></a> for web applications.  (Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions. on Linux or WSL2 you will probably need to use <code>apt</code> to install similar libraries if you don’t have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, <code>Cohttp</code> (below) is also a good choice.</li>
   <li><a href="https://github.com/rgrinberg/opium"><code>Opium</code></a> is a good alternative to <code>Dream</code> to consider as well.  Both are built on <code>Lwt</code>.</li>
   <li><code>Cohttp</code> also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
-  <li>For the client, it is possible to code your client in “OCaml” using <a href="https://rescript-lang.org">ReScript</a> which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  ReScript front-ends will count toward your “OCaml code” whereas JavaScript front-ends will not.</li>
+  <li>For the client, it is possible to code your client in “OCaml” using <a href="https://rescript-lang.org">ReScript</a> which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  Since ReScript is available we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!</li>
 </ul>
 
 <h4 id="persistence">Persistence</h4>
@@ -333,8 +333,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h2 id="sample-projects">Sample projects</h2>
 
 <p>Here are a few FPSE projects from last year (2023) to give you an idea of the scope etc. Please pick a different idea.</p>
-
-<b>(Stay tuned!)</b>
+<b>(Stay Tuned!)</b>
+      
           </section>
         </div>
       </div>

@@ -30,7 +30,7 @@ For all command-line apps, here are some ways to beef them up once the basic app
 
   1. Replace the command line with a RESTful web server using [`Dream`](https://aantron.github.io/dream) mentioned below.
   2. In addition to 1., `Dream` supports html templates and you could "reply" to the `http` queries with html and so you can run your app in the browser.
-  3. Use Rescript and React to beef it up and make an OCaml front-end in the browser. You may not use JavaScript unless you petition to the course staff.
+  3. Use [ReScript](https://rescript-lang.org) and React to beef it up and make an OCaml front-end in the browser. Rescript is basically OCaml with somewhat different syntax that compiles to JavaScript and can run in the browser.
   4. Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
   5. Rather than using your own ad-hoc format for data in the file or database, make an s-expression representation and convert back and forth.  
     - You should do this from the beginning in fact, it will be easier and more robust.
@@ -48,7 +48,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * We recommend [`Dream`](https://aantron.github.io/dream) for web applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
 * [`Opium`](https://github.com/rgrinberg/opium) is a good alternative to `Dream` to consider as well.  Both are built on `Lwt`.
 * `Cohttp` also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation. 
-* For the client, it is possible to code your client in "OCaml" using [ReScript](https://rescript-lang.org) which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  ReScript front-ends will count toward your "OCaml code" whereas JavaScript front-ends will not.
+* For the client, it is possible to code your client in "OCaml" using [ReScript](https://rescript-lang.org) which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  Since ReScript is available we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!
 
 #### Persistence
 
