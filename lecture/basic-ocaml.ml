@@ -5,10 +5,11 @@ open Core;; (* Make the Core libraries directly available *)
 let hw = "hello" ^ "world";;
 printf "the string is %s\n" hw
 
-3 + 4;;
-let x = 3 + 4;; (* give the value a name via let keyword. *)
+3 + 4;; (* outputs `- : int = 7` -- the value is 7, int is the type, "-" names no-name given *)
+let x = 3 + 4;; (* give the value a name, via let. *)
 let y = x + 5;; (* can use x now *)
 let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
+(* z is not defined here: z + 1 ;; will give an error. *)
 
 let b = true;;
 b && false;;
@@ -23,7 +24,7 @@ true || false;;
 "and of course strings";;
 
 let squared x = x * x;; (* returns   val squared : int -> int = <fun>     *)
-squared 4;; (* to call a function -- separate arguments with S P A C E S *)
+squared 4;; (* to call a function -- separate arguments with S P A C E S - ! *)
 
 let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
   if n <= 0 then 0
@@ -58,7 +59,7 @@ add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - applicatio
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)
 
 3.4 = 4.2;; (* errors, = only works on ints with the Core library in use *)
-Float.(=) 3.3 4.4;; (* Solution: use the Float module's = function for floats *)
+Float.(3.3 = 4.4);; (* Solution: use the Float module's = function for floats *)
 
 Some 5;;
 - : int option = Some 5
@@ -97,9 +98,9 @@ let tl_exn l =
 ;;
 let l = [1;2;3];; 
 let l' = tl_exn l;;
-l;; (* IMPORTANT: lists are immutable, l didn't change!! *)
+l;; (* Note: lists are immutable, l didn't change!! *)
 let l'' =  tl_exn l' (* So to get tail of tail, take tail of l' not 2 x tail of l!  THREAD the state! *)
-tl_exn [];; (* Raise an exception if the list had no tail *)
+tl_exn [];; (* Raises an `invalid_arg` exception if the list had no tail *)
 
 let tl l =
   match l with

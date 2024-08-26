@@ -14,7 +14,9 @@ See the [Dateline](../dateline.html)
 * More generally than limited mutation, most functions only return data, they have no other behaviors on the side (no "side effects") 
   - No printing, I/O, mutating, raising exceptions, etc.
 * Lack of side effects is called "referential transparency" - variable values don't change out from under you (follows how math behaves).
-* Standard data structures are analogues of imperative ones: dictionaries, lists, etc, but can be *immutable* - instead of mutating, make a fresh copy.
+* Functional data structures are analogues of imperative ones: dictionaries, lists, etc, but can be *immutable* 
+  - Instead of mutating, make a fresh copy.
+  - Sounds like it will be extremely inefficient but it is reasonable in many cases.
 
 ### FP and Math
 * Mathematical functions are implicitly immutable (think about it - no "assignment"!) so FP aligns closely with math
@@ -60,7 +62,7 @@ See the [Dateline](../dateline.html)
 ### Functional (FP)
 
 * Advantages described above: declarative nature and correctness, more composable
-* Sometimes less good at supporting extension, no notion of subclass in common functional paradigms
+* Sometimes less good at supporting extension: e.g. no notion of subclass in functional paradigm
 
 ### Who wins?
 Thesis:
@@ -72,7 +74,7 @@ Thesis:
  
 ### Typed Functional vs Untyped Functional
 
-* There are typed FP languages (OCaml, Haskell, TypeScript, etc) and uptyped ones (Scheme, Clojure, Python, JavaScript)
+* There are typed FP languages (OCaml, Haskell, TypeScript, etc) and uptyped ones (Scheme, Clojure, Python, JavaScript, etc)
 * We are clearly in the types camp here with OCaml but there are trade offs
   - With types we have *type-directed programming*: types serve as a skeleton of the code structure, and often once all the type errors are fixed the code .. works!
   - The downside is types can get in the way both in terms of code maintenance and in terms of expressiveness.

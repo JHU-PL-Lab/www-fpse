@@ -90,7 +90,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>Lack of side effects is called “referential transparency” - variable values don’t change out from under you (follows how math behaves).</li>
-  <li>Standard data structures are analogues of imperative ones: dictionaries, lists, etc, but can be <em>immutable</em> - instead of mutating, make a fresh copy.</li>
+  <li>Functional data structures are analogues of imperative ones: dictionaries, lists, etc, but can be <em>immutable</em>
+    <ul>
+      <li>Instead of mutating, make a fresh copy.</li>
+      <li>Sounds like it will be extremely inefficient but it is reasonable in many cases.</li>
+    </ul>
+  </li>
 </ul>
 
 <h3 id="fp-and-math">FP and Math</h3>
@@ -163,7 +168,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Advantages described above: declarative nature and correctness, more composable</li>
-  <li>Sometimes less good at supporting extension, no notion of subclass in common functional paradigms</li>
+  <li>Sometimes less good at supporting extension: e.g. no notion of subclass in functional paradigm</li>
 </ul>
 
 <h3 id="who-wins">Who wins?</h3>
@@ -182,7 +187,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="typed-functional-vs-untyped-functional">Typed Functional vs Untyped Functional</h3>
 
 <ul>
-  <li>There are typed FP languages (OCaml, Haskell, TypeScript, etc) and uptyped ones (Scheme, Clojure, Python, JavaScript)</li>
+  <li>There are typed FP languages (OCaml, Haskell, TypeScript, etc) and uptyped ones (Scheme, Clojure, Python, JavaScript, etc)</li>
   <li>We are clearly in the types camp here with OCaml but there are trade offs
     <ul>
       <li>With types we have <em>type-directed programming</em>: types serve as a skeleton of the code structure, and often once all the type errors are fixed the code .. works!</li>

@@ -15,7 +15,7 @@
 
 * Top loops allow you to type in small snippets of code which will run and produce a result.
   - e.g. shells like `bash`, Python's `python3`, JavaScript `node`, etc.
-* The OCaml top loop is the shell command `utop`.  
+* The OCaml top loop is started with the shell command `utop`.  
 * We will run the OCaml top loop and show you you can enter expressions such as `3+4`, follow with `;;` to indicate end of input (`;;` is **required**), and hit return to get the result
 
 ```ocaml
@@ -48,7 +48,7 @@ printf "the string is %s\n" hw
 )
 ```
 * This is the **build file**, specifying how to compile/test/run the program.  The notation is S-expressions.
-* Also a file `dune-project` is needed with only `(lang dune 3.10)` in it.
+* Also a file `dune-project` is needed with only `(lang dune 3.16)` in it.
 * Now, type `dune build` to compile this `helloworld.ml` code as an executable.
 * All of the results are placed in the `_build/` directory
 * Then, run with `dune exec ./helloworld.exe` - same as typing `_build/default/helloworld.exe`
@@ -57,16 +57,17 @@ printf "the string is %s\n" hw
 
 ### OCaml Language Basics in `utop`
 
-* We will be running many small programs in lecture now - something best done in the top loop.
+* To start with we will only live in the top-loop world, but even on the first assignment you will start working in both worlds.
 * All the following are typed as input into `utop` with `;;` ending input.
  
 ###  Integers
 
 ```ocaml
-3 + 4;;
-let x = 3 + 4;; (* give the value a name via let keyword. *)
+3 + 4;; (* outputs `- : int = 7` -- the value is 7, int is the type, "-" names no-name given *)
+let x = 3 + 4;; (* give the value a name, via let. *)
 let y = x + 5;; (* can use x now *)
 let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
+(* z is not defined here: z + 1 ;; will give an error. *)
 ```
 
 #### Boolean operations
@@ -90,10 +91,10 @@ true || false;;
 
 #### Simple functions on integers
 
-To declare a function `squared` with `x` its one parameter.  `return` is  implicit.
+Let's declare a function `squared` with `x` as its one parameter.  `return` is  implicit.
 ```ocaml
 let squared x = x * x;; (* returns   val squared : int -> int = <fun>     *)
-squared 4;; (* to call a function -- separate arguments with S P A C E S *)
+squared 4;; (* to call a function -- separate arguments with S P A C E S - ! *)
 ```
  *  OCaml has no `return` statement; value of the whole body-expression is what gets returned
  *  Type is automatically **inferred** and printed as `domain -> range`; `int -> int` here.
@@ -162,9 +163,9 @@ add3 @@ 3 * 2;; (* LIKE the original - @@ is like the " " for application but bi
 * `=` is also a 2-argument function; it is somewhat strange in our `Core` OCaml on non-ints:
 ```ocaml
 3.4 = 4.2;; (* errors, = only works on ints with the Core library in use *)
-Float.(=) 3.3 4.4;; (* Solution: use the Float module's = function for floats *)
+Float.(3.3 = 4.4);; (* Solution: use the Float module's = function for floats *)
 ```
-* Why this apparent ugliness?  Pay a price here but reap rewards later of having the right notion of `=`.
+* Why this apparent ugliness?  Pay a price here but reap rewards later of never having the wrong notion of `=`.
 
 ### Simple Structured Data Types: Option and Result
 
@@ -270,9 +271,10 @@ div_exn 3 4;;
    - A key dimension of this course is this side effect vs direct trade-off
    - Many bugs, security leaks, etc are due to ignorance of side effects; the `Error/Ok` approach keeps them "in your face" as a programmer
    - Also recall `Error/Ok` keeps us completely in math-land, the return result tells everything.
+
 ### Lists
 
-* Finally a real data structure to write some real programs!
+* Finally we can use a real data structure to write some real programs!
 * Lists are the most common data structure in OCaml, similar to dictionaries/objects for Python/JavaScript.
 * They are **immutable** so while they look something like arrays or vectors they are **not**
 
@@ -309,9 +311,9 @@ let tl_exn l =
 ;;
 let l = [1;2;3];; 
 let l' = tl_exn l;;
-l;; (* IMPORTANT: lists are immutable, l didn't change!! *)
+l;; (* Note: lists are immutable, l didn't change!! *)
 let l'' =  tl_exn l' (* So to get tail of tail, take tail of l' not 2 x tail of l!  THREAD the state! *)
-tl_exn [];; (* Raise an exception if the list had no tail *)
+tl_exn [];; (* Raises an `invalid_arg` exception if the list had no tail *)
 ```
 
 * An alternative to avoid the exception effect is to return `Ok/Error`:
@@ -348,7 +350,7 @@ Fortunately many common operations are already in the `List` module in the `Core
 ```
 * This library uses the `option` type instead of raising an exception like we did
 * `List.nth_exn` raises an exception like ours does.  Both versions are useful.
-   - Note this function is also `Core.List.nth_exn` but we always `open Core;;` to make `Core` module all available
-* Note on the HW you can use libraries on some questions but not others, read the instructions.
+   - Note this function is also `Core.List.nth_exn` but we always `open Core;;` to make `Core` module functions implicitly available
+* On the HWs you can use libraries some places but not others, please read the instructions carefully.
 
 

@@ -80,17 +80,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>For Linux or Mac see <a href="https://opam.ocaml.org/doc/Install.html">The OPAM install page</a> for install instructions.</li>
   <li>For Mac users, the above requires <a href="https://brew.sh">Homebrew</a> (a package manager for Linux-ish libraries) so here is a more detailed suggestion of some copy/paste that should work.
     <ul>
-      <li>Mac without homebrew installed:<code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code> will install Homebrew</li>
-      <li>if you get  “Error: homebrew-core is a shallow clone.” from the above follow the instructions and be prepared to wait awhile (the whole git history needs to be loaded thanks to github idiocy)</li>
-      <li>Mac with Homebrew already installed: <code>brew update; brew install gpatch; brew install opam</code></li>
+      <li>Mac without homebrew installed:<code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code> will install Homebrew.  Follow the instructions of things to copy/paste into your shell to complete the setup.</li>
+      <li>Mac with Homebrew already installed, or if you just installed as per above: run <code>brew update; brew install gpatch; brew install opam</code></li>
     </ul>
   </li>
   <li>For Windows you should use WSL2, the Windows Subsystem for Linux.  It creates a Linux-like system from within Windows.
     <ul>
-      <li>Once you install <a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL 2</a> you will be able to follow the Linux Ubuntu install instructions linked above.
+      <li>Once you install <a href="https://learn.microsoft.com/en-us/windows/wsl/">WSL 2</a> you will be able to follow the Linux Ubuntu install instructions linked above.
         <ul>
           <li>Note that your WSL2 Ubuntu needs the C compiler and tools for the <code>opam</code> install to work; the following Linux shell command will get you those: <code>sudo apt install make m4 gcc unzip bubblewrap</code>.</li>
-          <li>You can still use your Windows install of VSCode to edit files by using the <a href="https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode">VSCode Remote WSL Extension</a> – it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.</li>
+          <li>You can still use your Windows install of VSCode to edit files by using the <a href="https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode">VSCode Remote WSL Extension</a> – it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.</li>
         </ul>
       </li>
       <li>WSL2 has been working well for most people, but another option is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, <a href="https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098">here is one of them</a>.  Once your virtual Linux box is set up, you can follow the <code>opam</code> Linux install instructions.</li>
@@ -101,8 +100,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="initial-setup-of-opam">Initial setup of <code>opam</code></h3>
 <p>You will need to run some terminal commands to set up the basics:</p>
 <ol>
-  <li><code>opam init</code> will initialize OPAM (we suggest you answer <code>y</code> to the question <code>Do you want opam to modify ~/.profile? [N/y/f]</code>);</li>
-  <li>If you didn’t get that question or said <code>N</code>, you will need to add line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
+  <li><code>opam init</code> will initialize OPAM (it should give a list of options 1/2/3/4/5, pick 1, <code>Yes update ~/.bash_profile</code> or something similar depending on your shell setup);</li>
+  <li>If you didn’t get that question or said to do nothing, you will need to add line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
   <li><code>opam update</code> to make sure your <code>opam</code> is aware of all the versions of OCaml that are out there;</li>
   <li><code>opam switch create 5.2.0</code> will build OCaml version 5.2.0.;</li>
   <li>After any <code>opam switch</code> command it will instruct you to reset your path with some instructions like “Run <code>eval $(opam env)</code> to update the current shell environment” – follow those instructions and copy/paste the in the command into the shell (if you are on <code>zsh</code> replace the <code>$(...)</code> with back-quotes <code>`...`</code>).</li>
@@ -123,6 +122,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">#</span><span class="n">require</span> <span class="s2">"core.top"</span><span class="p">;;</span>
 <span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span>
 </code></pre></div></div>
+
+<p>And here is a shell command which you can simply copy/paste to make the above file:<br />
+<code>echo '#use "topfind";;'; echo; echo '#require "ppx_jane";;'; echo; echo '#require "core.top";;'; echo; echo 'open Core;;' &gt;~/.ocamlinit</code></p>
+
+<p>To test that your install works, type the shell command <code>utop</code> which will start up an interactive OCaml session (more later on that).  Type <code>Fn.id;;</code> into the <code>utop</code> prompt followed by return, this is just a test to make sure the <code>Core</code> libraries were properly loaded.  If you didn’t get an error message you are all good!  Type control-D to quit <code>utop</code>.</p>
 
 <h3 id="ocaml-documentation">OCaml Documentation</h3>
 <p><a href="https://ocaml.org">ocaml.org</a> is the central repository of OCaml information.</p>

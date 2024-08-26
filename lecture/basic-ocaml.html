@@ -96,7 +96,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>e.g. shells like <code>bash</code>, Python’s <code>python3</code>, JavaScript <code>node</code>, etc.</li>
     </ul>
   </li>
-  <li>The OCaml top loop is the shell command <code>utop</code>.</li>
+  <li>The OCaml top loop is started with the shell command <code>utop</code>.</li>
   <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result</li>
 </ul>
 
@@ -131,7 +131,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div>    </div>
   </li>
   <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.  The notation is S-expressions.</li>
-  <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.10)</code> in it.</li>
+  <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.16)</code> in it.</li>
   <li>Now, type <code>dune build</code> to compile this <code>helloworld.ml</code> code as an executable.</li>
   <li>All of the results are placed in the <code>_build/</code> directory</li>
   <li>Then, run with <code>dune exec ./helloworld.exe</code> - same as typing <code>_build/default/helloworld.exe</code></li>
@@ -142,16 +142,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="ocaml-language-basics-in-utop">OCaml Language Basics in <code>utop</code></h3>
 
 <ul>
-  <li>We will be running many small programs in lecture now - something best done in the top loop.</li>
+  <li>To start with we will only live in the top-loop world, but even on the first assignment you will start working in both worlds.</li>
   <li>All the following are typed as input into <code>utop</code> with <code>;;</code> ending input.</li>
 </ul>
 
 <h3 id="integers">Integers</h3>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span>
-<span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* give the value a name via let keyword. *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* outputs `- : int = 7` -- the value is 7, int is the type, "-" names no-name given *)</span>
+<span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* give the value a name, via let. *)</span>
 <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* can use x now *)</span>
 <span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span> <span class="k">in</span> <span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* let .. in defines a local variable z *)</span>
+<span class="c">(* z is not defined here: z + 1 ;; will give an error. *)</span>
 </code></pre></div></div>
 
 <h4 id="boolean-operations">Boolean operations</h4>
@@ -173,9 +174,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="simple-functions-on-integers">Simple functions on integers</h4>
 
-<p>To declare a function <code>squared</code> with <code>x</code> its one parameter.  <code>return</code> is  implicit.</p>
+<p>Let’s declare a function <code>squared</code> with <code>x</code> as its one parameter.  <code>return</code> is  implicit.</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">squared</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;;</span> <span class="c">(* returns   val squared : int -&gt; int = &lt;fun&gt;     *)</span>
-<span class="n">squared</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* to call a function -- separate arguments with S P A C E S *)</span>
+<span class="n">squared</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* to call a function -- separate arguments with S P A C E S - ! *)</span>
 </code></pre></div></div>
 <ul>
   <li>OCaml has no <code>return</code> statement; value of the whole body-expression is what gets returned</li>
@@ -245,10 +246,10 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <ul>
   <li><code>=</code> is also a 2-argument function; it is somewhat strange in our <code>Core</code> OCaml on non-ints:
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span><span class="o">.</span><span class="mi">4</span> <span class="o">=</span> <span class="mi">4</span><span class="o">.</span><span class="mi">2</span><span class="p">;;</span> <span class="c">(* errors, = only works on ints with the Core library in use *)</span>
-<span class="nn">Float</span><span class="p">.(</span><span class="o">=</span><span class="p">)</span> <span class="mi">3</span><span class="o">.</span><span class="mi">3</span> <span class="mi">4</span><span class="o">.</span><span class="mi">4</span><span class="p">;;</span> <span class="c">(* Solution: use the Float module's = function for floats *)</span>
+<span class="nn">Float</span><span class="p">.(</span><span class="mi">3</span><span class="o">.</span><span class="mi">3</span> <span class="o">=</span> <span class="mi">4</span><span class="o">.</span><span class="mi">4</span><span class="p">);;</span> <span class="c">(* Solution: use the Float module's = function for floats *)</span>
 </code></pre></div>    </div>
   </li>
-  <li>Why this apparent ugliness?  Pay a price here but reap rewards later of having the right notion of <code>=</code>.</li>
+  <li>Why this apparent ugliness?  Pay a price here but reap rewards later of never having the wrong notion of <code>=</code>.</li>
 </ul>
 
 <h3 id="simple-structured-data-types-option-and-result">Simple Structured Data Types: Option and Result</h3>
@@ -365,12 +366,15 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
     <ul>
       <li>A key dimension of this course is this side effect vs direct trade-off</li>
       <li>Many bugs, security leaks, etc are due to ignorance of side effects; the <code>Error/Ok</code> approach keeps them “in your face” as a programmer</li>
-      <li>Also recall <code>Error/Ok</code> keeps us completely in math-land, the return result tells everything.
-        <h3 id="lists">Lists</h3>
-      </li>
+      <li>Also recall <code>Error/Ok</code> keeps us completely in math-land, the return result tells everything.</li>
     </ul>
   </li>
-  <li>Finally a real data structure to write some real programs!</li>
+</ul>
+
+<h3 id="lists">Lists</h3>
+
+<ul>
+  <li>Finally we can use a real data structure to write some real programs!</li>
   <li>Lists are the most common data structure in OCaml, similar to dictionaries/objects for Python/JavaScript.</li>
   <li>They are <strong>immutable</strong> so while they look something like arrays or vectors they are <strong>not</strong></li>
 </ul>
@@ -407,9 +411,9 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 <span class="p">;;</span>
 <span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> 
 <span class="k">let</span> <span class="n">l'</span> <span class="o">=</span> <span class="n">tl_exn</span> <span class="n">l</span><span class="p">;;</span>
-<span class="n">l</span><span class="p">;;</span> <span class="c">(* IMPORTANT: lists are immutable, l didn't change!! *)</span>
+<span class="n">l</span><span class="p">;;</span> <span class="c">(* Note: lists are immutable, l didn't change!! *)</span>
 <span class="k">let</span> <span class="n">l''</span> <span class="o">=</span>  <span class="n">tl_exn</span> <span class="n">l'</span> <span class="c">(* So to get tail of tail, take tail of l' not 2 x tail of l!  THREAD the state! *)</span>
-<span class="n">tl_exn</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* Raise an exception if the list had no tail *)</span>
+<span class="n">tl_exn</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* Raises an `invalid_arg` exception if the list had no tail *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -449,10 +453,10 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
   <li>This library uses the <code>option</code> type instead of raising an exception like we did</li>
   <li><code>List.nth_exn</code> raises an exception like ours does.  Both versions are useful.
     <ul>
-      <li>Note this function is also <code>Core.List.nth_exn</code> but we always <code>open Core;;</code> to make <code>Core</code> module all available</li>
+      <li>Note this function is also <code>Core.List.nth_exn</code> but we always <code>open Core;;</code> to make <code>Core</code> module functions implicitly available</li>
     </ul>
   </li>
-  <li>Note on the HW you can use libraries on some questions but not others, read the instructions.</li>
+  <li>On the HWs you can use libraries some places but not others, please read the instructions carefully.</li>
 </ul>
 
       

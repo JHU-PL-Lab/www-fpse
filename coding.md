@@ -8,19 +8,18 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
 
 -  For Linux or Mac see [The OPAM install page](https://opam.ocaml.org/doc/Install.html) for install instructions. 
 -  For Mac users, the above requires [Homebrew](https://brew.sh) (a package manager for Linux-ish libraries) so here is a more detailed suggestion of some copy/paste that should work.
-	- Mac without homebrew installed:`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` will install Homebrew 
-   - if you get  "Error: homebrew-core is a shallow clone." from the above follow the instructions and be prepared to wait awhile (the whole git history needs to be loaded thanks to github idiocy)
-	- Mac with Homebrew already installed: `brew update; brew install gpatch; brew install opam`
+	- Mac without homebrew installed:`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` will install Homebrew.  Follow the instructions of things to copy/paste into your shell to complete the setup.
+	- Mac with Homebrew already installed, or if you just installed as per above: run `brew update; brew install gpatch; brew install opam`
 -   For Windows you should use WSL2, the Windows Subsystem for Linux.  It creates a Linux-like system from within Windows.
-    - Once you install [WSL 2](https://docs.microsoft.com/en-us/windows/wsl/) you will be able to follow the Linux Ubuntu install instructions linked above. 
+    - Once you install [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/) you will be able to follow the Linux Ubuntu install instructions linked above. 
        - Note that your WSL2 Ubuntu needs the C compiler and tools for the `opam` install to work; the following Linux shell command will get you those: `sudo apt install make m4 gcc unzip bubblewrap`.
-       - You can still use your Windows install of VSCode to edit files by using the [VSCode Remote WSL Extension](https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode) -- it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.
+       - You can still use your Windows install of VSCode to edit files by using the [VSCode Remote WSL Extension](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode) -- it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.
     -  WSL2 has been working well for most people, but another option is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, [here is one of them](https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098).  Once your virtual Linux box is set up, you can follow the `opam` Linux install instructions.
 
 ### Initial setup of `opam`
 You will need to run some terminal commands to set up the basics:
-   1.  `opam init` will initialize OPAM (we suggest you answer `y` to the question `Do you want opam to modify ~/.profile? [N/y/f]`);
-   2.  If you didn't get that question or said `N`, you will need to add line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
+   1.  `opam init` will initialize OPAM (it should give a list of options 1/2/3/4/5, pick 1, `Yes update ~/.bash_profile` or something similar depending on your shell setup);
+   2.  If you didn't get that question or said to do nothing, you will need to add line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
    3. `opam update` to make sure your `opam` is aware of all the versions of OCaml that are out there;
    4. `opam switch create 5.2.0` will build OCaml version 5.2.0.;
    5.  After any `opam switch` command it will instruct you to reset your path with some instructions like "Run `eval $(opam env)` to update the current shell environment" -- follow those instructions and copy/paste the in the command into the shell (if you are on `zsh` replace the `$(...)` with back-quotes `` `...` ``).
@@ -40,6 +39,11 @@ Lastly, in order for the OCaml top loop to start up with some of these libraries
 #require "core.top";;
 open Core;;
 ```
+
+And here is a shell command which you can simply copy/paste to make the above file:
+`echo '#use "topfind";;'; echo; echo '#require "ppx_jane";;'; echo; echo '#require "core.top";;'; echo; echo 'open Core;;' >~/.ocamlinit`
+
+To test that your install works, type the shell command `utop` which will start up an interactive OCaml session (more later on that).  Type `Fn.id;;` into the `utop` prompt followed by return, this is just a test to make sure the `Core` libraries were properly loaded.  If you didn't get an error message you are all good!  Type control-D to quit `utop`.
 
 ### OCaml Documentation
 [ocaml.org](https://ocaml.org) is the central repository of OCaml information.
