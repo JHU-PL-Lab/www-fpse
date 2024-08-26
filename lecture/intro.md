@@ -9,14 +9,6 @@ See the [Dateline](../dateline.html)
 * It is a style of programming where functions are the centerpiece
 * A key dimension is functions-as-data aka higher-order functions: functions can be passed to and returned from functions
 
-
-### FP and Math
-* Mathematical functions are implicitly immutable (think about it - no "assignment" in math!) so FP aligns closely with math
-  - Think about programming as creating an *algebra* for the domain you are coding over
-  - It is much easier to write completely correct programs in an FP style for this reason
-* Allows for powerful new programming paradigms using functions as data.
-  - Simple example higher-order function from math is composition: `g o f (x) = g(f(x))`: `o` takes two functions and returns a new function, their composition
-
 ### Lack of Side Effects
 * FP emphasizes *immutability*: data structures that cannot be changed after being created
 * More generally than limited mutation, most functions only return data, they have no other behaviors on the side (no "side effects") 
