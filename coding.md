@@ -40,7 +40,7 @@ Lastly, in order for the OCaml top loop to start up with some of these libraries
 open Core;;
 ```
 
-And here is a shell command which you can simply copy/paste to make the above file:
+And here is a shell command which you can simply copy/paste to make the above file (note this was broken but is fixed now):
 `(echo '#use "topfind";;'; echo; echo '#require "ppx_jane";;'; echo; echo '#require "core.top";;'; echo; echo 'open Core;;') >~/.ocamlinit`
 
 To test that your install works, type the shell command `utop` which will start up an interactive OCaml session (more later on that).  Type `Fn.id;;` into the `utop` prompt followed by return, this is just a test to make sure the `Core` libraries were properly loaded.  If you didn't get an error message you are all good!  Type control-D to quit `utop`.
