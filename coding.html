@@ -124,7 +124,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <p>And here is a shell command which you can simply copy/paste to make the above file:<br />
-<code>echo ('#use "topfind";;'; echo; echo '#require "ppx_jane";;'; echo; echo '#require "core.top";;'; echo; echo 'open Core;;') &gt;~/.ocamlinit</code></p>
+<code>(echo '#use "topfind";;'; echo; echo '#require "ppx_jane";;'; echo; echo '#require "core.top";;'; echo; echo 'open Core;;') &gt;~/.ocamlinit</code></p>
 
 <p>To test that your install works, type the shell command <code>utop</code> which will start up an interactive OCaml session (more later on that).  Type <code>Fn.id;;</code> into the <code>utop</code> prompt followed by return, this is just a test to make sure the <code>Core</code> libraries were properly loaded.  If you didn’t get an error message you are all good!  Type control-D to quit <code>utop</code>.</p>
 
