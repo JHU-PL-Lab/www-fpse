@@ -18,6 +18,13 @@ See the [Dateline](../dateline.html)
   - Instead of mutating, make a fresh copy.
   - Sounds like it will be extremely inefficient but it is reasonable in "most" cases.
 
+### FP and Math
+* Mathematical functions are implicitly immutable (think about it - no "assignment" in math!) so FP aligns closely with math
+  - Think about programming as creating an *algebra* for the domain you are coding over
+  - It is much easier to write completely correct programs in an FP style for this reason
+* Allows for powerful new programming paradigms using functions as data.
+  - Simple example higher-order function from math is composition: `g o f (x) = g(f(x))`: `o` takes two functions and returns a new function, their composition
+
 ### History in brief
 
 * &lambda;-calculus, 1930's - developed by logicians (Church, Turing, Kleene, Curry, etc)
