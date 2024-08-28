@@ -4,7 +4,7 @@
 ### Installing
 
  * See [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) for install instructions and lots of other information.  
- * Make sure to use the required version of OCaml, 5.0, install all the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
+ * Make sure to use the required version of OCaml, 5.2.0, install all the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
     - This will let us all "play in the same sandbox" and avoid confusion
 
 ### The Ecosystem via Hello World in OCaml
