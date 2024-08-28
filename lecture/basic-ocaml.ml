@@ -41,10 +41,10 @@ let rec fib x = match x with
 let add1 x = x + 1;; (* a normal add1 definition *)
 add1 3;;
 let anon_add1 = (function x -> x + 1);; (* equivalent to above; "x" is argument here *)
+let anon_add1 = (fun x -> x + 1);;      (*  shorthand notation -- cut off the "ction" *)
 anon_add1 3;;
 (anon_add1 4) + 7;; 
-((function x -> x + 1) 4) + 7;; (* can inline anonymous function definition *)
-((fun x -> x + 1) 4) + 7;; (*  shorthand notation -- cut off the "ction" *)
+((fun x -> x + 1) 4) + 7;; (* can inline anonymous function definition *)
 
 let add x y = x + y;;
 add 3 4;;

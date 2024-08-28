@@ -75,7 +75,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>See <a href="https://pl.cs.jhu.edu/fpse/coding.html">the Coding page</a> for install instructions and lots of other information.</li>
-  <li>Make sure to use the required version of OCaml, 5.0, install all the libraries listed via <code>opam</code>, and change your <code>.ocamlinit</code> file as mentioned on that page.
+  <li>Make sure to use the required version of OCaml, 5.2.0, install all the libraries listed via <code>opam</code>, and change your <code>.ocamlinit</code> file as mentioned on that page.
     <ul>
       <li>This will let us all “play in the same sandbox” and avoid confusion</li>
     </ul>
@@ -213,10 +213,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add1</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* a normal add1 definition *)</span>
 <span class="n">add1</span> <span class="mi">3</span><span class="p">;;</span>
 <span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* equivalent to above; "x" is argument here *)</span>
+<span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span>      <span class="c">(*  shorthand notation -- cut off the "ction" *)</span>
 <span class="n">anon_add1</span> <span class="mi">3</span><span class="p">;;</span>
 <span class="p">(</span><span class="n">anon_add1</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> 
-<span class="p">((</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(* can inline anonymous function definition *)</span>
-<span class="p">((</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(*  shorthand notation -- cut off the "ction" *)</span>
+<span class="p">((</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(* can inline anonymous function definition *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -316,7 +316,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 
 <p>Here is how we can in fact use <code>nice_div</code>:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">match</span> <span class="p">(</span><span class="n">nice_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="k">with</span> 
-   <span class="o">|</span> <span class="nc">Some</span> <span class="n">i</span> <span class="o">-&gt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">7</span> <span class="c">(* the div result is (Some 2) and i is bound to the 2 by this pattern *)</span>
+   <span class="o">|</span> <span class="nc">Some</span> <span class="n">i</span> <span class="o">-&gt;</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">7</span> <span class="c">(* the nice_div result is (Some 2) and i is bound to the 2 by this pattern *)</span>
    <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"This should never happen, we divided by 2"</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">9</span>
 </code></pre></div></div>
@@ -364,7 +364,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
   <li>Exceptions are side effects though, we want to minimize their usage to avoid error-at-a-distance.</li>
   <li>The above examples show how exceptional conditions can either be handled via exceptions or in the return value;
     <ul>
-      <li>A key dimension of this course is this side effect vs direct trade-off</li>
+      <li>A key dimension of this course is this side effect vs direct passing trade-off</li>
       <li>Many bugs, security leaks, etc are due to ignorance of side effects; the <code>Error/Ok</code> approach keeps them “in your face” as a programmer</li>
       <li>Also recall <code>Error/Ok</code> keeps us completely in math-land, the return result tells everything.</li>
     </ul>
@@ -456,7 +456,11 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
       <li>Note this function is also <code>Core.List.nth_exn</code> but we always <code>open Core;;</code> to make <code>Core</code> module functions implicitly available</li>
     </ul>
   </li>
-  <li>On the HWs you can use libraries some places but not others, please read the instructions carefully.</li>
+  <li>On Assignment 1 you <strong>cannot</strong> use <code>List.</code> libraries, you first need to practice using <code>let rec</code>
+    <ul>
+      <li>On Assignment 2 you will start using the <code>List.</code> libraries.</li>
+    </ul>
+  </li>
 </ul>
 
       

@@ -130,10 +130,10 @@ let rec fib x = match x with
 let add1 x = x + 1;; (* a normal add1 definition *)
 add1 3;;
 let anon_add1 = (function x -> x + 1);; (* equivalent to above; "x" is argument here *)
+let anon_add1 = (fun x -> x + 1);;      (*  shorthand notation -- cut off the "ction" *)
 anon_add1 3;;
 (anon_add1 4) + 7;; 
-((function x -> x + 1) 4) + 7;; (* can inline anonymous function definition *)
-((fun x -> x + 1) 4) + 7;; (*  shorthand notation -- cut off the "ction" *)
+((fun x -> x + 1) 4) + 7;; (* can inline anonymous function definition *)
 ```
 
 * Multiple arguments - just leave s p a c e s between multiple arguments in both definitions and uses
@@ -226,7 +226,7 @@ Error: This expression has type int but an expression was expected of type
 Here is how we can in fact use `nice_div`:
 ```ocaml
 # match (nice_div 5 2) with 
-   | Some i -> i + 7 (* the div result is (Some 2) and i is bound to the 2 by this pattern *)
+   | Some i -> i + 7 (* the nice_div result is (Some 2) and i is bound to the 2 by this pattern *)
    | None -> failwith "This should never happen, we divided by 2";;
 - : int = 9
 ```
@@ -268,7 +268,7 @@ div_exn 3 4;;
 * Note that the built-in `/` also raises an exception.
 * Exceptions are side effects though, we want to minimize their usage to avoid error-at-a-distance.
 * The above examples show how exceptional conditions can either be handled via exceptions or in the return value; 
-   - A key dimension of this course is this side effect vs direct trade-off
+   - A key dimension of this course is this side effect vs direct passing trade-off
    - Many bugs, security leaks, etc are due to ignorance of side effects; the `Error/Ok` approach keeps them "in your face" as a programmer
    - Also recall `Error/Ok` keeps us completely in math-land, the return result tells everything.
 
@@ -351,6 +351,7 @@ Fortunately many common operations are already in the `List` module in the `Core
 * This library uses the `option` type instead of raising an exception like we did
 * `List.nth_exn` raises an exception like ours does.  Both versions are useful.
    - Note this function is also `Core.List.nth_exn` but we always `open Core;;` to make `Core` module functions implicitly available
-* On the HWs you can use libraries some places but not others, please read the instructions carefully.
+* On Assignment 1 you **cannot** use `List.` libraries, you first need to practice using `let rec`
+   - On Assignment 2 you will start using the `List.` libraries.
 
 
