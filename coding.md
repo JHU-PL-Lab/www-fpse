@@ -12,7 +12,7 @@ We require that you use the [opam packaging system](https://opam.ocaml.org) for 
 	- Mac with Homebrew already installed, or if you just installed as per above: run `brew update; brew install gpatch; brew install opam`
 -   For Windows you should use WSL2, the Windows Subsystem for Linux.  It creates a Linux-like system from within Windows.
     - Once you install [WSL 2](https://learn.microsoft.com/en-us/windows/wsl/) you will be able to follow the Linux Ubuntu install instructions linked above. 
-       - Note that your WSL2 Ubuntu needs the C compiler and tools for the `opam` install to work; the following Linux shell command will get you those: `sudo apt install make m4 gcc unzip bubblewrap`.
+       - Note that your WSL2 Ubuntu needs the C compiler and tools for the `opam` install to work; the following Linux shell command will get you those: `sudo apt install make m4 gcc zip unzip bubblewrap`.
        - You can still use your Windows install of VSCode to edit files by using the [VSCode Remote WSL Extension](https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode) -- it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.
     -  WSL2 has been working well for most people, but another option is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, [here is one of them](https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098).  Once your virtual Linux box is set up, you can follow the `opam` Linux install instructions.
 

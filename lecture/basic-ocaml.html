@@ -329,7 +329,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
 
 <h4 id="result">Result</h4>
 
-<p>A similar approach to the above is to use the <code>result</code> type, which like <code>option</code> but is specialized for error handling.</p>
+<p>A very similar approach to the above is to use the <code>result</code> type, which like <code>option</code> but is specialized for error handling.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">nicer_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">Error</span> <span class="s2">"Divide by zero"</span> <span class="k">else</span> <span class="nc">Ok</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">);;</span>
 <span class="k">val</span> <span class="n">nicer_div</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">int</span><span class="o">,</span> <span class="kt">string</span><span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
@@ -338,7 +338,7 @@ So, add is a <strong>higher-order function</strong>: it either takes a function 
   <li>The <code>result</code> type is explicitly intended for this case of failure-result
     <ul>
       <li><code>Ok</code> means the normal result</li>
-      <li><code>Error</code> is the error case, which unlike <code>None</code> can include failure data, often a string.</li>
+      <li><code>Error</code> is the error case, which unlike <code>None</code> can include failure data, usually a string.</li>
     </ul>
   </li>
   <li>Again we can do the same kind of pattern match on <code>Ok/Error</code> as above.</li>

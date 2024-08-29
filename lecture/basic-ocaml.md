@@ -237,7 +237,7 @@ Here is how we can in fact use `nice_div`:
 
 #### Result
 
-A similar approach to the above is to use the `result` type, which like `option` but is specialized for error handling.
+A very similar approach to the above is to use the `result` type, which like `option` but is specialized for error handling.
 
 ```ocaml
 # let nicer_div m n = if n = 0 then Error "Divide by zero" else Ok (m / n);;
@@ -245,7 +245,7 @@ val nicer_div : int -> int -> (int, string) result = <fun>
 ```
 * The `result` type is explicitly intended for this case of failure-result
     - `Ok` means the normal result
-    - `Error` is the error case, which unlike `None` can include failure data, often a string.
+    - `Error` is the error case, which unlike `None` can include failure data, usually a string.
 * Again we can do the same kind of pattern match on `Ok/Error` as above.
 * This is a "more well-typed" version of the C approach of returning `-1` or `NULL` to indicate failure.
 * The `Core` libraries use both `result` and `option` for error cases
