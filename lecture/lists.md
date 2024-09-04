@@ -36,7 +36,7 @@ Of course `rev` is also in `Core.List` since it is a common operation:
 **Another Example: zero out all the negative elements in a list of numbers**
 
 * C solution: `for`-loop over it and mutate all negatives to 0
-* OCaml immutable list solution: recurse on list structure, building the new list as we go
+* OCaml immutable list solution: recurse on list structure, build the new list as we go
 
 ```ocaml
 let rec zero_negs l =
@@ -144,7 +144,7 @@ List.unzip @@ all_front_back_pairs [1;2;3;4;5;6];;
 * In a series of pipes, the leftmost argument is data, and all the others are functions
 * The data is fed into first function, output of first function fed as input to second, etc
 * This is exactly what the shell `|` does with standard input / standard output.
-* Please use pipes as much as possible on Part II of Assignment 1 - will make the code more readable
+* Please use pipes *as much as possible* on Assignment 2 - will make the code more readable
 
 * `List.zip` is the opposite of unzip: take two lists and make a single list pairing elements
 
@@ -156,8 +156,8 @@ Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
 * The strange result type is dealing with the case where the lists supplied may not be same length
 * This type and value are hard to read, let us take a crack at it.
 * `((int * int) list) List.Or_unequal_lengths.t` is the proper parentheses.
-* `List.Or_unequal_lengths.t` is referring to the type `t` found in the `List.Or_unequal_lengths` module (a small module within the `List` module)
-  - one of the great things about modules is they can also contain types (like C .h files but more principled)
+* `List.Or_unequal_lengths.t` is referring to the type `t` found in the `List.Or_unequal_lengths` module (a module `Or_unequal_lengths` inside the `List` module)
+  - one of the great things about modules is they can also contain types (like C's `.h` files but more principled)
 * We can use the `#show_type` directive in the top loop to see what `t` actually is:
 
 ```ocaml
@@ -247,8 +247,9 @@ compose (fun x -> x+3) (fun x -> x*2) 10;;
 
 ```ocaml
 let compose g f x =  g (f x);;
-let compose g f x =  x |> f |> g;; (* This is the readability winner: feed x into f and f's result into g *)
+let compose g f = (fun x -> g(f x));; (* this equivalent form reads more how you think of the "o" operation in math *)
 let compose = (fun g -> (fun f -> (fun x -> g(f x))));;
+let compose g f x =  x |> f |> g;; (* This is the readability winner: feed x into f and f's result into g *)
 ```
 
 * We can express the Zip/unzip composition explicitly with `compose`:
@@ -273,7 +274,7 @@ List.filter [1;-1;2;-2;0] (fun x -> x >= 0);;
 * Cool, we can "glue in" any checking function (boolean-returning, i.e. a *predicate*) and `List.filter` will do the rest
 * Note though that we got a strange warning on the above, "label f was omitted" - ??
 * This is because `List.filter` has type `'a list -> f:('a -> bool) -> 'a list` -- the `f:` is declaring a *named argument*
-* OCaml 5 gives warnings if you leave off a name so please always use them
+* OCaml gives warnings if you leave off a name so please always use them
 * We can put args out of order if we give name via `~f:` syntax:
 
 ```ocaml
@@ -309,7 +310,7 @@ Similarly, `List.for_all` checks if it holds for *all* elements.
 
 #### List.map
 
-* `List.map` is  super powerful, apply some operation we supply to every element of a list:
+* `List.map` is super powerful, apply some operation we supply to every element of a list:
 
 ```ocaml
 # List.map ~f:(fun x -> x + 1) [1;-1;2;-2;0];;
@@ -395,9 +396,10 @@ utop # List.fold_right ['a';'b';'c'] ~init:"" ~f:(fun elt -> fun accum -> (Char.
 We can implement `List.exists` above with map and fold:
 
 ```ocaml
-let exists l ~f =  (* Note: ~f is **declaring** a named argument f *)
-  List.map ~f l    (* ~f as an argument is shorthand for ~f:f *)
-  |> List.fold ~f:(||) ~init:false;;
+let exists l ~f =  (* Note: ~f is **declaring** a named argument f; ~f is shorthand for ~f:f *)
+  l
+  |> List.map ~f    (* ~f alone as an argument is again shorthand for ~f:f *)
+  |> List.fold ~f:(||) ~init:false;; (* the List.map output is a list of booleans, just fold them up here *)
 # exists ~f:(fun x -> x >= 0) [-1;-2];;
 - : bool = false
 # exists ~f:(fun x -> x >= 0) [1;-2];;
@@ -410,19 +412,18 @@ let exists l ~f =
   List.fold l ~f:(fun accum elt -> accum || f elt) ~init:false;;
 ```
 
+Which hints that `map` itself is easily definable with a `fold`:
 ```ocaml
 let map l ~f = List.fold ~f:(fun accum elt -> accum @ [f elt]) ~init:[] l
 ```
 
 This function is identical to `List.map` described above.  
 
-If you wanted to use `fold_right` to build map it would be similar but not the same:
+If you wanted to use `fold_right` to build map it would be somewhat similar:
 ```ocaml
-let map_right l ~f = List.fold_right ~f:(fun elt accum -> [f elt] @ accum) ~init:[] l;;
+let map_right l ~f = List.fold_right ~f:(fun elt accum -> (f elt) :: accum) ~init:[] l;;
 ```
-
-This is similar to the char list to string operation above.
-
+Note that `map_right` is more efficient, `::` takes unit time and `@` is linear in size of left list.
 
 #### Folding and efficiency
 
@@ -432,7 +433,7 @@ Here is possible code for `fold_right` to help understand it:
 let rec fold_right ~f l ~init =
   match l with
   | [] -> init
-  | hd::tl -> f hd (fold_right ~f tl ~init) (* observe it is invoking f after the recursive call *)
+  | hd::tl -> f hd (fold_right ~f tl ~init) (* observe it is invoking f **after** the recursive call *)
 ```
 
 Code for `fold` aka `fold_left`:
@@ -441,10 +442,11 @@ Code for `fold` aka `fold_left`:
 let rec fold l ~init ~f =
   match l with
   | [] -> init
-  | hd::tl -> fold tl ~init:(f init hd) ~f (*observe f is invoked before the call -- accumulating left-first *)
+  | hd::tl -> fold tl ~init:(f init hd) ~f (*observe f is invoked **before** the call -- accumulating left-first *)
 ```
 
 * Note that the first parameter to f in `fold` is the accumulated value passed *down* and the second parameter is the current list value
+  - `init` isn't quite the right variable name, its more like `accum` except on the first call.
 * In `fold_right` on the other hand the `f` computation happens *after* the recursive call is complete.
 * Fold left/right are good example contrasts of how you can accumulate a value up (`fold_right`) vs down (`fold`) the recursion
 

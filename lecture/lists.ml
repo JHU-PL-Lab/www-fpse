@@ -92,8 +92,9 @@ let compose g f = (fun x -> g (f x));;
 compose (fun x -> x+3) (fun x -> x*2) 10;;
 
 let compose g f x =  g (f x);;
-let compose g f x =  x |> f |> g;; (* This is the readability winner: feed x into f and f's result into g *)
+let compose g f = (fun x -> g(f x));; (* this equivalent form reads more how you think of the "o" operation in math *)
 let compose = (fun g -> (fun f -> (fun x -> g(f x))));;
+let compose g f x =  x |> f |> g;; (* This is the readability winner: feed x into f and f's result into g *)
 
 # (compose zip_pair List.unzip) [(1, 3); (2, 4)];;
 - : (int * int) list = [(1, 3); (2, 4)]
@@ -133,9 +134,10 @@ List.fold ['a';'b';'c'] ~init:"" ~f:(fun accum -> fun elt -> accum^(Char.to_stri
 
 utop # List.fold_right ['a';'b';'c'] ~init:"" ~f:(fun elt -> fun accum -> (Char.to_string elt)^accum);;
 
-let exists l ~f =  (* Note: ~f is **declaring** a named argument f *)
-  List.map ~f l    (* ~f as an argument is shorthand for ~f:f *)
-  |> List.fold ~f:(||) ~init:false;;
+let exists l ~f =  (* Note: ~f is **declaring** a named argument f; ~f is shorthand for ~f:f *)
+  l
+  |> List.map ~f    (* ~f alone as an argument is again shorthand for ~f:f *)
+  |> List.fold ~f:(||) ~init:false;; (* the List.map output is a list of booleans, just fold them up here *)
 # exists ~f:(fun x -> x >= 0) [-1;-2];;
 - : bool = false
 # exists ~f:(fun x -> x >= 0) [1;-2];;
@@ -146,12 +148,12 @@ let exists l ~f =
 
 let map l ~f = List.fold ~f:(fun accum elt -> accum @ [f elt]) ~init:[] l
 
-let map_right l ~f = List.fold_right ~f:(fun elt accum -> [f elt] @ accum) ~init:[] l;;
+let map_right l ~f = List.fold_right ~f:(fun elt accum -> (f elt) :: accum) ~init:[] l;;
 
 let rec fold_right ~f l ~init =
   match l with
   | [] -> init
-  | hd::tl -> f hd (fold_right ~f tl ~init) (* observe it is invoking f after the recursive call *)
+  | hd::tl -> f hd (fold_right ~f tl ~init) (* observe it is invoking f **after** the recursive call *)
 
 let summate_til_zero l =
   List.fold_until l ~init:0

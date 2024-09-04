@@ -117,7 +117,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>C solution: <code>for</code>-loop over it and mutate all negatives to 0</li>
-  <li>OCaml immutable list solution: recurse on list structure, building the new list as we go</li>
+  <li>OCaml immutable list solution: recurse on list structure, build the new list as we go</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">zero_negs</span> <span class="n">l</span> <span class="o">=</span>
@@ -244,7 +244,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The data is fed into first function, output of first function fed as input to second, etc</li>
   <li>This is exactly what the shell <code>|</code> does with standard input / standard output.</li>
   <li>
-    <p>Please use pipes as much as possible on Part II of Assignment 1 - will make the code more readable</p>
+    <p>Please use pipes <em>as much as possible</em> on Assignment 2 - will make the code more readable</p>
   </li>
   <li><code>List.zip</code> is the opposite of unzip: take two lists and make a single list pairing elements</li>
 </ul>
@@ -257,9 +257,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The strange result type is dealing with the case where the lists supplied may not be same length</li>
   <li>This type and value are hard to read, let us take a crack at it.</li>
   <li><code>((int * int) list) List.Or_unequal_lengths.t</code> is the proper parentheses.</li>
-  <li><code>List.Or_unequal_lengths.t</code> is referring to the type <code>t</code> found in the <code>List.Or_unequal_lengths</code> module (a small module within the <code>List</code> module)
+  <li><code>List.Or_unequal_lengths.t</code> is referring to the type <code>t</code> found in the <code>List.Or_unequal_lengths</code> module (a module <code>Or_unequal_lengths</code> inside the <code>List</code> module)
     <ul>
-      <li>one of the great things about modules is they can also contain types (like C .h files but more principled)</li>
+      <li>one of the great things about modules is they can also contain types (like C’s <code>.h</code> files but more principled)</li>
     </ul>
   </li>
   <li>We can use the <code>#show_type</code> directive in the top loop to see what <code>t</code> actually is:</li>
@@ -359,8 +359,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">compose</span> <span class="n">g</span> <span class="n">f</span> <span class="n">x</span> <span class="o">=</span>  <span class="n">g</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">);;</span>
-<span class="k">let</span> <span class="n">compose</span> <span class="n">g</span> <span class="n">f</span> <span class="n">x</span> <span class="o">=</span>  <span class="n">x</span> <span class="o">|&gt;</span> <span class="n">f</span> <span class="o">|&gt;</span> <span class="n">g</span><span class="p">;;</span> <span class="c">(* This is the readability winner: feed x into f and f's result into g *)</span>
+<span class="k">let</span> <span class="n">compose</span> <span class="n">g</span> <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">g</span><span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">));;</span> <span class="c">(* this equivalent form reads more how you think of the "o" operation in math *)</span>
 <span class="k">let</span> <span class="n">compose</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">g</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">fun</span> <span class="n">f</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">g</span><span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">))));;</span>
+<span class="k">let</span> <span class="n">compose</span> <span class="n">g</span> <span class="n">f</span> <span class="n">x</span> <span class="o">=</span>  <span class="n">x</span> <span class="o">|&gt;</span> <span class="n">f</span> <span class="o">|&gt;</span> <span class="n">g</span><span class="p">;;</span> <span class="c">(* This is the readability winner: feed x into f and f's result into g *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -390,7 +391,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Cool, we can “glue in” any checking function (boolean-returning, i.e. a <em>predicate</em>) and <code>List.filter</code> will do the rest</li>
   <li>Note though that we got a strange warning on the above, “label f was omitted” - ??</li>
   <li>This is because <code>List.filter</code> has type <code>'a list -&gt; f:('a -&gt; bool) -&gt; 'a list</code> – the <code>f:</code> is declaring a <em>named argument</em></li>
-  <li>OCaml 5 gives warnings if you leave off a name so please always use them</li>
+  <li>OCaml gives warnings if you leave off a name so please always use them</li>
   <li>We can put args out of order if we give name via <code>~f:</code> syntax:</li>
 </ul>
 
@@ -426,7 +427,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="listmap">List.map</h4>
 
 <ul>
-  <li><code>List.map</code> is  super powerful, apply some operation we supply to every element of a list:</li>
+  <li><code>List.map</code> is super powerful, apply some operation we supply to every element of a list:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
@@ -536,9 +537,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>We can implement <code>List.exists</code> above with map and fold:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">exists</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span> <span class="o">=</span>  <span class="c">(* Note: ~f is **declaring** a named argument f *)</span>
-  <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span>    <span class="c">(* ~f as an argument is shorthand for ~f:f *)</span>
-  <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">||</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">false</span><span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">exists</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span> <span class="o">=</span>  <span class="c">(* Note: ~f is **declaring** a named argument f; ~f is shorthand for ~f:f *)</span>
+  <span class="n">l</span>
+  <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span>    <span class="c">(* ~f alone as an argument is again shorthand for ~f:f *)</span>
+  <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">||</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">false</span><span class="p">;;</span> <span class="c">(* the List.map output is a list of booleans, just fold them up here *)</span>
 <span class="o">#</span> <span class="n">exists</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span>
 <span class="o">#</span> <span class="n">exists</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">];;</span>
@@ -550,16 +552,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">||</span> <span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">false</span><span class="p">;;</span>
 </code></pre></div></div>
 
+<p>Which hints that <code>map</code> itself is easily definable with a <code>fold</code>:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">map</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">@</span> <span class="p">[</span><span class="n">f</span> <span class="n">elt</span><span class="p">])</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span> <span class="n">l</span>
 </code></pre></div></div>
 
 <p>This function is identical to <code>List.map</code> described above.</p>
 
-<p>If you wanted to use <code>fold_right</code> to build map it would be similar but not the same:</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">map_right</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">f</span> <span class="n">elt</span><span class="p">]</span> <span class="o">@</span> <span class="n">accum</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span> <span class="n">l</span><span class="p">;;</span>
+<p>If you wanted to use <code>fold_right</code> to build map it would be somewhat similar:</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">map_right</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span> <span class="n">l</span><span class="p">;;</span>
 </code></pre></div></div>
-
-<p>This is similar to the char list to string operation above.</p>
+<p>Note that <code>map_right</code> is more efficient, <code>::</code> takes unit time and <code>@</code> is linear in size of left list.</p>
 
 <h4 id="folding-and-efficiency">Folding and efficiency</h4>
 
@@ -568,7 +570,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">~</span><span class="n">init</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
-  <span class="o">|</span> <span class="n">hd</span><span class="o">::</span><span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">hd</span> <span class="p">(</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="n">tl</span> <span class="o">~</span><span class="n">init</span><span class="p">)</span> <span class="c">(* observe it is invoking f after the recursive call *)</span>
+  <span class="o">|</span> <span class="n">hd</span><span class="o">::</span><span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">hd</span> <span class="p">(</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="n">tl</span> <span class="o">~</span><span class="n">init</span><span class="p">)</span> <span class="c">(* observe it is invoking f **after** the recursive call *)</span>
 </code></pre></div></div>
 
 <p>Code for <code>fold</code> aka <code>fold_left</code>:</p>
@@ -576,11 +578,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold</span> <span class="n">l</span> <span class="o">~</span><span class="n">init</span> <span class="o">~</span><span class="n">f</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
-  <span class="o">|</span> <span class="n">hd</span><span class="o">::</span><span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">fold</span> <span class="n">tl</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="p">(</span><span class="n">f</span> <span class="n">init</span> <span class="n">hd</span><span class="p">)</span> <span class="o">~</span><span class="n">f</span> <span class="c">(*observe f is invoked before the call -- accumulating left-first *)</span>
+  <span class="o">|</span> <span class="n">hd</span><span class="o">::</span><span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">fold</span> <span class="n">tl</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="p">(</span><span class="n">f</span> <span class="n">init</span> <span class="n">hd</span><span class="p">)</span> <span class="o">~</span><span class="n">f</span> <span class="c">(*observe f is invoked **before** the call -- accumulating left-first *)</span>
 </code></pre></div></div>
 
 <ul>
-  <li>Note that the first parameter to f in <code>fold</code> is the accumulated value passed <em>down</em> and the second parameter is the current list value</li>
+  <li>Note that the first parameter to f in <code>fold</code> is the accumulated value passed <em>down</em> and the second parameter is the current list value
+    <ul>
+      <li><code>init</code> isn’t quite the right variable name, its more like <code>accum</code> except on the first call.</li>
+    </ul>
+  </li>
   <li>In <code>fold_right</code> on the other hand the <code>f</code> computation happens <em>after</em> the recursive call is complete.</li>
   <li>Fold left/right are good example contrasts of how you can accumulate a value up (<code>fold_right</code>) vs down (<code>fold</code>) the recursion</li>
 </ul>
