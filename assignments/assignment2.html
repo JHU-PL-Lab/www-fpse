@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/fpse/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+            <li><a href="">Assignments</a>
+                <ul class="menu">
+                <li><a href="/fpse/assignments/assignment1.html">Assignment 1</a></li>
+                <li><a href="/fpse/assignments/assignment2.html">Assignment 2</a></li>
+                <li><a href="/fpse/assignments/assignment3.html">Assignment 3</a></li>
+                <li><a href="/fpse/assignments/assignment4.html">Assignment 4</a></li>
+                <li><a href="/fpse/assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
+                <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
+                <li><a href="/fpse/assignments/project.html">Project</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/9034692226">Q&A</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="assignment-2-list-module-primes-and-the-towers-game">Assignment 2: List module, primes, and the Towers game.</h2>
+
+<p>This assignment is split into three separate files, each unrelated to the other.</p>
+<ul>
+  <li><code>src/reimplementation.ml</code>: you write new solutions to some problems from Assignment 1, but you can only use the <code>List</code> module and <em>cannot</em> use explicit recursion (i.e., no <code>let rec</code>).</li>
+  <li><code>src/primes.ml</code>: you write a few functions around prime numbers.</li>
+  <li><code>src/towers.ml</code>: you verify that the solution to a Towers game is correct.</li>
+</ul>
+
+<h3 id="file-structure-and-requirements">File structure and requirements</h3>
+
+<ul>
+  <li><a href="https://pl.cs.jhu.edu/fpse/assignments/assignment2.zip">Use this zip file</a> as the starting point for your assignment. Download and unzip it.</li>
+  <li>Your code will go in three files, each of which contains a full description of the requirements for that file:
+    <ul>
+      <li><code>src/reimplementation.ml</code></li>
+      <li><code>src/primes.ml</code></li>
+      <li><code>src/towers.ml</code></li>
+    </ul>
+  </li>
+  <li>Thoroughly read the instructions in each of these files and write your code to follow the instructions.</li>
+  <li>You must add five non-redundant <code>assert_equal</code> statements to the tests in <code>test/tests.ml</code>.
+    <ul>
+      <li>Note there are other provided tests in the following files:
+        <ul>
+          <li><code>tests/reimplementation_tests.ml</code></li>
+          <li><code>tests/primes_tests.ml</code></li>
+          <li><code>tests/towers_tests.ml</code></li>
+        </ul>
+      </li>
+      <li>Your new <code>assert_equal</code> statements must be complementary to all tests in these files. Your tests can be on any part of this assignment (e.g. on primes, towers, etc.).</li>
+    </ul>
+  </li>
+  <li>There are corresponding <code>.mli</code> files that state which functions you must have in your submission. You will not submit these files, so do not edit them. If you edit them, then Gradescope may fail to run your code.  Note that for this assignment we also list all funtions you need to define in the <code>.ml</code> files so you can largely ignore them now; it is more of a warm-up to how real OCaml development works.</li>
+  <li>The <code>dune</code> files are set up for you. They allow you to run <code>dune build</code> and <code>dune test</code> from the top level directory <code>assignment2/</code></li>
+</ul>
+
+<h3 id="resources-to-help-you">Resources to help you</h3>
+
+<p>Here is a reminder of some resources at your disposal.</p>
+
+<ul>
+  <li>Consult the <a href="https://pl.cs.jhu.edu/fpse/basic-ocaml.html">Basic OCaml lecture notes</a>, and if you want to re-watch any lecture they are on Panopto as per the link pinned on Courselore.</li>
+  <li><a href="https://dev.realworldocaml.org/guided-tour.html">Real World OCaml Chapter 1</a> is another tutorial introdution in a somewhat different order than we are doing.</li>
+  <li>If you are looking for how some standard library function is expressed in OCaml, like not equal, etc, consult the <a href="https://v2.ocaml.org/manual/stdlib.html">Caml Stdlib</a> which are the predefined functions available in OCaml.</li>
+  <li>Note that <code>Core</code> overrides some of these including the comparison operations which only work on <code>int</code>s.  To perform <code>=</code>, <code>&lt;</code> or the like on e.g. floats you need to write <code>Float.(=) 3.2 4.7</code> for example to check for equality on <code>3.2</code> and <code>4.7</code>, and similarly for <code>&lt;</code> etc.  To see what is actually loaded look at the <a href="https://ocaml.org/p/core/latest/doc/index.html">Core documentation</a>.</li>
+  <li>Use <code>Core</code>’s <code>List</code> module functions where possible; those functions are generally described under the <a href="https://ocaml.org/p/core/latest/doc/Core/List/index.html"><code>Core</code> list docs</a>.</li>
+  <li>You are allowed to work with other people on the assignment; you just need to list the names of people you worked with. However, remember that you should submit your own write up of the answers. <strong>Copying of solutions is not allowed</strong>. For the full collaboration policy see <a href="https://pl.cs.jhu.edu/fpse/integrity.html">here</a>.</li>
+  <li>Come to office hours to get help from Prof and CAs.  Office hours are posted on Courselore.</li>
+  <li>Use Courselore for online help and question clarification.</li>
+</ul>
+
+<h3 id="coding-methods">Coding Methods</h3>
+
+<ul>
+  <li>There are two ways to test your code.
+    <ul>
+      <li>Run it in the top loop with <code>utop</code>. To load all of your functions into the top loop in one go you can use the OCaml top-loop directive <code>#use "src/submission.ml";;</code> which is the same as copy/pasting that file into the top loop as input. Make sure you started <code>utop</code> from the <code>assignment2/</code> directory for this to work. Alternatively, you can use the <code>dune utop</code> command to load your code upon starting.</li>
+      <li>Run <code>dune test</code> from the main directory (<code>assignment2/</code>). All of these tests should pass because we will run it when you submit your code. Remember to add five of your own tests.</li>
+    </ul>
+  </li>
+  <li>Note that all <code>dune</code> commands should be run directly from the <code>assignment2/</code> directory <strong>ONLY</strong>. <code>dune</code> automatically will also run the build files in any sub-directories by default, so this will run the <code>dune</code> files in <code>src/</code> and <code>test/</code> if required. Also note that <code>dune test</code> will implicitly invoke <code>dune build</code> if your code is not compiled yet.</li>
+</ul>
+
+<h3 id="submission-and-grading">Submission and Grading</h3>
+
+<ul>
+  <li>Follow the same procedure as Assignment 1 to upload to Gradescope.
+    <ul>
+      <li>Run <code>dune build</code> and submit the zip file at <code>_build/default/assignment2.zip</code>.</li>
+    </ul>
+  </li>
+  <li>The autograder will run the tests we gave you and any additional tests you add.
+    <ul>
+      <li>You will be graded on adding five additional tests.</li>
+    </ul>
+  </li>
+  <li>The autograder will also run our own tests that you might not see (yet). Ensure your own tests are complete to pass all of our hidden tests.</li>
+  <li>We will hand-inspect your code, but we won’t enforce style guidelines until the next assignment.</li>
+  <li>You can submit the HW as many times as you want up to the deadline. Any submissions after the deadline will fall under the late submission policy.</li>
+  <li>Please submit your draft HW at least once well ahead of the deadline, so you do not find some problem right at the deadline.</li>
+</ul>
+
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: TEMPLATED
+				</div>			
+
+
+   </body>
+</html>
