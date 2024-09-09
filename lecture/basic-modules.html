@@ -68,10 +68,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
-    <h3 id="modules-basics">Modules basics</h3>
+    <h3 id="modules-basics">Modules Basics</h3>
 
 <ul>
-  <li>We have seen OCaml modules in action, e.g. <code>List.map</code>, <code>Float.(=)</code>, <code>Fn.id</code>, etc.</li>
+  <li>We have seen OCaml modules in action, e.g. <code>List.map</code>, <code>Float.(2 = 3)</code>, <code>Fn.id</code>, etc.</li>
   <li>We also covered how modules are collections of functions, values, types, and other modules</li>
   <li>Now we want to cover how individual <code>.ml</code> files define modules
     <ul>
@@ -83,7 +83,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>We are going to use a running example to explain these concepts; see <a href="../examples/set-example.zip">set-example.zip</a> for the full example</li>
 </ul>
 
-<h3 id="ml-files-as-modules"><code>.ml</code> files as modules</h3>
+<h3 id="ml-files-are-modules"><code>.ml</code> files are modules</h3>
 
 <p>The contents of the file <code>simple_set.ml</code> in the above is the following:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span>
@@ -111,7 +111,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>Modules are just collections of top-level definable things (things you could type into top loop)</li>
-  <li>Assignment 1 file <code>submission.ml</code> is in fact making a module as well, named <code>Submission</code>.</li>
+  <li>Assignment 1 file <code>submission.ml</code> is in fact making a module as well, named <code>Submission</code>.
+    <ul>
+      <li><code>dune utop</code> fires up OCaml with that module loaded;</li>
+      <li><code>open Submission;;</code> then allows you to avoid typing long name <code>Submission.fibonacci</code> etc.</li>
+    </ul>
+  </li>
   <li>This particular set module is just a set implemented as a list; it is in fact a multiset</li>
   <li>The line <code>type 'a t = 'a list</code> is a <em>type abbreviation</em>, <code>'a t</code> is a synonym for <code>'a list</code>
     <ul>
@@ -121,7 +126,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Naming a type just <code>t</code> is the standard for “the” underlying type of a module
     <ul>
       <li>When outsiders use this module the type will be <code>Simple_set.t</code>, read “Simple set’s type”</li>
-      <li><code>Core</code> extensively uses this convention in libraries: <code>List.t</code>, <code>Set.t</code> etc.</li>
+      <li><code>Core</code> extensively uses this type naming convention in libraries: <code>List.t</code>, <code>Option.t</code> etc.</li>
     </ul>
   </li>
   <li>Notice how the functions needing <code>=</code> we have to pass it in explicitly to be polymorphic
@@ -168,7 +173,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h3 id="information-hiding-with-module-signatures">Information Hiding with Module Signatures</h3>
+<h3 id="information-hiding-with-module-types-aka-signatures">Information Hiding with Module Types aka Signatures</h3>
 
 <ul>
   <li>Modules also have types, they are called either <em>module types</em> or <em>signatures</em>
@@ -176,21 +181,22 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>The latter term is used in math, e.g. “a DFA has signature D = (S, Σ, τ, s0, F)”</li>
     </ul>
   </li>
-  <li>When a module is defined in a file <code>simple_set.ml</code>, make a file <code>simple_set.mli</code> for its corresponding signature
+  <li>When a module is defined in a file <code>simple_set.ml</code>, make a file <code>simple_set.mli</code> for its corresponding module type
     <ul>
       <li>the added “<code>i</code>” is for “interface”</li>
     </ul>
   </li>
   <li>You don’t need an <code>.mli</code> file if there is nothing to hide, the type will be inferred
     <ul>
-      <li>But, even if nothing is hidden the <code>.mli</code> is good as a document of what is provided to users</li>
+      <li>But, even if nothing is hidden the <code>.mli</code> is important as a document of what is provided to users</li>
+      <li>all assignments come with an <code>.mli</code> file so you can get used to that format.</li>
     </ul>
   </li>
 </ul>
 
-<p>So, here the <code>simple_set.mli</code> file from the above zip:</p>
+<p>So, here the <code>simple_set.mli</code> file from the above zip after we have hidden the type of <code>'a t</code> by removing <code>= 'a list</code>:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>    <span class="c">(* hide the type 'a list here by not giving it in signature *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>  <span class="c">(* can also hide the type here by not giving it in signature: remove the = 'a list  *)</span>
     <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
     <span class="k">val</span> <span class="n">add</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span><span class="k">'</span><span class="n">a</span> <span class="n">t</span>
     <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span>  <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
@@ -237,6 +243,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="p">)</span>
 </code></pre></div></div>
 
+<h4 id="running-executables">Running executables</h4>
+
+<ul>
+  <li>If you declared an executable in <code>dune</code> as above, it will make a file <code>my_main_module.exe</code> so in our case that is <code>set_main.exe</code></li>
+  <li>To exec it you can do <code>dune exec ./src/set_main.exe "open Core" src/simple_set.ml</code></li>
+  <li>Which is really just <code>_build/default/src/set_main.exe "open Core" src/simple_set.ml</code></li>
+</ul>
+
+<h3 id="set_mainml"><code>set_main.ml</code></h3>
 <ul>
   <li>We will now inspect <code>set_main.ml</code> in VSCode so we can use the tool tips to check out various types</li>
 </ul>
@@ -296,14 +311,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<h4 id="running-executables">Running executables</h4>
-
-<ul>
-  <li>If you declared an executable in <code>dune</code> as above, it will make a file <code>my_main_module.exe</code> so in our case that is <code>set_main.exe</code></li>
-  <li>To exec it you can do <code>dune exec ./src/set_main.exe "open Core" src/simple_set.ml</code></li>
-  <li>Which is really just <code>_build/default/src/set_main.exe "open Core" src/simple_set.ml</code></li>
-</ul>
-
 <h3 id="modules-within-modules">Modules within modules</h3>
 
 <ul>
@@ -316,13 +323,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div>    </div>
     <p>where the <code>...</code> are the same kinds of declarations that are in files like <code>foo.ml</code>.</p>
   </li>
+  <li>This syntax is also how we can directly define a module in <code>utop</code> without putting it in a file.</li>
   <li>In the remainder of the file you can access the contents of <code>Sub</code> as <code>Sub.blah</code>, and outside of the <code>foo.ml</code> file <code>Foo.Sub.blah</code> will access.</li>
-  <li>We in fact used nested modules in the assignments thus far to divvy into sections
-    <ul>
-      <li>We also included lines <code>include Section1</code> etc after defining module <code>Section1</code> which pastes the contents into the top level to avoid the need to nest.</li>
-      <li>Assignment 2 also includes some nested modules, this time with more purpose; we will take a look.</li>
-    </ul>
-  </li>
+  <li>Assignment 3 includes some nested modules, this time with more purpose; we will take a look.</li>
 </ul>
       
           </section>

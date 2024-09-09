@@ -162,7 +162,7 @@ Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
 
 ```ocaml
 # #show_type List.Or_unequal_lengths.t;;
-type nonrec 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
+type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
 ```
 * This means the value is either `Ok(..)` or `Unequal_lenghts`, very similar to `result` or `option`
   - (Why don't they just use one of those two here instead?? No idea!)
@@ -321,79 +321,124 @@ List.map ~f:(fun (x,y) -> x + y) [(1,2);(3,4)];; (* turns list of number pairs i
 ```
 
 ### Folding
+
+* OK, so far we have been cruising along on impulse power; its now time for warp speed!
 * Some of the most powerful combinators are the folds: `fold_right`, and `fold_left` aka simply `fold`. 
 * They "fold together" list data using an operator.
 * Think of fold as something you feed just the "base case" and the "recursive case" code to and it makes a recursive function for you.
-* Here for example is how we can summate all elements in a list using `fold_right`
+  - this recursive function will make one recursive call on the tail of the list
+* Here for example is how we can turn a list of characters into a string with `fold_right`
 
 ```ocaml
-# List.fold_right ~f:(+) ~init:0 [3; 5; 7];; (* this computes 3 + (5 + (7 + 0))  *)
-- : int = 15
+List.fold_right ['a';'b';'c'] ~init:"" ~f:(fun elt -> fun accum -> (Char.to_string elt)^accum);; (* computes "a"^("b"^("c"^"")) *)
 ```
-* The `~f`  parameter is the binary operation to put between list elements, `+` in this example;
-* The `~init` is the base case of the recursion.  It is needed here because `+` is a binary operator so an initial value is needed to fold for 0/1 length lists
 
-Note that the `+` is not symmetrical in this sequence, `fold_right` feeds the individual elements (`elt`) into the left side of `+` and the accumulated value (`accum`) is on the right, more clear in this equivalent syntax:
+* The base case is `~init`, the empty string
+* `~f` is plugging in the code for the recursive call
+  - `elt` is the current element of the list
+  - `accum` is the result of recursing on the tail of the list
+
+Before showing potential code for `List.fold_right` let's manually implement the above use with `let rec` to compare.
 
 ```ocaml
-List.fold_right ~f:(fun elt accum -> elt + accum) ~init:0 [3; 5; 7];;
+let rec char_list_to_string l =
+  match l with 
+  | [] -> "" (* ~init above is "", plug it in as the base case *)
+  | elt :: elts ->  (* as in the above we are calling the current list element `elt` *)
+    let accum = char_list_to_string elts in (* this is what `accum` is, the result of recursing on a shorter list *)
+      (Char.to_string elt)^accum (* now plug in the body of ~f as the calculation done on accum and elt *)
 ```
 
-* `accum` here gets the accumulated value so far (think result of the recursive call fold is doing for you)
-* `elt` is the most recent element to fold in to the accumulated result.
-* For `fold_right` the `+` is parenthesized in **right**-associative form, that is the "right".  There is also a `fold_left`, see below
+
+OK now lets show some potential code for `List.fold_right` to show how we can pull out this base-case and recursion code as parameters `~init` and `~f`.
+
+```ocaml
+let rec fold_right l ~f ~init =
+  match l with
+  | [] -> init
+  | elt :: elts -> 
+    let accum = fold_right elts ~f ~init in 
+      f elt accum
+```
+
+ - If we now plug in `""` for `~init` and `(fun elt -> fun accum -> (Char.to_string elt)^accum)` for `~f` we get exactly `char_list_to_string` above.
+
+ ```ocaml
+fold_right ['a';'b';'c'] ~init:"" ~f:(fun elt -> fun accum -> (Char.to_string elt)^accum);;
+```
+
+ - observe how we have to keep forwarding `~f` and `~init` down the calls to make them available; we could have instead made an aux function without those:
+
+```ocaml
+let fold_right l ~f ~init =
+  let rec folder_aux l = 
+    match l with
+    | [] -> init
+    | elt :: elts -> 
+      let accum = folder_aux elts in 
+        f elt accum in
+  folder_aux l
+```
+
+Here is another simple right fold to summate an integer list
+```ocaml
+List.fold_right ~f:(fun elt accum -> elt + accum) ~init:0 [3; 5; 7];;  (* this computes 3 + (5 + (7 + 0))  *)
+```
+which more concisely could be written as
+
+```ocaml
+List.fold_right ~f:(+) ~init:0 [3; 5; 7];;
+```
 
 #### Left folding 
-* `List.fold_left` aka `List.fold` (use the latter syntax) associates left:
+
+* There is another way to fold: left fold!
+* Notice in the above summate example the zero is on the right; that is why that is a right fold
+* We could have instead summated as `((0 + 3) + 5) + 7`, with the zero on the *left* which is a fold left.
+* `List.fold_left` is the function, and it has synonym `List.fold` which is because by default you should fold left for efficiency.
 
 ```ocaml
-# List.fold ~f:(+) ~init:0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
-- : int = 15
-```
-
-Which being more explicit about the `elt` and `accum` of the `+` is
-```ocaml
-# List.fold ~f:(fun accum elt -> accum + elt) ~init:0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
-- : int = 15
+List.fold ~f:(fun accum elt -> accum + elt) ~init:0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
 ```
 
 * Here since it is a fold left the accumulator is on the *left* (compare with folding right above)
   - the arguments to `f` are swapped to make that more clear
-* Note that for `~f:(+)`, folding left or right gives the same answer; 
+* Note that for `~f` being addition, folding left or right gives the same answer; 
     - but, that is only because `+` happens to be *commutative and associative*.
 * For example, `List.fold ~f:(-) ~init:0 [1;2]` is `(0 - 1) - 2` is `-3` and `List.fold_right ~f:(-) ~init:0 [1;2]` is `1 - (2 - 0)` is `-1` 
 
-#### More general use of folds
-
-* The type of `List.fold` is `'a list -> init:'accum -> f:('accum -> 'a -> 'accum) -> 'accum`
-* Note how the two parameters of `f` need not be the same type
-* The `'a` here is the type of the list elements
-* The `'accum` is the type of the result being accumulated, which *could be different* than the type of list elements
-
-Here is a simple fold example where these types are different (here `'a` is `char` and `'accum` is `string`):
+Let us understand how left folding differs by again looking at an implementation for the char list to string function.
 
 ```ocaml
-List.fold ['a';'b';'c'] ~init:"" ~f:(fun accum -> fun elt -> accum^(Char.to_string elt));;
+let rec char_list_to_string l accum =
+  match l with 
+  | [] -> accum (* we are totally done at this point, `accum`` is the final result and just pop pop pop *)
+  | elt :: elts -> 
+    char_list_to_string elts (accum^(Char.to_string elt));;  (* we are computing the `~f` to accumulate result on the way *down* the recursion now *)
+char_list_to_string ['a';'d'] "";; (* we need to prime the accum pump with "" here *)
 ```
 
-* As we saw above, `elt` is the list element and `accum` is the accumulator, the result thus far.
-  - **Think inductively about folding**: you can assume `accum` properly accumulated the result you want on the tail of the list, just take the head (`elt`) and combine with `accum` in the `f` body to get the final result and you are good.
+Here is the general `fold`, pulling out the `~f` in the above as a parameter.  
+Note that the `accum` we call `~init` here since that is the exterior interface.
 
-We can also compute the same thing with `fold_right`:
-```ocaml
-utop # List.fold_right ['a';'b';'c'] ~init:"" ~f:(fun elt -> fun accum -> (Char.to_string elt)^accum);;
+```ocaml 
+let rec fold l ~init ~f =
+  match l with
+  | [] -> init
+  | elt::elts -> fold elts ~init:(f init elt) ~f (*observe f is invoked **before** the call -- accumulating left-first *)
 ```
+#### Summarize by looking at the types
 
-* Notice that the arguments to `f` are swapped here compared to the `fold` left version
-   * in `fold` `f` should be a `fun accum elt -> ...` of type `('accum -> 'a -> 'accum)` and 
-   * in `fold_right` it should be `fun elt accum -> ...` of type `('a -> 'accum -> 'accum)`
-* Also notice we shifted where the `^accum` is 
-  - in the fold left, accum is accumulating the *left* elements of the list so far, so put new char on back
-  - in fold right `accum` is the accumulation of the right (tail) elements so put new char on front
+* The type of `List.fold` is `'a list -> init:'acc -> f:('acc -> 'a -> 'acc) -> 'acc`
+   - The `'a` here is the type of the list elements
+   - The `'acc` is the type of the result being accumulated
+* The type of `List.fold_right` is `'a list -> f:('a -> 'acc -> 'acc) -> init:'acc -> 'acc`
+  - Notice that the arguments to `f` are swapped here compared to the `fold` left version
 
-#### A few more fold examples
+#### More fold examples
 
-We can implement `List.exists` above with map and fold:
+* Folding can encapsulate most simple recursions over lists, so it can implement many of the library functions.
+* We can for example implement `List.exists` above with map and fold:
 
 ```ocaml
 let exists l ~f =  (* Note: ~f is **declaring** a named argument f; ~f is shorthand for ~f:f *)
@@ -406,7 +451,7 @@ let exists l ~f =  (* Note: ~f is **declaring** a named argument f; ~f is shorth
 - : bool = true
 ```
 
-Or, just with a fold:
+In fact we can do this in one pass with just a fold:
 ```ocaml
 let exists l ~f = 
   List.fold l ~f:(fun accum elt -> accum || f elt) ~init:false;;
@@ -417,17 +462,15 @@ Which hints that `map` itself is easily definable with a `fold`:
 let map l ~f = List.fold ~f:(fun accum elt -> accum @ [f elt]) ~init:[] l
 ```
 
-This function is identical to `List.map` described above.  
-
 If you wanted to use `fold_right` to build map it would be somewhat similar:
 ```ocaml
 let map_right l ~f = List.fold_right ~f:(fun elt accum -> (f elt) :: accum) ~init:[] l;;
 ```
-Note that `map_right` is more efficient, `::` takes unit time and `@` is linear in size of left list.
+Note that `map_right` is much more efficient, `::` takes unit time and `@` is linear in size of left list.
 
 #### Folding and efficiency
 
-Here is possible code for `fold_right` to help understand it:
+Let us review left vs right folding and reflect on efficiency.  Here are two implementations similar to the above ones:
 
 ```ocaml
 let rec fold_right ~f l ~init =
@@ -435,23 +478,21 @@ let rec fold_right ~f l ~init =
   | [] -> init
   | hd::tl -> f hd (fold_right ~f tl ~init) (* observe it is invoking f **after** the recursive call *)
 ```
-
-Code for `fold` aka `fold_left`:
+vs
 
 ```ocaml 
-let rec fold l ~init ~f =
+let rec fold_left l ~init ~f =
   match l with
   | [] -> init
   | hd::tl -> fold tl ~init:(f init hd) ~f (*observe f is invoked **before** the call -- accumulating left-first *)
 ```
 
-* Note that the first parameter to f in `fold` is the accumulated value passed *down* and the second parameter is the current list value
-  - `init` isn't quite the right variable name, its more like `accum` except on the first call.
+* Note that the first parameter to f in `fold_left` is the accumulated value passed *down* and the second parameter is the current list value
 * In `fold_right` on the other hand the `f` computation happens *after* the recursive call is complete.
-* Fold left/right are good example contrasts of how you can accumulate a value up (`fold_right`) vs down (`fold`) the recursion
+* Fold left/right are good example contrasts of how you can accumulate a value up (`fold_right`) vs down (`fold_left`) the recursion
 
-`fold` is in fact more efficient than `fold_right` so it is preferred all things being equal:
- - Observe how the value of the `fold` function above is what is directly returned from the recursion
+`fold_left` is in fact more efficient than `fold_right` so it is preferred all things being equal:
+ - Observe how the value of the `fold_left` function above is what is directly returned from the base case, it bubbles all the way out
  - Such a function is *tail recursive*
  - The compiler doesn't need to use a call stack for such functions since nothing happens upon return
    - so it replaces push/pop with jumps in and one jump out when done -- its just a loop.

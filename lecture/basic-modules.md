@@ -1,6 +1,6 @@
-### Modules basics
+### Modules Basics
 
-* We have seen OCaml modules in action, e.g. `List.map`, `Float.(=)`, `Fn.id`, etc.
+* We have seen OCaml modules in action, e.g. `List.map`, `Float.(2 = 3)`, `Fn.id`, etc.
 * We also covered how modules are collections of functions, values, types, and other modules
 * Now we want to cover how individual `.ml` files define modules
     - and, how to hide some items in a module (think `private` of Java/C++) via `.mli` file signatures
@@ -9,7 +9,7 @@
 * We are going to use a running example to explain these concepts; see [set-example.zip](../examples/set-example.zip) for the full example
 
 
-### `.ml` files as modules
+### `.ml` files are modules
 
 The contents of the file `simple_set.ml` in the above is the following:
 ```ocaml
@@ -35,12 +35,14 @@ let rec contains (x: 'a) (s: 'a t) (equal : 'a -> 'a -> bool) : bool =
   - Capitalize first letter (only) in file name and remove `.ml` to get module name
 * Modules are just collections of top-level definable things (things you could type into top loop)
 * Assignment 1 file `submission.ml` is in fact making a module as well, named `Submission`.
+  - `dune utop` fires up OCaml with that module loaded; 
+  - `open Submission;;` then allows you to avoid typing long name `Submission.fibonacci` etc.
 * This particular set module is just a set implemented as a list; it is in fact a multiset
 * The line `type 'a t = 'a list` is a *type abbreviation*, `'a t` is a synonym for `'a list`
    - below we will show how to *hide* the fact that it is a list.
 * Naming a type just `t` is the standard for "the" underlying type of a module
     - When outsiders use this module the type will be `Simple_set.t`, read "Simple set's type"
-    - `Core` extensively uses this convention in libraries: `List.t`, `Set.t` etc.
+    - `Core` extensively uses this type naming convention in libraries: `List.t`, `Option.t` etc.
 * Notice how the functions needing `=` we have to pass it in explicitly to be polymorphic
     - In `Core.Set` there is in fact a much better solution but involves fancier modules which we cover later
 #### Building the library
@@ -75,19 +77,20 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 * And if that was not enough there is one more method: you can `#use_output "dune top"`
   - this runs the shell command `dune top` and pastes the output into the top loop; that `dune` command generates byte code files and then spits out a bunch of `#load` commands to load all the libraries as well as your code.
 
-### Information Hiding with Module Signatures
+### Information Hiding with Module Types aka Signatures
 
 * Modules also have types, they are called either *module types* or *signatures*
   - The latter term is used in math, e.g. "a DFA has signature D = (S, Σ, τ, s0, F)"
-* When a module is defined in a file `simple_set.ml`, make a file `simple_set.mli` for its corresponding signature
+* When a module is defined in a file `simple_set.ml`, make a file `simple_set.mli` for its corresponding module type
     - the added "`i`" is for "interface"
 * You don't need an `.mli` file if there is nothing to hide, the type will be inferred
-    - But, even if nothing is hidden the `.mli` is good as a document of what is provided to users
+    - But, even if nothing is hidden the `.mli` is important as a document of what is provided to users
+    - all assignments come with an `.mli` file so you can get used to that format.
 
-So, here the `simple_set.mli` file from the above zip:
+So, here the `simple_set.mli` file from the above zip after we have hidden the type of `'a t` by removing `= 'a list`:
 
 ```ocaml
-    type 'a t    (* hide the type 'a list here by not giving it in signature *)
+    type 'a t  (* can also hide the type here by not giving it in signature: remove the = 'a list  *)
     val emptyset : 'a t
     val add: 'a -> 'a t ->'a t
     val remove : 'a -> 'a t ->  ('a -> 'a -> bool) -> 'a t
@@ -126,6 +129,14 @@ Here is what we need to add to the `dune` file along with the above to build the
 )
 ```
 
+#### Running executables
+
+* If you declared an executable in `dune` as above, it will make a file `my_main_module.exe` so in our case that is `set_main.exe`
+* To exec it you can do `dune exec ./src/set_main.exe "open Core" src/simple_set.ml`
+* Which is really just `_build/default/src/set_main.exe "open Core" src/simple_set.ml`
+
+
+### `set_main.ml`
 * We will now inspect `set_main.ml` in VSCode so we can use the tool tips to check out various types
 
 #### The `Stdio.In_channel` library
@@ -167,11 +178,6 @@ val f : ?x:int -> int -> int = <fun>
 * We will also take a quick look at its documentation [here](https://ocaml.org/p/core/latest/doc/Core/Sys/index.html)
   - Notice how this particular module has no carrier type `t`, it is just a collection of utility functions.
 
-#### Running executables
-
-* If you declared an executable in `dune` as above, it will make a file `my_main_module.exe` so in our case that is `set_main.exe`
-* To exec it you can do `dune exec ./src/set_main.exe "open Core" src/simple_set.ml`
-* Which is really just `_build/default/src/set_main.exe "open Core" src/simple_set.ml`
 
 ### Modules within modules
 
@@ -184,7 +190,6 @@ val f : ?x:int -> int -> int = <fun>
   end
   ```
   where the `...` are the same kinds of declarations that are in files like `foo.ml`.
+* This syntax is also how we can directly define a module in `utop` without putting it in a file.
 * In the remainder of the file you can access the contents of `Sub` as `Sub.blah`, and outside of the `foo.ml` file `Foo.Sub.blah` will access.
-* We in fact used nested modules in the assignments thus far to divvy into sections
-  - We also included lines `include Section1` etc after defining module `Section1` which pastes the contents into the top level to avoid the need to nest.
-  - Assignment 2 also includes some nested modules, this time with more purpose; we will take a look.
+* Assignment 3 includes some nested modules, this time with more purpose; we will take a look.

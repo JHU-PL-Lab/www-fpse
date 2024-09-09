@@ -63,7 +63,7 @@ List.zip [1;2;3] [4;5;6];;
 Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
 
 # #show_type List.Or_unequal_lengths.t;;
-type nonrec 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
+type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
 
 List.zip [1;2;3] [4;5];;
 - : (int * int) list List.Or_unequal_lengths.t =
@@ -119,20 +119,34 @@ let has_negs l = List.exists ~f:(fun x -> x < 0) l;;
 - : bool list = [true; false; true; false; true]
 List.map ~f:(fun (x,y) -> x + y) [(1,2);(3,4)];; (* turns list of number pairs into list of their sums *)
 
-# List.fold_right ~f:(+) ~init:0 [3; 5; 7];; (* this computes 3 + (5 + (7 + 0))  *)
-- : int = 15
+List.fold_right ['a';'b';'c'] ~init:"" ~f:(fun elt -> fun accum -> (Char.to_string elt)^accum);; (* computes "a"^("b"^("c"^"")) *)
 
-List.fold_right ~f:(fun elt accum -> elt + accum) ~init:0 [3; 5; 7];;
+let rec char_list_to_string l =
+  match l with 
+  | [] -> "" (* ~init above is "", plug it in as the base case *)
+  | elt :: elts ->  (* as in the above we are calling the current list element `elt` *)
+    let accum = char_list_to_string elts in (* this is what `accum` is, the result of recursing on a shorter list *)
+      (Char.to_string elt)^accum (* now plug in the body of ~f as the calculation done on accum and elt *)
 
-# List.fold ~f:(+) ~init:0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
-- : int = 15
+let rec fold_right l ~f ~init =
+  match l with
+  | [] -> init
+  | elt :: elts -> 
+    let accum = fold_right elts ~f ~init in 
+      f elt accum
 
-# List.fold ~f:(fun accum elt -> accum + elt) ~init:0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
-- : int = 15
+List.fold_right ~f:(fun elt accum -> elt + accum) ~init:0 [3; 5; 7];;  (* this computes 3 + (5 + (7 + 0))  *)
 
-List.fold ['a';'b';'c'] ~init:"" ~f:(fun accum -> fun elt -> accum^(Char.to_string elt));;
+List.fold_right ~f:(+) ~init:0 [3; 5; 7];;
 
-utop # List.fold_right ['a';'b';'c'] ~init:"" ~f:(fun elt -> fun accum -> (Char.to_string elt)^accum);;
+List.fold ~f:(fun accum elt -> accum + elt) ~init:0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
+
+let rec char_list_to_string l accum =
+  match l with 
+  | [] -> accum (* we are totally done at this point, `accum`` is the final result and just pop pop pop *)
+  | elt :: elts -> 
+    char_list_to_string elts (accum^(Char.to_string elt));;  (* we are computing the `~f` to accumulate result on the way *down* the recursion now *)
+char_list_to_string ['a';'d'] "";; (* we need to prime the accum pump with "" here *)
 
 let exists l ~f =  (* Note: ~f is **declaring** a named argument f; ~f is shorthand for ~f:f *)
   l
