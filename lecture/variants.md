@@ -132,7 +132,7 @@ type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
   - Functional programming is fantastic for computing over tree-structured data
   - Recursive types can refer to themselves in their own definition
      - similar in spirit to how C structs can be recursive (but, no pointers needed here)
-  - Unlike with functions, no need for `rec` (in fact can use `nonrec` to let OCaml know it is *not* recursive)
+  - Unlike with functions, no need for `rec`
 
 Homebrew lists as a warm-up - the built-in `list` type is in fact not needed
 
