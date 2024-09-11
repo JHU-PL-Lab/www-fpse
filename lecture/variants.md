@@ -134,13 +134,14 @@ type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
      - similar in spirit to how C structs can be recursive (but, no pointers needed here)
   - Unlike with functions, no need for `rec`
 
-Homebrew lists as a warm-up - the built-in `list` type is in fact not needed
+ - Homebrew lists as a warm-up - the built-in `list` type is in fact not needed
+   - Note you will never need to do this, just use the built-in ones!  This example is just for understanding.
 
 ```ocaml
 type 'a homebrew_list = Mt | Cons of 'a * 'a homebrew_list;;
 let hb_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
 ```
-Coding over homebrew lists is basically identical to built-in lists.
+Coding over homebrew lists is nearly identical to built-in lists.
 
 ```ocaml
 let rec homebrew_map (ml : 'a homebrew_list) ~(f : 'a -> 'b) : ('b homebrew_list) =
@@ -195,7 +196,8 @@ Node("fiddly",Node(0,Leaf,Leaf),Leaf);;
 
 * Since lists are built-in we get a massive library of functions on them.
 * For these binary trees (and in general for whatever variant types you roll yourself) there is no such luxury.
-* **But**, that doesn't mean you should just code everything by recursing over the tree.  Instead
+  - This is because there is no single canonical form of tree, there are many different kinds of trees used
+* **Still**, that doesn't mean you should just code everything by recursing over the tree.  Instead
    1. Define the combinators you need (maps, folds, node counts, etc.) using `let rec`
    2. Use your combinators without needing `let rec`
 
@@ -208,7 +210,7 @@ let rec add_gobble binstringtree =
        Node(y^"gobble",add_gobble left,add_gobble right)
 ```
 
- * Remember, as with lists this is not mutating the tree, its building a new one
+ * (Remember, as with lists this is not mutating the tree, its building a new one)
  * Observe: this is an instance of the general operation of building a tree with same structure but applying an operation on each node value
  * i.e. it is a **map** operation over a tree.  Let us code `map` and use it to add gobbles.
 
@@ -223,9 +225,10 @@ let rec map (tree : 'a bin_tree) ~(f : 'a -> 'b) : ('b bin_tree) =
 let add_gobble tree = map ~f:(fun s -> s ^ "gobble") tree
 ```
 * Fold is also natural on binary trees, apply operation f to node value and each subtree result.
+  - This is a fold right (post-processed), folding left on a tree isn't so useful because there are two subtrees to go down in to.
 
 ```ocaml
-let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'accum -> 'accum -> 'accum) ~(leaf : 'accum) : 'accum =
+let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'acc -> 'acc -> 'acc) ~(leaf : 'acc) : 'acc =
    match tree with
    | Leaf -> leaf
    | Node(y, left, right) ->
@@ -235,11 +238,11 @@ let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'accum -> 'accum -> 'accum) ~(leaf
 let int_summate tree = fold ~f:(fun elt laccum raccum -> elt + laccum + raccum) ~leaf:0 tree;;
 int_summate @@ Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
 (* fold can also do map-like operations - the folder can return a tree *)
-let bump_nodes tree = fold ~f:(fun elt la ra -> Node(elt+1,la,ra)) ~leaf:Leaf tree;;
+let inc_nodes tree = fold ~f:(fun elt la ra -> Node(elt+1,la,ra)) ~leaf:Leaf tree;;
 ```
 
 * Many of the other `List` functions have analogues on binary trees and recursive variants in general
-   - `length` (`size` for a tree), `forall`, `exists`, `filter` (filter out a subtree), etc etc.
+   - `length` (`size` or `depth` for a tree), `forall`, `exists`, `filter` (filter out a subtree), etc etc.
 
 * For some operations we need to know how to compare the tree elements, 
 * e.g. if it is a binary (sorted) tree an insertion requires comparison

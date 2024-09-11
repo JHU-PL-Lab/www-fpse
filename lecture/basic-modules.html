@@ -156,7 +156,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>One thing potentially annoying here is the fact that we used a list gets exposed here</li>
+  <li>One thing potentially annoying here is the fact that we used a list to implement our set gets exposed here</li>
   <li>But, we can use <em>type abstraction</em> to hide this; next topic</li>
 </ul>
 
@@ -186,7 +186,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>the added “<code>i</code>” is for “interface”</li>
     </ul>
   </li>
-  <li>You don’t need an <code>.mli</code> file if there is nothing to hide, the type will be inferred
+  <li>You don’t need an <code>.mli</code> file if there is nothing to hide, the module type will be inferred
     <ul>
       <li>But, even if nothing is hidden the <code>.mli</code> is important as a document of what is provided to users</li>
       <li>all assignments come with an <code>.mli</code> file so you can get used to that format.</li>
@@ -315,7 +315,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>It is often useful to have modules inside of modules for further code “modularization”</li>
-  <li>The way it is declared is in e.g. <code>foo.ml</code> (which defines the items in module <code>Foo</code>) add
+  <li>The way it is declared is in e.g. <code>foo.ml</code> (which itself defines the items for module <code>Foo</code> using the above convention), add
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Sub</span> <span class="o">=</span> <span class="k">struct</span> 
  <span class="k">let</span> <span class="n">blah</span> <span class="o">=</span> <span class="o">...</span>
  <span class="o">...</span>

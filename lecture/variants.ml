@@ -111,7 +111,7 @@ let rec map (tree : 'a bin_tree) ~(f : 'a -> 'b) : ('b bin_tree) =
 (* using tree map to make a non-recursive add_gobble *)
 let add_gobble tree = map ~f:(fun s -> s ^ "gobble") tree
 
-let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'accum -> 'accum -> 'accum) ~(leaf : 'accum) : 'accum =
+let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'acc -> 'acc -> 'acc) ~(leaf : 'acc) : 'acc =
    match tree with
    | Leaf -> leaf
    | Node(y, left, right) ->
@@ -121,7 +121,7 @@ let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'accum -> 'accum -> 'accum) ~(leaf
 let int_summate tree = fold ~f:(fun elt laccum raccum -> elt + laccum + raccum) ~leaf:0 tree;;
 int_summate @@ Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
 (* fold can also do map-like operations - the folder can return a tree *)
-let bump_nodes tree = fold ~f:(fun elt la ra -> Node(elt+1,la,ra)) ~leaf:Leaf tree;;
+let inc_nodes tree = fold ~f:(fun elt la ra -> Node(elt+1,la,ra)) ~leaf:Leaf tree;;
 
 let rec insert_int (x : int) (bt : int bin_tree) : (int bin_tree) =
    match bt with

@@ -66,7 +66,7 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
 - : int list = [4]
 ```
 
-* One thing potentially annoying here is the fact that we used a list gets exposed here
+* One thing potentially annoying here is the fact that we used a list to implement our set gets exposed here
  - But, we can use *type abstraction* to hide this; next topic
 
 #### Other ways to load a module into the top loop besides `dune utop`
@@ -83,7 +83,7 @@ utop # Simple_set.add 4 Simple_set.emptyset;;
   - The latter term is used in math, e.g. "a DFA has signature D = (S, Σ, τ, s0, F)"
 * When a module is defined in a file `simple_set.ml`, make a file `simple_set.mli` for its corresponding module type
     - the added "`i`" is for "interface"
-* You don't need an `.mli` file if there is nothing to hide, the type will be inferred
+* You don't need an `.mli` file if there is nothing to hide, the module type will be inferred
     - But, even if nothing is hidden the `.mli` is important as a document of what is provided to users
     - all assignments come with an `.mli` file so you can get used to that format.
 
@@ -182,7 +182,7 @@ val f : ?x:int -> int -> int = <fun>
 ### Modules within modules
 
 * It is often useful to have modules inside of modules for further code "modularization"
-* The way it is declared is in e.g. `foo.ml` (which defines the items in module `Foo`) add
+* The way it is declared is in e.g. `foo.ml` (which itself defines the items for module `Foo` using the above convention), add
   ```ocaml
   module Sub = struct 
    let blah = ...

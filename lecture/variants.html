@@ -214,15 +214,20 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>similar in spirit to how C structs can be recursive (but, no pointers needed here)</li>
     </ul>
   </li>
-  <li>Unlike with functions, no need for <code>rec</code></li>
+  <li>
+    <p>Unlike with functions, no need for <code>rec</code></p>
+  </li>
+  <li>Homebrew lists as a warm-up - the built-in <code>list</code> type is in fact not needed
+    <ul>
+      <li>Note you will never need to do this, just use the built-in ones!  This example is just for understanding.</li>
+    </ul>
+  </li>
 </ul>
-
-<p>Homebrew lists as a warm-up - the built-in <code>list</code> type is in fact not needed</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">homebrew_list</span> <span class="o">=</span> <span class="nc">Mt</span> <span class="o">|</span> <span class="nc">Cons</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">homebrew_list</span><span class="p">;;</span>
 <span class="k">let</span> <span class="n">hb_eg</span> <span class="o">=</span> <span class="nc">Cons</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">5</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">7</span><span class="o">,</span><span class="nc">Mt</span><span class="p">)));;</span> <span class="c">(* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)</span>
 </code></pre></div></div>
-<p>Coding over homebrew lists is basically identical to built-in lists.</p>
+<p>Coding over homebrew lists is nearly identical to built-in lists.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">homebrew_map</span> <span class="p">(</span><span class="n">ml</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">homebrew_list</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">b</span> <span class="n">homebrew_list</span><span class="p">)</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">ml</span> <span class="k">with</span>
@@ -275,8 +280,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Since lists are built-in we get a massive library of functions on them.</li>
-  <li>For these binary trees (and in general for whatever variant types you roll yourself) there is no such luxury.</li>
-  <li><strong>But</strong>, that doesn’t mean you should just code everything by recursing over the tree.  Instead
+  <li>For these binary trees (and in general for whatever variant types you roll yourself) there is no such luxury.
+    <ul>
+      <li>This is because there is no single canonical form of tree, there are many different kinds of trees used</li>
+    </ul>
+  </li>
+  <li><strong>Still</strong>, that doesn’t mean you should just code everything by recursing over the tree.  Instead
     <ol>
       <li>Define the combinators you need (maps, folds, node counts, etc.) using <code>let rec</code></li>
       <li>Use your combinators without needing <code>let rec</code></li>
@@ -290,7 +299,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
      <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">^</span><span class="s2">"gobble"</span><span class="o">,</span><span class="n">add_gobble</span> <span class="n">left</span><span class="o">,</span><span class="n">add_gobble</span> <span class="n">right</span><span class="p">)</span>
 </code></pre></div>    </div>
   </li>
-  <li>Remember, as with lists this is not mutating the tree, its building a new one</li>
+  <li>(Remember, as with lists this is not mutating the tree, its building a new one)</li>
   <li>Observe: this is an instance of the general operation of building a tree with same structure but applying an operation on each node value</li>
   <li>i.e. it is a <strong>map</strong> operation over a tree.  Let us code <code>map</code> and use it to add gobbles.</li>
 </ul>
@@ -305,10 +314,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">let</span> <span class="n">add_gobble</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span> <span class="o">^</span> <span class="s2">"gobble"</span><span class="p">)</span> <span class="n">tree</span>
 </code></pre></div></div>
 <ul>
-  <li>Fold is also natural on binary trees, apply operation f to node value and each subtree result.</li>
+  <li>Fold is also natural on binary trees, apply operation f to node value and each subtree result.
+    <ul>
+      <li>This is a fold right (post-processed), folding left on a tree isn’t so useful because there are two subtrees to go down in to.</li>
+    </ul>
+  </li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold</span> <span class="p">(</span><span class="n">tree</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">accum</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">accum</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">accum</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">leaf</span> <span class="o">:</span> <span class="k">'</span><span class="n">accum</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">accum</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold</span> <span class="p">(</span><span class="n">tree</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">leaf</span> <span class="o">:</span> <span class="k">'</span><span class="n">acc</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">acc</span> <span class="o">=</span>
    <span class="k">match</span> <span class="n">tree</span> <span class="k">with</span>
    <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="n">leaf</span>
    <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
@@ -318,13 +331,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">let</span> <span class="n">int_summate</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">fold</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">laccum</span> <span class="n">raccum</span> <span class="o">-&gt;</span> <span class="n">elt</span> <span class="o">+</span> <span class="n">laccum</span> <span class="o">+</span> <span class="n">raccum</span><span class="p">)</span> <span class="o">~</span><span class="n">leaf</span><span class="o">:</span><span class="mi">0</span> <span class="n">tree</span><span class="p">;;</span>
 <span class="n">int_summate</span> <span class="o">@@</span> <span class="nc">Node</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Node</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="nc">Leaf</span><span class="o">,</span><span class="nc">Node</span><span class="p">(</span><span class="mi">2</span><span class="o">,</span><span class="nc">Leaf</span><span class="o">,</span><span class="nc">Leaf</span><span class="p">))</span><span class="o">,</span><span class="nc">Leaf</span><span class="p">);;</span>
 <span class="c">(* fold can also do map-like operations - the folder can return a tree *)</span>
-<span class="k">let</span> <span class="n">bump_nodes</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">fold</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">la</span> <span class="n">ra</span> <span class="o">-&gt;</span> <span class="nc">Node</span><span class="p">(</span><span class="n">elt</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span><span class="n">la</span><span class="o">,</span><span class="n">ra</span><span class="p">))</span> <span class="o">~</span><span class="n">leaf</span><span class="o">:</span><span class="nc">Leaf</span> <span class="n">tree</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">inc_nodes</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">fold</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">la</span> <span class="n">ra</span> <span class="o">-&gt;</span> <span class="nc">Node</span><span class="p">(</span><span class="n">elt</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span><span class="n">la</span><span class="o">,</span><span class="n">ra</span><span class="p">))</span> <span class="o">~</span><span class="n">leaf</span><span class="o">:</span><span class="nc">Leaf</span> <span class="n">tree</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <ul>
   <li>Many of the other <code>List</code> functions have analogues on binary trees and recursive variants in general
     <ul>
-      <li><code>length</code> (<code>size</code> for a tree), <code>forall</code>, <code>exists</code>, <code>filter</code> (filter out a subtree), etc etc.</li>
+      <li><code>length</code> (<code>size</code> or <code>depth</code> for a tree), <code>forall</code>, <code>exists</code>, <code>filter</code> (filter out a subtree), etc etc.</li>
     </ul>
   </li>
   <li>For some operations we need to know how to compare the tree elements,</li>
