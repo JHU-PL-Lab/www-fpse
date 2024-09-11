@@ -214,6 +214,7 @@ Here are some defining features of the labs.
 
 ## Sample projects
 
+
 Here are a few FPSE projects from last year (2023) to give you an idea of the scope etc. Please pick a different idea.
 
 * [Sudoku solver](https://github.com/TheHarcker/FPSE_Project)
