@@ -1,9 +1,9 @@
 
 ### Records
   - Records are like tuples, an and-data combiner (this-and-this-and-this), but with label names added for readability
-    - Yes it is only about readability but it can make a big difference in code quality
-  - Record types must be declared just like OCaml variants.
-  - Again the fields are immutable by default (but there is a way to make them mutable ..)
+    - Yes it is mainly about readability but it can make a big difference in code quality
+  - Record types must be declared with `type` just like OCaml variants
+  - Record fields are immutable by default, **but** there is a way to make them mutable (below)
 
 Example: a simple record type to represent rational numbers
 
@@ -19,7 +19,7 @@ let rattoint r =
    {num = n; denom = d} -> n / d;;
 ```
 
-Only one pattern matched so should inline pattern in `fun`ctions and `let`s
+Only one pattern is matched so can inline the pattern in `fun`ctions and `let`s
 ```ocaml
 let rattoint {num = n; denom = d}  =  n / d;;
 ```
@@ -71,35 +71,31 @@ type newratio = {num: int; coeff: float};; (* shadows ratio's label num *)
 
 fun x -> x.num;; (* x is inferred a newratio, the most recent num field defined *)
 ```
-Solution is to generally avoid dot; or, declare `x`'s type if needed.  
-
-```ocaml
-fun (x : ratio) -> x.num;; (* x is declared a ratio, avoiding previous shadowing *)
-```
+Solution is to avoid dot
 
 * Multiple punning.. pun both on parameters and in record creation
 
 ```ocaml
-let make_ratio num denom = {num; denom};;
+let make_ratio (num : int) (denom : int) = {num; denom};;
 make_ratio 1 2;;
 ```
 
 * Here is a shorthand for changing just some of the fields: `{r with ...}`
   - Very useful for records with many fields
-  - Note "change" is not mutation, it constructs a new record.
+  - Note "change" still is not mutation, it constructs a new record.
 
  ```ocaml
 let clear_bad_denom r =
 match r with
-  | {denom = 0 } ->  {r with num = 0} (* can leave off ignored fields in pattern *)
+  | { denom = 0 } ->  { r with num = 0 } (* can leave off ignored fields in pattern *)
   | _ -> r;;
-clear_bad_denom {num = 4; denom = 0};;
+clear_bad_denom { num = 4; denom = 0 };;
 ``` 
 
 * One more nice feature: labeling components of variants with records
 
 ```ocaml
-type gbu = | Good of { sugar : string; units : int} | Bad of { spice: string; units : int} | Ugly
+type gbu = | Good of { sugar : string; units : int } | Bad of { spice: string; units : int } | Ugly
 ```
 * Observe that these inner record types don't need to be separately declared
 * Note that the "internal records" here are just that, internal -- you can only use a `{sugar;units}` records inside a `Good` variant.

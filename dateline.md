@@ -135,7 +135,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Finish <a href="lecture/basic-modules.html">Basic Modules</a>, <a href="lecture/records.html">Records</a>,<a href="style-guide.html">Code style</a></div>
+            <div align="left" class="body">Finish <a href="lecture/basic-modules.html">Basic Modules</a>, <a href="lecture/records.html">Records</a>, <a href="style-guide.html">Code style</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

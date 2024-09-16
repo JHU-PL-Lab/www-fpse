@@ -259,7 +259,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="the-stdioin_channel-library">The <code>Stdio.In_channel</code> library</h4>
 
 <ul>
-  <li><code>set_main.ml</code> uses the <code>In_channel</code> module to read in file contents</li>
+  <li><code>set_main.ml</code> uses the <code>In_channel</code> module to read in file contents
+    <ul>
+      <li>(Note that I/O is a <strong>side effect</strong>, I/O functions do things besides the value returned)</li>
+    </ul>
+  </li>
   <li>It is part of the <code>Stdio</code> module (which is itself included in <code>Core</code> so <code>Core.In_channel</code> is the same as <code>Stdio.In_channel</code>)</li>
   <li>The Documentation is <a href="https://ocaml.org/p/stdio/latest/doc/Stdio/index.html">here</a>; we will go through it to observe a few points
     <ul>

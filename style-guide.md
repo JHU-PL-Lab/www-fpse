@@ -1,6 +1,6 @@
 # OCaml Style Guide for Functional Programming in Software Engineering
 
-Authors: Kelvin Qian and Scott Smith
+Author: Kelvin Qian with updates by Scott Smith
 
 ## Preface
 
@@ -10,7 +10,7 @@ Many of these guidelines are more recommendations than absolute requirements; un
 
 ### Acknowledgements
 
-This document would not have been made possible without the input of the whole FPSE team - myself, Dr. Scott, Devin Hill, and Shiwei Weng.  Special thanks is also given to Peter Frölich, whose C style guide served as the inspiration for this document.
+This document would not have been made possible without input of the original FPSE team - myself, Dr. Scott, Devin Hill, and Shiwei Weng.  Special thanks is also given to Peter Frölich, whose C style guide served as the inspiration for this document.
 
 ## General Guidelines 
 
@@ -18,17 +18,17 @@ This document would not have been made possible without the input of the whole F
 
 1. Each line of code should be of reasonable length.  Traditionally this meant that each line had a max length of 80 columns, but this rule has [become less relevant](https://www.phoronix.com/scan.php?page=news_item&px=Linux-Kernel-Deprecates-80-Col) with modern displays.  What is **not** acceptable are massive lines of 200+ columns or more that are either painful to side-scroll or are unreadable thanks to text wrapping.
 
-2. Your functions should be short - a reader will either glaze over at an overly long function or be utterly confused from having to keep track of all the moving parts.  A good rule of thumb is that you should break up a function if it's longer than the height of your screen.  Functions in good functional code often outsource tasks to helper functions that each perform a single, specific, and easy to understand task.  (Note: you can get away with a longer function if it's _conceptually_ simple, such as a `match` statement with many short cases.)
+2. Your functions should be short - a reader will either glaze over at an overly long function or be utterly confused from having to keep track of all the moving parts. Functions in good functional code often outsource tasks to helper functions that each perform a single, specific, and easy to understand task.  (Note: you can get away with a longer function if it's _conceptually_ simple, such as a `match` statement with very many short cases.)
 
-3. Your functions should not have an excessive number of arguments - functions with five arguments are okay, seven arguments is a reasonable limit, and ten arguments is _really_ pushing it.  If you have a ton of function arguments, consider using a record.  (This also applies to the length of tuples being passed into functions; see the "Miscellaneous" section.)  Additionally, for functions with more than a couple arguments consider using named arguments (the `~f:...` in function definitions and uses): they make clear what the argument is at the function call site.
+3. Your functions should not have an excessive number of arguments - functions with five arguments are okay, seven arguments is a bit too much, and ten arguments is beyond reason.  If you have a ton of function arguments, look for packages of related argumenrts and consider packaging them up aas a new record type.  (This also applies to the length of tuples being passed into functions; see the "Miscellaneous" section.)  Additionally, for functions with more than a couple arguments use named arguments (the `~f:...` in function definitions and uses) to keep things straight.
 
 4. Do not duplicate code.  Functions that share functionality should have that code split off into a helper function that both can call, for example; if you wish to later fix that code, you'd only have to do it once and not twice.  That said, avoiding code duplication is sometimes either impossible or not worth it, so (like most things in this guide) use your best judgement.
 
 5. Give descriptive names to your variables, (non-anonymous) functions, variants, etc.  We know what `add2` does, but what the heck does `foo` do?  (You might get away with it for local variables or when using `x` and `y` in mathematical functions, but even then some description can be useful, e.g. `counter` instead of `c`.)
 
-6. Pattern matching is your friend in OCaml, and you should use it extensively to match on cases and destructure data structures.  Pattern match on a pair rather than nesting patterns, use `with` to add side-conditions if needed, etc.
+6. Pattern matching is your friend in OCaml, and you should use it extensively to match on cases and destructure data structures.  Pattern match on a pair rather than nesting patterns, use `with` to add side-conditions if needed, use `let {num; denom} = r in ..` instead of `let num = r.num in let denom = r.denom in ..` etc.
 
-7. Speaking of exceptions, they are used frequently in OCaml code, but they can make debugging difficult when they're thrown from deep within the code structure.  Especially for larger programs use `option` or `result` values, and handle errors locally.
+7. Exceptions can make debugging difficult when they are thrown from deep within the code structure.  Especially for larger programs use `option` or `result` values, and handle errors locally.
 
 8. Excessive nesting of conditionals or match statements should be avoided; it causes confusion and bugs (especially if parentheses aren't used).  In particular, when matching on nested data structures (e.g. variants that contain other variants), it's usually clearer to match on the entire data structure at once instead of matching each layer.  For instance, the following:
     ```ocaml
@@ -47,9 +47,24 @@ This document would not have been made possible without the input of the whole F
     | Error msg -> (* ... *)
     ```
 
-9. Use libraries like `Core` whenever possible instead of "rolling your own."  At the end of the day, it's not worth it to re-invent the wheel when there's correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.  The only exceptions are 1) when we tell you not to use a certain library for pedagogical purposes and 2) when literally no library exists for your specific task.
+9. Use `Core` modules whenever possible instead of "rolling your own."  At the end of the day, it's not worth it to re-invent the wheel when there's correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.
 
-10. Generally you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are important.  Use them judiciously; don't shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  For some homework problems you will be required to avoid mutation.
+10. Generally you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are important.  Use them judiciously; don't shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  In order to get used to functional programming you will be required to avoid mutation on all homeworks (but, you can use mutation in your projects if it has a clear advantage).
+
+## Modules
+
+0. Modules are a critical component of code encapsulation in OCaml.  Creating modules and submodules is a key tool used to divide your code up and keep everything straight.
+
+1. You should always write an `.mli` file corresponding to each `.ml` file that you make.  This enforces separation between interface and implementation (a concept shared by other languages like C++ and Java) and provides the best place to put documentation (see "Documentation" below).  If your `.ml` file contains a lot of helper functions, `.mli` functions ensure that they are not exposed to other parts of the codebase, let alone external programs that may use your code as a library.
+
+2. Use the `open` keyword judiciously.  Many style guides will tell you to avoid using `open` for any module (except for standard libraries like `Core`); they have a point since opening modules without care can result in unwanted name shadowing, as well as confusion over which function belongs to which module.  However, never opening modules can result in `Long.Module_paths.Polluting.Your.codebase`.  In general, it is a good idea to use `open` in a module when:
+  - The module is a standard library that you want to use throughout your entire environment (e.g. `Core`).
+  - The module is closely related to the module it's being opened in (e.g. if you're opening `My_module` in `my_module_utils.ml`).
+    
+    You should also take advantage of the `let open My_Module in ...` and `My_module.( ... )` syntax.  Both features restrict opening the module to the `...` code, allowing you to have the best of both worlds. For example, `String.("hi" = ho")` is easier to read than `String.(=) "hi" "ho"`. 
+
+3. When making a new data structure, always encapsulate it in its own module.  The type of the underlying data of the module should then be written as `t` (for "type"), e.g. `String_set.t` would the type of a set of strings module, not e.g. `String_set.string_set_underlying_type`.  This may seem to contradict the guideline to give descriptive names, but the descriptiveness is already in the module name.  `Core` uses this convention: for example `Core.Result.t` is the `Ok/Error` variant type, etc.
+
 
 ## Naming Conventions
 
@@ -66,8 +81,6 @@ This document would not have been made possible without the input of the whole F
 ## Indentation
 
 In this course you will be required to use and automatic code formatter, either `ocamlformat` or `ocp-indent`.  Depending on what editor you are using one other the other may be the preferred option.  The convention dictated by these formatters mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don't use tabs for indentation!)  
-
-If you are using OCaml Platform, issue the `opam` install commands `opam install ocamlformat` and `opam install ocamlformat-rpc`.  Additionally, for some idiotic reason you must have an `.ocamlformat` file at the base of the project; from the shell you can do `touch .ocamlformat` to make such an empty file.
 
 To automatically format your code in VSCode, use `option-shift-F` on Mac or `alt-shift-F` on Windows.  The following examples show how these tools indent common OCaml expressions:
 
@@ -113,21 +126,6 @@ One thing to point out is that it's bad form to over-indent. These tools should 
       | x :: xs -> (fn x) :: (match fn xs)
   ```
 
-## Modules
-
-0. Modules are a form of code encapsulation.  Creating modules and submodules is a good way to divide your code up and keep everything straight.
-
-1. It is good practice to write `.mli` files for the `.ml` files you write.  They enforce separation between interface and implementation (a concept shared by other languages like C++ and Java) and provide a convenient place to put documentation (see "Documentation" below).  If your `.ml` file contains a lot of helper functions, `.mli` functions ensure that they are not exposed to other parts of the codebase, let alone external programs that may use your code as a library.
-
-2. By the same token, it is good practice to write module type signatures for the submodules you write.  This goes doubly true if you have two or more modules that share tons of functionality - in that case consider having them share the same type signature as a shared interface.
-
-3. Use the `open` keyword judiciously.  Many style guides will tell you to avoid using `open` for any module (except for standard libraries like `Core`); they have a point since opening modules without care can result in unwanted name shadowing, as well as confusion over which function belongs to which module.  However, never opening modules can result in `Long.Module_paths.Polluting.Your.codebase`.  In general, it is a good idea to use `open` in a module when:
-  - The module is a standard library that you want to use throughout your entire environment (e.g. `Core`).
-  - The module is closely related to the module it's being opened in (e.g. if you're opening `My_module` in `my_module_utils.ml`).
-    
-    You should also take advantage of the `let open My_Module in ...` and `My_module.( ... )` syntax.  Both features restrict opening the module to the `...` code, allowing you to have the best of both worlds. For example, `String.("hi" = ho")` is easier to read than `String.(=) "hi" "ho"`. 
-
-4. When writing a module for a data structure, the type of the underlying data of the module is conventially written as `t` (for "type"), e.g. `String_set.t` is the type of a set of strings, not `String_set.string_set`.  This may seem to contradict the "give descriptive names" guideline we mentioned earlier, but the descriptiveness is already in the module name.  Note that `Core` uses this convention: for example `Core.Result.t` is the `Ok/Error` variant type.
 
 ## Documentation
 
@@ -135,7 +133,7 @@ One thing to point out is that it's bad form to over-indent. These tools should 
 
 1. Many people think that documentation = comments, but that is not necessarily true.  We already mentioned the "give descriptive names" guideline as one example.  Another example is using type annotations like `(x : int)` for function arguments and return types (which has the bonus benefit of helping the compiler perform type inference).  Good variable names and type annotations can be just as descriptive as comments to someone familiar with OCaml.
 
-2. A good place to put comments is the `.mli` file, where you can describe functions and other parts of the module signature.  You can, of course, also put comments in the `.ml` file, but putting most of your documentation in the interface allows for comments to focus on _what_ something is doing or _why_ it exists, rather than _how_ it works; it also serves as API documentation if you choose to release your library to the wider world.
+2. A key place to put comments is the `.mli` file, where functions and other parts of the module signature are described.  You can also put comments in the `.ml` file, but putting most of your documentation in the interface allows for comments to focus on _what_ something is doing or _why_ it exists, rather than _how_ it works; it also serves as API documentation if you choose to release your library to the wider world.
 
 3. Both of the previous points hint at how over-documentation is a thing.  Over-documentation clutters the code and can make it unreadable.  For example, you should not spam the body of your functions with comments describing every little thing it does; instead, the bulk of the explaining should be done by the code.  That said, do put comments if the code isn't clear enough, or if there's unusual behavior, weird edge cases, interesting algorithms, etc. in your functions, but make sure to do so judiciously.
 
@@ -145,7 +143,7 @@ One thing to point out is that it's bad form to over-indent. These tools should 
 
 0. Do not write parentheses around function arguments that consist of a single variable or value: `my_function (a) ("bee") (3)` looks worse than `my_function a "bee" 3`.
 
-1. On the other hand, _do_ use parentheses around tuples: while writing `x, y, z` is legal OCaml syntax, you should write `(x, y, z)` to clearly indicate that the value is a tuple.  (That said, you are free to omit parentheses around a tuple when you are _immediately_ destructuring that tuple, e.g. in let or match statements like `let x, y = tuple_fn 0 in ...` or `match x, y with 0, 0 -> ...`.)
+1. Use the power of pattern matching in `let`, for tuples and records, e.g. `let x, y = tuple_fn 0 in ...`, and in function definitions, `let get_numerator {num, denom} = num`
 
 2. Use `@@` or `begin ... end` syntax to avoid too many parentheses.
 

@@ -142,6 +142,7 @@ Here is what we need to add to the `dune` file along with the above to build the
 #### The `Stdio.In_channel` library
 
 * `set_main.ml` uses the `In_channel` module to read in file contents
+  - (Note that I/O is a **side effect**, I/O functions do things besides the value returned)
 * It is part of the `Stdio` module (which is itself included in `Core` so `Core.In_channel` is the same as `Stdio.In_channel`)
 * The Documentation is [here](https://ocaml.org/p/stdio/latest/doc/Stdio/index.html); we will go through it to observe a few points
   - First, now that we covered abstract types we can see there is an abstract type `t` here
