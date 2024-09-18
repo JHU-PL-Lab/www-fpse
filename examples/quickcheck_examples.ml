@@ -8,6 +8,8 @@
 
 (* `Base_quickcheck` is highly integrated with Core libraries which is why we use it *)
 
+[@@@warning "-32"]
+
 open Core
 
 (* Step 1 is you need a generator to make random data in a given type. *)

@@ -9,12 +9,17 @@ open Core
    Used OCaml Stack library with exceptions, re-wrote to use Core
 *)
 
-let are_balanced_stack s =
+let are_balanced_stack (s : string) : bool =
   let stack_of_lefts = Stack.create () in
-  let match_with c =
-    Option.value_map (Stack.pop stack_of_lefts) ~f:(fun c' -> Char.( = ) c c') ~default:false
+  let match_with (c : char) : bool =
+    Option.value_map (Stack.pop stack_of_lefts)
+      ~f:(fun c' -> Char.(c = c'))
+      ~default:false
+    (* Option.value_map is a combinator you feed Some/None match cases to -- same as:
+       `match Stack.pop stack_of_lefts with Some c' -> Char.(c = c') | None -> false` *)
   in
   let parse = function
+    (* can pattern match in anonymous function directly using `function` *)
     | ('(' | '{' | '[') as c ->
         Stack.push stack_of_lefts c;
         true
@@ -23,34 +28,17 @@ let are_balanced_stack s =
     | ']' -> match_with '['
     | _ -> true
   in
+  (* Loop over the characters in the string with `String.for_all` (not for/while) : *)
   let r = String.for_all ~f:(fun c -> parse c) s in
-  r && Stack.is_empty stack_of_lefts
-
-(* Here is an alternate version, mainly to show what Option.value_map does *)
-let are_balanced_stack' s =
-  let stack_of_lefts = Stack.create () in
-  let match_with c = (* expand meaning of Option.value_map *)
-    match Stack.pop stack_of_lefts with Some c' -> Char.(c = c') | None -> false
-  in
-  let parse = function
-    | ('(' | '{' | '[') as c ->
-        Stack.push stack_of_lefts c;
-        true
-    | ')' -> match_with '('
-    | '}' -> match_with '{'
-    | ']' -> match_with '['
-    | _ -> true
-  in
-  (* Use fold instead of for_all here *)
-  let r = String.fold ~init:true ~f:(fun b c -> b && parse c) s in
+  (* alt to above using fold: `String.fold ~init:true ~f:(fun b c -> b && parse c) s` *)
   r && Stack.is_empty stack_of_lefts
 
 (* Another version which uses an exception for the empty stack pop case.
    The above version is arguably better since there is a good default to return for empty-pop *)
 
-let are_balanced_exn s =
+let are_balanced_exn (s : string) : bool =
   let stack_of_lefts = Stack.create () in
-  let match_with  c = Char.( = ) c (Stack.pop_exn stack_of_lefts) in
+  let match_with (c : char) : bool = Char.(c = Stack.pop_exn stack_of_lefts) in
   let parse = function
     | ('(' | '{' | '[') as c -> Fn.const true @@ Stack.push stack_of_lefts c
     | ')' -> match_with '('
@@ -64,13 +52,15 @@ let are_balanced_exn s =
   with _ -> false
 (* return false if any exception is raised (a bit of a sledgehammer) *)
 
-(* No, you don't really need mutation here at all, and the code is shorter to boot.
+(* Yes, you can solve this (more) concisely without any mutation.
+   There is no functional stack data structure in OCaml as List is 98% there already.
+
    Solution derived from
    https://exercism.io/tracks/ocaml/exercises/matching-brackets/solutions/ac5921390cb14120b44f049ef1a09186
 *)
 
-let are_balanced_functional str =
-  String.fold_until str ~init:[]
+let are_balanced_functional (s : string) : bool =
+  String.fold_until s ~init:[]
     ~f:(fun stk ch ->
       match (ch, stk) with
       | '(', _ | '[', _ | '{', _ -> Continue (ch :: stk)
@@ -79,10 +69,9 @@ let are_balanced_functional str =
       | _ -> Continue stk)
     ~finish:List.is_empty
 
-(* Here is a simpler example of fold_until we covered earlier, to better understand the above *)
+(* Here is a simple example of fold_until we covered earlier, to better understand the above *)
 
 let summate_til_zero l =
   List.fold_until l ~init:0
-    ~f:(fun acc i ->
-      match i with 0 -> Stop acc | _ -> Continue (i + acc))
+    ~f:(fun acc i -> match i with 0 -> Stop acc | _ -> Continue (i + acc))
     ~finish:Fn.id

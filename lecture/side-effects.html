@@ -71,9 +71,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <h2 id="side-effects">Side effects</h2>
 
 <ul>
-  <li>Side effects are operations which do more than return a result</li>
+  <li>Side effects are operations which do more than return a result: mutate, I/O, exceptions, threads, etc.</li>
   <li>So far we have not seen many side effects but a few have snuck in: printing, file input, exceptions</li>
-  <li>Principle of idiomatic OCaml (and style for this class): <strong>avoid effects</strong>, unless they are a real improvement.</li>
+  <li>Principle of idiomatic OCaml (and style for this class): <strong>avoid effects</strong>, unless they are a real improvement, or a necessity (e.g. I/O).</li>
+  <li>Reminder: don’t use mutation on your homeworks, and limit use of other effects as well.</li>
 </ul>
 
 <p>Side effects of OCaml include</p>
@@ -81,7 +82,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Mutatable state - <em>changing</em> the contents of a memory location intead of making a new one
     <ul>
       <li>Three built-in sorts in OCaml: references, mutable record fields, and arrays.</li>
-      <li>Plus many libraries: <code>Stack</code> etc</li>
+      <li>Plus many libraries: <code>Stack</code>, <code>Queue</code>, <code>Hashtbl</code>, <code>Hash_set</code>, etc</li>
     </ul>
   </li>
   <li>Exceptions (we saw a bit of this already, <code>failwith "ill-formed"</code> etc)</li>
@@ -91,10 +92,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h3 id="state">State</h3>
 <ul>
-  <li>Variables in OCaml are <em>still</em> not directly mutable</li>
-  <li>But, they can hold a <em>reference</em> to mutable memory (and a way to mutate said reference)</li>
+  <li>Variables in OCaml are <em>never</em> directly mutable</li>
+  <li>But, they can hold a <em>reference</em> to memory that can be mutated</li>
   <li>i.e. it is only indirect mutability - variable itself can’t change, but what it points to can.</li>
-  <li>OCaml invariant: items are immutable unless their mutability is explicitly declared</li>
 </ul>
 
 <h3 id="mutable-references">Mutable References</h3>
@@ -107,7 +107,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">val</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">contents</span> <span class="o">=</span> <span class="mi">4</span><span class="p">}</span>
 </code></pre></div></div>
 
-<p>Meaning of the above: x forevermore (i.e. forever unless shadowed) refers to a fixed cell.  The <strong>contents</strong> of that fixed call can change, but not x.</p>
+<p>Meaning of the above: x forevermore (i.e. forever unless shadowed) refers to a fixed cell.  The <strong>contents</strong> of that fixed cell, currently <code>4</code>, can change, but not x.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">4</span><span class="p">;;</span>
 <span class="k">val</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">contents</span> <span class="o">=</span> <span class="mi">4</span><span class="p">}</span>
@@ -124,11 +124,27 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">#</span> 
 </code></pre></div></div>
 
+<h4 id="variables-are-still-themselves-immutable">Variables are still themselves immutable</h4>
+
+<ul>
+  <li>To be clear, <code>let</code> doesn’t turn into a mutation operator with <code>ref</code>:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">4</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">f</span> <span class="bp">()</span> <span class="o">=</span> <span class="o">!</span><span class="n">x</span><span class="p">;;</span>
+
+<span class="n">x</span> <span class="o">:=</span> <span class="mi">234</span><span class="p">;;</span>
+<span class="n">f</span><span class="bp">()</span><span class="p">;;</span>
+
+<span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">6</span><span class="p">;;</span> <span class="c">(* shadows previous x definition, NOT an assignment to x !! *)</span>
+<span class="n">f</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* 234, not 6 *)</span>
+</code></pre></div></div>
+
 <h4 id="null-or-nil-initial-cell-contents-in-ocaml-and-weakly-polymorphic-types">Null or Nil initial cell contents in OCaml, and Weakly Polymorphic types</h4>
 
 <ul>
   <li>If you don’t yet have a well-formed initial value, use an <code>option</code>:
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="nc">None</span><span class="p">;;</span> <span class="c">(* Use an option type if initial value not known yet *)</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="nc">None</span><span class="p">;;</span>
 <span class="k">val</span> <span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak1</span> <span class="n">option</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">contents</span> <span class="o">=</span> <span class="nc">None</span><span class="p">}</span>
 </code></pre></div>    </div>
   </li>
@@ -149,8 +165,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
 <span class="o">#</span> <span class="o">!</span><span class="n">x</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">3</span> <span class="c">(* `'_weak1` = `int` now, permanently *)</span>
-<span class="o">#</span> <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ref</span> <span class="nc">None</span><span class="p">;;</span>
-<span class="k">val</span> <span class="n">y</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak2</span> <span class="n">option</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">contents</span> <span class="o">=</span> <span class="nc">None</span><span class="p">}</span> <span class="c">(* next one is `'_weak2` etc *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -158,7 +172,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Most of the time it is because it would be incorrect not to</li>
   <li>But occasionally OCaml is too dumb to realize things are not weak
     <ul>
-      <li>there are some workarounds for this case</li>
+      <li>there are advanced workarounds for this case which we will not cover</li>
     </ul>
   </li>
 </ul>
@@ -166,9 +180,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="mutable-records">Mutable Records</h3>
 
 <ul>
-  <li>Along with refs we can make some record fields mutable</li>
+  <li>Along with refs we can declare some record fields <code>mutable</code></li>
   <li><code>'a ref</code> is really implemented by a mutable record with one field, contents:</li>
-  <li><code>'a ref</code> abbreviates the type <code>{ mutable contents: 'a }</code></li>
+  <li><code>'a ref</code> in fact abbreviates the type <code>{ mutable contents: 'a }</code></li>
   <li>The keyword mutable on a record field means it can mutate</li>
 </ul>
 
@@ -195,12 +209,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">translate</span> <span class="n">mypoint</span> <span class="mi">1</span><span class="o">.</span><span class="mi">0</span> <span class="mi">2</span><span class="o">.</span><span class="mi">0</span><span class="p">;;</span>
 <span class="n">mypoint</span><span class="p">;;</span>
 </code></pre></div></div>
+<ul>
+  <li>Note here that the <code>x</code> and <code>y</code> fields of the point are mutable, but the point as a whole you cannot swap in a different point for.</li>
+</ul>
 
 <h4 id="tree-with-mutable-subtrees">Tree with mutable subtrees</h4>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* version using ref: *)</span>
 <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="o">=</span> <span class="nc">MLeaf</span> <span class="o">|</span> <span class="nc">MNode</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="n">ref</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="n">ref</span><span class="p">;;</span>
-<span class="c">(* But, this type would be more readable with mutable record - no `!` needed: *)</span>
+<span class="c">(* But, use this type with mutable records - no `!` needed: *)</span>
 <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="o">=</span> <span class="nc">MLeaf</span> <span class="o">|</span> <span class="nc">MNode</span> <span class="k">of</span> <span class="p">{</span> <span class="n">data</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">;</span> <span class="k">mutable</span> <span class="n">left</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span><span class="p">;</span> <span class="k">mutable</span> <span class="n">right</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span><span class="p">};;</span>
 </code></pre></div></div>
 
@@ -208,6 +225,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Note that in this <code>mtree</code> we can only mutate the subtrees, <em>not</em> the data</li>
   <li>Also, cannot replace a leaf at top of tree with a non-leaf.</li>
   <li>The idea is to put mutablility only where you are doing mutation, no more no less.</li>
+  <li>So if the tree structure never changes but the node values can, only make the <code>data</code> mutable.</li>
 </ul>
 
 <p>Example use: mutate right tree</p>
@@ -228,22 +246,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Note the use of the <code>... as r</code> in the pattern, sometimes something needs a name that didn’t have one</li>
   <li>And of course notice that <code>mt</code> actually <em>changed</em> here unlike with immutables</li>
 </ul>
-
-<h4 id="variables-are-still-themselves-immutable">Variables are still themselves immutable</h4>
-
-<ul>
-  <li>To be clear, <code>let</code> doesn’t turn into a mutation operator with <code>ref</code>:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">4</span><span class="p">;;</span>
-<span class="k">let</span> <span class="n">f</span> <span class="bp">()</span> <span class="o">=</span> <span class="o">!</span><span class="n">x</span><span class="p">;;</span>
-
-<span class="n">x</span> <span class="o">:=</span> <span class="mi">234</span><span class="p">;;</span>
-<span class="n">f</span><span class="bp">()</span><span class="p">;;</span>
-
-<span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">6</span><span class="p">;;</span> <span class="c">(* shadows previous x definition, NOT an assignment to x !! *)</span>
-<span class="n">f</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* 234, not 6 *)</span>
-</code></pre></div></div>
 
 <h3 id="physical-equality">Physical equality</h3>
 
@@ -306,8 +308,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li><code>for</code> and <code>while</code> loops are useful with mutable state</li>
-  <li>But, don’t fall back into old state habits; good OCaml style is functional by default</li>
-  <li>You hardly ever for or while, usually use a list or data structure iterator like map fold etc.</li>
+  <li>But they are almost always a code smell in OCaml, usually a data structure iterator like map fold etc is better.</li>
   <li>Here is a <code>while .. do .. done</code> loop; <code>for</code> syntax also standard</li>
 </ul>
 
@@ -321,16 +322,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Fact: while loops are useless without mutation: would either never loop or infinitely loop</li>
   <li>Same for <code>e1 ; e2</code> –  if <code>e1</code> has no side effects may as well delete it, it is dead code!</li>
-  <li>Note that <code>e1; e2</code> is equivalent to <code>let () = e1 in e2</code></li>
+  <li>Note that <code>e1; e2</code> is exactly the same as writing <code>let () = e1 in e2</code></li>
 </ul>
 
 <h3 id="arrays">Arrays</h3>
 <ul>
+  <li>They are mutable, and they are also constant time to access nth element unlike lists</li>
+  <li>But, extending an array is inefficient: cannot share sub-array due to mutation</li>
   <li>Entered and shown as <code>[| 1; 2; 3 |]</code> (added “<code>|</code>”) in top-loop to distinguish from lists.</li>
   <li>Have to be initialized before using
     <ul>
       <li>In general, there is no such thing as “uninitialized” in OCaml.</li>
-      <li>If you need “undefined”/”null”, make it an <code>int option array</code> and init to <code>None</code>’s.</li>
+      <li>If you need “undefined”/”null” array, make it an <code>int option array</code> and init to <code>None</code>’s.</li>
     </ul>
   </li>
 </ul>
@@ -340,7 +343,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">arr</span><span class="o">.</span><span class="p">(</span><span class="mi">0</span><span class="p">);;</span> <span class="c">(* access (unfortunately already used [] for lists so a bit ugly) *)</span>
 <span class="n">arr</span><span class="o">.</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="mi">55</span><span class="p">;;</span> <span class="c">(* update *)</span>
 <span class="n">arr</span><span class="p">;;</span>
-<span class="c">(* Of course there are many library functions over Array including map fold etc *)</span>
+<span class="c">(* Don't use for loops for arrays, use your favorite iterators: *)</span>
 <span class="nn">Array</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">arr</span><span class="p">;;</span> <span class="c">(* standard map - produces a new array *)</span>
 <span class="nn">Array</span><span class="p">.</span><span class="n">map_inplace</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">arr</span><span class="p">;;</span> <span class="c">(* This *changes* the array based on map-function *)</span>
 <span class="c">(* Here are some conversions *)</span>
@@ -353,7 +356,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>As mentioned earlier, exceptions are powerful but dangerous
     <ul>
-      <li>They are OK if they are always handled very close to when they are raised</li>
+      <li>They are OK if they are always handled close to when they are raised</li>
       <li>If the handler is far away it can lead to buggy code</li>
       <li>We will aim for idiomatic use of OCaml exceptions in FPSE: local necessary ones only.</li>
     </ul>
@@ -380,9 +383,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="ocaml-syntax-for-defining-raising-and-handling-exceptions">OCaml syntax for defining raising and handling exceptions</h3>
 <ul>
   <li>New exception names need to be declared via <code>exception</code> like <code>type</code>s needs to be declared</li>
-  <li>Unfortunately types do not include what exceptions a function will raise
+  <li>Unfortunately types do not include what exceptions a function may raise
     <ul>
-      <li>an outdated aspect of OCaml</li>
+      <li>an outdated aspect of OCaml; even Java has this</li>
     </ul>
   </li>
   <li>The value returned by an exception is very similar in looks to a variant.</li>
@@ -399,17 +402,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="o">|</span> <span class="nc">Boom</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">printf</span> <span class="s2">"exception Boom raised with payload string </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"\n</span><span class="s2">"</span> <span class="n">s</span>
 <span class="p">;;</span>
 <span class="n">g</span> <span class="bp">()</span><span class="p">;;</span>
-</code></pre></div></div>
-
-<ul>
-  <li>Exceptions are in fact first-class data, all of the single type <code>exn</code></li>
-  <li>But, this feature is rarely useful.</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">ex</span> <span class="o">=</span> <span class="nc">Boom</span> <span class="s2">"oops"</span><span class="p">;;</span>
-<span class="k">val</span> <span class="n">ex</span> <span class="o">:</span> <span class="n">exn</span> <span class="o">=</span> <span class="nc">Boom</span><span class="p">(</span><span class="s2">"oops"</span><span class="p">)</span>
-<span class="o">#</span> <span class="k">raise</span> <span class="n">ex</span><span class="p">;;</span>
-<span class="nc">Exception</span><span class="o">:</span> <span class="nc">Boom</span><span class="p">(</span><span class="s2">"oops"</span><span class="p">)</span><span class="o">.</span>
 </code></pre></div></div>
 
 <h3 id="mutating-data-structures-in-core">Mutating data structures in <code>Core</code></h3>
