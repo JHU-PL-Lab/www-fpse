@@ -62,7 +62,7 @@ let are_balanced_exn (s : string) : bool =
 let are_balanced_functional (s : string) : bool =
   String.fold_until s ~init:[]
     ~f:(fun stk ch ->
-      match (ch, stk) with
+      match ch, stk with
       | '(', _ | '[', _ | '{', _ -> Continue (ch :: stk)
       | ')', '(' :: tl | ']', '[' :: tl | '}', '{' :: tl -> Continue tl
       | ')', _ | ']', _ | '}', _ -> Stop false
