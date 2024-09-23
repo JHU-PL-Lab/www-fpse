@@ -321,6 +321,7 @@ module FloatMap :
 val mm : 'a FloatMap.t = <abstr> (* t is the key type, and 'a is the value (anything for empty map) *)
 # let mm' = Map.add_exn mm ~key:0.4 ~data:5;; (* Just use Map. interface since mm defines key type *)
 val mm' : (float, int, FloatMap.Key.comparator_witness) Map.t = <abstr> (* three types: (key,value,witness) *)
+(* observe above how the Map. functions return a different type; it is compatible with 'a FloatMap.t *)
 # Map.find_exn mm' 0.4 ;; 
 (* Use FloatMap.of_X functions to convert to a float map: *)
 # let mm2 = FloatMap.of_alist_exn [2.3,"hi"; 3.3,"low"; 2.6,"medium"; 22.2,"wavy"];;
