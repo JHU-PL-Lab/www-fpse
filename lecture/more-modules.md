@@ -75,37 +75,14 @@ utop # compare_nucleotide C A;;
 ```
 
 
-### JSON format manipulation
+#### JSON format
 
+* JSON is a common standard for data-as-text and may be useful in your project
 * `Core` does not have libraries for dealing with JSON unfortunately.
-  - `sexp` is the "JSON of the OCaml universe"
-* But, if you need it, someone else has made such a macro library, `ppx_deriving_yojson` which works with the `yojson` library to do something like what `deriving sexp` above did.
-* With these libraries you can trivially define a to/from JSON format function on any type
- - this will save wear and tear on your fingers, no need to convert.
+  - `sexp` is the "JSON for Core"
+* If you need JSON conversion, use `ppx_deriving_yojson` which works with the `yojson` library to do something like what `deriving sexp` above did.
+* **Aside**: `ppx_deriving_yojson` is not compatible with `ppx_jane` so if you want to derive equality and comparisons along with `yojson` you need to use `#require "ppx_deriving.eq";; / [@@deriving eq]` and `#require "ppx_deriving.ord";; / [@@deriving ord]` in place of the `equal/compare` deriving in `ppx_jane`. `ppx_deriving show`, which prints variant type data, is also not compatible with `ppx_jane`.
 
-```ocaml
-# #require "ppx_deriving_yojson";; (* see the ppx_deriving_yojson docs linked in HW for `dune` use *)
-# type nucleotide = A | C | G | T [@@deriving yojson];;
-type nucleotide = A | C | G | T
-val nucleotide_to_yojson : nucleotide -> Yojson.Safe.t = fun
-val nucleotide_of_yojson :
-  Yojson.Safe.t -> nucleotide Ppx_deriving_yojson_runtime.error_or = <fun>
-# nucleotide_to_yojson A;;
-- : Yojson.Safe.t = `List [`String "A"] (* This is an OCaml inferred variant type *)
-# type n_list = nucleotide list [@@deriving yojson];; (* extend to lists of nuc's *)
-type n_list = nucleotide list
-val n_list_to_yojson : n_list -> Yojson.Safe.t = <fun>
-val n_list_of_yojson :
-  Yojson.Safe.t -> n_list Ppx_deriving_yojson_runtime.error_or = <fun>
-# n_list_to_yojson [A;A;G];;
-- : Yojson.Safe.t =
-`List [`List [`String "A"]; `List [`String "A"]; `List [`String "G"]]
-# [A;A;G] |> n_list_to_yojson |> Yojson.Safe.pretty_to_string |> print_endline;;
-[ [ "A" ], [ "A" ], [ "G" ] ]
-- : unit = ()
-```
-* See the docs for more examples, in particular for records which is the bread and butter of JSON data: key-value collections.
-* **Aside**: `ppx_deriving_yojson` is not compatible with `ppx_jane` so if you want to derive equality and comparisons along with `yojson` you need to use `#require "ppx_deriving.eq";; / [@@deriving eq]` and `#require "ppx_deriving.ord";; / [@@deriving ord]` in place of the `equal/compare` deriving in `ppx_jane`. 
 ## Defining Modules in the top loop or nesting them in a file
 
 * Modules can be defined in the top loop just like how we had defined nested modules in a `my_module.ml` file
@@ -172,32 +149,33 @@ and it will define the module with the above signature on it
 * They let us define a generic code library to which we can plug in some concrete code
     - in other words, just like what higher-order functions do except for modules
     - the main advantage is we get to include *types* as parameters since modules have types in them: very powerful!!
-* Note that you don't want to make every dependent module a parameter as that would get too confusing.
-   - `dune` automatically makes referenced libraries available so most of the time that is the way one module uses another.
-* Functors are needed when the parameter module can be more than one thing.
+* You only want to use a functor when there could be multiple modules to plug in.
+  - Example A: if you just want to write code depending on our `Simple_set` module, use put `(libraries simple_et)` in the `dune` file and use it. 
+  - Example B: on the other hand if you want to be able to "plug in" which implementation of sets you use, make a functor where the set module is a parameter.
+
 #### Simple Functors Example
 
 * Lets use a functor to fix the problem of the `equal` function needed as a parameter to `remove` and `contains` on our `Simple_set` module.
-* (Note the `Core` libraries also do this for `Core.Set` for example)
+* (Note the `Core` libraries also do this for `Core.Set`, it is a functor)
 
 ```ocaml
-(* The following module type is "some data type plus = on it" *)
+(* This module type is "some data type plus equality on it" *)
 module type Eq = sig 
 type t
 val equal: t -> t -> bool 
 end
 
-module Simple_set_functor (M: Eq) = 
+module Simple_set_functor (M: Eq) = (* this syntax defines a functor: a function on modules *)
 struct
 open Core
-type t = M.t list
+type t = M.t list (* Use M.t to grab the underlying type from module M *)
 let emptyset : t = []
 let add (x : M.t) (s : t) = (x :: s)
 let rec remove (x : M.t) (s: t) =
   match s with
   | [] -> failwith "item is not in set"
   | hd :: tl ->
-    if M.equal hd x then tl
+    if M.equal hd x then tl (* M.equal to use the equal function from M *)
     else hd :: remove x tl
 let rec contains (x: M.t) (s: t) =
   match s with
@@ -207,9 +185,9 @@ let rec contains (x: M.t) (s: t) =
 end
 ```
 
-* Notice how the type that was polymorphic, `'a` in the original `Simple_set`, is `M.t` here -- we are taking the type from the `Eq` module, that is the type we need.
-    - In general there are many such programming patterns where types are treated more like data in OCaml -- adds to the power.
-* This is a great example of the usefulness of functors - many different possible types and their equivalences could be supplied with different `M`'s.
+* Notice how the type that was polymorphic, `'a` in the original `Simple_set`, is a *parameter* `M.t` here -- we are taking the type from the `Eq` module, that is the type we need.
+    - (In general there are many such programming patterns where types are treated more like data in OCaml -- adds to the power of OCaml.)
+* With this code, the simple set can be set up to work at any type with equality, as we now show.
 ### Using functors
 
 * Pass a module to a functor to make a new module
@@ -228,15 +206,15 @@ module String_set :
 ```
 * Note that we passed in a `String` module where the parameter had the `Eq` module type - why did this work?
 * Answer: `String.t` is the underlying type of the string, and `String.equal` exists as an equality operation on strings, so `String` matches the `Eq` module type
- - (`utop` command `#show_module String` will dump the full module if you want to verify `t` and `equal` are there)
+   - (`utop` command `#show_module String` will dump the full module if you want to verify `t` and `equal` are there)
 * Note `String` also has a whole **ton** of other functions, types, etc
   - but like with subclasses or Java interfaces you match a `sig` if you have "at least" the stuff needed.
 * Here is one way you can test if a module matches a module type:
 
 ```ocaml
-# module String2 = (String : Eq);;
+# module String2 : Eq = String;;
 module String2 : Eq
-# module String2 : Eq = String;; (* Equivalent way to write the above *)
+# module String2 = (String : Eq);;  (* Equivalent way to write the above *)
 module String2 : Eq
 ```
  - This declares a new module `String2` which is `String` matched against the `Eq` type.
@@ -266,7 +244,21 @@ module Nuc_set :
 
 #### Types of functors
 
-* Functors also have types; OCaml inferred a type for `Simple_set_functor` above but we can also declare it:
+* Functors also have types; OCaml inferred a type for `Simple_set_functor` above which was
+
+```ocaml
+module Simple_set_functor :
+  functor (M : Eq) ->
+    sig
+      type t = M.t list
+      val emptyset : t
+      val add : M.t -> t -> M.t list
+      val remove : M.t -> t -> M.t list
+      val contains : M.t -> t -> bool
+    end
+```
+
+ but we can also declare it:
 
 ```ocaml
 # module type SSF = functor (M : Eq) ->
@@ -280,34 +272,36 @@ module Nuc_set :
 ```
 * Observe the type is generally `functor (M : Module_type) -> sig ... end`
 * Notice how the argument module `M` occurs in the result type since it has types in it
- - Such a type is called a *dependent type*
+ - Such a type is called a *dependent type*: the type of the result depends on the value of the argument
 
 ### Type Hiding
 
-* The above implemetation of our simple set functor does not hide the fact that the underlying implementation is lists
-* Recall the goal of "abstract data types (ADTS)" is for programmers to avoid exposing implementations 
-* But, hiding is harder here than in the non-functor version: once we supply the `=` we have also fixed the type.  So e.g. `emptyset` is not polymorphic, it cannot be type `'a t` any more.
-* One solution is to hide the type completely in the functor type:
+* In the above functor we were exposing the underlying implementation of the set used a list
+* But, we can again do the same hiding trick we did in the `.mli` file etc: leave that off the type.
+* Observe now that we have `type t` whereas in the original simple set we had `'a t`
+   - its not a parametric type any more, the type parameter is in the module passed in
+   - so after applying the functor that type is "baked in" to the resulting module.
 
 ```ocaml
 module type SSF_hidden = functor (M : Eq) ->
     sig
-      type t (* hide the type completely, no longer 'a t *)
+      type t (* hide the type as before but just `type t` now not `type 'a t` *)
       val emptyset : t
       val add : M.t -> t -> t
       val remove : M.t -> t -> t
       val contains : M.t -> t -> bool
     end;;
-    module Simple_set_functor_hidden = (Simple_set_functor : SSF_hidden)
+    module Simple_set_functor_hidden : SSF_hidden = Simple_set_functor
     module String_set_hidden = Simple_set_functor_hidden(String);;
 ```
 
 ### File-based functors and type hiding
 
-* In making real software we are putting all the code in the `.ml` files
-* So for functors just put the `Simple_set_functor` in the file, say file `simple_set.ml`
-  - but, we will rename it `Make` so `Simple_set.Make(Float)` for example will make a `Simple_set`
-* Then to hide information make a `simple_set.mli` file which lists the types of everything
+* The above is the top loop version of functors, but we will be using files in actual coding
+* Code the `Simple_set_functor` above by putting it in the file, say file `simple_set.ml`
+  - *and*, rename it `Make` so `Simple_set.Make(Float)` for example will make a `Simple_set`
+  - this reads better, we are "making a simple set"; libraries also use this naming standard
+* To hide information make a `simple_set.mli` file which lists the types of everything
   - There is a specific naming convention on how to do this which is subtle
   - We will review [set-example-functor.zip](../examples/set-example-functor.zip) which is our old set example redone as a functor
 
@@ -315,7 +309,7 @@ module type SSF_hidden = functor (M : Eq) ->
 
 * The `Core` advanced data structures support something similar to what we did above
   - "plug in the comparison in an initialization phase and then forget about it"
-* Here for example is how you make a map where the key is a built-in type (which has an associated module)
+* Here for example is how you make a (functional) map where the key is a built-in type
 * `Map.Make` is a functor just like our `Simple_set.Make` above
  - We need to supply the type of *keys* as we need to compare on them; the types of values is arbitrary so we let it be `'a` as in a list
 
@@ -324,17 +318,21 @@ module type SSF_hidden = functor (M : Eq) ->
 module FloatMap :
   sig ... end
 # let mm = FloatMap.empty;;
-val mm : 'a FloatMap.t = <abstr> (* mm itself encapsulates that it is a Float map *)
-# Map.add_exn mm ~key:0.4 ~data:5 |> Fn.flip Map.find_exn 0.4 ;; (* Can just use Map. interface since mm defines key type *)
-- : int = 5
+val mm : 'a FloatMap.t = <abstr> (* t is the key type, and 'a is the value (anything for empty map) *)
+# let mm' = Map.add_exn mm ~key:0.4 ~data:5;; (* Just use Map. interface since mm defines key type *)
+val mm' : (float, int, FloatMap.Key.comparator_witness) Map.t = <abstr> (* three types: (key,value,witness) *)
+# Map.find_exn mm' 0.4 ;; 
+(* Use FloatMap.of_X functions to convert to a float map: *)
+# let mm2 = FloatMap.of_alist_exn [2.3,"hi"; 3.3,"low"; 2.6,"medium"; 22.2,"wavy"];;
 ```
 
+* (Ignore the above `FloatMap.Key.comparator_witness` type for now, we will learn about that later)
 * Note it requires a bit more than just the type and `compare` to be in `Float` for this to work with `Core`
  - `#show Map.Make;;` will show the functor type and we can look at what `Map.Make`s argument expects
  - In particular to/from S-expression conversions are also needed; use `[@@deriving compare, sexp]` on your own type:
 
 ```ocaml
-#require "ppx_jane";;
+#require "ppx_jane";; (* this is in the ~/.ocamlinit so you should not need this *)
 # module IntPair = struct
 type t = int * int [@@deriving compare, sexp]
 end;;
@@ -370,7 +368,8 @@ Error: Signature mismatch:
        File "src/list.mli", line 12, characters 0-48: Actual declaration
 ```
 
-* Mildly annoying solution: explictly make a module for the list type you care about:
+* The "different arities" means one has a type parameter (`list`) and the other doesn't (`t`)
+* Simple solution: explictly make a module for the list type you care about:
 
 ```ocaml
 # module SList = struct type t = string list [@@deriving compare,sexp] end;;
@@ -385,7 +384,7 @@ module SList :
 module SListMap :
   sig ... end
 ```
-Simpler way to do above: can inline the module definition, no need to name it
+Another way to do above: can inline the module definition, no need to name it
 ```ocaml
 # module SListMap = Map.Make(struct type t = string list [@@deriving compare,sexp] end);;
 module SListMap :
@@ -402,8 +401,12 @@ type 'a intpairmaptree =
     Leaf
   | Node of 'a IPMap.t * 'a intpairmaptree * 'a intpairmaptree
 ```
-* Notice how we refer to our pair map type as `'a IPMap.t`, its a bit of a mouthful to see at first
-  - but if it was a list it would be `'a list` here and `'a List.t` is just an alias for that.
+* Notice how we refer to our pair map type as `'a IPMap.t`
+  - The keys are integer pairs, that is built-in to `IPMap.t`, and the values are `'a`s, the parameter here
+  - Compare with `'a list` instead of a map in the nodes; `'a List.t` is just an alias for that type:
+  ```ocaml
+  type 'a listtree = Leaf | Node of ('a List.t) * 'a listtree * 'a listtree;; 
+  ```
 
 ### Larger Example Using Core.Map
 * We will go over the code of [school.ml](../examples/school.ml), simple code that uses a `Core.Map`.
