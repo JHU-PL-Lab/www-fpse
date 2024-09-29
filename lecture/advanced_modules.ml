@@ -72,6 +72,8 @@ type nonrec ('key, 'value, 'cmp) t = ('key, 'value, 'cmp) Map.t (* existential /
 (* Module type hiding and un-hiding review *)
 (* *************************************** *)
 
+(* META COMMENT: just review the more-modules.md lecture here instead *)
+
 (* First we review sharing constraints ("with" in module types) 
    this is similar to what we did in the more-modules lecture but 
    we will make the code more generic with functors - like HW 3/4 *)

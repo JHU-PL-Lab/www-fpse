@@ -321,7 +321,8 @@ module FloatMap :
 val mm : 'a FloatMap.t = <abstr> (* t is the key type, and 'a is the value (anything for empty map) *)
 # let mm' = Map.add_exn mm ~key:0.4 ~data:5;; (* Just use Map. interface since mm defines key type *)
 val mm' : (float, int, FloatMap.Key.comparator_witness) Map.t = <abstr> (* three types: (key,value,witness) *)
-(* observe above how the Map. functions return a different type; it is compatible with 'a FloatMap.t *)
+(* observe above how the Map. functions return a different type; it is compatible with 'a FloatMap.t: *)
+# let mm'' : int FloatMap.t = mm';; (* assignment shows mm' type above same as int FloatMap.t *)
 # Map.find_exn mm' 0.4 ;; 
 (* Use FloatMap.of_X functions to convert to a float map: *)
 # let mm2 = FloatMap.of_alist_exn [2.3,"hi"; 3.3,"low"; 2.6,"medium"; 22.2,"wavy"];;
@@ -409,13 +410,12 @@ type 'a intpairmaptree =
   type 'a listtree = Leaf | Node of ('a List.t) * 'a listtree * 'a listtree;; 
   ```
 
-### Larger Example Using Core.Map
+### A Small Example Using Core.Map
 * We will go over the code of [school.ml](../examples/school.ml), simple code that uses a `Core.Map`.
-* Note that there is a fancier way than `Map.Make` using advanced features we will cover in detail later: *first-class modules*.
-  - We will look at [cool_school.ml](../examples/cool_school.ml) which re-writes the `school.ml` example to use first-class modules
+* Note that there is a better method than `Map.Make` using advanced features we will cover in detail later: *first-class modules*.
+  - We will briefly look at [cool_school.ml](../examples/cool_school.ml) which re-writes the `school.ml` example to use first-class modules
   - The advantage of this code is you don't need to make a new module for every type you use it at
-  - Imagine if for every `List` type we had to make an `IntList`, `StringList` etc module - painful!
-  - (`List` itself avoids this problem by not being comparison-friendly, we had to pass in `compare` to `List.sort` for example)
+  - Also avoids the `Map.add` vs `IntMap.empty` issue of two different interfaces to use same map.
 
 ### The `with` type refinement operation
 
@@ -488,12 +488,55 @@ module type Pair_int_string =
   end
 ```
 
-Sometimes we also want to inline the types we are instantiating in `with`: use `:=` in place of `=` for that:
+`with` is often needed in functors which need to expose a type in a parameter:
 
 ```ocaml
-# module Matched_pair = (Pair : Pair with type l := int with type r := string);;
-module Matched_pair :
-  sig type t = int * string val left : t -> int val right : t -> string end
+(* random data with equality *)
+module type Datum = sig
+  type t
+  val equal : t -> t -> bool
+end
+
+module Make_pair_dumb(Datum1 : Datum)(Datum2 : Datum) : Pair = 
+struct
+  type l = Datum1.t (* Oops this gets hidden since Pair type just has "type l" *)
+  type r = Datum2.t (* ditto *)
+  type t = l * r
+  let left (p : t) = match p with (a,_) -> a
+  let right (p : t) = match p with (_,b) -> b
+  let equal (p1 : t) (p2 : t) = Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
+end
+
+module Example_pair_dumb = Make_pair_dumb(Int)(String)
+(* Example_pair_dumb.left (1,"e") fails, we hid the fact that l/r are int/string *)
+
+Let us fix this by specializing the `Pair` module type with `with`:
+```ocaml
+module Make_pair_smarter(Datum1 : Datum)(Datum2 : Datum) : (Pair with type l = Datum1.t with type r = Datum2.t) = 
+struct
+  type l = Datum1.t
+  type r = Datum2.t
+  type t = l * r
+  let left (p : t) = match p with (a,_) -> a
+  let right (p : t) = match p with (_,b) -> b
+  let equal (p1 : t) (p2 : t) = Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
+end
+
+module Example_pair_smarter = Make_pair_smarter(Int)(String)
+```
+Sometimes we might want to *inline* the types we are instantiating in `with`: use `:=` in place of `=` for that:
+
+```ocaml
+module Make_pair_smartest(Datum1 : Datum)(Datum2 : Datum) : (Pair with type l := Datum1.t with type r := Datum2.t) = 
+struct
+  type l = Datum1.t
+  type r = Datum2.t
+  type t = l * r
+  let left (p : t) = match p with (a,_) -> a
+  let right (p : t) = match p with (_,b) -> b
+  let equal (p1 : t) (p2 : t) = Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
+end
+module Example_pair_smartest = Make_pair_smartest(Int)(String)
 ```
 
 ### Other Data Structures in `Core`

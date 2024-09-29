@@ -16,7 +16,6 @@ let (empty : t) = Map.empty(module Int) (* new syntax: first-class module Int *)
 
 (* ***************************************************** *)
 (* Everything from here on down is the same as school.ml *)
-(* but using Map.add etc instead of IntMap.add etc       *)
 (* ***************************************************** *)
 
 
