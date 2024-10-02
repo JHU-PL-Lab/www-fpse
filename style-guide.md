@@ -80,7 +80,12 @@ This document would not have been made possible without input of the original FP
 
 ## Indentation
 
-In this course you will be required to use and automatic code formatter, either `ocamlformat` or `ocp-indent`.  Depending on what editor you are using one other the other may be the preferred option.  The convention dictated by these formatters mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don't use tabs for indentation!)  
+In this course you will be required to use an automatic code formatter, we recommend that you use `ocamlformat` as it works directly with the default course install.  The convention dictated by `ocamlformat` mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don't use tabs for indentation!).  To enable `ocamlformat` for your project you need to put an (empty) file at the root with the name `.ocamlformat`.  You can simply make this file with the shell command 
+
+```sh
+touch .ocamlformat
+``` 
+at the root of your project.  Note that the homeworks should have this file present for you already.
 
 To automatically format your code in VSCode, use `option-shift-F` on Mac or `alt-shift-F` on Windows.  The following examples show how these tools indent common OCaml expressions:
 

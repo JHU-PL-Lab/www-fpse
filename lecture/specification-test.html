@@ -87,11 +87,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>There are many levels of interpretation for “correct”
     <ul>
       <li>Informal spec.: we had some vague idea of what the code should do, wrote it, iteratively addressed feedback of users until bug reports shrunk to very low levels.</li>
-      <li>Semi-formal spec.: Sat down with stakeholders, wrote out a specification document in English with a few pictures/formulas, added some tests to code which affirmed aspects of this spec.</li>
+      <li>Semi-formal spec.: Sat down with stakeholders, wrote out a specification document in English with a few pictures/formulas, added many tests to code which affirmed all aspects of this spec.</li>
       <li>Rigorous spec.: Have an unambiguous mathematical notion of what correct behavior should be, write it out as the formal specification, make sure code meets it.</li>
     </ul>
   </li>
-  <li>In practice all of these modes can be fruitful depending on the project and how mission-critical it is.</li>
+  <li>The best mode from the above depends on the project: how complex are the algorithms/architecture, and how mission-critical is it?
+    <ul>
+      <li>Need to go further down the above list as complexity/mission-critical aspects increase</li>
+    </ul>
+  </li>
 </ul>
 
 <h3 id="forms-of-specification">Forms of specification</h3>
@@ -106,7 +110,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Types, e.g. writing an <code>.mli</code> file before implementing the code
     <ul>
       <li>Gives a very rigorous, compiler-checked skeleton for the code; we are doing this for you on the assignments</li>
-      <li>Much more precise than the previous in terms of code/spec relationship, but limited expressiveness</li>
+      <li>Much more precise than the previous in terms of code/spec relationship, but limited expressiveness since types can express only so much</li>
     </ul>
   </li>
   <li>Tests
@@ -118,12 +122,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Full logical assertions specifying code behavior in terms of math
     <ul>
-      <li>e.g. <em>precondition</em> on a function that tree parameter is a binary tree (left values &lt; right values)</li>
-      <li>e.g. <em>precondition</em> on a function that tree parameter is a <em>balanced</em> binary tree</li>
-      <li>e.g. <em>postcondition</em> that <code>List.sort</code> always returns a sorted list</li>
-      <li>e.g. <em>precondition</em>/<em>postcondition</em> on tree <code>add</code> function that if the input tree is balanced the output tree will also be.</li>
-      <li>e.g. <em>invariants</em> on data structures such as a <code>Set</code> implementation which uses an underlying always-sorted list.</li>
-      <li>e.g. <em>inductive invariants</em> on recursive algorithms, e.g. assuming that in the body of <code>reverse</code> that it works on a shorter list.</li>
+      <li>a <em>precondition</em> is a logical constraint on function arguments (before it is called: “pre”)</li>
+      <li>a <em>postcondition</em> is a constraint on the value returned from a function</li>
+      <li>an <em>invariant</em> is a property internal to the function or internal to a data structure that always holds (it “invariably” holds)</li>
+      <li>Some examples
+        <ul>
+          <li><em>precondition</em> on a function that tree parameter is a binary tree (left values &lt; right values)</li>
+          <li><em>precondition</em> on a function that tree parameter is a <em>balanced</em> binary tree</li>
+          <li><em>postcondition</em> that <code>List.sort</code> always returns a sorted list</li>
+          <li><em>precondition</em>/<em>postcondition</em> on tree <code>add</code> function that if the input tree is balanced the output tree will also be.</li>
+          <li><em>invariants</em> on data structures such as a <code>Set</code> implementation which uses an underlying always-sorted list.</li>
+          <li><em>inductive invariants</em> on recursive algorithms, e.g. assuming in the body of list <code>reverse</code> that it works on a shorter list.</li>
+        </ul>
+      </li>
       <li>Logical assertions are more general than tests since they are for <em>all</em> inputs
         <ul>
           <li>but not necessarily verified (but, invariants do guide tests - write tests to verify on lots of examples)</li>
@@ -144,9 +155,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Fact: types outline the “shape” of the code you need to write and serve as a “structural” spec.</p>
 
 <ul>
-  <li>You have been doing type-directed programming, perhaps getting very annoyed whilst
+  <li>You have been doing type-directed programming all along
     <ul>
-      <li>With time the annoyance turns to thanks (we promise!)</li>
+      <li>We give you the types for most HW questions</li>
     </ul>
   </li>
   <li>Principle is: writing code that matches declared type will get you well on the way to an implementation
@@ -164,7 +175,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="type-directed-programming-examples">Type-directed programming examples</h4>
 
-<p>Review example: not bubbling up <code>option</code> or other wrapped results properly</p>
+<p>(These examples are super simple, they only serve to clarify what the term means.)</p>
+
+<p>Example: not bubbling up <code>option</code> or other wrapped results properly</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">zadd</span> <span class="p">(</span><span class="n">l1</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">l2</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span> <span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip</span> <span class="n">l1</span> <span class="n">l2</span> <span class="k">in</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span> <span class="n">l</span><span class="p">;;</span>
 <span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">74</span><span class="o">-</span><span class="mi">75</span><span class="o">:</span>
@@ -175,7 +188,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>To solve this type error you will need to <code>match</code> on the result, which should fix both type error and behavior</li>
 </ul>
 
-<p>Review example: with partial parameters applied, remainder types hint at what is needed.</p>
+<p>Review example: with partial parameters applied, the remaining types hint at what is still needed.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">3</span><span class="p">;</span><span class="mi">3</span><span class="p">];</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span><span class="mi">4</span><span class="p">];</span> <span class="p">[</span><span class="mi">22</span><span class="p">;</span><span class="mi">17</span><span class="p">]]</span> <span class="k">in</span>
 <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">l</span><span class="p">;;</span>
@@ -185,8 +198,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The type shows that <code>f</code> needs to be a function taking an <code>int list</code> as argument.</li>
 </ul>
 
-<p>Review example: the type in an <code>.mli</code> file can direct your implementation, e.g. <code>map</code> on <code>dict</code> example from HW2</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">map</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">dict</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">dict</span>
+<p>Review example: the type in an <code>.mli</code> file can direct your implementation, e.g. <code>map</code> on <code>dict</code> example from HW2 (<code>t</code> here is the <code>simpledict</code>)</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">map</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span>
 </code></pre></div></div>
 <ul>
   <li>Q: “how can I get a dict of <code>'b</code>’s built from a dict of <code>'a</code>’s here</li>
@@ -233,7 +246,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p><a name="specs"></a></p>
 
-<h3 id="preconditions-postconditions-and-data-structure-invariants">Preconditions Postconditions and Data Structure Invariants</h3>
+<h3 id="preconditions-postconditions-and-data-structure-invariants">Preconditions, Postconditions, and Data Structure Invariants</h3>
 
 <ul>
   <li>Types are fine for high-level structural information, but cannot express deeper properties.
@@ -270,15 +283,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Precondition on <code>remove</code>: <code>s</code> is not empty (it would always fail otherwise)</li>
-  <li>Stronger precondition on <code>remove</code>: <code>contains x s</code> must hold
-    <ul>
-      <li>could be too strong if caller wants to handle this exception (generally better to avoid exceptions though)</li>
-    </ul>
-  </li>
+  <li>Stronger precondition on <code>remove</code>: <code>contains x s</code> must hold</li>
   <li>Postcondition on <code>remove</code> for it returning set <code>s'</code>:  <code>not(contains x s')</code> - ??
     <ul>
       <li>No, this simple “set” data structure is in fact a multiset and this will not always hold</li>
-      <li>If we had this postcondition on a “real set” spec we would have seen that our implementation failed to meet it</li>
+      <li>If we were trying to implement an actual set this postcondition would let us catch an error</li>
     </ul>
   </li>
   <li>Postcondition on <code>add x s</code>: for the resulting set <code>s'</code>, <code>contains x s'</code> holds</li>
@@ -298,16 +307,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">let</span> <span class="n">s'</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span> <span class="k">in</span> <span class="k">assert</span> <span class="p">(</span><span class="n">contains</span> <span class="n">x</span> <span class="n">s'</span><span class="p">);</span> <span class="n">s'</span>
 </code></pre></div>    </div>
   </li>
-  <li>Good for development mode, but not after deployment (slows things down)</li>
+  <li>Asserts are handy for development mode, but not after deployment (slows things down)</li>
   <li>Generally it is better to make tests to spot-check assertions instead of using <code>assert</code>
     <ul>
-      <li><a href="https://github.com/janestreet/ppx_inline_test"><code>ppx_inline_tests</code></a> is a library where you can write tests in-line with your code</li>
-      <li>example: <code>let s_test = .. in let%test_unit "add adds" = assert (contains (add s_test x) x)</code></li>
+      <li>But, one thing handy about <code>assert</code> is it puts the assertions in the code, as “rigorous comments”</li>
+      <li>Middle approach: <a href="https://github.com/janestreet/ppx_inline_test"><code>ppx_inline_tests</code></a> is a library where you can write tests in-line with your code</li>
+      <li>example:
+        <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="o">%</span><span class="n">test</span> <span class="s2">"add adds"</span> <span class="o">=</span> <span class="n">contains</span> <span class="p">(</span><span class="n">add</span> <span class="p">(</span><span class="n">add</span> <span class="mi">5</span> <span class="n">emptyset</span><span class="p">)</span> <span class="mi">22</span><span class="p">)</span> <span class="mi">22</span>
+</code></pre></div>        </div>
+      </li>
       <li>inline tests both document invariants and serve as tests: two-for-one!</li>
       <li>They also allow functions and data structures hidden in a module to be tested
         <ul>
           <li>one issue with OCaml’s modules is the tester module needs to see the local functions in the library module so they need to be made non-local for that - oops!</li>
-          <li>For Assignment 2 we didn’t hide the underlying tree type of the dictionary so you could use it in tests</li>
         </ul>
       </li>
     </ul>
@@ -322,7 +334,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>for example the “ordered tree” and “balanced tree” examples mentioned above</li>
     </ul>
   </li>
-  <li>Example from <code>dict</code> on homework: <code>is_ordered</code> must hold for the binary tree.</li>
+  <li>Example from <code>simpledict</code> on homework: <code>is_ordered</code> must hold for the <code>Simpletree.t</code>.</li>
   <li>Such data structure invariants should be made clear in the code documentation</li>
 </ul>
 
@@ -331,7 +343,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Recursion and other loops (e.g. in <code>fold</code>) is a prime place to assert invariants</li>
   <li>(Even if you don’t write them out, <em>thinking</em> of the invariants are critical to coding recursive programs)</li>
-  <li>A standard invariant for recursive functions is that the recursive calls return what the outer function expected</li>
+  <li>A standard invariant for recursive functions is that the recursive calls return what the calling function expected</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span> 
@@ -341,8 +353,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 <ul>
   <li>Note that we have to use the built-in <code>List.rev</code> to test our version - somewhat circular (note <code>Poly</code> quick-open lets <code>=</code> work on any type)</li>
-  <li>In general a big issue with specification is it is often hard to give a code-based definition of the full spec.</li>
-  <li>So, our main focus is on <em>partial</em> specs, give sanity conditions and not complete property</li>
+  <li>In general a big issue with specification is it is often very difficult to give a code-based definition of the full spec.</li>
+  <li>So, the main focus should be on <em>partial</em> specs, give sanity conditions</li>
 </ul>
 
 <h3 id="invariants-over-folds-as-examples">Invariants over folds as examples</h3>
@@ -357,7 +369,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>also assume <code>accum</code> is initially <code>init</code></li>
     </ul>
   </li>
-  <li>Folding right: just flip the order the list is walked over in the above</li>
+  <li>Folding right: almost identical; “for all elements to the <em>right</em> in the list”, not “left”</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* invariant for length: accum is length of list up to here *)</span>
@@ -374,11 +386,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Formal verification is <em>proving</em> the invariants hold (e.g. that <code>rev</code> really reverses the list)</li>
-  <li>It is of only limited applicability in mainstream SE but will become more common through your careers</li>
+  <li>It is currently of only limited applicability in mainstream SE but is becoming more common as tools improve</li>
   <li>A simple view of what it is is the preconditions/postconditions/invariants/<code>asserts</code> above will be <strong>verified</strong> to always hold by a computer program.
     <ul>
       <li>Like how a compiler verifies type declarations but on a much grander scale.</li>
-      <li>End goal is to do this over a full spec. but verification of partial spec is also good (e.g. dict being a binary tree)</li>
+      <li>End goal is to do this over a full spec. but verification of partial spec is also good (e.g. dictionary is a balanced binary tree)</li>
     </ul>
   </li>
 </ul>
@@ -386,8 +398,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="specification-and-abstraction">Specification and Abstraction</h3>
 
 <ul>
-  <li>The more completely a module is specified the less the users need to know about the underlying implementration</li>
-  <li>The built-in <code>Core.Map</code> etc modules are examples where the users need to know almost nothing about the implementation</li>
+  <li>The more completely a module is specified the less the users need to know about the underlying implementation</li>
+  <li><code>Core.Map</code> is an example where the users need to know almost nothing about the implementation</li>
   <li>Note that <em>documentation</em> of the specification in the interface is important; sometimes <code>Core</code> is weak there</li>
   <li>On your own libraries you can do the same
     <ul>
@@ -399,15 +411,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h2 id="testing">Testing</h2>
 
 <ul>
-  <li>Testing wears two very different but very useful hats:
+  <li>Testing wears two very different but very useful hats
     <ol>
       <li>Specification-based: use tests to define and refine what the code should do</li>
       <li>Implementation-based: find bugs in code, for example when you change code make sure you didn’t break it.</li>
     </ol>
   </li>
-  <li>Moral: when testing, wear both hats
+  <li>Both hats are important
     <ul>
-      <li>Writing tests before fully coding the answer makes the tests serve as your “coding spec”</li>
+      <li>Writing tests before fully coding the answer lets the tests serve as your “coding spec”</li>
       <li>Adding tests for corner cases will flesh out the spec</li>
       <li>Adding tests covering past bugs will make sure they are caught quickly next time</li>
     </ul>
@@ -605,7 +617,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>If you want to verify some code raises an exception, use <code>assert_raises</code></li>
   <li>To perform acceptance testing (I/O), use <code>assert_command</code> to run a shell command and compare against output
     <ul>
-      <li>we are using <code>assert_command</code> to test your A2P2</li>
+      <li>in the A4 <code>exec_tests.ml</code> code we provided you can see we are using <code>assert_command</code> to test the executable</li>
     </ul>
   </li>
   <li>If you need fixed setup/teardown code bracketing a group of tests to setup e.g. files: <code>bracket_tmpfile</code></li>
@@ -639,16 +651,16 @@ OUnit2 <a href="https://ocaml.org/p/ounit2/latest/doc/index.html">API docs</a></
     </ul>
   </li>
   <li>See <a href="https://github.com/aantron/bisect_ppx">Bisect docs</a> for more details</li>
-  <li>Note that if you have lines of code that you know should not be run (e.g. invariants that should not fail) you can put <code>[@@@coverage off]</code> on them.</li>
+  <li>Note that if you have lines of code that you know should not be run (e.g. invariants that should not fail) you can put <code>[@@@coverage off]</code> on them.  See <a href="https://github.com/aantron/bisect_ppx?tab=readme-ov-file#controlling-coverage-with-coverage-off">the docs</a> for various forms of <code>coverage off</code> depending on how much code you want to turn off coverage for.</li>
 </ul>
 
 <p>We will check how well my tests of the <a href="../examples/set-example.zip">simple set example</a> covered the code using Bisect.  The only addition to code is the <code>(preprocess (pps bisect_ppx))</code> added to <code>src/dune</code> for the library.</p>
 
 <h2 id="testing-executables">Testing executables</h2>
 <ul>
-  <li><code>OUnit</code> can be used to test executables: <code>OUnit2.assert_command</code> can run a shell command (e.g. your OCaml executable)</li>
+  <li>As mentioned above <code>OUnit</code> can be used to test executables: <code>OUnit2.assert_command</code> can run any shell command (in particular, your OCaml <code>.exe</code> file)</li>
   <li><code>dune</code> also contains an extension called <code>cram</code> which allows for output to be compared against expected output for a given input</li>
-  <li>It is very general, you just specify the shell command to run (can test non-OCaml just as easily)</li>
+  <li>It is very general, you just specify the shell command to run (like <code>assert_command</code> can also test non-OCaml executables)</li>
   <li>We will super-briefly skim the <a href="https://dune.readthedocs.io/en/stable/tests.html#cram-tests"><code>cram</code> docs</a></li>
 </ul>
 

@@ -172,7 +172,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h2 id="indentation">Indentation</h2>
 
-<p>In this course you will be required to use and automatic code formatter, either <code>ocamlformat</code> or <code>ocp-indent</code>.  Depending on what editor you are using one other the other may be the preferred option.  The convention dictated by these formatters mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don’t use tabs for indentation!)</p>
+<p>In this course you will be required to use an automatic code formatter, we recommend that you use <code>ocamlformat</code> as it works directly with the default course install.  The convention dictated by <code>ocamlformat</code> mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don’t use tabs for indentation!).  To enable <code>ocamlformat</code> for your project you need to put an (empty) file at the root with the name <code>.ocamlformat</code>.  You can simply make this file with the shell command</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">touch</span> .ocamlformat
+</code></pre></div></div>
+<p>at the root of your project.  Note that the homeworks should have this file present for you already.</p>
 
 <p>To automatically format your code in VSCode, use <code>option-shift-F</code> on Mac or <code>alt-shift-F</code> on Windows.  The following examples show how these tools indent common OCaml expressions:</p>
 
