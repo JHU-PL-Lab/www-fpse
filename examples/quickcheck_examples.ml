@@ -3,12 +3,11 @@
    (libraries core)
    (preprocess (pps ppx_jane))
    in dune file
-   And #require "ppx_jane" in top-loop
 *)
 
 (* `Base_quickcheck` is highly integrated with Core libraries which is why we use it *)
 
-[@@@warning "-32"]
+[@@@ocaml.warning "-32"]
 
 open Core
 
@@ -27,8 +26,11 @@ let rand_int' =  (Quickcheck.random_value ~seed:`Nondeterministic int_gen')
    This is often useful to get repeatable results from test runs
    If it is used, also use Quickcheck.random_sequence to make an unbounded list of such values 
    -- otherwise you will get the same value every time. *)
+let rand_seq = (Quickcheck.random_sequence int_gen')
 
-(* A little function to test out various generators: given a generator returns a random value *)
+let _ = Sequence.next rand_seq (* etc, each call gets another pseudo-random element.  Sequence is the same each time. *)
+
+(* A little function to test various generators: given a generator returns a random value *)
 let rand_from (g : 'a Base_quickcheck.Generator.t) = (Quickcheck.random_value ~seed:`Nondeterministic g)
 
 (* Parameterized type generators need a generator for the parameter 
@@ -38,7 +40,7 @@ let int_list_gen = List.quickcheck_generator Int.quickcheck_generator
 (* One random list *)
 let rand_list = rand_from int_list_gen
 
-(* Shorthand ppx notation *)
+(* Equivalent shorthand ppx notation for making a generator *)
 let int_list_gen' = [%quickcheck.generator: int list]
 
 (* Lists with a narrower range of integers *)
@@ -55,10 +57,11 @@ let rand_list_pair = rand_from (Quickcheck.Generator.both int_list_gen int_list_
 (* But, Quickcheck has some helper functions to make that easier and with lots of extra arguments possible *)
 
 (* IMPORTANT POINT: we always need to know the "correct" answer for the test and that limits what can be tested *)
-(* So, primarily used to validate invariants or to make sure no exceptions are raised *)
+(* So, primarily used to validate invariants or to make sure no exceptions or other failure conditions are raised *)
 
 (* Simple failure example from Real World OCaml *)
 (* Quickcheck.test will run the ~f function on 10000 different random data items by default *)
+(* This example reflects the case that -4611686018427387904 negated is itself .. fun little corner case with integers *)
 let invariant x = assert(Sign.equal (Int.sign (Int.neg x)) (Sign.flip (Int.sign x)))
 
 let testcode () =
@@ -78,12 +81,14 @@ let quick_test () = Quickcheck.test ~sexp_of:[%sexp_of: int]
 (* Here it is packaged as an OUnit.test we can run *)
 let ounit_test = OUnit2.("sign test" >:: fun _ -> quick_test ())
 
-let _ = OUnit2.run_test_tt_main ounit_test (* run our OUnit.test in the top loop *)
+let _ = OUnit2.run_test_tt_main ounit_test (* The usual test runner, recall this will crash utop when finished *)
 
 (* List Reverse Example *)
 
-
-(* Check to see if (reverse o reverse) is identity on all lists using int_list_gen above *)    
+(* Check to see if invariant that (reverse o reverse) is identity on all lists using int_list_gen above *) 
+(* This is an example of how we can combine quickcheck with invariant properties *)   
+(* Postconditions on functions also often imply invariant data structure properties, 
+    e.g. adding an element to a set and then looking up the element should always succeed *)
 let check_a_list_rev (revver : int list -> int list) = 
   Quickcheck.test ~sexp_of:[%sexp_of: int list]
     int_list_gen
@@ -99,10 +104,9 @@ let bad_rev l = match l with 1::_ -> [] | _ -> List.rev l
 let () = check_a_list_rev bad_rev
 
 (* Generators for your own types 
-   Fortunately Quickcheck has an easy ppx to do this, analogous to `@@deriving equal`.  *)
+   Fortunately Quickcheck has an easy ppx to do this with to `@@deriving`.  *)
 
 type complex = CZero | Nonzero of float * float [@@deriving quickcheck]
-
 let compl = rand_from quickcheck_generator_complex
 
 type int_tree = 

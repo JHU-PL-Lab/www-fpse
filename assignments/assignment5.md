@@ -7,7 +7,7 @@ your code for good coverage.
 
 ### The file structure
 
-* [Use this zip file](http://pl.cs.jhu.edu/fpse/assignments/assignment5.zip) for your assignment. 
+* [Use this zip file](https://pl.cs.jhu.edu/fpse/assignments/assignment5.zip) for your assignment. 
 * We are giving you an `.mli` file that describes the expected behavior. We only provide a very small and simple skeleton for *some* of your code.
   * Your implementation goes in `src/finite_group.ml`.
 * You need to write a complete test suite to cover your implementation.

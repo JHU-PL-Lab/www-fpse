@@ -285,7 +285,7 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
   - There is not much in `OUnit2` per se, if you want something extra just write some higher-order functions to do it
 * To review, here is your standard simple `tests.ml` file, this one is from the simple-set example:
   ```ocaml
-  open OUnit2
+  open OUnit2 (* we usually open OUnit2 since it is pervasively used in test files *)
   open Simple_set
 
   let tests = "test suite for set" >::: [
@@ -316,10 +316,10 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
       TestCase (Short, <fun>))])
   ```
 * Then, `OUnit2.run_test_tt_main tests` will run the suite `tests` 
-  - (note this will work but then freeze the top loop alas; the old `run_test_tt` is no longer existing sigh)
+  - (note this will work but will then freeze the top loop unfortunately)
 
 #### How the tests run when you say dune test
-* The above `tests.ml` file is just defining an executable, like `keywordcount.exe` on HW2
+* The above `tests.ml` file is just defining an executable, like `keywordcount.exe` on HW4
 * Build and run the executable to run the tests
 * Here a dune build file which would work for the simple set tests for example:
 
@@ -332,14 +332,13 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
   ))
 
 ; dune rule so command line "dune runtest" (and "dune test") will run tests.
+; in other words, there is nothing special about `dune test`, its just a build plus running `_build/default/test/tests.exe`
 (rule
  (alias runtest)
  (action (chdir %{project_root}
   (run ./test/tests.exe))))
 ```
-
-- The alias rule also runs the tests after building them
-* We in fact use dune shorthand for the above: replace `executable` with `test` and it makes an executable with the above alias to run tests:
+* There is even special shorthand for the above: replace `executable` with `test` and it makes an executable plus the above alias to run tests:
 
 ```scheme
 (test
@@ -381,7 +380,7 @@ let s' = "id tests" >:::
   ["one" >:: (fun _ -> assert_equal (Fn.id 4) 4) ;
    "two" >:: (fun _ -> assert_equal (Fn.id "hello") "hello")];;
 let suites = test_list [s;s'];; (* make suite of suites *)
-let named_suites = "revrev and Fn.id" >: suites (* any tree of tests can be named *)
+let named_suites = "revrev and Fn.id" >: suites (* any tree of tests can be named with >: *)
 ```
 
 Here is the type of `test` under the hood (from the docs) which should make clear why the above works:
@@ -395,7 +394,8 @@ type test =
 
 ### Tangent: defining infix operators
 
-* The OUnit infix operators `>::`/`>:::` are just like `+`, `^` etc
+* The OUnit infix operators `>:`/`>::`/`>:::` are just like `+`, `^` etc
+* Using them arguably makes the code more readable, so consider defining your own infix operators
 
 ```ocaml
 # #require "ounit2";;
@@ -414,12 +414,12 @@ val ( ^^ ) : int -> int -> int = <fun>
 utop # 3 ^^ 5;;
 - : int = 8
 ```
-* Note unlike in C++ we are not overloading operators, `^^` only works on two ints now.
-* The old version of `^^` for printing just got nuked.
+* Note that unlike in C++ we are *not* overloading operators, `^^` only works on two ints now.
+* The old version of `^^` for printing is now shadowed so is not directly accessible.
 * So, new infix ops are always defined within a module to avoid overlap
-* OCaml will eventually have overloading but it is still in the development pipe
+* OCaml will eventually have true operator overloading but it is still in the development pipe
 
-### Making actual tests
+### The different assert_X statements possible in OUnit2
 
 * We used `assert_equal` above which is the OUnit function to check things being equal
 * `assert_bool` which is like the `assert` OCaml command: `assert_bool "name that test" (0=0)` for example
@@ -430,6 +430,25 @@ utop # 3 ^^ 5;;
 
 As always, see the documentation for more details: 
 OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
+
+### Testing executables with cram
+* As mentioned above `OUnit` can be used to test executables: `OUnit2.assert_command` can run any shell command (in particular, your OCaml `.exe` file)
+* `dune` also contains an extension called `cram` which allows for output to be compared against expected output for a given input
+* It is very general, you just specify the shell command to run and expected output
+* See the [`cram` docs](https://dune.readthedocs.io/en/stable/tests.html#cram-tests) if you are interested
+* An example in a file `cramtest.t`.  Non-indented lines are comments, $ is the input and after the input is implicitly the expected output (4 here)
+   ```sh
+  We first create a test artifact called "foo"
+    $ cat >foo <<EOF
+    > foo
+    > bar
+    > baz
+    > EOF
+
+  After creating the fixture, we want to verify that ``wc`` gives us the right result:
+    $ wc -l foo | awk '{ print $1 }'
+    4
+  ```
 
 ### Bisect for OCaml code coverage
 
@@ -447,15 +466,9 @@ OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
 
 We will check how well my tests of the [simple set example](../examples/set-example.zip) covered the code using Bisect.  The only addition to code is the `(preprocess (pps bisect_ppx))` added to `src/dune` for the library.
 
-## Testing executables
-* As mentioned above `OUnit` can be used to test executables: `OUnit2.assert_command` can run any shell command (in particular, your OCaml `.exe` file)
-* `dune` also contains an extension called `cram` which allows for output to be compared against expected output for a given input
-* It is very general, you just specify the shell command to run (like `assert_command` can also test non-OCaml executables)
-* We will super-briefly skim the [`cram` docs](https://dune.readthedocs.io/en/stable/tests.html#cram-tests)
-
 
 <a name = "quickcheck"></a>
-## Base_quickcheck and Random Testing
+## Base_quickcheck and Random aka Property-Based Testing
 ### The big picture of random testing
 
   0. Suppose we have one function `f` that we want to test.
@@ -479,10 +492,9 @@ We will check how well my tests of the [simple set example](../examples/set-exam
 
 ### Fuzz testing vs Quickcheck
 
-* We are focusing on quickchecking (aka property-based testing) now but fuzz testing also important
-* Fuzz testing is to acceptance tests as quickcheck is to unit tests
-  - fuzzers feed in inputs on `stdio` and other input channels to whole app
-  - quickcheckers are internally generating random data
+* Fuzz testing aka fuzzing is to acceptance tests as quickcheck is to unit tests
+  - fuzzers feed random inputs into an app to see what it does (acceptance test modality)
+  - quickcheckers on the other hand are testing single functions (unit test modailty)
 * Industry fuzz testers do a lot more more than generate totally random data
   - They may be aware that the string input should fit a particular grammar, e.g. html
-  - They may be combined with a coverage tool and work to find random data "covering" all the code
+  - They may be combined with a coverage tool and work to find random data inputs covering all the code

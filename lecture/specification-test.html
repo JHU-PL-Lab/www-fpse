@@ -465,7 +465,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>To review, here is your standard simple <code>tests.ml</code> file, this one is from the simple-set example:
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">OUnit2</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">OUnit2</span> <span class="c">(* we usually open OUnit2 since it is pervasively used in test files *)</span>
 <span class="k">open</span> <span class="nc">Simple_set</span>
 
 <span class="k">let</span> <span class="n">tests</span> <span class="o">=</span> <span class="s2">"test suite for set"</span> <span class="o">&gt;:::</span> <span class="p">[</span>
@@ -496,14 +496,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Then, <code>OUnit2.run_test_tt_main tests</code> will run the suite <code>tests</code>
     <ul>
-      <li>(note this will work but then freeze the top loop alas; the old <code>run_test_tt</code> is no longer existing sigh)</li>
+      <li>(note this will work but will then freeze the top loop unfortunately)</li>
     </ul>
   </li>
 </ul>
 
 <h4 id="how-the-tests-run-when-you-say-dune-test">How the tests run when you say dune test</h4>
 <ul>
-  <li>The above <code>tests.ml</code> file is just defining an executable, like <code>keywordcount.exe</code> on HW2</li>
+  <li>The above <code>tests.ml</code> file is just defining an executable, like <code>keywordcount.exe</code> on HW4</li>
   <li>Build and run the executable to run the tests</li>
   <li>Here a dune build file which would work for the simple set tests for example:</li>
 </ul>
@@ -516,15 +516,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="p">))</span>
 
 <span class="c1">; dune rule so command line "dune runtest" (and "dune test") will run tests.</span>
+<span class="c1">; in other words, there is nothing special about `dune test`, its just a build plus running `_build/default/test/tests.exe`</span>
 <span class="p">(</span><span class="nf">rule</span>
  <span class="p">(</span><span class="nf">alias</span> <span class="nv">runtest</span><span class="p">)</span>
  <span class="p">(</span><span class="nf">action</span> <span class="p">(</span><span class="nf">chdir</span> <span class="nv">%</span><span class="err">{</span><span class="nv">project_root</span><span class="err">}</span>
   <span class="p">(</span><span class="nf">run</span> <span class="o">.</span><span class="nv">/test/tests</span><span class="o">.</span><span class="nv">exe</span><span class="p">))))</span>
 </code></pre></div></div>
-
 <ul>
-  <li>The alias rule also runs the tests after building them</li>
-  <li>We in fact use dune shorthand for the above: replace <code>executable</code> with <code>test</code> and it makes an executable with the above alias to run tests:</li>
+  <li>There is even special shorthand for the above: replace <code>executable</code> with <code>test</code> and it makes an executable plus the above alias to run tests:</li>
 </ul>
 
 <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">test</span>
@@ -568,7 +567,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="p">[</span><span class="s2">"one"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="mi">4</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="p">;</span>
    <span class="s2">"two"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="s2">"hello"</span><span class="p">)</span> <span class="s2">"hello"</span><span class="p">)];;</span>
 <span class="k">let</span> <span class="n">suites</span> <span class="o">=</span> <span class="n">test_list</span> <span class="p">[</span><span class="n">s</span><span class="p">;</span><span class="n">s'</span><span class="p">];;</span> <span class="c">(* make suite of suites *)</span>
-<span class="k">let</span> <span class="n">named_suites</span> <span class="o">=</span> <span class="s2">"revrev and Fn.id"</span> <span class="o">&gt;:</span> <span class="n">suites</span> <span class="c">(* any tree of tests can be named *)</span>
+<span class="k">let</span> <span class="n">named_suites</span> <span class="o">=</span> <span class="s2">"revrev and Fn.id"</span> <span class="o">&gt;:</span> <span class="n">suites</span> <span class="c">(* any tree of tests can be named with &gt;: *)</span>
 </code></pre></div></div>
 
 <p>Here is the type of <code>test</code> under the hood (from the docs) which should make clear why the above works:</p>
@@ -582,7 +581,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="tangent-defining-infix-operators">Tangent: defining infix operators</h3>
 
 <ul>
-  <li>The OUnit infix operators <code>&gt;::</code>/<code>&gt;:::</code> are just like <code>+</code>, <code>^</code> etc</li>
+  <li>The OUnit infix operators <code>&gt;:</code>/<code>&gt;::</code>/<code>&gt;:::</code> are just like <code>+</code>, <code>^</code> etc</li>
+  <li>Using them arguably makes the code more readable, so consider defining your own infix operators</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ounit2"</span><span class="p">;;</span>
@@ -603,13 +603,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">8</span>
 </code></pre></div></div>
 <ul>
-  <li>Note unlike in C++ we are not overloading operators, <code>^^</code> only works on two ints now.</li>
-  <li>The old version of <code>^^</code> for printing just got nuked.</li>
+  <li>Note that unlike in C++ we are <em>not</em> overloading operators, <code>^^</code> only works on two ints now.</li>
+  <li>The old version of <code>^^</code> for printing is now shadowed so is not directly accessible.</li>
   <li>So, new infix ops are always defined within a module to avoid overlap</li>
-  <li>OCaml will eventually have overloading but it is still in the development pipe</li>
+  <li>OCaml will eventually have true operator overloading but it is still in the development pipe</li>
 </ul>
 
-<h3 id="making-actual-tests">Making actual tests</h3>
+<h3 id="the-different-assert_x-statements-possible-in-ounit2">The different assert_X statements possible in OUnit2</h3>
 
 <ul>
   <li>We used <code>assert_equal</code> above which is the OUnit function to check things being equal</li>
@@ -625,6 +625,27 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>As always, see the documentation for more details: <br />
 OUnit2 <a href="https://ocaml.org/p/ounit2/latest/doc/index.html">API docs</a></p>
+
+<h3 id="testing-executables-with-cram">Testing executables with cram</h3>
+<ul>
+  <li>As mentioned above <code>OUnit</code> can be used to test executables: <code>OUnit2.assert_command</code> can run any shell command (in particular, your OCaml <code>.exe</code> file)</li>
+  <li><code>dune</code> also contains an extension called <code>cram</code> which allows for output to be compared against expected output for a given input</li>
+  <li>It is very general, you just specify the shell command to run and expected output</li>
+  <li>See the <a href="https://dune.readthedocs.io/en/stable/tests.html#cram-tests"><code>cram</code> docs</a> if you are interested</li>
+  <li>An example in a file <code>cramtest.t</code>.  Non-indented lines are comments, $ is the input and after the input is implicitly the expected output (4 here)
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>We first create a <span class="nb">test </span>artifact called <span class="s2">"foo"</span>
+  <span class="nv">$ </span><span class="nb">cat</span> <span class="o">&gt;</span>foo <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh">
+  &gt; foo
+  &gt; bar
+  &gt; baz
+  &gt; EOF
+
+After creating the fixture, we want to verify that ``wc`` gives us the right result:
+  </span><span class="nv">$ </span><span class="sh">wc -l foo | awk '{ print </span><span class="nv">$1</span><span class="sh"> }'
+  4
+</span></code></pre></div>    </div>
+  </li>
+</ul>
 
 <h3 id="bisect-for-ocaml-code-coverage">Bisect for OCaml code coverage</h3>
 
@@ -656,16 +677,8 @@ OUnit2 <a href="https://ocaml.org/p/ounit2/latest/doc/index.html">API docs</a></
 
 <p>We will check how well my tests of the <a href="../examples/set-example.zip">simple set example</a> covered the code using Bisect.  The only addition to code is the <code>(preprocess (pps bisect_ppx))</code> added to <code>src/dune</code> for the library.</p>
 
-<h2 id="testing-executables">Testing executables</h2>
-<ul>
-  <li>As mentioned above <code>OUnit</code> can be used to test executables: <code>OUnit2.assert_command</code> can run any shell command (in particular, your OCaml <code>.exe</code> file)</li>
-  <li><code>dune</code> also contains an extension called <code>cram</code> which allows for output to be compared against expected output for a given input</li>
-  <li>It is very general, you just specify the shell command to run (like <code>assert_command</code> can also test non-OCaml executables)</li>
-  <li>We will super-briefly skim the <a href="https://dune.readthedocs.io/en/stable/tests.html#cram-tests"><code>cram</code> docs</a></li>
-</ul>
-
 <p><a name="quickcheck"></a></p>
-<h2 id="base_quickcheck-and-random-testing">Base_quickcheck and Random Testing</h2>
+<h2 id="base_quickcheck-and-random-aka-property-based-testing">Base_quickcheck and Random aka Property-Based Testing</h2>
 <h3 id="the-big-picture-of-random-testing">The big picture of random testing</h3>
 
 <ol>
@@ -700,17 +713,16 @@ OUnit2 <a href="https://ocaml.org/p/ounit2/latest/doc/index.html">API docs</a></
 <h3 id="fuzz-testing-vs-quickcheck">Fuzz testing vs Quickcheck</h3>
 
 <ul>
-  <li>We are focusing on quickchecking (aka property-based testing) now but fuzz testing also important</li>
-  <li>Fuzz testing is to acceptance tests as quickcheck is to unit tests
+  <li>Fuzz testing aka fuzzing is to acceptance tests as quickcheck is to unit tests
     <ul>
-      <li>fuzzers feed in inputs on <code>stdio</code> and other input channels to whole app</li>
-      <li>quickcheckers are internally generating random data</li>
+      <li>fuzzers feed random inputs into an app to see what it does (acceptance test modality)</li>
+      <li>quickcheckers on the other hand are testing single functions (unit test modailty)</li>
     </ul>
   </li>
   <li>Industry fuzz testers do a lot more more than generate totally random data
     <ul>
       <li>They may be aware that the string input should fit a particular grammar, e.g. html</li>
-      <li>They may be combined with a coverage tool and work to find random data “covering” all the code</li>
+      <li>They may be combined with a coverage tool and work to find random data inputs covering all the code</li>
     </ul>
   </li>
 </ul>
