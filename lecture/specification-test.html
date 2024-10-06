@@ -672,7 +672,7 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
     </ul>
   </li>
   <li>See <a href="https://github.com/aantron/bisect_ppx">Bisect docs</a> for more details</li>
-  <li>Note that if you have lines of code that you know should not be run (e.g. invariants that should not fail) you can put <code>[@@@coverage off]</code> on them.  See <a href="https://github.com/aantron/bisect_ppx?tab=readme-ov-file#controlling-coverage-with-coverage-off">the docs</a> for various forms of <code>coverage off</code> depending on how much code you want to turn off coverage for.</li>
+  <li>Note that if you have single lines of code that you know should not be run (e.g. invariants that should not fail) you can put <code>[@coverage off]</code> at the end of those lines.  To turn coverage off on a single <code>let</code> definition, put <code>[@@coverage off]</code> immediately after the end of definition. To turn coverage off on an arbitrary range of lines in the file, put <code>[@@@coverage off]</code> to turn it off and then <code>[@@@coverage on]</code> to turn it back on.  See <a href="https://github.com/aantron/bisect_ppx?tab=readme-ov-file#controlling-coverage-with-coverage-off">the docs</a> for details.</li>
 </ul>
 
 <p>We will check how well my tests of the <a href="../examples/set-example.zip">simple set example</a> covered the code using Bisect.  The only addition to code is the <code>(preprocess (pps bisect_ppx))</code> added to <code>src/dune</code> for the library.</p>

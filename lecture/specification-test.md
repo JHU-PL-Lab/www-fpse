@@ -462,7 +462,7 @@ OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
   - open `_coverage/index.html` in your browser to see the report
   - if this command is not working make sure you did the `opam install bisect-ppx` in the course required installs
 * See [Bisect docs](https://github.com/aantron/bisect_ppx) for more details
-* Note that if you have lines of code that you know should not be run (e.g. invariants that should not fail) you can put `[@@@coverage off]` on them.  See [the docs](https://github.com/aantron/bisect_ppx?tab=readme-ov-file#controlling-coverage-with-coverage-off) for various forms of `coverage off` depending on how much code you want to turn off coverage for.
+* Note that if you have single lines of code that you know should not be run (e.g. invariants that should not fail) you can put `[@coverage off]` at the end of those lines.  To turn coverage off on a single `let` definition, put `[@@coverage off]` immediately after the end of definition. To turn coverage off on an arbitrary range of lines in the file, put `[@@@coverage off]` to turn it off and then `[@@@coverage on]` to turn it back on.  See [the docs](https://github.com/aantron/bisect_ppx?tab=readme-ov-file#controlling-coverage-with-coverage-off) for details.
 
 We will check how well my tests of the [simple set example](../examples/set-example.zip) covered the code using Bisect.  The only addition to code is the `(preprocess (pps bisect_ppx))` added to `src/dune` for the library.
 
