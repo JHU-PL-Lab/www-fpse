@@ -1,6 +1,8 @@
 (* Use a 2D immutable array of characters for board - supports O(1) random access *)
+(* It is also arguably a cleaner design as we have a separate data structure for the 2D array *)
 
-(* Similar to minesweeper.ml otherwise *)
+(* Code below is similar to minesweeper.ml otherwise *)
+(* We still are using char's ' ' / '*' for grid entries which is a bit low-level.. *)
 
 open Core
 
@@ -24,7 +26,17 @@ module Array_2d = struct
       ]
 end
 
-let to_char i = i |> Int.to_string |> (Fn.flip String.get) 0 |> fun c -> match c with '-' -> '*' | '0' -> ' ' | _ -> c
+let to_char = function
+  | 0 -> ' '
+  | 1 -> '1'
+  | 2 -> '2'
+  | 3 -> '3'
+  | 4 -> '4'
+  | 5 -> '5'
+  | 6 -> '6'
+  | 7 -> '7'
+  | 8 -> '8'
+  | _ -> invalid_arg "all counts must be 0-8"
 
 let is_mine = Char.equal '*'
 
