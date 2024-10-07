@@ -6,7 +6,8 @@
 
 open Core
 
-(* Let us pull out the immutable 2D array stuff into its own module *)
+(* Let us pull out the immutable 2D array stuff into its own module, instead of Board *)
+(* Why? A 2D immutable array is a very clear abstraction boundary, we know exactly what it is *)
 
 module Array_2d = struct
   type 'a t = 'a array array
@@ -43,6 +44,7 @@ let is_mine = Char.equal '*'
 let is_field = Fn.non is_mine
 
 (* Need conversion functions to/from list of strings format since tests are that form *)
+(* Note that sexps would be a better format since it is supported in Core *)
 
 let from_string_list (l : string list) =
   List.to_array (List.map l ~f:(fun s -> String.to_array s))
