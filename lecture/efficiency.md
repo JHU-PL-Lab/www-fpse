@@ -1,31 +1,7 @@
-## Efficiency in Functional Programming
+## Case Studies of Efficiency in Functional Programming
 
-* We have already covered a fair amount about efficiency in the [idiomatic FP lecture](https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency) and before
+* We already covered efficiency general concepts in the [idiomatic FP lecture](https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency)
 
-* Summary: functional data structures
-    - Feel like they should be much more inefficient but its often "at worst a log factor"
-    - In a few cases they are better because past states "persist for free"
-    - In a few cases speed is critical and mutable structures are required
-
-
-
-### Functional lists
-Let us warm up reviewing `'a list` efficiency
-
-* `hd` and `tl` are O(1)
-* `List.nth` is O(n) -- lists are not random access
-* `append l1 l2` is O(`length l1`) - cons each `l1` elt onto `l2` one by one
-
-Remember that sub-lists are shared since they are immutable
-
-```ocaml
-let l1 = [1;2;3;... n] in
-let l2 = 0    :: l1 in
-let l3 = (-1) :: l1 in ..
-```
-
-* `l2` and `l3` share `l1` and all the above is O(1)
-* If lists were mutable such sharing would not generally be possible
 
 ### Case Study: Monadic Minesweeper
 

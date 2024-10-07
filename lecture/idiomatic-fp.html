@@ -70,11 +70,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     
 <h2 id="idiomatic-functional-programming">Idiomatic Functional Programming</h2>
-<p>This a major theme of the course; we covered some of this already but let’s put it all together.</p>
 
 <ul>
-  <li>Design principles, design patterns, refactoring (OO) = principles &amp; idioms (FP)</li>
+  <li>Design principles, design patterns, refactoring in Object-Oriented programming<br />
+           = <br />
+<strong>Principles &amp; idioms</strong> in Functional Programming</li>
   <li><strong>Principles</strong>: overarching principles; <strong>Idioms</strong>: more focused ideas to aid in achieving principles</li>
+  <li>We have touched on much of this so much of this is review</li>
 </ul>
 
 <h3 id="fp-principles">FP Principles</h3>
@@ -85,10 +87,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Goal of making code as short as possible</li>
       <li>From the classic Strunk and White English writing guide:
         <blockquote>
-          <p>A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts (<strong>and, we add that code should have no unnecessary constructs</strong>).</p>
+          <p>A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts</p>
         </blockquote>
       </li>
-      <li>Concise code means on a larger program more will fit in your brain’s working set</li>
+      <li>Concise code means that more information will fit in your brain’s fixed-size working set</li>
     </ul>
   </li>
   <li>Modularity / focus of responsibility
@@ -101,7 +103,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>Recall how pure functional code is referentially transparent, the behavior is all in the interface with no “hidden” actions.</li>
       <li>Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on</li>
-      <li>But, if the pipeline metaphor is failing, side effects may make it overall more concise</li>
+      <li>Occasionally side effects will make code more concise, that is when to use them</li>
     </ul>
   </li>
   <li>Speed
@@ -126,21 +128,31 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="dont-repeat-yourself-dry-from-oo">Don’t Repeat Yourself (DRY from OO):</h4>
 <ul>
   <li>Extract duplicate code into its own function</li>
+  <li>if there is common code except for one spot, make that spot a code (i.e.function) parameter
+    <ul>
+      <li>example: make a map function on a tree if you are doing many tree operations that are maps.</li>
+    </ul>
+  </li>
   <li>Code usually won’t be exact duplicate; extract different bits as function parameters so the different bits are passed in</li>
   <li>May also entail replacing specific types with generic types <code>'a</code> or functor parameter types <code>t</code>, <code>elt</code> etc</li>
 </ul>
 
 <h4 id="hide-it-behind-an-interface">Hide it behind an interface</h4>
 <ul>
+  <li>Hiding minimizes what programmer-users have to think about, they can think at the higher (simpler) level of the interface
+    <ul>
+      <li>and, this again will take up less brain space since they are not seeing lots of low-level details.</li>
+    </ul>
+  </li>
   <li>If a function is auxiliary to only one other function, define it in the body of the latter.
     <ul>
       <li>i.e. <code>let f x = let aux y = ..&lt;aux's body&gt;.. in .. &lt;f's body&gt; ..</code></li>
     </ul>
   </li>
-  <li>If a function is not local to a single function but is not used outside its module, leave it out of the module type (e.g. <code>.mli</code> file) which will hide it to module users</li>
+  <li>If a function is not local to a single function but is not used outside its module, leave it out of the module type (the <code>.mli</code> file) which will hide it to module users</li>
   <li>Make a new module for a new data type, and include operations on the type (only) in it
     <ul>
-      <li>This is not just for generic data structures lke <code>Map</code>/<code>Set</code>, it is for app-specific data structures</li>
+      <li>This is not just for generic data structures like <code>Map</code>/<code>Set</code>, it is for app-specific data structures</li>
       <li>Example: <code>ChessBoard</code> is a nontrivial data type for a chess game, make it its own module</li>
     </ul>
   </li>
@@ -162,7 +174,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="concision">Concision</h4>
 
-<p>(Some of this was already covered in the <a href="../style-guide.md">FPSE Style Guide</a>)</p>
+<p>(Most of this was already covered in the <a href="../style-guide.md">FPSE Style Guide</a>)</p>
 
 <ul>
   <li><strong>Combinize</strong>: replace recursion with <code>map</code>s, <code>fold</code>s and the like
@@ -191,70 +203,47 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Our main goal is conciseness, but in some cases efficiency does matter</li>
-  <li>We already discussed this issue a bit (e.g. cons vs append, tail recursion), here is a bit more and we will cover even more later.</li>
+  <li>We already discussed this issue a bit (e.g. cons vs append, tail recursion)</li>
+  <li>Here is more detail on efficiency considerations</li>
+  <li>We will also cover some case studies in the <a href="./efficiency.html">efficiency lecture</a>.</li>
 </ul>
 
 <h3 id="tail-recursion">Tail recursion</h3>
 
 <ul>
-  <li>We largely covered this earlier</li>
+  <li>We covered this earlier: <code>List.fold_left</code> is tail-recursive whereas <code>List.fold_right</code> is not</li>
   <li>A tail-recursive function is a function where there is no work to do after returning from recursive calls
     <ul>
       <li>Just bubble up the result</li>
     </ul>
   </li>
-  <li>Observe: since there is no need to mark the call point to resume from, no stack is needed!</li>
-  <li>Overwrite the parameters going “down”, and return the base case at the bottom, done!</li>
-  <li>Compilers take advantage of this to get rid of stack in this case</li>
-  <li>Moral: to save space/time you may want to tail-call</li>
-</ul>
-
-<h4 id="folding-left-vs-right-and-tail-calls">Folding left vs right and tail calls</h4>
-<p><a name="tail-recursion"></a><br />
-<code>fold_right</code> is not tail-recursive; here is an implementation:</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span> <span class="n">l</span> <span class="o">=</span> 
-<span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
-  <span class="o">|</span> <span class="n">h</span><span class="o">::</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">h</span> <span class="p">(</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span> <span class="n">t</span><span class="p">)</span>
-
-<span class="k">let</span> <span class="n">summate</span> <span class="n">l</span> <span class="o">=</span> <span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">+</span><span class="p">)</span>  <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="n">l</span>
-<span class="k">let</span> <span class="n">concatenate</span> <span class="n">l</span> <span class="o">=</span> <span class="n">fold_right</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">^</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="s2">""</span> <span class="n">l</span>
-</code></pre></div></div>
-
-<ul>
-  <li>Observe: after each recursive call completes, it must compute <code>f h rec-call-result</code></li>
-  <li>That is how folding right can start from the right, it computes <code>f</code> on the way up the call stack.</li>
-  <li>Folding left is the opposite, computing <code>f</code> and passing accumulated result <em>down</em> the call stack:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span> <span class="n">l</span> <span class="o">=</span> 
-<span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
-  <span class="o">|</span> <span class="n">h</span><span class="o">::</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="p">(</span><span class="n">f</span> <span class="n">init</span> <span class="n">h</span><span class="p">)</span> <span class="n">t</span>
-
-<span class="k">let</span> <span class="n">summate</span> <span class="n">l</span> <span class="o">=</span> <span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="n">l</span>
-<span class="k">let</span> <span class="n">concatenate</span> <span class="n">l</span> <span class="o">=</span> <span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="o">^</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="s2">""</span> <span class="n">l</span>
-</code></pre></div></div>
-
-<ul>
-  <li>Observe that in the recursive case when the <code>fold_left</code> completes at the base case there is no more work to do</li>
-  <li>Thus, <code>fold_left</code> is tail-recursive
-    <ul>
-      <li>The <code>init</code> of the base case is in fact the final result.</li>
-    </ul>
-  </li>
-  <li>So, if the choice doesn’t matter, use <code>fold_left</code> over <code>fold_right</code></li>
-  <li><code>Core</code> has <code>fold</code> as an abbreviation of <code>fold_left</code> to bias you to use it over right fold.</li>
-  <li>If you are doing millions of iterations, you may have to refactor your code to use tail calls
-    <ul>
-      <li>Or you could run out of memory</li>
-      <li>Yes, this is a bit of a wart on the FP approach, sometimes you need to be aware of non-tail calls</li>
-    </ul>
-  </li>
+  <li>Observation: since there is no need to mark the call point to resume from, no stack is needed</li>
+  <li>Overwrite the parameters going “down”, and return the base case as the final result of the recursion.</li>
+  <li>Compilers can see which functions are tail-recursive and eliminate the stack</li>
+  <li>Moral: to save space/time you may need to tail-call</li>
 </ul>
 
 <h3 id="imperative-vs-functional-data-structures">Imperative vs functional data structures</h3>
+
+<p>Let us warm up reviewing <code>'a list</code> efficiency</p>
+
+<ul>
+  <li><code>hd</code> and <code>tl</code> are O(1)</li>
+  <li><code>List.nth</code> is O(n) – lists are not random access</li>
+  <li><code>append l1 l2</code> is O(<code>length l1</code>) - cons each <code>l1</code> elt onto <code>l2</code> one by one</li>
+</ul>
+
+<p>Remember that sub-lists are shared since they are immutable</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="o">...</span> <span class="n">n</span><span class="p">]</span> <span class="k">in</span>
+<span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="mi">0</span>    <span class="o">::</span> <span class="n">l1</span> <span class="k">in</span>
+<span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">::</span> <span class="n">l1</span> <span class="k">in</span> <span class="o">..</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code>l2</code> and <code>l3</code> share <code>l1</code> and all the above is O(1)</li>
+  <li>If lists were mutable such sharing would not generally be possible</li>
+</ul>
 
 <p><code>List</code> vs <code>Array</code></p>
 <ul>
@@ -266,13 +255,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Update of one element in an array is O(1); updating one element of a list is worst-case O(n) - re-build whole list</li>
   <li>Random access of nth element: O(n) list, O(1) array.</li>
-  <li>If you want fast random access to a “list” that is not growing / shrinking / changing, can in fact use an <code>array</code>.</li>
+  <li>If you want fast random access to a “list” that is not growing / shrinking / changing, use an <code>array</code>.</li>
 </ul>
 
 <p><code>Map</code> vs <code>Hashtbl</code></p>
 <ul>
-  <li><code>Map</code> is implemented like the <code>dict</code> of the homework, but the tree is rebalanced always</li>
-  <li>O(log n) worst case time for <code>Map</code> to look up, add, or change an entry</li>
+  <li><code>Map</code> is implemented like the <code>dict</code> of the homework</li>
+  <li>O(log n) worst case time for <code>Map</code> to look up, add, or change an entry
+    <ul>
+      <li>only the path to the changed node needs updating, all the sub-trees hanging off it are kept</li>
+    </ul>
+  </li>
   <li>“O(1) amortized” for <code>Hashtbl</code> - will only matter for really big data sets.</li>
 </ul>
 
@@ -284,15 +277,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>
     <p><a href="https://ocaml.org/learn/tutorials/comparison_of_standard_containers.html">Here is a summary of OCaml data structure complexity</a> (for the standard OCaml library but same results as <code>Core</code> version)</p>
   </li>
-  <li>
-    <p>Is functional ever any better?  Yes!</p>
+</ul>
+
+<p>Summary: functional data structures</p>
+<ul>
+  <li>Feel like they should be much more inefficient but its often “at worst a log factor”</li>
+  <li>In a few cases they are actually better because past states “persist for free”
     <ul>
-      <li>If you have many closely related maps, e.g. repeatedly forking off a map into two sub-versions</li>
-      <li>Due to referential transparency the cost of copying is <strong>zero</strong>!!</li>
-      <li>Multiple Lists similarly can share common portions</li>
+      <li>e.g. sub-lists can be shared since copying never needed, etc</li>
       <li>See <a href="https://dev.realworldocaml.org/maps-and-hashtables.html">Real World OCaml benchmarks (scroll down)</a> for example benchmarks of this</li>
     </ul>
   </li>
+  <li>In a few cases speed is critical and mutable structures are required</li>
 </ul>
 
 <h3 id="examples-of-idiomatic-fp">Examples of Idiomatic FP</h3>

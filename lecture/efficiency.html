@@ -68,41 +68,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
-    <h2 id="efficiency-in-functional-programming">Efficiency in Functional Programming</h2>
+    <h2 id="case-studies-of-efficiency-in-functional-programming">Case Studies of Efficiency in Functional Programming</h2>
 
 <ul>
-  <li>
-    <p>We have already covered a fair amount about efficiency in the <a href="https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency">idiomatic FP lecture</a> and before</p>
-  </li>
-  <li>
-    <p>Summary: functional data structures</p>
-    <ul>
-      <li>Feel like they should be much more inefficient but its often “at worst a log factor”</li>
-      <li>In a few cases they are better because past states “persist for free”</li>
-      <li>In a few cases speed is critical and mutable structures are required</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="functional-lists">Functional lists</h3>
-<p>Let us warm up reviewing <code>'a list</code> efficiency</p>
-
-<ul>
-  <li><code>hd</code> and <code>tl</code> are O(1)</li>
-  <li><code>List.nth</code> is O(n) – lists are not random access</li>
-  <li><code>append l1 l2</code> is O(<code>length l1</code>) - cons each <code>l1</code> elt onto <code>l2</code> one by one</li>
-</ul>
-
-<p>Remember that sub-lists are shared since they are immutable</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="o">...</span> <span class="n">n</span><span class="p">]</span> <span class="k">in</span>
-<span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="mi">0</span>    <span class="o">::</span> <span class="n">l1</span> <span class="k">in</span>
-<span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">::</span> <span class="n">l1</span> <span class="k">in</span> <span class="o">..</span>
-</code></pre></div></div>
-
-<ul>
-  <li><code>l2</code> and <code>l3</code> share <code>l1</code> and all the above is O(1)</li>
-  <li>If lists were mutable such sharing would not generally be possible</li>
+  <li>We already covered efficiency general concepts in the <a href="https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency">idiomatic FP lecture</a></li>
 </ul>
 
 <h3 id="case-study-monadic-minesweeper">Case Study: Monadic Minesweeper</h3>
