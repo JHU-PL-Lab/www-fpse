@@ -1,6 +1,6 @@
 
-(* 
-Minesweeper board display
+(* Minesweeper implementation with mutation
+   Largely an example of poor programming style
 
 From https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae59540d18f3c18615dcbb956
 
@@ -11,7 +11,8 @@ open Core
 
 type cell = Mine | Empty of int
 
-(* Far worse abstraction of the board, a 1D array not a 2D array - ! *)
+(* A very poor abstraction of the board, a 1D array not a 2D array - ! 
+   - requires arithmetic to compute the offset, ouch! *)
 
 type state = { board : cell Array.t; rows : int; columns : int }
 
@@ -23,6 +24,7 @@ let string_of_cell = function
   | Empty 0 -> " "
   | Empty n -> Int.to_string n
 
+(* The conversion code to/from the test format is extremely ugly now, its C-style *)  
 let serialize { board; rows; columns } =
   let converted_board = Array.map ~f:string_of_cell board in
   let rec to_list l i acc =

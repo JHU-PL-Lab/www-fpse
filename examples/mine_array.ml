@@ -1,13 +1,16 @@
+(* Let's re-code the minesweeper with a more intelligent / abstract data structure, not the list of strings *)
+
 (* Use a 2D immutable array of characters for board - supports O(1) random access *)
 (* It is also arguably a cleaner design as we have a separate data structure for the 2D array *)
 
 (* Code below is similar to minesweeper.ml otherwise *)
-(* We still are using char's ' ' / '*' for grid entries which is a bit low-level.. *)
+(* We still are using chars ' ' / '*' for grid entries which is too low-level.. *)
 
 open Core
 
 (* Let us pull out the immutable 2D array stuff into its own module, instead of Board *)
 (* Why? A 2D immutable array is a very clear abstraction boundary, we know exactly what it is *)
+(* This struct is a generic 2D immutable array, nothing here is for minesweeper only *)
 
 module Array_2d = struct
   type 'a t = 'a array array
@@ -45,8 +48,9 @@ let is_field = Fn.non is_mine
 
 (* Need conversion functions to/from list of strings format since tests are that form *)
 (* Note that sexps would be a better format since it is supported in Core *)
+(* But we are sticking to the exercism I/O format here *)
 
-let from_string_list (l : string list) =
+let from_string_list (l : string list) : char array array =
   List.to_array (List.map l ~f:(fun s -> String.to_array s))
 
 let to_string_list (board : char Array_2d.t) : string list =
@@ -56,7 +60,7 @@ let to_string_list (board : char Array_2d.t) : string list =
 
 (* Main calculation: annotate a board of mines; similar to minesweeper.ml *)
 
-let array_annotate (board : char Array_2d.t) =
+let array_annotate (board : char Array_2d.t) : char Array_2d.t =
   let count_nearby_mines x y =
     Array_2d.adjacents board x y |> List.count ~f:is_mine
   in
@@ -64,5 +68,5 @@ let array_annotate (board : char Array_2d.t) =
       if is_field c then count_nearby_mines x y |> to_char else c)
 
 (* Overall function requires conversion functions in pipeline *)      
-let annotate (l : string list) =
+let annotate (l : string list) : string list =
   l |> from_string_list |> array_annotate |> to_string_list

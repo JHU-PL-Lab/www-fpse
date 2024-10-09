@@ -151,3 +151,4 @@ Summary: functional data structures
      - Lots of nice piping here plus use of functors to build Unix and JavaScript variations
   * [dolog](https://github.com/UnixJunkie/dolog) is a very simple logging utility
      - Shows some nice use of state, `include`, and a `Make` functor.
+  * We may also look at a past homework solution so you can compare it with what you did.
