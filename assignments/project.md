@@ -24,8 +24,6 @@ You will need to make a standalone application as in assignments 4 and 6. Here a
 3. A complex library.
     * The focus is on some sophisticated algorithm, and there may be a simple usage through the command line.
 
-Note that in all three, **there must be a non-trivial algorithm as a key feature**. 
-
 ### Libraries Catalog
 Here is a list of well-maintained libraries we recommend using for the above approaches, as well as some resources where you can find other libraries.
 

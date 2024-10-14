@@ -271,7 +271,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="assignments/project.html">Projects and Libraries</a>, <a href="lecture/advanced_modules.ml">Advanced Modules</a></div>
+            <div align="left" class="body"><a href="assignments/project.html">The Projects</a>, <a href="lecture/advanced_modules.ml">Advanced Modules</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body"><a href="assignments/project.html">Project</a></div>
