@@ -80,13 +80,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>You must use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>OUnit2</code> etc – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 2-4 people.</li>
   <li>OCaml excels for non-trivial algorithms, and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.</li>
-  <li>You need to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.</li>
+  <li>You are also <strong>required</strong> need to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.</li>
   <li>A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.</li>
 </ul>
 
 <h3 id="project-topic-thrusts">Project Topic Thrusts</h3>
 
-<p>You will need to make a standalone application as in assignments 4 and 6. Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects.</p>
+<p>You will need to make a standalone application as in assignments 4 and 6. Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects: a sudoku solver, chess AI, complex-number mathematics with a rasterizer, ASCII image generator, etc.</p>
 
 <ol>
   <li>A command-line app with persistence.
@@ -106,19 +106,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ol>
 
-<p>Note that in all three, <strong>there must be a non-trivial algorithm as a key feature</strong>. For example, in the projects linked below, we have sudoku solvers, chess AI, complex-number mathematics with a rasterizer and ASCII image generator, etc. The complexity of the user interaction makes up for lack of complexity in the algorithm and underlying behavior and vice versa.</p>
-
-<p>For all command-line apps, here are some ways to beef them up once the basic app is working:</p>
-
-<ol>
-  <li>Replace the command line with a RESTful web server using <a href="https://aantron.github.io/dream"><code>Dream</code></a> mentioned below.</li>
-  <li>In addition to 1., <code>Dream</code> supports html templates and you could “reply” to the <code>http</code> queries with html and so you can run your app in the browser.</li>
-  <li>Use <a href="https://rescript-lang.org">ReScript</a> and React to beef it up and make an OCaml front-end in the browser. Rescript is basically OCaml with somewhat different syntax that compiles to JavaScript and can run in the browser.</li>
-  <li>Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>
-  <li>Rather than using your own ad-hoc format for data in the file or database, make an s-expression representation and convert back and forth.  <br />
-    - You should do this from the beginning in fact, it will be easier and more robust.</li>
-  <li>Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.</li>
-</ol>
+<p>Note that in all three, <strong>there must be a non-trivial algorithm as a key feature</strong>.</p>
 
 <h3 id="libraries-catalog">Libraries Catalog</h3>
 <p>Here is a list of well-maintained libraries we recommend using for the above approaches, as well as some resources where you can find other libraries.</p>
@@ -126,7 +114,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="web-based">Web-based</h4>
 
 <ul>
-  <li>All web-based applications may have delayed response or may fail, and so all of the web libraries below are built on an OCaml coroutine library, either <code>Lwt</code> or <code>Async</code>.  <code>Async</code> is the Core version, but it is not gaining a lot of traction so you will probably be better off with a library over <code>Lwt</code>.
+  <li>All web-based applications may have delayed response or may fail, and so all of the web libraries below are built on an OCaml coroutine library, primarily <code>Lwt</code>.
     <ul>
       <li>See the <a href="../coroutines.html">coroutines lecture notes</a> for more information on using <code>Lwt</code>.</li>
     </ul>
@@ -165,6 +153,20 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><a href="https://github.com/ocaml-community/awesome-ocaml">Awesome OCaml</a> is another such list.</li>
 </ul>
 
+<h4 id="beefing-up-your-app">Beefing up your app</h4>
+
+<p>You may want to start with a command-line app and add more features later:</p>
+
+<ol>
+  <li>Replace the command line with a RESTful web server using <a href="https://aantron.github.io/dream"><code>Dream</code></a> mentioned below.</li>
+  <li>In addition to 1., <code>Dream</code> supports html templates and you could “reply” to the <code>http</code> queries with html and so you can run your app in the browser.</li>
+  <li>Use <a href="https://rescript-lang.org">ReScript</a> and React to beef it up and make an OCaml front-end in the browser. Rescript is basically OCaml with somewhat different syntax that compiles to JavaScript and can run in the browser.</li>
+  <li>Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>
+  <li>Rather than using your own ad-hoc format for data in a file or database, make an s-expression representation and convert back and forth.  <br />
+    - You should do this from the beginning in fact, it will be easier and more robust.</li>
+  <li>Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.</li>
+</ol>
+
 <h3 id="submissions">Submissions</h3>
 
 <ul>
@@ -185,7 +187,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <p>To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use Core because the Rubik’s Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.</p>
 </blockquote>
 
-<p>This submission will count for very little; its purpose is just to get your group off the ground, and to give us some direction in who to assign as your group advisor.</p>
+<p>This submission will count for very little; its purpose is just to get your group off the ground, and to give us some direction on who to assign as your group advisor.</p>
 
 <p>After this submission, you will have lab days to have designated time to work together and discuss with your advisor.</p>
 
@@ -322,17 +324,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Here are some defining features of the labs.</p>
 
 <ol>
-  <li>There will be seven labs.  Your group will be required to attend the first lab in-person on Nov 6th.</li>
-  <li>Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework. You won’t get credit for a lab if you show up and choose to work on anything other than your FPSE project.</li>
+  <li>There will be seven labs.  Your group will be required to attend the first lab in-person on Oct 28th.</li>
+  <li>Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework. You won’t get credit for a lab if you show up and choose to work on something other than your FPSE project.</li>
   <li>Attendance will be taken at all labs and will be a part of your final grade.</li>
   <li>Your group is required to attend <strong>seven</strong> labs total.  Conveniently, there are seven class periods which are project labs, but you may alternatively select a CA office hour (the whole hour and it should be your group advisor if at all possible) to be a “lab”.  If you wish to do that, show up in-person at the start of the office hour and notify the CA that you are doing a lab, and they will mark you down for attendance.  At most two in-class labs can made up in this way.</li>
   <li>All labs must be attended in-person, but you may petition for an exception.</li>
-  <li><strong>Attendance is all or none</strong> – for a lab to count all group members must be present.  Group work is group work.</li>
+  <li><strong>Attendance is all or none for a group</strong> – for a lab to count, <strong>all</strong> group members must be present.  Group work is group work.</li>
 </ol>
 
 <h2 id="sample-projects">Sample projects</h2>
 
-<p>Here are a few FPSE projects from last year (2023) to give you an idea of the scope etc. Please pick a different idea.</p>
+<p>Here are a few FPSE projects from 2023 to give you an idea of the scope etc. Please pick a different idea.</p>
 
 <ul>
   <li>

@@ -10,12 +10,12 @@ Here are the high-level requirements for the projects.
 * You must use the standard course libraries -- `Core`, `Lwt`, `OUnit2` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 2-4 people.
 * OCaml excels for non-trivial algorithms, and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.
-* You need to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
+* You are also **required** need to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
 * A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.
 
 ### Project Topic Thrusts
 
-You will need to make a standalone application as in assignments 4 and 6. Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects.
+You will need to make a standalone application as in assignments 4 and 6. Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects: a sudoku solver, chess AI, complex-number mathematics with a rasterizer, ASCII image generator, etc.
 
 1. A command-line app with persistence.
     * The focus is on complex user interaction through the command line.
@@ -24,25 +24,14 @@ You will need to make a standalone application as in assignments 4 and 6. Here a
 3. A complex library.
     * The focus is on some sophisticated algorithm, and there may be a simple usage through the command line.
 
-Note that in all three, **there must be a non-trivial algorithm as a key feature**. For example, in the projects linked below, we have sudoku solvers, chess AI, complex-number mathematics with a rasterizer and ASCII image generator, etc. The complexity of the user interaction makes up for lack of complexity in the algorithm and underlying behavior and vice versa.
-
-For all command-line apps, here are some ways to beef them up once the basic app is working:
-
-  1. Replace the command line with a RESTful web server using [`Dream`](https://aantron.github.io/dream) mentioned below.
-  2. In addition to 1., `Dream` supports html templates and you could "reply" to the `http` queries with html and so you can run your app in the browser.
-  3. Use [ReScript](https://rescript-lang.org) and React to beef it up and make an OCaml front-end in the browser. Rescript is basically OCaml with somewhat different syntax that compiles to JavaScript and can run in the browser.
-  4. Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
-  5. Rather than using your own ad-hoc format for data in the file or database, make an s-expression representation and convert back and forth.  
-    - You should do this from the beginning in fact, it will be easier and more robust.
-  6. Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.
-
+Note that in all three, **there must be a non-trivial algorithm as a key feature**. 
 
 ### Libraries Catalog
 Here is a list of well-maintained libraries we recommend using for the above approaches, as well as some resources where you can find other libraries.
 
 #### Web-based
 
-* All web-based applications may have delayed response or may fail, and so all of the web libraries below are built on an OCaml coroutine library, either `Lwt` or `Async`.  `Async` is the Core version, but it is not gaining a lot of traction so you will probably be better off with a library over `Lwt`.  
+* All web-based applications may have delayed response or may fail, and so all of the web libraries below are built on an OCaml coroutine library, primarily `Lwt`.
   - See the [coroutines lecture notes](../coroutines.html) for more information on using `Lwt`.
 * We recommend the simple [`Cohttp_lwt_unix`](https://github.com/mirage/ocaml-cohttp) for web client (API reading / crawling) applications.
 * We recommend [`Dream`](https://aantron.github.io/dream) for web applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
@@ -68,6 +57,18 @@ There are some good libraries here but they don't have many users and we have ha
    - Note that some libraries in the list are not particularly up-to-date or reliable or well-documented.  They are roughly sorted though so start with the ones at the top of a given list.
 * [Awesome OCaml](https://github.com/ocaml-community/awesome-ocaml) is another such list.
 
+#### Beefing up your app
+
+You may want to start with a command-line app and add more features later:
+
+  1. Replace the command line with a RESTful web server using [`Dream`](https://aantron.github.io/dream) mentioned below.
+  2. In addition to 1., `Dream` supports html templates and you could "reply" to the `http` queries with html and so you can run your app in the browser.
+  3. Use [ReScript](https://rescript-lang.org) and React to beef it up and make an OCaml front-end in the browser. Rescript is basically OCaml with somewhat different syntax that compiles to JavaScript and can run in the browser.
+  4. Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
+  5. Rather than using your own ad-hoc format for data in a file or database, make an s-expression representation and convert back and forth.  
+    - You should do this from the beginning in fact, it will be easier and more robust.
+  6. Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.
+
 
 ### Submissions
 
@@ -85,7 +86,7 @@ E.g.
 >
 >To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use Core because the Rubik's Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.
 
-This submission will count for very little; its purpose is just to get your group off the ground, and to give us some direction in who to assign as your group advisor.
+This submission will count for very little; its purpose is just to get your group off the ground, and to give us some direction on who to assign as your group advisor.
 
 After this submission, you will have lab days to have designated time to work together and discuss with your advisor.
 
@@ -205,17 +206,16 @@ The project labs are classes later in the semester where your group can collabor
 
 Here are some defining features of the labs.
 
-1. There will be seven labs.  Your group will be required to attend the first lab in-person on Nov 6th.
-2. Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework. You won't get credit for a lab if you show up and choose to work on anything other than your FPSE project.
+1. There will be seven labs.  Your group will be required to attend the first lab in-person on Oct 28th.
+2. Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework. You won't get credit for a lab if you show up and choose to work on something other than your FPSE project.
 3. Attendance will be taken at all labs and will be a part of your final grade. 
 4. Your group is required to attend **seven** labs total.  Conveniently, there are seven class periods which are project labs, but you may alternatively select a CA office hour (the whole hour and it should be your group advisor if at all possible) to be a "lab".  If you wish to do that, show up in-person at the start of the office hour and notify the CA that you are doing a lab, and they will mark you down for attendance.  At most two in-class labs can made up in this way.
 5. All labs must be attended in-person, but you may petition for an exception.
-6. **Attendance is all or none** -- for a lab to count all group members must be present.  Group work is group work.
+6. **Attendance is all or none for a group** -- for a lab to count, **all** group members must be present.  Group work is group work.
 
 ## Sample projects
 
-
-Here are a few FPSE projects from last year (2023) to give you an idea of the scope etc. Please pick a different idea.
+Here are a few FPSE projects from 2023 to give you an idea of the scope etc. Please pick a different idea.
 
 * [Sudoku solver](https://github.com/TheHarcker/FPSE_Project)
 
