@@ -78,7 +78,7 @@ module type Eq = sig type t val equal : t -> t -> bool end
 # #show String.t;;
 type nonrec t = string (* alias *)
 # #show Map.t;;
-type nonrec ('key, 'value, 'cmp) t = ('key, 'value, 'cmp) Map.t (* existential / hidden *)
+type ('key, 'value, 'cmp) t = ('key, 'value, 'cmp) Map.t (* existential / hidden *)
 
  * Moral: every time you see a type variable reference t / 'a / Int.t / etc
     first sort it into one of the above four categories
@@ -311,7 +311,6 @@ let m = Map.empty (module IntPairCompar) (* Works now; note no type on module is
     - the phantom uniquely tags the `compare` since it had to be defined in the same module
     - without the phantom it would be possible incorrectly to compare two maps
 *)
-
 
 (* **************** *)
 (* **** I/O ******* *)
