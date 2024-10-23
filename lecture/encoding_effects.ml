@@ -517,6 +517,8 @@ let log_abs n =
        let%bind () = log "indeed" in 
        let%bind () = log "yup" in return (-n)
 
+let _ = run (fun () -> log_abs (-1))   
+ 
 (* another simple example, add log messages to 1+2 example above *)
 let oneplustwo_logged = 
   let%bind () = log "Starting!" in
@@ -608,9 +610,9 @@ let is_retired'' =
 
     Let us focus on the equivalent let%bind versions which are easier to read:
     1) let%bind x = return(a) in f x  ===  f a
-    2) let%bind x = a in return(x)  ===  a
-    3) let%bind x = a in let%bind y = b in c ===
-       let%bind y = (let%bind x = a in b) in c
+    2) let%bind x = m in return(x)  ===  m
+    3) let%bind x = m in let%bind y = m' in m'' ===
+       let%bind y = (let%bind x = m in m') in m''
   * (Note "===" here means we can replace one with the other and notice no difference)
   * These are called the "Monad Laws"
   * The last one is the trickiest but we hit on it earlier, it is associativity of bind
@@ -737,7 +739,7 @@ module State = struct
                                     return 's -> 'b * 's : *)
     let bind (x : ('a, 's) t) ~(f: 'a -> ('b, 's) t) : ('b, 's) t =
       fun (s : 's) -> let (x', s') = x s in (f x') s'
-    let return (x : 'a) : ('a, 's) t = fun v -> (x, v) (* just pass on the state we got in *)
+    let return (x : 'a) : ('a, 's) t = fun s -> (x, s) (* just pass on the state we got in *)
     let map = `Define_using_bind
     type ('a, 's) result = 'a * 's
     (* Run needs to get passed in an init state *)
@@ -779,7 +781,6 @@ let simple_state () =
   bind (set(rv + 1)) ~f:(fun () ->get()))
 
   let _ = run (simple_state ()) ~init:0
-
 
 (* Here is a bit larger example using statefulness of State 
    -- sum the elements of a list with a "mutable" counter *)
@@ -967,6 +968,7 @@ type 'a t = ('a -> 'a result) -> 'a result
    - Coroutines are a variation on the continuation monad where "rest" is the other routines
  *)
 
+(* Skip!! *)
 
 (* Composing monads *)
 
