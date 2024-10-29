@@ -1003,4 +1003,3 @@ type 'a except_state = (int -> 'a * int) Option.t
  * You are used to the first kind, state never gets tossed in usual PL's.
  * Could even combine both: two types of exceptions, one keeps one tosses state
  *)
-
