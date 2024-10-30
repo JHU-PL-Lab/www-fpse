@@ -72,6 +72,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>We already covered efficiency general concepts in the <a href="https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency">idiomatic FP lecture</a></li>
+  <li>It is sometimes important to analyze runtime complexity to make sure the price of using a functional data structure is not too high.</li>
 </ul>
 
 <h3 id="case-study-monadic-minesweeper">Case Study: Monadic Minesweeper</h3>
@@ -116,7 +117,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>So a bit of a backfire</li>
 </ul>
 
-<p>Imagine an alternative monad implementation using a <code>Board</code> implemented as a <code>Core.Map</code> from keys <code>(i,j)</code> to characters:</p>
+<p>Imagine an alternative state monad implementation with <code>Board</code> state implemented as a <code>Core.Map</code> from keys <code>(i,j)</code> to characters:</p>
 <ul>
   <li>Lookup and increment will be O(log n) on average since <code>Core.Map</code> is implemented as a balanced binary search tree
     <ul>
@@ -141,7 +142,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>For standard uses a mutable hashtable will be “O(1)” vs O(log n) for a <code>Map</code> version</li>
       <li>But if there are many minor variations on the Map/Hashset being created the functional data structure will in fact be faster due to all the sharing.</li>
-      <li>Functional can in general be a big win for certain classes of algorithms (but admitedly not most)</li>
+      <li>Functional can be a big win for a few classes of algorithms (but admitedly not most)</li>
     </ul>
   </li>
 </ul>
@@ -197,7 +198,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h2 id="algebraic-effects">Algebraic Effects</h2>
 
-<p>We will hopefully have a bit of extra time to cover an interesting side topic of <a href="algebraic_effects.ml">algebraic effects</a>: exceptions that can be resumed.</p>
+<p>If we have extra time we will cover the interesting side topic of <a href="algebraic_effects.ml">algebraic effects</a>: exceptions that can be resumed.</p>
       
           </section>
         </div>

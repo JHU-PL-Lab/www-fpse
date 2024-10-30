@@ -158,8 +158,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="idea-of-the-implementation">Idea of the implementation</h4>
 
-<p>Q: How do we allow these loads to happen concurrently without fork/threads/parallelism?<br />
-A: Use coroutines to split I/O actions in two:</p>
+<p>Q: How do we allow these loads to happen concurrently without fork/threads/parallelism?</p>
+
+<p>A: Use coroutines to split I/O actions in two:</p>
 <ol>
   <li>Issue each image request</li>
   <li>Package up the processing code (the <em>continuation</em>) as a function which will run when each load completes</li>
@@ -185,7 +186,8 @@ A: Use coroutines to split I/O actions in two:</p>
 <ul>
   <li>Observe how <code>bind</code> is naturally making the continuation a function</li>
   <li>So we will be using <code>bind</code> a lot when writing coroutine code in OCaml</li>
-  <li>In general <code>Lwt</code> is also a <em>monad</em></li>
+  <li>In general <code>Lwt</code> is a <em>monad</em></li>
+  <li>We won’t be looking at the underlying structure of the <code>Lwt</code> monad, but the type <code>Lwt.t</code> is keeping a list of active coroutines and swapping between them.</li>
 </ul>
 
 <h3 id="the-full-loading-task-here">The full loading task here</h3>
@@ -247,14 +249,14 @@ A: Use coroutines to split I/O actions in two:</p>
   <li>This example looks just like the built-in <code>read_line</code> except for the <code>%lwt</code>; here is why <code>Lwt</code> version is better:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> 
-<span class="n">printf</span> <span class="s2">"See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Stdio</span><span class="p">.</span><span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span> 
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span>
+<span class="n">printf</span> <span class="s2">"See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Stdio</span><span class="p">.</span><span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span>
 <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="n">str</span> <span class="o">=</span> <span class="n">p</span> <span class="k">in</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <p>Lets expand the <code>let%lwt</code> to <code>bind</code> to make this more clear:</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> 
-<span class="n">printf</span> <span class="s2">"See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Stdio</span><span class="p">.</span><span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span> 
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span>
+<span class="n">printf</span> <span class="s2">"See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Stdio</span><span class="p">.</span><span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span>
 <span class="nn">Lwt</span><span class="p">.</span><span class="n">bind</span> <span class="n">p</span> <span class="p">(</span><span class="k">fun</span> <span class="n">str</span> <span class="o">-&gt;</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">);;</span>
 </code></pre></div></div>
 <p>What is going on here?</p>
@@ -287,19 +289,20 @@ A: Use coroutines to split I/O actions in two:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">let</span> <span class="n">s</span><span class="o">,</span><span class="n">p</span> <span class="o">=</span> <span class="k">let</span> <span class="n">p0</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> <span class="p">(</span><span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p0</span><span class="o">,</span> <span class="n">p0</span><span class="p">);;</span> <span class="c">(* state is Sleep - input not read yet*)</span>
  <span class="c">(* type something at utop and hit return now - not shown for some reason - this is the input *)</span>
  <span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* returns `Return &lt;the string you typed&gt;` *)</span>
- <span class="c">(* Here is a failure state.  It is an exception internal to `Lwt`, it doesn't get `raise`d in OCaml except at top *)</span>
+ <span class="c">(* Here we artificially make  a failure state.  It is an exception internal to `Lwt`, 
+    it doesn't get `raise`d in OCaml except at top *)</span>
  <span class="k">let</span> <span class="n">p'</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">fail</span> <span class="nc">Exit</span> <span class="k">in</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p'</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <h2 id="making-our-own-promises">Making our own promises</h2>
-<p>We can make (and directly resolve) our own promises; this also shows what <code>Lwt_io.read_line</code> et al are doing under the hood</p>
+<p>We can make (and directly resolve) our own promises; this also shows what <code>Lwt_io.read_line</code> <em>et al</em> are doing under the hood</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="n">return</span> <span class="s2">"done"</span><span class="p">;;</span> <span class="c">(* This is the return of Lwt monad - inject a regular value as a "fulfilled" promise *)</span>
 <span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* indeed it is already resolved to a `Return`. *)</span>
-<span class="k">let</span> <span class="n">p</span><span class="o">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">wait</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* `wait` starts a promise aSleep; r is a resolver used to resolve it later *)</span>
+<span class="k">let</span> <span class="n">p</span><span class="o">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">wait</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* `wait` returns a pair of a sleeped promise and a resolver for it *)</span>
 <span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* Sleep *)</span>
-<span class="n">wakeup_exn</span> <span class="n">r</span> <span class="nc">Exit</span><span class="p">;;</span> <span class="c">(* `wakeup_exn` makes p a failure  *)</span>
-<span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* Now a `Fail Exit`.  Note once resolved it is all done, can't Sleep/Return *)</span>
+<span class="n">wakeup_exn</span> <span class="n">r</span> <span class="nc">Exit</span><span class="p">;;</span> <span class="c">(* `wakeup_exn` uses r to resolve p to failure  *)</span>
+<span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* p is now a `Fail Exit`.  Note once resolved it can't change any more. *)</span>
 
 <span class="k">let</span> <span class="n">p</span><span class="o">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">wait</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* another one, lets resolve this one positively *)</span>
 <span class="n">wakeup</span> <span class="n">r</span> <span class="s2">"hello"</span><span class="p">;;</span>
@@ -309,13 +312,16 @@ A: Use coroutines to split I/O actions in two:</p>
 <h2 id="lwt-in-an-executable">Lwt in an executable</h2>
 
 <ul>
-  <li>It is hard to see what is going on in the top loop with coroutines</li>
-  <li>We switch to some small executable examples now.</li>
-  <li>
-    <p>See <a href="../examples/lwteg.zip">lwteg.zip</a> for a zipfile of the examples (most from Lwt manual)</p>
-  </li>
+  <li>So far we have only shown promises, not general coroutines</li>
+  <li>For coroutines we need to call <code>Lwt_main.run</code> which works best in a standalone executable</li>
+  <li>See <a href="../examples/lwteg.zip">lwteg.zip</a> for a zipfile of the examples below (most from Lwt manual)</li>
+  <li>Note you can also invoke <code>Lwt_main.run</code> in the top loop but it could run forever</li>
+</ul>
+
+<h3 id="a-simple-example">A simple Example</h3>
+<ul>
   <li>Here is an example of promise resolution in an executable</li>
-  <li><code>Lwt_main.run</code> kicks off the whole thing</li>
+  <li>Note this one we can test in the top loop since it finishes (all promises are resolved)</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span>
@@ -332,7 +338,11 @@ A: Use coroutines to split I/O actions in two:</p>
 </code></pre></div></div>
 <ul>
   <li>This runs the <code>'a Lwt.t</code> computation supplied until all promises are resolved, and returns the final value if any.</li>
-  <li>Any main executable using <code>Lwt</code> usually calls this at the top, and when all promises are resolved the app can usually terminate.</li>
+  <li>Any main executable using <code>Lwt</code> usually calls this at the top, and when all promises are resolved the app can usually terminate.
+    <ul>
+      <li>Apps such as servers will never terminate, they listen for requests until killed.</li>
+    </ul>
+  </li>
   <li>Note its type: <code>'a t -&gt; 'a</code> which is what <code>run</code> should be in monad-land: get us out of the monad somehow
     <ul>
       <li>A common error is to try to call <code>Lwt_main.run</code> on your own to get out of monad-land but that won’t work, it will destroy all the previous promises.</li>
@@ -346,6 +356,7 @@ A: Use coroutines to split I/O actions in two:</p>
 <ul>
   <li>One common operation is when you have launched a bunch of I/O requests to be able to respond when only one of them has come back</li>
   <li>The <code>Lwt</code> combinator for that is <code>choose</code> which picks a resolved promise from a list of promises</li>
+  <li>This example also terminates so we can test it in the top loop.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="bp">()</span> <span class="o">=</span>
@@ -383,6 +394,12 @@ A: Use coroutines to split I/O actions in two:</p>
   <li><code>Lwt.async</code> can launch a new coroutine</li>
   <li>The engine will then round-robin between all the active coroutines</li>
   <li>The coroutine will at some point need to do an Lwt operation so it can yield to others</li>
+  <li>In this case the sleep is an Lwt operation that will yield, so other actions can happen then.</li>
+  <li>Note this one is not good to run in the top loop as the nag runs forever
+    <ul>
+      <li>it is commented out in the file <code>manual_examples.ml</code> if you want to try the executable.</li>
+    </ul>
+  </li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="bp">()</span> <span class="o">=</span>
@@ -399,7 +416,14 @@ A: Use coroutines to split I/O actions in two:</p>
    <span class="k">end</span>
 </code></pre></div></div>
 
-<p>Here is an example that shows how <code>Lwt.pause</code> is used in a compute-intensive task to let other coroutines run</p>
+<ul>
+  <li>Here is an example that shows how <code>Lwt.pause</code> is used in a compute-intensive task to let other coroutines run.</li>
+  <li>Note this one is also not good to run in the top loop as <code>handle_io</code> runs forever
+    <ul>
+      <li>it is in the file <code>manual_examples.ml</code> if you want to try it.</li>
+    </ul>
+  </li>
+</ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="bp">()</span> <span class="o">=</span>
   <span class="k">let</span> <span class="k">rec</span> <span class="n">handle_io</span> <span class="bp">()</span> <span class="o">=</span>
@@ -421,8 +445,26 @@ A: Use coroutines to split I/O actions in two:</p>
   <span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span> <span class="p">(</span><span class="n">compute</span> <span class="mi">100_000_000</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>For more details on the internals see <a href="https://raphael-proust.github.io/code/lwt-part-1.html">This <code>Lwt</code> tutorial</a></p>
+<h3 id="using-libraries-that-are-built-on-lwt">Using Libraries that are built on Lwt</h3>
 
+<ul>
+  <li>Web libraries Cohttp, Dream, and Opium all use <code>Lwt</code>.</li>
+  <li>For example for Dream when you say <code>Dream.run</code> at the top of your main program it in turn will call <code>Lwt_main.run</code></li>
+  <li><code>Lwt</code> then is running the whole time the server is up, and all of your own server code is running inside the Lwt monad.</li>
+  <li>The <code>simple_counter.ml</code> example in the zip gives a very high-level idea how a server like Dream works, but this example just works from stdio.
+    <ul>
+      <li>In this example the <code>handle_connection</code> function is repeatedly listening for input and invoking <code>handle_message</code> to handle messages.  This is a super simplified idea of what the Dream library is doing</li>
+      <li>Your code in Dream is something like <code>handle_message</code>, it is just OCaml code which is not directly aware of <code>Lwt</code> etc.</li>
+    </ul>
+  </li>
+  <li>The <code>counter_server.ml</code> example in the above zip is actually listening on a network port so is one step closer to a web server.
+    <ul>
+      <li>Again the “user” of the server just writes <code>handle_message</code> here and the server invokes that on each input to get the output.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>If you want to learn more about Lwt internals, see  <a href="https://raphael-proust.github.io/code/lwt-part-1.html">This <code>Lwt</code> tutorial</a></p>
       
           </section>
         </div>

@@ -56,6 +56,7 @@ In OCaml there are currently two competing libraries
 #### Idea of the implementation
 
 Q: How do we allow these loads to happen concurrently without fork/threads/parallelism?
+
 A: Use coroutines to split I/O actions in two:
   1. Issue each image request
   2. Package up the processing code (the *continuation*) as a function which will run when each load completes
@@ -81,7 +82,8 @@ let%bind img = (* code to issue image request and pause *) in
 
 * Observe how `bind` is naturally making the continuation a function
 * So we will be using `bind` a lot when writing coroutine code in OCaml
-* In general `Lwt` is also a *monad*
+* In general `Lwt` is a *monad*
+* We won't be looking at the underlying structure of the `Lwt` monad, but the type `Lwt.t` is keeping a list of active coroutines and swapping between them.
 
 ### The full loading task here
  * Suppose for simplicity there are only two images.
@@ -136,15 +138,15 @@ let%lwt str = Lwt_io.read_line Lwt_io.stdin in Lwt_io.printf "You typed %S\n" st
 - This example looks just like the built-in `read_line` except for the `%lwt`; here is why `Lwt` version is better:
 
 ```ocaml
-let p = Lwt_io.read_line Lwt_io.stdin in 
-printf "See how read not blocking now\n"; Stdio.Out_channel.flush stdout; 
+let p = Lwt_io.read_line Lwt_io.stdin in
+printf "See how read not blocking now\n"; Stdio.Out_channel.flush stdout;
 let%lwt str = p in Lwt_io.printf "You typed %S\n" str;;
 ```
 
 Lets expand the `let%lwt` to `bind` to make this more clear:
 ```ocaml
-let p = Lwt_io.read_line Lwt_io.stdin in 
-printf "See how read not blocking now\n"; Stdio.Out_channel.flush stdout; 
+let p = Lwt_io.read_line Lwt_io.stdin in
+printf "See how read not blocking now\n"; Stdio.Out_channel.flush stdout;
 Lwt.bind p (fun str -> Lwt_io.printf "You typed %S\n" str);;
 ```
 What is going on here?
@@ -167,20 +169,21 @@ Here is a top-loop example showing some of these promise states; code is a bit c
  let s,p = let p0 = Lwt_io.read_line Lwt_io.stdin in (Lwt.state p0, p0);; (* state is Sleep - input not read yet*)
  (* type something at utop and hit return now - not shown for some reason - this is the input *)
  Lwt.state p;; (* returns `Return <the string you typed>` *)
- (* Here is a failure state.  It is an exception internal to `Lwt`, it doesn't get `raise`d in OCaml except at top *)
+ (* Here we artificially make  a failure state.  It is an exception internal to `Lwt`, 
+    it doesn't get `raise`d in OCaml except at top *)
  let p' = Lwt.fail Exit in Lwt.state p';;
 ```
 
 ## Making our own promises 
-We can make (and directly resolve) our own promises; this also shows what `Lwt_io.read_line` et al are doing under the hood
+We can make (and directly resolve) our own promises; this also shows what `Lwt_io.read_line` *et al* are doing under the hood
 
 ```ocaml
 let p = return "done";; (* This is the return of Lwt monad - inject a regular value as a "fulfilled" promise *)
 state p;; (* indeed it is already resolved to a `Return`. *)
-let p, r = wait ();; (* `wait` starts a promise aSleep; r is a resolver used to resolve it later *)
+let p, r = wait ();; (* `wait` returns a pair of a sleeped promise and a resolver for it *)
 state p;; (* Sleep *)
-wakeup_exn r Exit;; (* `wakeup_exn` makes p a failure  *)
-state p;; (* Now a `Fail Exit`.  Note once resolved it is all done, can't Sleep/Return *)
+wakeup_exn r Exit;; (* `wakeup_exn` uses r to resolve p to failure  *)
+state p;; (* p is now a `Fail Exit`.  Note once resolved it can't change any more. *)
 
 let p, r = wait ();; (* another one, lets resolve this one positively *)
 wakeup r "hello";;
@@ -189,12 +192,14 @@ state p;; (* now a Return "hello" *)
 
 ## Lwt in an executable
 
-* It is hard to see what is going on in the top loop with coroutines
-* We switch to some small executable examples now.
-* See [lwteg.zip](../examples/lwteg.zip) for a zipfile of the examples (most from Lwt manual)
+* So far we have only shown promises, not general coroutines
+* For coroutines we need to call `Lwt_main.run` which works best in a standalone executable
+* See [lwteg.zip](../examples/lwteg.zip) for a zipfile of the examples below (most from Lwt manual)
+* Note you can also invoke `Lwt_main.run` in the top loop but it could run forever
 
+### A simple Example
 * Here is an example of promise resolution in an executable
-* `Lwt_main.run` kicks off the whole thing
+* Note this one we can test in the top loop since it finishes (all promises are resolved)
 
 ```ocaml
   Lwt_main.run
@@ -212,6 +217,7 @@ Lwt_main.run (return "hello")
 ```
 * This runs the `'a Lwt.t` computation supplied until all promises are resolved, and returns the final value if any.
 * Any main executable using `Lwt` usually calls this at the top, and when all promises are resolved the app can usually terminate.
+  - Apps such as servers will never terminate, they listen for requests until killed.
 * Note its type: `'a t -> 'a` which is what `run` should be in monad-land: get us out of the monad somehow
   - A common error is to try to call `Lwt_main.run` on your own to get out of monad-land but that won't work, it will destroy all the previous promises.
   - Moral: once in monad-land, always in monad-land when using `Lwt` in an executable.  Or at least til all I/O done.
@@ -220,6 +226,7 @@ Lwt_main.run (return "hello")
 
 * One common operation is when you have launched a bunch of I/O requests to be able to respond when only one of them has come back
 * The `Lwt` combinator for that is `choose` which picks a resolved promise from a list of promises
+* This example also terminates so we can test it in the top loop.
 
 ```ocaml
 let () =
@@ -248,6 +255,9 @@ let () =
 * `Lwt.async` can launch a new coroutine
 * The engine will then round-robin between all the active coroutines
 * The coroutine will at some point need to do an Lwt operation so it can yield to others
+* In this case the sleep is an Lwt operation that will yield, so other actions can happen then.
+* Note this one is not good to run in the top loop as the nag runs forever
+  - it is commented out in the file `manual_examples.ml` if you want to try the executable.
 
 ```ocaml
 let () =
@@ -264,7 +274,9 @@ let () =
    end
 ```
 
-Here is an example that shows how `Lwt.pause` is used in a compute-intensive task to let other coroutines run
+* Here is an example that shows how `Lwt.pause` is used in a compute-intensive task to let other coroutines run.
+* Note this one is also not good to run in the top loop as `handle_io` runs forever
+  - it is in the file `manual_examples.ml` if you want to try it.
 
 ```ocaml
 let () =
@@ -287,5 +299,15 @@ let () =
   Lwt_main.run (compute 100_000_000)
 ```
 
-For more details on the internals see [This `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html)
+### Using Libraries that are built on Lwt
 
+* Web libraries Cohttp, Dream, and Opium all use `Lwt`.
+* For example for Dream when you say `Dream.run` at the top of your main program it in turn will call `Lwt_main.run`
+* `Lwt` then is running the whole time the server is up, and all of your own server code is running inside the Lwt monad.
+* The `simple_counter.ml` example in the zip gives a very high-level idea how a server like Dream works, but this example just works from stdio.
+  - In this example the `handle_connection` function is repeatedly listening for input and invoking `handle_message` to handle messages.  This is a super simplified idea of what the Dream library is doing
+  - Your code in Dream is something like `handle_message`, it is just OCaml code which is not directly aware of `Lwt` etc.
+* The `counter_server.ml` example in the above zip is actually listening on a network port so is one step closer to a web server.
+  - Again the "user" of the server just writes `handle_message` here and the server invokes that on each input to get the output.
+
+If you want to learn more about Lwt internals, see  [This `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html)

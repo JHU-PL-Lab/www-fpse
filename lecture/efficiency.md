@@ -1,6 +1,7 @@
 ## Case Studies of Efficiency in Functional Programming
 
 * We already covered efficiency general concepts in the [idiomatic FP lecture](https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency)
+* It is sometimes important to analyze runtime complexity to make sure the price of using a functional data structure is not too high.
 
 
 ### Case Study: Monadic Minesweeper
@@ -33,7 +34,7 @@ Monadic state version
 * O(n) inc's are performed total so it will be O(n^2).
 * So a bit of a backfire
 
-Imagine an alternative monad implementation using a `Board` implemented as a `Core.Map` from keys `(i,j)` to characters:
+Imagine an alternative state monad implementation with `Board` state implemented as a `Core.Map` from keys `(i,j)` to characters:
 * Lookup and increment will be O(log n) on average since `Core.Map` is implemented as a balanced binary search tree
     - one change to a Map's tree is only log n because only one path in tree is changed, rest can be re-used
     - (yes, one path down a binary tree is only 1/(log n)-th of the tree nodes, and the sub-trees can be reused)
@@ -48,7 +49,7 @@ Conclusion
 * Also recall the Real World OCaml example comparing an [(immutable) Map vs a (mutable) Hashtable](https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables)
   - For standard uses a mutable hashtable will be "O(1)" vs O(log n) for a `Map` version
   - But if there are many minor variations on the Map/Hashset being created the functional data structure will in fact be faster due to all the sharing.
-  - Functional can in general be a big win for certain classes of algorithms (but admitedly not most)
+  - Functional can be a big win for a few classes of algorithms (but admitedly not most)
 
 #### FP and paralellism
 
@@ -83,4 +84,4 @@ Conclusion
 
 ## Algebraic Effects
 
-We will hopefully have a bit of extra time to cover an interesting side topic of [algebraic effects](algebraic_effects.ml): exceptions that can be resumed.
+If we have extra time we will cover the interesting side topic of [algebraic effects](algebraic_effects.ml): exceptions that can be resumed.
