@@ -4,8 +4,16 @@ The Functional Programming Language Universe
 * "This is the Dawn of the Age of FP", there are now many choices of FP languages
 * There are both viable functional-focused languages as well as FP extensions to existing languages
 * We review the landscape here so you can us some FP on your next Python/Java(Script)/C++/... project
-* Along with the FP another thing from the class which you can apply elsewhere is quickchecking
+
+
+Along with the FP there are some other things we covered that you can re-use in other langauges:
+
+* Quickchecking aka property-based testing aka random testing
   - Originated with Haskell but being ported to many languages now
+* Type-directed programming
+  - You need a typed functional language subset for this (e.g. C++, TypeScript, etc)
+  - Note that it doesn't work as well with imperative code, not as many type interfaces declared.
+
 
 ## Functional-focused languages
 
@@ -16,7 +24,6 @@ The Functional Programming Language Universe
   - Full higher-order functions (can pass and return functions to functions), currying, anonymous (`fun x -> ...` functions), etc.
   - Often also includes pattern matching and type inference, but also may be dynamically-typed
 * Note that you may see the term "persistent data structure", we have been calling these "pure functional" or "immutable" data structures.
-  - The term "persistent" has a longstanding meaning of surviving over multiple runs of a program so I  perfsonally find "persistent data structure" as a misleading term for immutable structure.
 * There are roughly two "schools"
     - ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, etc)
     - Lisp school: dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, etc)
@@ -32,7 +39,7 @@ The Functional Programming Language Universe
 
 * [F#](https://fsharp.org) is Microsoft's ML-style language, it has all the main features of OCaml
 * It integrates well with the MSFT toolchain, probably the main point of interest
-* Here is an example from their tutorial; looks familiar, eh?
+* Here is an example from their tutorial to show how similar it is to OCaml:
 
 ```fsharp
 let square x = x * x
@@ -60,11 +67,11 @@ let square = Square 2.0
 printfn "The area of the square is %f" (getArea square)
 ```
 
-### ReScript (was called Reason until a year ago)
+### ReScript (was "Reason" until ~2021)
 
 * [ReScript](https://rescript-lang.org) is an interesting beast, it is a fork of OCaml in terms of features
-  - But, with a somewhat different syntax not so loaded with historical oddities and kludges
-  - Compiler (bucklescript) takes `.res` to `.bs.js` which can in turn run in a browser
+  - It has different (improved!) syntax not loaded with historical oddities and kludges of OCaml
+  - Target to web browsers: compiler ("bucklescript") takes `.res` to `.bs.js` which can in turn run in a browser
   - [Here](https://rescript-lang.org/try) is a playground where you can see how `.res` is turned into `.js.bs`.
   - [This playground](https://reasonml.github.io/en/try) shows the close relation of ReScript and OCaml (and JavaScript) (it is in fact a Reason playground, the predecessor of ReScript)
   - [Some small code examples](https://rescript-lang.org/docs/manual/latest/newcomer-examples) to get an idea of the syntax
@@ -85,6 +92,8 @@ printfn "The area of the square is %f" (getArea square)
 
 ### Elixir
 
+* [Elixir](https://elixir-lang.org) runs on the Erlang VM; Erlang is another older FP not as popular now.
+
 ### Scala
 
 * Scala is a hybrid of Java and ML which runs on the JVM so can link with Java libraries
@@ -96,6 +105,7 @@ printfn "The area of the square is %f" (getArea square)
 * It is hard-core FP: no direct side effects at all, must use monads for every side-effect (ouch!)
 * It was gaining in popularity but not as much recently, too hard-core for your average programmer
 * Has some very cool features that OCaml does not have, e.g. type classes for principled operator overloading
+
 ### Lisp / Scheme / Racket
 
 * Lisp was the very first functional programming language, from the late 50's
@@ -112,14 +122,42 @@ printfn "The area of the square is %f" (getArea square)
 * Additionally, Smalltalk, Ruby, Python, and JavaScript are descended from Lisp (more below on those)
 * The Lisp school is generally in decline these days, `(the syntax (sucks) (since everything is just an s-expression (like this)))`
 
+## What is needed to have FP in YourLang
+You need the following elements:
+ * Higher-order: functions that can be put in variables, passed to functions, and returned as results of functions
+ * Currying: the ability to partially apply function arguments
+ * Anonymous (un-named) functions: e.g. the OCaml `(fun x -> x) 4`
+ * Closures: to implement the above FP features, the compiler/interpreter needs *closures*.
+ * (Also, FP languages often have pattern matching and immutable data structures)
+ 
+ Lets cover closures briefly now.
+
+<a name="closures"></a>
+### Closures
+
+*   A _closure_ is just a higher-order function return value
+*   The term "closure" comes from how they are implemented -- all variables not local to the function must be remembered
+*   OCaml example:
+
+```ocaml
+# let add4 = (fun x -> fun y -> x + y) 4;;
+val add4 : int -> int = <fun> (* add4 is at runtime the closure (pair) "<fun y code, {x |-> 4}>" *)
+# add4 3;;                    (* This lets us remember the 4 we passed to x *)
+- : int = 7
+```
+
+* Note how `x` is a function parameter and is remembered in spite of function returning, means `x` needs to be remembered, in the closure
+
+* Closures are the key thing missing from C: C has *function pointers* you can pass in and out of other functions, but no *closures* (variables are either directly arguments or completely global).
+
 ## FP in YourFavoriteLang
 
-* It is now possible to do FP-style programming in Java, C++, Python, JavaScript, etc.
-* All of these languages support higher-order functions with Currying, etc.
-  - (Currying is usually not the default multi-arg approach as in OCaml, though)
-* There is not necessarily good library support or integration
-  - So, at this point more "checking the FP box" than actual "doing FP"
-  - To "really do" FP you need immutable data structures and default-immutable variables
+* It is now possible to do somewhat-FP-style programming in Java, C++, Python, JavaScript, etc.
+* All of these languages have the core elements outlined above (higher-order, currying, anon functions, closures)
+* There is however often not good library support or integration
+  - So, at this point it is more a "slice of FP" but not the whole pizza
+  - With good FP libraries added and enough discipline, many FP patterns will work well.
+* [Here](https://en.wikipedia.org/wiki/Anonymous_function) is a list of languages that do and don't support FP.
 
 ### FP in Java
 
@@ -132,13 +170,13 @@ Java 8+ has **Lambdas**
 *   Currying in Java, somewhat painfully: [Gist currying example](https://gist.github.com/timyates/7674005). For that example here is the [Function](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html) and [BiFunction](https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/BiFunction.html) type.
 * Use `final` to declare variables immutable in Java - use it!
 * There are no immutable data structures in the Java standard library unfortunately
- - limits the advantages of FP
+ - significantly limits the advantages of FP
 
 ### FP in C++11
 
-* Everyone is joining the Lambda party!
-* Details [here](http://en.wikipedia.org/wiki/Anonymous_function#C.2B.2B_.28since_C.2B.2B11.29). 
-* Closures are a headache in C++ due to different low-level ways data can be accessed in C++.
+* The terse details are [here](https://en.wikipedia.org/wiki/C++14#Generic_lambdas); [here](https://www.programiz.com/cpp-programming/lambda-expression) is a tutorial with more. 
+* Closures are more difficult in C++ due to different low-level ways data can be accessed in C++.
+  - you need to explicitly mark how each variable is stored in the closure: by value, reference, etc
 * Use `const` declarations to get immutable variables
 * C++ also has some type inference a la OCaml  [C++ local type inference ](https://en.wikipedia.org/wiki/C%2B%2B11#Type_inference)
     - e.g. `auto mydata = 22;`. `auto` is like `var` in Java.
@@ -174,7 +212,7 @@ Note however that application requires a named parameter on the 2nd parameter.
 
 ### FP In Python
 
-* Python "already has" FP including lambda, closures and Currying.  Here is a Curried add function.
+* Python as a descendant of Lisp "already has" FP including lambda, closures and Currying.  Here is a Curried add function.
 
 ```python
 adder =  lambda x: lambda y: x + y
@@ -221,33 +259,5 @@ function adder(a)
 
 * `const` declarations bring the FP immutable variable default to JS - use it!
 * JavaScript has no immutable data structures however
-  - means e.g. lists won't be able to share sub-structures so "FP programming" will be less efficient in JS.
+  - means e.g. lists won't be able to share sub-structures so "FP programming" will be less efficient in JavaScript.
 
-
-<a name="closures"></a>
-### Terminology aside: _closure_
-
-*   A _closure_ is just a higher-order function return value
-*   The term "closure" comes from how they are implemented -- all variables not local to the function must be remembered
-*   OCaml example:
-
-```ocaml
-# let f = (fun x -> fun y -> x + y) 4;;
-val f : int -> int = <fun> (* f is at runtime the closure (pair) "<fun y code, {x |-> 4}>" *)
-# f 3;;
-- : int = 7
-```
-
-* Note how `x` is a function parameter and is remembered in spite of function returning, means `x` needs to be remembered, in the closure
-
-* Here is an encoding of the above idea in OCaml
-```ocaml
-let f = (fun x -> (fun (x,y) -> x + y), x) in (* return pair of function and non-local value *)
-let apply_closure (f,x) y = f (x,y) in (* function application needs to pass in x from the closure *)
-let add3 = f 3 in (* example of partial application: only one argument given *)
-apply_closure add3 5;;
-```
-
-* Closures are the key thing missing from C: C has *function pointers* you can pass around, but no closures.
-  - It also doesn't allow you to write anonymous functions (`fun x -> ..`), etc, etc.
-* In C++ there is an issue of what format non-locals like `x` are: references, copies, or what.

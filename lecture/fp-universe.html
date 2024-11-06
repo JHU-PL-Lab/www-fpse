@@ -74,9 +74,20 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>“This is the Dawn of the Age of FP”, there are now many choices of FP languages</li>
   <li>There are both viable functional-focused languages as well as FP extensions to existing languages</li>
   <li>We review the landscape here so you can us some FP on your next Python/Java(Script)/C++/… project</li>
-  <li>Along with the FP another thing from the class which you can apply elsewhere is quickchecking
+</ul>
+
+<p>Along with the FP there are some other things we covered that you can re-use in other langauges:</p>
+
+<ul>
+  <li>Quickchecking aka property-based testing aka random testing
     <ul>
       <li>Originated with Haskell but being ported to many languages now</li>
+    </ul>
+  </li>
+  <li>Type-directed programming
+    <ul>
+      <li>You need a typed functional language subset for this (e.g. C++, TypeScript, etc)</li>
+      <li>Note that it doesn’t work as well with imperative code, not as many type interfaces declared.</li>
     </ul>
   </li>
 </ul>
@@ -93,11 +104,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Often also includes pattern matching and type inference, but also may be dynamically-typed</li>
     </ul>
   </li>
-  <li>Note that you may see the term “persistent data structure”, we have been calling these “pure functional” or “immutable” data structures.
-    <ul>
-      <li>The term “persistent” has a longstanding meaning of surviving over multiple runs of a program so I  perfsonally find “persistent data structure” as a misleading term for immutable structure.</li>
-    </ul>
-  </li>
+  <li>Note that you may see the term “persistent data structure”, we have been calling these “pure functional” or “immutable” data structures.</li>
   <li>There are roughly two “schools”
     <ul>
       <li>ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, etc)</li>
@@ -120,7 +127,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li><a href="https://fsharp.org">F#</a> is Microsoft’s ML-style language, it has all the main features of OCaml</li>
   <li>It integrates well with the MSFT toolchain, probably the main point of interest</li>
-  <li>Here is an example from their tutorial; looks familiar, eh?</li>
+  <li>Here is an example from their tutorial to show how similar it is to OCaml:</li>
 </ul>
 
 <div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">square</span> <span class="n">x</span> <span class="p">=</span> <span class="n">x</span> <span class="p">*</span> <span class="n">x</span>
@@ -148,13 +155,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">printfn</span> <span class="s2">"The area of the square is %f"</span> <span class="p">(</span><span class="n">getArea</span> <span class="n">square</span><span class="p">)</span>
 </code></pre></div></div>
 
-<h3 id="rescript-was-called-reason-until-a-year-ago">ReScript (was called Reason until a year ago)</h3>
+<h3 id="rescript-was-reason-until-2021">ReScript (was “Reason” until ~2021)</h3>
 
 <ul>
   <li><a href="https://rescript-lang.org">ReScript</a> is an interesting beast, it is a fork of OCaml in terms of features
     <ul>
-      <li>But, with a somewhat different syntax not so loaded with historical oddities and kludges</li>
-      <li>Compiler (bucklescript) takes <code>.res</code> to <code>.bs.js</code> which can in turn run in a browser</li>
+      <li>It has different (improved!) syntax not loaded with historical oddities and kludges of OCaml</li>
+      <li>Target to web browsers: compiler (“bucklescript”) takes <code>.res</code> to <code>.bs.js</code> which can in turn run in a browser</li>
       <li><a href="https://rescript-lang.org/try">Here</a> is a playground where you can see how <code>.res</code> is turned into <code>.js.bs</code>.</li>
       <li><a href="https://reasonml.github.io/en/try">This playground</a> shows the close relation of ReScript and OCaml (and JavaScript) (it is in fact a Reason playground, the predecessor of ReScript)</li>
       <li><a href="https://rescript-lang.org/docs/manual/latest/newcomer-examples">Some small code examples</a> to get an idea of the syntax</li>
@@ -191,6 +198,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h3 id="elixir">Elixir</h3>
 
+<ul>
+  <li><a href="https://elixir-lang.org">Elixir</a> runs on the Erlang VM; Erlang is another older FP not as popular now.</li>
+</ul>
+
 <h3 id="scala">Scala</h3>
 
 <ul>
@@ -204,9 +215,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Haskell is an ML descendant, it shares a lot of the same syntax</li>
   <li>It is hard-core FP: no direct side effects at all, must use monads for every side-effect (ouch!)</li>
   <li>It was gaining in popularity but not as much recently, too hard-core for your average programmer</li>
-  <li>Has some very cool features that OCaml does not have, e.g. type classes for principled operator overloading
-    <h3 id="lisp--scheme--racket">Lisp / Scheme / Racket</h3>
-  </li>
+  <li>Has some very cool features that OCaml does not have, e.g. type classes for principled operator overloading</li>
+</ul>
+
+<h3 id="lisp--scheme--racket">Lisp / Scheme / Racket</h3>
+
+<ul>
   <li>Lisp was the very first functional programming language, from the late 50’s
     <ul>
       <li>inspired by Church’s Lambda Calculus, circa 1934 - functional programming on paper</li>
@@ -234,21 +248,54 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The Lisp school is generally in decline these days, <code>(the syntax (sucks) (since everything is just an s-expression (like this)))</code></li>
 </ul>
 
+<h2 id="what-is-needed-to-have-fp-in-yourlang">What is needed to have FP in YourLang</h2>
+<p>You need the following elements:</p>
+<ul>
+  <li>Higher-order: functions that can be put in variables, passed to functions, and returned as results of functions</li>
+  <li>Currying: the ability to partially apply function arguments</li>
+  <li>Anonymous (un-named) functions: e.g. the OCaml <code>(fun x -&gt; x) 4</code></li>
+  <li>Closures: to implement the above FP features, the compiler/interpreter needs <em>closures</em>.</li>
+  <li>(Also, FP languages often have pattern matching and immutable data structures)</li>
+</ul>
+
+<p>Lets cover closures briefly now.</p>
+
+<p><a name="closures"></a></p>
+<h3 id="closures">Closures</h3>
+
+<ul>
+  <li>A <em>closure</em> is just a higher-order function return value</li>
+  <li>The term “closure” comes from how they are implemented – all variables not local to the function must be remembered</li>
+  <li>OCaml example:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">add4</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="mi">4</span><span class="p">;;</span>
+<span class="k">val</span> <span class="n">add4</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span> <span class="c">(* add4 is at runtime the closure (pair) "&lt;fun y code, {x |-&gt; 4}&gt;" *)</span>
+<span class="o">#</span> <span class="n">add4</span> <span class="mi">3</span><span class="p">;;</span>                    <span class="c">(* This lets us remember the 4 we passed to x *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">7</span>
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>Note how <code>x</code> is a function parameter and is remembered in spite of function returning, means <code>x</code> needs to be remembered, in the closure</p>
+  </li>
+  <li>
+    <p>Closures are the key thing missing from C: C has <em>function pointers</em> you can pass in and out of other functions, but no <em>closures</em> (variables are either directly arguments or completely global).</p>
+  </li>
+</ul>
+
 <h2 id="fp-in-yourfavoritelang">FP in YourFavoriteLang</h2>
 
 <ul>
-  <li>It is now possible to do FP-style programming in Java, C++, Python, JavaScript, etc.</li>
-  <li>All of these languages support higher-order functions with Currying, etc.
+  <li>It is now possible to do somewhat-FP-style programming in Java, C++, Python, JavaScript, etc.</li>
+  <li>All of these languages have the core elements outlined above (higher-order, currying, anon functions, closures)</li>
+  <li>There is however often not good library support or integration
     <ul>
-      <li>(Currying is usually not the default multi-arg approach as in OCaml, though)</li>
+      <li>So, at this point it is more a “slice of FP” but not the whole pizza</li>
+      <li>With good FP libraries added and enough discipline, many FP patterns will work well.</li>
     </ul>
   </li>
-  <li>There is not necessarily good library support or integration
-    <ul>
-      <li>So, at this point more “checking the FP box” than actual “doing FP”</li>
-      <li>To “really do” FP you need immutable data structures and default-immutable variables</li>
-    </ul>
-  </li>
+  <li><a href="https://en.wikipedia.org/wiki/Anonymous_function">Here</a> is a list of languages that do and don’t support FP.</li>
 </ul>
 
 <h3 id="fp-in-java">FP in Java</h3>
@@ -266,15 +313,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Currying in Java, somewhat painfully: <a href="https://gist.github.com/timyates/7674005">Gist currying example</a>. For that example here is the <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/Function.html">Function</a> and <a href="https://docs.oracle.com/en/java/javase/14/docs/api/java.base/java/util/function/BiFunction.html">BiFunction</a> type.</li>
   <li>Use <code>final</code> to declare variables immutable in Java - use it!</li>
   <li>There are no immutable data structures in the Java standard library unfortunately</li>
-  <li>limits the advantages of FP</li>
+  <li>significantly limits the advantages of FP</li>
 </ul>
 
 <h3 id="fp-in-c11">FP in C++11</h3>
 
 <ul>
-  <li>Everyone is joining the Lambda party!</li>
-  <li>Details <a href="http://en.wikipedia.org/wiki/Anonymous_function#C.2B.2B_.28since_C.2B.2B11.29">here</a>.</li>
-  <li>Closures are a headache in C++ due to different low-level ways data can be accessed in C++.</li>
+  <li>The terse details are <a href="https://en.wikipedia.org/wiki/C++14#Generic_lambdas">here</a>; <a href="https://www.programiz.com/cpp-programming/lambda-expression">here</a> is a tutorial with more.</li>
+  <li>Closures are more difficult in C++ due to different low-level ways data can be accessed in C++.
+    <ul>
+      <li>you need to explicitly mark how each variable is stored in the closure: by value, reference, etc</li>
+    </ul>
+  </li>
   <li>Use <code>const</code> declarations to get immutable variables</li>
   <li>C++ also has some type inference a la OCaml  <a href="https://en.wikipedia.org/wiki/C%2B%2B11#Type_inference">C++ local type inference </a>
     <ul>
@@ -316,7 +366,7 @@ let sum = add(2)(y: 3)
 <h3 id="fp-in-python">FP In Python</h3>
 
 <ul>
-  <li>Python “already has” FP including lambda, closures and Currying.  Here is a Curried add function.</li>
+  <li>Python as a descendant of Lisp “already has” FP including lambda, closures and Currying.  Here is a Curried add function.</li>
 </ul>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">adder</span> <span class="o">=</span>  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
@@ -374,44 +424,11 @@ let sum = add(2)(y: 3)
   <li><code>const</code> declarations bring the FP immutable variable default to JS - use it!</li>
   <li>JavaScript has no immutable data structures however
     <ul>
-      <li>means e.g. lists won’t be able to share sub-structures so “FP programming” will be less efficient in JS.</li>
+      <li>means e.g. lists won’t be able to share sub-structures so “FP programming” will be less efficient in JavaScript.</li>
     </ul>
   </li>
 </ul>
 
-<p><a name="closures"></a></p>
-<h3 id="terminology-aside-closure">Terminology aside: <em>closure</em></h3>
-
-<ul>
-  <li>A <em>closure</em> is just a higher-order function return value</li>
-  <li>The term “closure” comes from how they are implemented – all variables not local to the function must be remembered</li>
-  <li>OCaml example:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="mi">4</span><span class="p">;;</span>
-<span class="k">val</span> <span class="n">f</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span> <span class="c">(* f is at runtime the closure (pair) "&lt;fun y code, {x |-&gt; 4}&gt;" *)</span>
-<span class="o">#</span> <span class="n">f</span> <span class="mi">3</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">7</span>
-</code></pre></div></div>
-
-<ul>
-  <li>
-    <p>Note how <code>x</code> is a function parameter and is remembered in spite of function returning, means <code>x</code> needs to be remembered, in the closure</p>
-  </li>
-  <li>Here is an encoding of the above idea in OCaml
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span><span class="o">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">in</span> <span class="c">(* return pair of function and non-local value *)</span>
-<span class="k">let</span> <span class="n">apply_closure</span> <span class="p">(</span><span class="n">f</span><span class="o">,</span><span class="n">x</span><span class="p">)</span> <span class="n">y</span> <span class="o">=</span> <span class="n">f</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="p">)</span> <span class="k">in</span> <span class="c">(* function application needs to pass in x from the closure *)</span>
-<span class="k">let</span> <span class="n">add3</span> <span class="o">=</span> <span class="n">f</span> <span class="mi">3</span> <span class="k">in</span> <span class="c">(* example of partial application: only one argument given *)</span>
-<span class="n">apply_closure</span> <span class="n">add3</span> <span class="mi">5</span><span class="p">;;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>Closures are the key thing missing from C: C has <em>function pointers</em> you can pass around, but no closures.
-    <ul>
-      <li>It also doesn’t allow you to write anonymous functions (<code>fun x -&gt; ..</code>), etc, etc.</li>
-    </ul>
-  </li>
-  <li>In C++ there is an issue of what format non-locals like <code>x</code> are: references, copies, or what.</li>
-</ul>
       
           </section>
         </div>
