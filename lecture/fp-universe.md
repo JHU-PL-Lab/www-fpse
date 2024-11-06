@@ -20,20 +20,19 @@ Along with the FP there are some other things we covered that you can re-use in 
 * These are languages designed with FP in mind from the start
 * Key features include
   - Immutable variables by default
-  - Libraries have immutable data structures
+  - Libraries have immutable aka persistent data structures (immutable lists, trees, maps, etc)
   - Full higher-order functions (can pass and return functions to functions), currying, anonymous (`fun x -> ...` functions), etc.
   - Often also includes pattern matching and type inference, but also may be dynamically-typed
-* Note that you may see the term "persistent data structure", we have been calling these "pure functional" or "immutable" data structures.
-* There are roughly two "schools"
-    - ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, etc)
-    - Lisp school: dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, etc)
-* All of these functional languages should be very easy to learn now that you know OCaml.
+* There are two major "schools" of FP today
+    - ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, Scala, etc)
+    - Lisp school, dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, etc)
+* All of these true functional languages should be very easy to learn now that you know OCaml.
 
 ## ML Dialects
 
 * OCaml .. perhaps you have heard of that? :-)
 * Standard ML is another variant of ML, but it has limited popularity these days
-* F#, ReScript, and Elm are other ML-descended languages we cover briefly now
+* F#, ReScript, Elm, and Haskell are other ML-descended languages we cover briefly now
 
 ### F#
 
@@ -67,10 +66,10 @@ let square = Square 2.0
 printfn "The area of the square is %f" (getArea square)
 ```
 
-### ReScript (was "Reason" until ~2021)
+### ReScript (was called Reason until ~2021)
 
 * [ReScript](https://rescript-lang.org) is an interesting beast, it is a fork of OCaml in terms of features
-  - It has different (improved!) syntax not loaded with historical oddities and kludges of OCaml
+  - It has different (improved!) syntax fixing the historical oddities and kludges of OCaml
   - Target to web browsers: compiler ("bucklescript") takes `.res` to `.bs.js` which can in turn run in a browser
   - [Here](https://rescript-lang.org/try) is a playground where you can see how `.res` is turned into `.js.bs`.
   - [This playground](https://reasonml.github.io/en/try) shows the close relation of ReScript and OCaml (and JavaScript) (it is in fact a Reason playground, the predecessor of ReScript)
@@ -80,7 +79,7 @@ printfn "The area of the square is %f" (getArea square)
 
 * The main thrust behind ReScript is use of soundly-typed FP in web UI programming
   - Compare to TypeScript which is not sound and lacks type inference
-* ReScriptReact is the ReScript version of Facebook's excellent React UI library
+* [ReScriptReact](https://rescript-lang.org/docs/react/latest/introduction) is the ReScript version of Facebook's excellent React UI library for web browsers
 * [Here](https://github.com/jihchi/rescript-react-realworld-example-app) is an example of a full browser app written in ReScriptReact.
   - ReScript and ReScriptReact count as OCaml for the course projects, an option to consider if you already know React.
 
@@ -92,18 +91,19 @@ printfn "The area of the square is %f" (getArea square)
 
 ### Elixir
 
-* [Elixir](https://elixir-lang.org) runs on the Erlang VM; Erlang is another older FP not as popular now.
+* [Elixir](https://elixir-lang.org) runs on the Erlang VM; Erlang is another older FP not so popular now.
 
 ### Scala
 
 * Scala is a hybrid of Java and ML which runs on the JVM so can link with Java libraries
-* It is easier to do FP in compared to Java since FP was built-in from the start: pattern matching, type inference, etc.
+* It is much easier to do FP in compared to Java since FP was built-in from the start: pattern matching, type inference, etc.
 
 ### Haskell
 
 * Haskell is an ML descendant, it shares a lot of the same syntax
 * It is hard-core FP: no direct side effects at all, must use monads for every side-effect (ouch!)
-* It was gaining in popularity but not as much recently, too hard-core for your average programmer
+* It was gaining in popularity but interest has leveled off in the last few years
+   - monads are too hard-core for your average programmer
 * Has some very cool features that OCaml does not have, e.g. type classes for principled operator overloading
 
 ### Lisp / Scheme / Racket
@@ -124,9 +124,9 @@ printfn "The area of the square is %f" (getArea square)
 
 ## What is needed to have FP in YourLang
 You need the following elements:
- * Higher-order: functions that can be put in variables, passed to functions, and returned as results of functions
- * Currying: the ability to partially apply function arguments
- * Anonymous (un-named) functions: e.g. the OCaml `(fun x -> x) 4`
+ * Higher-order functions: functions can be put in variables, passed to other functions, and returned as results of functions
+ * Currying: the ability to partially apply function arguments because the type is `a1 -> (a2 -> r)`
+ * Anonymous (un-named) functions: e.g. in the OCaml `(fun x -> x) 4`
  * Closures: to implement the above FP features, the compiler/interpreter needs *closures*.
  * (Also, FP languages often have pattern matching and immutable data structures)
  
@@ -135,29 +135,28 @@ You need the following elements:
 <a name="closures"></a>
 ### Closures
 
-*   A _closure_ is just a higher-order function return value
-*   The term "closure" comes from how they are implemented -- all variables not local to the function must be remembered
+*   A _closure_ is just how one function can return another function as a result
+*   The term "closure" comes from how they are implemented -- all variable values not local to the function must be remembered
 *   OCaml example:
 
 ```ocaml
 # let add4 = (fun x -> fun y -> x + y) 4;;
-val add4 : int -> int = <fun> (* add4 is at runtime the closure (pair) "<fun y code, {x |-> 4}>" *)
-# add4 3;;                    (* This lets us remember the 4 we passed to x *)
+val add4 : int -> int = <fun> (* add4 is at runtime the *closure* "< fun y code, {x |-> 4} >" *)
+# add4 3;;                    (* The closure lets us remember the 4 we passed to x *)
 - : int = 7
 ```
 
 * Note how `x` is a function parameter and is remembered in spite of function returning, means `x` needs to be remembered, in the closure
-
-* Closures are the key thing missing from C: C has *function pointers* you can pass in and out of other functions, but no *closures* (variables are either directly arguments or completely global).
+* Closures are the key thing missing from C: C has *function pointers* you can pass in and out of other functions, but no closures
 
 ## FP in YourFavoriteLang
 
 * It is now possible to do somewhat-FP-style programming in Java, C++, Python, JavaScript, etc.
-* All of these languages have the core elements outlined above (higher-order, currying, anon functions, closures)
+* All of these languages have the core elements outlined above (higher-order, currying, anon. functions, closures)
 * There is however often not good library support or integration
-  - So, at this point it is more a "slice of FP" but not the whole pizza
-  - With good FP libraries added and enough discipline, many FP patterns will work well.
-* [Here](https://en.wikipedia.org/wiki/Anonymous_function) is a list of languages that do and don't support FP.
+  - So, at this point it is more a "slice of FP" and not the whole pizza
+  - With good FP libraries added and enough discipline, many FP coding idioms will still work.
+* [Here](https://en.wikipedia.org/wiki/Anonymous_function) is a list of languages that do and don't support basic FP.
 
 ### FP in Java
 
@@ -172,12 +171,12 @@ Java 8+ has **Lambdas**
 * There are no immutable data structures in the Java standard library unfortunately
  - significantly limits the advantages of FP
 
-### FP in C++11
+### FP in C++11/14
 
-* The terse details are [here](https://en.wikipedia.org/wiki/C++14#Generic_lambdas); [here](https://www.programiz.com/cpp-programming/lambda-expression) is a tutorial with more. 
 * Closures are more difficult in C++ due to different low-level ways data can be accessed in C++.
   - you need to explicitly mark how each variable is stored in the closure: by value, reference, etc
-* Use `const` declarations to get immutable variables
+* Can use `const` declarations to get immutable variables
+* [Here](https://www.programiz.com/cpp-programming/lambda-expression) is a tutorial with some details. 
 * C++ also has some type inference a la OCaml  [C++ local type inference ](https://en.wikipedia.org/wiki/C%2B%2B11#Type_inference)
     - e.g. `auto mydata = 22;`. `auto` is like `var` in Java.
 *   C++14 adds [generic lambdas](http://en.wikipedia.org/wiki/C++14#Generic_lambdas) which look like the polymorphic types of OCaml/Java but are really just fancy macros.
@@ -186,7 +185,7 @@ Java 8+ has **Lambdas**
 
 * Swift also has support for anonymous function definitions, closures, Currying, etc.
 * `let` is also built-in for defining immutable values (use `var` to mutate)
-* `map` and other standard functions are supported in the system libraries
+* `map` and other standard functions are supported in the system libraries, and lists can be immutable and so can be shared.
 * The generic types of Swift also allow polymorphic functions to be defined like in OCaml
 * Here is a Curried add function
 ```swift

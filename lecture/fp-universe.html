@@ -99,19 +99,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Key features include
     <ul>
       <li>Immutable variables by default</li>
-      <li>Libraries have immutable data structures</li>
+      <li>Libraries have immutable aka persistent data structures (immutable lists, trees, maps, etc)</li>
       <li>Full higher-order functions (can pass and return functions to functions), currying, anonymous (<code>fun x -&gt; ...</code> functions), etc.</li>
       <li>Often also includes pattern matching and type inference, but also may be dynamically-typed</li>
     </ul>
   </li>
-  <li>Note that you may see the term “persistent data structure”, we have been calling these “pure functional” or “immutable” data structures.</li>
-  <li>There are roughly two “schools”
+  <li>There are two major “schools” of FP today
     <ul>
-      <li>ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, etc)</li>
-      <li>Lisp school: dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, etc)</li>
+      <li>ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, Scala, etc)</li>
+      <li>Lisp school, dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, etc)</li>
     </ul>
   </li>
-  <li>All of these functional languages should be very easy to learn now that you know OCaml.</li>
+  <li>All of these true functional languages should be very easy to learn now that you know OCaml.</li>
 </ul>
 
 <h2 id="ml-dialects">ML Dialects</h2>
@@ -119,7 +118,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>OCaml .. perhaps you have heard of that? :-)</li>
   <li>Standard ML is another variant of ML, but it has limited popularity these days</li>
-  <li>F#, ReScript, and Elm are other ML-descended languages we cover briefly now</li>
+  <li>F#, ReScript, Elm, and Haskell are other ML-descended languages we cover briefly now</li>
 </ul>
 
 <h3 id="f">F#</h3>
@@ -155,12 +154,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">printfn</span> <span class="s2">"The area of the square is %f"</span> <span class="p">(</span><span class="n">getArea</span> <span class="n">square</span><span class="p">)</span>
 </code></pre></div></div>
 
-<h3 id="rescript-was-reason-until-2021">ReScript (was “Reason” until ~2021)</h3>
+<h3 id="rescript-was-called-reason-until-2021">ReScript (was called Reason until ~2021)</h3>
 
 <ul>
   <li><a href="https://rescript-lang.org">ReScript</a> is an interesting beast, it is a fork of OCaml in terms of features
     <ul>
-      <li>It has different (improved!) syntax not loaded with historical oddities and kludges of OCaml</li>
+      <li>It has different (improved!) syntax fixing the historical oddities and kludges of OCaml</li>
       <li>Target to web browsers: compiler (“bucklescript”) takes <code>.res</code> to <code>.bs.js</code> which can in turn run in a browser</li>
       <li><a href="https://rescript-lang.org/try">Here</a> is a playground where you can see how <code>.res</code> is turned into <code>.js.bs</code>.</li>
       <li><a href="https://reasonml.github.io/en/try">This playground</a> shows the close relation of ReScript and OCaml (and JavaScript) (it is in fact a Reason playground, the predecessor of ReScript)</li>
@@ -177,7 +176,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Compare to TypeScript which is not sound and lacks type inference</li>
     </ul>
   </li>
-  <li>ReScriptReact is the ReScript version of Facebook’s excellent React UI library</li>
+  <li><a href="https://rescript-lang.org/docs/react/latest/introduction">ReScriptReact</a> is the ReScript version of Facebook’s excellent React UI library for web browsers</li>
   <li><a href="https://github.com/jihchi/rescript-react-realworld-example-app">Here</a> is an example of a full browser app written in ReScriptReact.
     <ul>
       <li>ReScript and ReScriptReact count as OCaml for the course projects, an option to consider if you already know React.</li>
@@ -199,14 +198,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="elixir">Elixir</h3>
 
 <ul>
-  <li><a href="https://elixir-lang.org">Elixir</a> runs on the Erlang VM; Erlang is another older FP not as popular now.</li>
+  <li><a href="https://elixir-lang.org">Elixir</a> runs on the Erlang VM; Erlang is another older FP not so popular now.</li>
 </ul>
 
 <h3 id="scala">Scala</h3>
 
 <ul>
   <li>Scala is a hybrid of Java and ML which runs on the JVM so can link with Java libraries</li>
-  <li>It is easier to do FP in compared to Java since FP was built-in from the start: pattern matching, type inference, etc.</li>
+  <li>It is much easier to do FP in compared to Java since FP was built-in from the start: pattern matching, type inference, etc.</li>
 </ul>
 
 <h3 id="haskell">Haskell</h3>
@@ -214,7 +213,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Haskell is an ML descendant, it shares a lot of the same syntax</li>
   <li>It is hard-core FP: no direct side effects at all, must use monads for every side-effect (ouch!)</li>
-  <li>It was gaining in popularity but not as much recently, too hard-core for your average programmer</li>
+  <li>It was gaining in popularity but interest has leveled off in the last few years
+    <ul>
+      <li>monads are too hard-core for your average programmer</li>
+    </ul>
+  </li>
   <li>Has some very cool features that OCaml does not have, e.g. type classes for principled operator overloading</li>
 </ul>
 
@@ -251,9 +254,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h2 id="what-is-needed-to-have-fp-in-yourlang">What is needed to have FP in YourLang</h2>
 <p>You need the following elements:</p>
 <ul>
-  <li>Higher-order: functions that can be put in variables, passed to functions, and returned as results of functions</li>
-  <li>Currying: the ability to partially apply function arguments</li>
-  <li>Anonymous (un-named) functions: e.g. the OCaml <code>(fun x -&gt; x) 4</code></li>
+  <li>Higher-order functions: functions can be put in variables, passed to other functions, and returned as results of functions</li>
+  <li>Currying: the ability to partially apply function arguments because the type is <code>a1 -&gt; (a2 -&gt; r)</code></li>
+  <li>Anonymous (un-named) functions: e.g. in the OCaml <code>(fun x -&gt; x) 4</code></li>
   <li>Closures: to implement the above FP features, the compiler/interpreter needs <em>closures</em>.</li>
   <li>(Also, FP languages often have pattern matching and immutable data structures)</li>
 </ul>
@@ -264,38 +267,34 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="closures">Closures</h3>
 
 <ul>
-  <li>A <em>closure</em> is just a higher-order function return value</li>
-  <li>The term “closure” comes from how they are implemented – all variables not local to the function must be remembered</li>
+  <li>A <em>closure</em> is just how one function can return another function as a result</li>
+  <li>The term “closure” comes from how they are implemented – all variable values not local to the function must be remembered</li>
   <li>OCaml example:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">add4</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="mi">4</span><span class="p">;;</span>
-<span class="k">val</span> <span class="n">add4</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span> <span class="c">(* add4 is at runtime the closure (pair) "&lt;fun y code, {x |-&gt; 4}&gt;" *)</span>
-<span class="o">#</span> <span class="n">add4</span> <span class="mi">3</span><span class="p">;;</span>                    <span class="c">(* This lets us remember the 4 we passed to x *)</span>
+<span class="k">val</span> <span class="n">add4</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span> <span class="c">(* add4 is at runtime the *closure* "&lt; fun y code, {x |-&gt; 4} &gt;" *)</span>
+<span class="o">#</span> <span class="n">add4</span> <span class="mi">3</span><span class="p">;;</span>                    <span class="c">(* The closure lets us remember the 4 we passed to x *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">7</span>
 </code></pre></div></div>
 
 <ul>
-  <li>
-    <p>Note how <code>x</code> is a function parameter and is remembered in spite of function returning, means <code>x</code> needs to be remembered, in the closure</p>
-  </li>
-  <li>
-    <p>Closures are the key thing missing from C: C has <em>function pointers</em> you can pass in and out of other functions, but no <em>closures</em> (variables are either directly arguments or completely global).</p>
-  </li>
+  <li>Note how <code>x</code> is a function parameter and is remembered in spite of function returning, means <code>x</code> needs to be remembered, in the closure</li>
+  <li>Closures are the key thing missing from C: C has <em>function pointers</em> you can pass in and out of other functions, but no closures</li>
 </ul>
 
 <h2 id="fp-in-yourfavoritelang">FP in YourFavoriteLang</h2>
 
 <ul>
   <li>It is now possible to do somewhat-FP-style programming in Java, C++, Python, JavaScript, etc.</li>
-  <li>All of these languages have the core elements outlined above (higher-order, currying, anon functions, closures)</li>
+  <li>All of these languages have the core elements outlined above (higher-order, currying, anon. functions, closures)</li>
   <li>There is however often not good library support or integration
     <ul>
-      <li>So, at this point it is more a “slice of FP” but not the whole pizza</li>
-      <li>With good FP libraries added and enough discipline, many FP patterns will work well.</li>
+      <li>So, at this point it is more a “slice of FP” and not the whole pizza</li>
+      <li>With good FP libraries added and enough discipline, many FP coding idioms will still work.</li>
     </ul>
   </li>
-  <li><a href="https://en.wikipedia.org/wiki/Anonymous_function">Here</a> is a list of languages that do and don’t support FP.</li>
+  <li><a href="https://en.wikipedia.org/wiki/Anonymous_function">Here</a> is a list of languages that do and don’t support basic FP.</li>
 </ul>
 
 <h3 id="fp-in-java">FP in Java</h3>
@@ -316,16 +315,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>significantly limits the advantages of FP</li>
 </ul>
 
-<h3 id="fp-in-c11">FP in C++11</h3>
+<h3 id="fp-in-c1114">FP in C++11/14</h3>
 
 <ul>
-  <li>The terse details are <a href="https://en.wikipedia.org/wiki/C++14#Generic_lambdas">here</a>; <a href="https://www.programiz.com/cpp-programming/lambda-expression">here</a> is a tutorial with more.</li>
   <li>Closures are more difficult in C++ due to different low-level ways data can be accessed in C++.
     <ul>
       <li>you need to explicitly mark how each variable is stored in the closure: by value, reference, etc</li>
     </ul>
   </li>
-  <li>Use <code>const</code> declarations to get immutable variables</li>
+  <li>Can use <code>const</code> declarations to get immutable variables</li>
+  <li><a href="https://www.programiz.com/cpp-programming/lambda-expression">Here</a> is a tutorial with some details.</li>
   <li>C++ also has some type inference a la OCaml  <a href="https://en.wikipedia.org/wiki/C%2B%2B11#Type_inference">C++ local type inference </a>
     <ul>
       <li>e.g. <code>auto mydata = 22;</code>. <code>auto</code> is like <code>var</code> in Java.</li>
@@ -339,7 +338,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Swift also has support for anonymous function definitions, closures, Currying, etc.</li>
   <li><code>let</code> is also built-in for defining immutable values (use <code>var</code> to mutate)</li>
-  <li><code>map</code> and other standard functions are supported in the system libraries</li>
+  <li><code>map</code> and other standard functions are supported in the system libraries, and lists can be immutable and so can be shared.</li>
   <li>The generic types of Swift also allow polymorphic functions to be defined like in OCaml</li>
   <li>Here is a Curried add function<br />
 ```swift<br />
