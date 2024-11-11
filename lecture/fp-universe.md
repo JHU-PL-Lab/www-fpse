@@ -170,6 +170,7 @@ Java 8+ has **Lambdas**
 * Use `final` to declare variables immutable in Java - use it!
 * There are no immutable data structures in the Java standard library unfortunately
  - significantly limits the advantages of FP
+* Java 14 has records and pattern matching on them, but no "or" types so you can't make nice list/tree types (and they also won't be able to be shared as they are mutable).
 
 ### FP in C++11/14
 
