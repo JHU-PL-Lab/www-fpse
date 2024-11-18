@@ -532,7 +532,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%"> 
-            <div align="center" class="body">Code Checkpoint</div>
+            <div align="center" class="body">Code Checkpoint (Fri)</div>
           </td>
         </tr>
 	<tr> 
