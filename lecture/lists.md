@@ -2,7 +2,7 @@
 * First we will do a few more recursive functions over lists
 * Then we will show how the `Core.List` library functions allow a great many (most?) operations to be written without recursion
 * This is *combinator programming*, solve a task by composing operations on a few standard combinators ("combiners")
-* (Note for Assignment 1 Part I you will not be able to use the library combinators, they are for Part II)
+* (Note for Assignment 1 you will not be able to use the library combinators, but you will use them in Assignment 2)
 
 #### Reversing a list
 
@@ -121,7 +121,7 @@ split_in_half [2;3;4;5;99];;
 ```ocaml
 let all_front_back_pairs l = 
   let front, back = split_in_half l in 
-    List.cartesian_product front back;; (* observe how let can itself pattern match pairs *)
+  List.cartesian_product front back;; (* observe how let can itself pattern match pairs *)
 val all_front_back_pairs : 'a list -> ('a * 'a) list = <fun>
 # all_front_back_pairs [1;2;3;4;5;6];;
 - : (int * int) list =
@@ -165,7 +165,9 @@ Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
 type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
 ```
 * This means the value is either `Ok(..)` or `Unequal_lenghts`, very similar to `result` or `option`
-  - (Why don't they just use one of those two here instead?? No idea!)
+  - Why don't they just use one of those two here instead?? 
+  - Probably to let the type communicate the reason for the error, rather than some unexplained failure (`Option`) or some _value_ the communicates the failure (a string message in `Result`, which would then have to be run to read the reason for error).
+  - Since it's statically known that the only error would be due to unequal lengths, it's good practice to bake that into the type.
 * The `'a` here is the type parameter, more on those later so don't sweat it now
 * The latter case is for zipping lists of different lengths:
 
@@ -346,7 +348,7 @@ let rec char_list_to_string l =
   | [] -> "" (* ~init above is "", plug it in as the base case *)
   | elt :: elts ->  (* as in the above we are calling the current list element `elt` *)
     let accum = char_list_to_string elts in (* this is what `accum` is, the result of recursing on a shorter list *)
-      (Char.to_string elt)^accum (* now plug in the body of ~f as the calculation done on accum and elt *)
+    (Char.to_string elt)^accum (* now plug in the body of ~f as the calculation done on accum and elt *)
 ```
 
 
@@ -358,7 +360,7 @@ let rec fold_right l ~f ~init =
   | [] -> init
   | elt :: elts -> 
     let accum = fold_right elts ~f ~init in 
-      f elt accum
+    f elt accum
 ```
 
  - If we now plug in `""` for `~init` and `(fun elt -> fun accum -> (Char.to_string elt)^accum)` for `~f` we get exactly `char_list_to_string` above.
@@ -517,3 +519,6 @@ let stz_example = summate_til_zero [1;2;3;4;0;5;6;7;8;9;10]
 * The `Stop` variant is like break, here take `sum` as the final value
 * `Continue` wraps the continue-folding case, which adds `i` to running `sum` here.
 * `~finish` can post-process the result if the `Stop` case was not hit; `Fn.id` is `fun x -> x`, no additional processing here.
+  * The `~finish` exists so that the `Stop` and `Continue` cases can hold different types: `Continue` holds an `'acc`, and `Stop` holds a `'final`.
+  * If we continued until the very end of the list, we need to tell it how to turn an `'acc` into a `'final`.
+  * In `summate_til_zero`, both were `int`, so we can do nothing.
