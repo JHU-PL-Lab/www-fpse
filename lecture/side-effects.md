@@ -56,8 +56,18 @@ Error: This expression has type int ref but an expression was expected of type
 - : int = 7
 ```
 
+And `!` does **not** return the memory location to which a ref cell points, so this is a syntax error:
+
+```ocaml
+let x = ref 4
+let !x = 5 (* syntax error. !x is a value, not a valid assignee *)
+```
+
+In this way, `!x` in OCaml is not like `*x` in C.
+
 ### Tangent on unit
 
+* We said that `(:=)` returns `()`, so it only performs a side effect. What did we mean by that?
 * `unit` is a terminal type. Only one value called `()` has type `unit`, and it is totally useless.
 * All you can do is pass it around.
 * So what is it good for?
@@ -114,15 +124,6 @@ let x = ref 6;; (* shadows previous x definition, NOT an assignment to x !! *)
 f ();; (* 234, not 6 *)
 ```
 
-And `!` does **not** return the memory location to which a ref cell points, so this is a total syntax error:
-
-```ocaml
-let x = ref 4
-let !x = 5 (* syntax error. !x is a value, not a valid assignee *)
-```
-
-In this way, `!x` in OCaml is not like `*x` in C.
-
 ### Null or Nil initial cell contents in OCaml, and Weakly Polymorphic types
 
 * If you don't yet have a well-formed initial value, use an `option`:
@@ -133,7 +134,9 @@ val x : '_weak1 option ref = {contents = None}
 ```
 * Note the type here, `'_weak1 option ref`, this is a *weakly polymorphic type*
 * Which really is not polymorphic at all - what it means is the type can be only a single type
-    - which is not known yet
+  - which is not known yet
+* To the first order, a weakly polymorphic type is like a "Schrodinger's type". 
+  - It is ready to be any type until it is observed (i.e. used), after which it is fixed.
 * If you think about it, there is no other possibility, can't put int and string in same cell
     - would not know the type when taking out of cell.
 
@@ -153,9 +156,9 @@ val x : '_weak1 option ref = {contents = None}
 The weak types are here so that we cannot do this:
 
 ```ocaml
-let x = ref None (* weakly typed. Not polymorphic *)
+let x = ref None (* Puts Schrodinger's cat in the box. It is weakly typed, not polymorphic. *)
 
-let _ = x := Some 5 (* fixes the weak type to be int *)
+let _ = x := Some 5 (* Observes Schrodinger's cat: fixes the weak type to be int *)
 
 let _ = x := Some "hello" (* type error! x is not a string ref *)
 ```
@@ -165,9 +168,9 @@ let _ = x := Some "hello" (* type error! x is not a string ref *)
 * Along with refs we can declare some record fields `mutable`
 * `'a ref` is really implemented by a mutable record with one field, contents:
 * `'a ref` in fact abbreviates the type `{ mutable contents: 'a }`
-  * And `ref` is a just a function to make creation convenient
-  * And `(:=)` is just a function to make assignment convenient
-  * And `(!)` is just a function to make reading convenient.
+  * And `ref` is a just a function to make creation convenient.
+  * And `(:=)` is just a function to make assignment convenient.
+  * And `(!)` is just a function to make reading convenient and explicit.
 * The keyword mutable on a record field means it can mutate
 
 ```ocaml
