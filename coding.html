@@ -50,7 +50,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="/fpse/assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/9034692226">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -123,8 +123,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span>
 </code></pre></div></div>
 
-<p>And here is a shell command which you can simply copy/paste to make the above file (note this was broken but is fixed now):<br />
-<code>(echo '#use "topfind";;'; echo; echo '#require "ppx_jane";;'; echo; echo '#require "core.top";;'; echo; echo 'open Core;;') &gt;~/.ocamlinit</code></p>
+<p>And here is a shell command which you can simply copy/paste to make the above file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="nb">echo</span> <span class="s1">'#use "topfind";;'</span><span class="p">;</span> <span class="nb">echo</span><span class="p">;</span> <span class="nb">echo</span> <span class="s1">'#require "ppx_jane";;'</span><span class="p">;</span> <span class="nb">echo</span><span class="p">;</span> <span class="nb">echo</span> <span class="s1">'#require "core.top";;'</span><span class="p">;</span> <span class="nb">echo</span><span class="p">;</span> <span class="nb">echo</span> <span class="s1">'open Core;;'</span><span class="o">)</span> <span class="o">&gt;</span>~/.ocamlinit
+</code></pre></div></div>
 
 <p>To test that your install works, type the shell command <code>utop</code> which will start up an interactive OCaml session (more later on that).  Type <code>Fn.id;;</code> into the <code>utop</code> prompt followed by return, this is just a test to make sure the <code>Core</code> libraries were properly loaded.  If you didn’t get an error message you are all good!  Type control-D to quit <code>utop</code>.</p>
 

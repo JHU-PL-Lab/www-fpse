@@ -2,18 +2,18 @@
 
 ### Lecture Schedule
 
-Lectures will be 1:30-2:45 on Mondays and Wednesdays in Hackerman B17.
+Lectures will be 1:30-2:45 on Mondays and Wednesdays in Krieger 170.
 ### Syllabus
 
 See the [Dateline](dateline.html) for the schedule and the topics that will be covered.
 
 ### Gradescope
 
-[Gradescope](https://gradescope.com) will be used for assignment submission and grade posting. See the Q&A board for the entry code.
+[Gradescope](https://gradescope.com) will be used for assignment submission and grade posting. See Courselore for the entry code.
 
 ### Courselore Q&A board
 
-We will be using the [Courselore Q&A board](https://courselore.org/courses/9034692226) for online discussions. A registration link will be emailed if you are either registered or on the wait list, and the link will also be posted as an announcement on Canvas if you signed up late and missed the email.  All information not on this website, such as locations of Panopto recordings, office hours, etc will be posted on Courselore.
+We will be using the [Courselore Q&A board](https://courselore.org/courses/1192943254) for online discussions. A registration link will be emailed if you are either registered or on the wait list, and the link will also be posted as an announcement on Canvas if you signed up late and missed the email.  All information not on this website, such as locations of Panopto recordings, office hours, etc will be posted on Courselore.
 
 Note we are not using Canvas for anything so don't try accessing things like Gradescope or Panopto from within there as it probably won't work.
 
