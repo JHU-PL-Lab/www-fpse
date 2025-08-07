@@ -24,6 +24,10 @@ Lectures will be recorded and the Panopto page for those recordings will be post
 
 All assignments are linked from the [dateline](dateline.html). They will all be programming exercises, primarily in OCaml.
 
+### In-Class Exercises
+
+There will be around half a dozen graded in-class exercises to test your OCaml abilities.  They will be announced ahead of time.  They cannot be made up however so you will need to be attending in-person to get credit.  You will be able to drop your lowest score in case you miss one.
+
 ### Exams
 
 There will be no exam.  There will be a quiz around 2/3rds of the way through the course.
@@ -34,7 +38,7 @@ There will be an independent team project at the end of the course worth around 
 
 ### Grades
 
-Grades will be computed as follows: around 50% for projects, 35% for homeworks, and 15% for the quiz.  There is no curve but the cutoffs can shift based on assignment difficulty; you can assume they will probably be at or close to the standard 90-80-70 for A/B/C based on previous years.
+Grades will be computed approximately as follows: 45% for projects, 30% for homeworks, 10% for the in-class exercises, and 15% for the quiz.  There is no curve but the cutoffs can shift based on assignment difficulty; you can assume they will probably be at or close to the standard 90-80-70 for A/B/C based on previous years.
 
 ### Collaboration
 

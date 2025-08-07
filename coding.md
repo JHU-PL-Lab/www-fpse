@@ -1,8 +1,8 @@
 ## OCaml Coding Information
 
-We are using [OCaml](https://ocaml.org) version 5.2.0.
+We are using [OCaml](https://ocaml.org) version 5.3.0.
 
-### Installing OCaml 5.2.0 and associated tools
+### Installing OCaml 5.3.0 and associated tools
 
 We require that you use the [opam packaging system](https://opam.ocaml.org) for installing OCaml and its extensions.  Once you get `opam` installed and working, everything else should be easy to install .. so the only hard part is the first step.
 
@@ -21,14 +21,14 @@ You will need to run some terminal commands to set up the basics:
    1.  `opam init` will initialize OPAM (it should give a list of options 1/2/3/4/5, pick 1, `Yes update ~/.bash_profile` or something similar depending on your shell setup);
    2.  If you didn't get that question or said to do nothing, you will need to add line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
    3. `opam update` to make sure your `opam` is aware of all the versions of OCaml that are out there;
-   4. `opam switch create 5.2.0` will build OCaml version 5.2.0.;
-   5.  After any `opam switch` command it will instruct you to reset your path with some instructions like "Run `eval $(opam env)` to update the current shell environment" -- follow those instructions and copy/paste the in the command into the shell (if you are on `zsh` replace the `$(...)` with back-quotes `` `...` ``).
+   4. `opam switch create 5.3.0` will build OCaml version 5.3.0.;
+   5.  After any `opam switch` command it will instruct you to reset your path with some instructions like "Run `eval $(opam env --switch=5.3.0)` to update the current shell environment" -- follow those instructions and copy/paste the in the command into the shell (if you are on a Mac you may be using `zsh`; replace the `$(...)` with back-quotes `` `...` ``).
 
-If you already have an earlier version of OCaml installed via `opam`, start on step 3. above to update to 5.2.0.
+If you already have an earlier version of OCaml installed via `opam`, start on step 3. above to update to 5.3.0.
 
 #### Required OPAM Standard packages
 
-Once you have `opam` and `ocaml` 5.2.0 installed, run the following `opam` command to install additional necessary packages for the class:
+Once you have `opam` and `ocaml` 5.3.0 installed, run the following `opam` command to install additional necessary packages for the class:
 
     opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 base base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_ppx
 
