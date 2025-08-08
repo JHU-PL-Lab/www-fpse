@@ -402,14 +402,14 @@ let make_string_item (s : string) = (module struct
   let to_string () = item
 end : ITEM_I)
 
-(* Since the type t is hidden in Item_i we can make a heterogenous list! *)
+(* Since the type t is hidden in ITEM_I we can make a heterogenous list! *)
 let item_list = [make_string_item "hi"; make_int_item 5]
 
 (* Inspect the type above, OCaml still sees a uniform list
    Observe that abstract types like t in module types are "exists t"'s - each t underlying in the list is different but OCaml just sees "exists a t" for each one and that is OK! Only when types are 100% hidden are they "exists" So, there is not a lot we can do with such data structures *)
 
 
-let to_string_items (il : (module Item_i) list)  = 
+let to_string_items (il : (module ITEM_I) list)  = 
   il |> List.map ~f:(fun it -> let (module M) = it in M.to_string())
 
   let _ = to_string_items item_list;;   
