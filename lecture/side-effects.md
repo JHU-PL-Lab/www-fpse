@@ -98,6 +98,9 @@ Alternatively, if you see a function type that has `unit` domain and some other 
 ```ocaml
 # Stack.create;; (* takes unit, so it is making a new mutable data structure *)
 - : unit -> 'a Core.Stack.t = <fun>
+
+# Stack.create ();; (* still uses spaces with unit arguments *)
+- : '_weak1 Core.Stack.t = <abstr> (* more on weak types very soon *)
 ```
 
 * Remember that the body of a function cannot run until it has its argument. 
