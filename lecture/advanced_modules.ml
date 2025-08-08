@@ -63,7 +63,7 @@ let sid (x : String.t) = x (* String.t is aliased to be `string` via "type t = s
  * Type variables can denote **existential** (hidden) types in module types
 *)
 
-module type Eq = sig type t val equal : t -> t -> bool end
+module type EQ = sig type t val equal : t -> t -> bool end
 
 (*
 
@@ -93,7 +93,7 @@ type ('key, 'value, 'cmp) t = ('key, 'value, 'cmp) Map.t (* existential / hidden
 
 (* An abstract pairing module type: *)
 
-module type Pair = 
+module type PAIR = 
  sig
    type l
    type r
@@ -105,14 +105,14 @@ module type Pair =
 end
 
 (* Arbitrary Data with equality module type *)
-module type Datum = sig
+module type DATUM = sig
   type t
   val equal : t -> t -> bool
 end
 
 (* Functor to make a pair of two Datum's, 
   and the "with :=" syntax  will substitute those types in the result module type. *)
-module Make_pair_smartest(Datum1 : Datum)(Datum2 : Datum) : (Pair with type l := Datum1.t with type r := Datum2.t) = 
+module Make_pair_smartest(Datum1 : DATUM)(Datum2 : DATUM) : (PAIR with type l := Datum1.t with type r := Datum2.t) = 
 struct
   type l = Datum1.t
   type r = Datum2.t
@@ -136,7 +136,7 @@ module Example_pair_smartest = Make_pair_smartest(Int)(String)
 
 (* The module type for Example_pair_smartest above, declared module type needed explicitly *)
 (* This is the type inferred for the resulting module the functor makes *)
-module type Eps_i = 
+module type EPS_I = 
 sig
   type t
   val create : int -> string -> t
@@ -151,7 +151,7 @@ end
     But often the type checker needs some help so you need to also give a type:  
     `(module M : M_i)`  *)
 
-let mcell  =  ref (module Example_pair_smartest : Eps_i)
+let mcell  =  ref (module Example_pair_smartest : EPS_I)
 
 (* Unpack it from the cell to make an official top-level module *)
 (* "val" is the keyword to go back expression-land to module-land
@@ -371,15 +371,14 @@ let () = printf fmt3 4 "k" "l";;
 (* We need modules to do this because they include existential types *)
 
 (* Here is a simple module type holding one piece of data from some abstract aka existential type *)
-module type Item_i =
-sig 
+module type ITEM_I = sig 
   type t
   val item : t
   val to_string : unit -> string
 end
 
 (* An instance of the above type *)
-module Int_item : Item_i = struct
+module Int_item : ITEM_I = struct
   type t = Int.t
   let item = 33 (* Yes a bit overwrought, a module just to hold a single number *)
   let to_string () = Int.to_string item
@@ -394,14 +393,14 @@ let make_int_item (i : int) = (module struct
   type t = Int.t
   let item = i
   let to_string () = Int.to_string item
-end : Item_i)
+end : ITEM_I)
 
 (* And similarly for strings (or ANY other type) *)
 let make_string_item (s : string) = (module struct
   type t = String.t
   let item = s
   let to_string () = item
-end : Item_i)
+end : ITEM_I)
 
 (* Since the type t is hidden in Item_i we can make a heterogenous list! *)
 let item_list = [make_string_item "hi"; make_int_item 5]

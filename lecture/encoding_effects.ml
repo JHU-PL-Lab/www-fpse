@@ -416,7 +416,7 @@ let f (x : int) =
 
 (* Generally a monad for us is anything matching this module type *)
 
-module type Monadic = sig
+module type MONADIC = sig
   type 'a t (* a "wrapper" on 'a-typed data *)
   val return : 'a -> 'a t
   val bind : 'a t -> f:('a -> 'b t) -> 'b t
@@ -428,7 +428,7 @@ end
 (* ( Core.Monad's version also requires map but does not require run) *)
 (* Let us verify our version above is indeed a monad *)
 
-module Exception_test : Monadic = Exception
+module Exception_test : MONADIC = Exception
 
 (* 
   * General principle: side effects are result "plus other stuff"
@@ -503,7 +503,7 @@ module Logger = struct
   let log msg : unit t = ((), [msg])
 end
 
-module Logger_test = (Logger : Monadic) (* verify it is a monad *)
+module Logger_test = (Logger : MONADIC) (* verify it is a monad *)
 
 open Logger
 open Logger.Let_syntax
