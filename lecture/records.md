@@ -27,7 +27,7 @@ let q = { num = 53 ; denom = 6 }
 Note that a record type **must** be declared before you make any values with that type. For example, the following will **not** work because there is no type defined for it yet.
 
 ```ocaml
-let p = { x = 42.0 ; y = 50.1 } (* doesn't work! It's type isn't defined yet *)
+let p = { x = 42.0 ; y = 50.1 } (* doesn't work! Its type isn't defined yet *)
 ```
 
 There are many ways to use record values. We will compare functions that do **the exact same thing** and are just different ways of writing it.
@@ -154,13 +154,8 @@ The solution is to avoid dot, or to use modules to avoid a global namespace of r
 Here are a few ways to make it clear which type is being used.
 
 ```ocaml
-module A = struct
-  type t = { x : int ; y : bool }
-end
-
-module B = struct
-  type t = { x : int ; z : float }
-end
+(* Suppose A.t is { x : int ; y : bool } *)
+(* Also suppose B.t is { x : int ; z : float } *)
 
 let r = { x = 0 ; y = true } (* uh oh! It doesn't know label x because the types are inside modules *)
 
@@ -201,7 +196,7 @@ make_ratio 1 2
 
 When there are many labels, and we want to copy a record and only change a few, we use the `with` keyword.
 - Very useful for records with many fields
-- Note that by "change" we do **not** mean a mutation. A new record is constructed.
+- Note that by "change" we do **not** mean a mutation. A brand new record is constructed.
 
 ```ocaml
 let clear_bad_denom r =
@@ -236,7 +231,7 @@ type gbu =
   | Ugly
 ```
 
-The inner records (`{ sugar : string ; units : int }` and `{ spice : string ; units : int }`) don't need to be separately declared. The downside is they cannot be returned or typed on their own. They are only internal to the variant constructor.
+The inner records (`{ sugar : string ; units : int }` and `{ spice : string ; units : int }`) don't need to be defined on their own. The downside is they cannot be returned or typed on their own. They are only internal to the variant constructor.
 
 ```ocaml
 let good_units_exn v =
