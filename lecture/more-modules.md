@@ -414,7 +414,7 @@ type 'a intpairmaptree =
 
 ### A Small Example Using Core.Map
 * We will go over the code of [school.ml](../examples/school.ml), simple code that uses a `Core.Map`.
-* Note that there is a better method than `Map.Make` using advanced features we will cover in detail later: *first-class modules*.
+* Note that there is an alternative to `Map.Make` using advanced features we will cover in detail later: *first-class modules*.
   - We will briefly look at [cool_school.ml](../examples/cool_school.ml) which re-writes the `school.ml` example to use first-class modules
   - The advantage of this code is you don't need to make a new module for every type you use it at
   - Also avoids the `Map.add` vs `IntMap.empty` issue of two different interfaces to use same map.
@@ -423,9 +423,9 @@ type 'a intpairmaptree =
 
 
 * `with` is sometimes needed when you have a module type with an abstract `type t` (just the type name, no explicit definition)
- - Sometimes you made it just `type t` not to hide it like we did in `simple_set.mli`, but because **we didn't know it** - it is a generic type.
+ - Sometimes you made it just `type t`, not to hide it like we did in `simple_set.mli`, but because **we didn't know it** - it is a generic type.
  - This is common in functor parameter module types in particular, e.g. our `EQ` above has a `type t` which is intended to be generic, not hidden.
- - Above everything worked fine because `t` was only a parameter, but if the functor result module type had a `type t` in it, it would be hidden and that might not be desired.
+ - Above, everything worked fine because `t` was only a parameter, but if the functor result module type had a `type t` in it, it would be hidden, and that might not be desired.
  
 * Example: here is a type of modules which contain pairs (a toy example)
 * We want this to be generic over any type of pair so we let `l` and `r` be undefined
@@ -469,7 +469,7 @@ Error: This expression has type int but an expression was expected of type
 The solution is you can specialize abstract types in module types via `with`:
 
 ```ocaml
-# module Matched_pair = (Pair : Pair with type l = int with type r = string);;
+# module Matched_pair = (Pair : PAIR with type l = int with type r = string);;
 module Matched_pair :
   sig
     type l = int
@@ -486,7 +486,7 @@ module Matched_pair :
 Usually `with` is inlined like above, but it is just shorthand for defining a new module type, and inlining that module type:
 
 ```ocaml
-# module type PAIR_INT_STRING = Pair with type l = int with type r = string;;
+# module type PAIR_INT_STRING = PAIR with type l = int with type r = string;;
 module type PAIR_INT_STRING =
   sig
     type l = int
@@ -506,8 +506,8 @@ module type DATUM = sig
   val equal : t -> t -> bool
 end
 
-module Make_pair_dumb (Datum1 : DATUM) (Datum2 : DATUM) : Pair = struct
-  type l = Datum1.t (* Oops this gets hidden since Pair type just has "type l" *)
+module Make_pair_dumb (Datum1 : DATUM) (Datum2 : DATUM) : PAIR = struct
+  type l = Datum1.t (* Oops this gets hidden since PAIR type just has "type l" *)
   type r = Datum2.t (* ditto *)
   type t = l * r
   let left (p : t) = match p with (a,_) -> a
@@ -522,7 +522,7 @@ module Example_pair_dumb = Make_pair_dumb (Int) (String)
 Let us fix this by specializing the `Pair` module type with `with`:
 
 ```ocaml
-module Make_pair_smarter (Datum1 :  Datum) (Datum2 :  Datum) : (Pair with type l = Datum1.t with type r = Datum2.t) = struct
+module Make_pair_smarter (Datum1 :  DATUM) (Datum2 :  DATUM) : (PAIR with type l = Datum1.t with type r = Datum2.t) = struct
   type l = Datum1.t
   type r = Datum2.t
   type t = l * r
@@ -537,7 +537,7 @@ module Example_pair_smarter = Make_pair_smarter (Int) (String)
 Sometimes we might want to *inline* the types we are instantiating in `with`: use `:=` in place of `=` for that:
 
 ```ocaml
-module Make_pair_smartest (Datum1 :  Datum) (Datum2 :  Datum) : (Pair with type l := Datum1.t with type r := Datum2.t) = struct
+module Make_pair_smartest (Datum1 :  DATUM) (Datum2 :  DATUM) : (PAIR with type l := Datum1.t with type r := Datum2.t) = struct
   (* type l = Datum1.t *) (* Not needed! They were destructively substituted! *)
   (* type r = Datum2.t *)
   type t = Datum1.t * Datum2.t

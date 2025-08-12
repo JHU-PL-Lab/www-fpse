@@ -40,7 +40,7 @@ type t = (string list) IntMap.t
 *)
 
 (* The empty school *)
-let (empty : t) = IntMap.empty
+let empty : t = IntMap.empty
 
 (* From now on we need to use Map.add etc directly and not IntMap.add etc
     - the empty map has in its type the type of map and we build all the maps from that *)
@@ -48,7 +48,7 @@ let (empty : t) = IntMap.empty
 (**  Add a student stud in grade grade to school database 
      Map.add_multi assumes values are lists and conses to key's list
      or, creates a new key and singleton list if key not present. **)
-let add (grade : int) (stud : string) (school : t) : t =  Map.add_multi school ~key:grade ~data:(stud)
+let add (grade : int) (stud : string) (school : t) : t =  Map.add_multi school ~key:grade ~data:stud
 
 (** 
   Sorting using a fold over the map.
@@ -58,12 +58,12 @@ let add (grade : int) (stud : string) (school : t) : t =  Map.add_multi school ~
 let sort (school : t) : t = 
   Map.fold school
     ~init:empty 
-    ~f:(fun ~key -> fun ~data -> fun scl -> Map.add_exn scl ~key ~data:(List.sort data ~compare:(String.compare) ))
+    ~f:(fun ~key ~data scl -> Map.add_exn scl ~key ~data:(List.sort data ~compare:String.compare))
 
 (** Note that Map.map is a better way; it maps over the values only, keeping key structure intact *)
 let sort_better_with_map (school : t) : t = 
   Map.map school
-    ~f:(fun data -> (List.sort data ~compare:(String.compare) ))
+    ~f:(fun data -> (List.sort data ~compare:String.compare))
 
 let roster (school : t) = school |> sort |> Map.data |> List.concat
 (** Auxiliary function to dump data structure *)
