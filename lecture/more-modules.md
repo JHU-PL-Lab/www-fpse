@@ -250,7 +250,7 @@ module type MAKE_SET = functor (M : EQ) -> sig
 end
 ```
 
-* Observe the type is generally `functor (M : Module_type) -> sig ... end`
+* Observe the type is generally `functor (M : MODULE_TYPE) -> sig ... end`
 * Notice how the argument module `M` occurs in the result type!
   - Such a type is called a *dependent type*: the type of the result depends on the value of the argument.
 * Functor types are module types. Just like function types are regular types.
