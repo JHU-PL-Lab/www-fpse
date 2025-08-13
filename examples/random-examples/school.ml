@@ -6,7 +6,7 @@ open Core
 (* The Make functor in the Map module specializes maps to Ints in this case 
    See https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Map/index.html for the Map module API.  *)
 
-module IntMap = Map.Make(Int)
+module IntMap = Map.Make (Int)
 
 (* The Int here is the **keys** of the map (the grade here); we need to use a functor because 
   we need an underling compare function for maps to work.  Built-in Core.Int has such. 

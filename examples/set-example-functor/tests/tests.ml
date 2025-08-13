@@ -1,5 +1,5 @@
 open OUnit2
-module Int_set = Simple_set.Make(Int)
+module Int_set = Simple_set.Make (Int)
 open Int_set
 let tests = "test suite for simple set" >::: [
   "empty"  >:: (fun _ -> assert_equal empty empty);

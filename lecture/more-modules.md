@@ -522,7 +522,7 @@ module Example_pair_dumb = Make_pair_dumb (Int) (String)
 Let us fix this by specializing the `Pair` module type with `with`:
 
 ```ocaml
-module Make_pair_smarter (Datum1 :  DATUM) (Datum2 :  DATUM) : (PAIR with type l = Datum1.t with type r = Datum2.t) = struct
+module Make_pair_smarter (Datum1 : DATUM) (Datum2 : DATUM) : (PAIR with type l = Datum1.t with type r = Datum2.t) = struct
   type l = Datum1.t
   type r = Datum2.t
   type t = l * r
@@ -537,7 +537,7 @@ module Example_pair_smarter = Make_pair_smarter (Int) (String)
 Sometimes we might want to *inline* the types we are instantiating in `with`: use `:=` in place of `=` for that:
 
 ```ocaml
-module Make_pair_smartest (Datum1 :  DATUM) (Datum2 :  DATUM) : (PAIR with type l := Datum1.t with type r := Datum2.t) = struct
+module Make_pair_smartest (Datum1 : DATUM) (Datum2 : DATUM) : (PAIR with type l := Datum1.t with type r := Datum2.t) = struct
   (* type l = Datum1.t *) (* Not needed! They were destructively substituted! *)
   (* type r = Datum2.t *)
   type t = Datum1.t * Datum2.t
