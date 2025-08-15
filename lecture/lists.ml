@@ -48,7 +48,7 @@ split_in_half [2;3;4;5;99];;
 
 let all_front_back_pairs l = 
   let front, back = split_in_half l in 
-    List.cartesian_product front back;; (* observe how let can itself pattern match pairs *)
+  List.cartesian_product front back;; (* observe how let can itself pattern match pairs *)
 val all_front_back_pairs : 'a list -> ('a * 'a) list = <fun>
 # all_front_back_pairs [1;2;3;4;5;6];;
 - : (int * int) list =
@@ -126,14 +126,14 @@ let rec char_list_to_string l =
   | [] -> "" (* ~init above is "", plug it in as the base case *)
   | elt :: elts ->  (* as in the above we are calling the current list element `elt` *)
     let accum = char_list_to_string elts in (* this is what `accum` is, the result of recursing on a shorter list *)
-      (Char.to_string elt)^accum (* now plug in the body of ~f as the calculation done on accum and elt *)
+    (Char.to_string elt)^accum (* now plug in the body of ~f as the calculation done on accum and elt *)
 
 let rec fold_right l ~f ~init =
   match l with
   | [] -> init
   | elt :: elts -> 
     let accum = fold_right elts ~f ~init in 
-      f elt accum
+    f elt accum
 
 List.fold_right ~f:(fun elt accum -> elt + accum) ~init:0 [3; 5; 7];;  (* this computes 3 + (5 + (7 + 0))  *)
 

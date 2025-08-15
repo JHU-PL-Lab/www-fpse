@@ -50,7 +50,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="/fpse/assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/9034692226">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -68,195 +68,233 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
-    <h3 id="modules-basics">Modules Basics</h3>
+    <h1 id="modules-basics">Modules Basics</h1>
 
+<p>We’ve already <em>used</em> modules without thinking too much about them: <code>List.map</code>, <code>Float.(2 = 3)</code>, <code>Fn.id</code> – all these come from modules in the <code>Core</code> library.</p>
+
+<p>Now it’s time to look under the hood:</p>
 <ul>
-  <li>We have seen OCaml modules in action, e.g. <code>List.map</code>, <code>Float.(2 = 3)</code>, <code>Fn.id</code>, etc.</li>
-  <li>We also covered how modules are collections of functions, values, types, and other modules</li>
-  <li>Now we want to cover how individual <code>.ml</code> files define modules
-    <ul>
-      <li>and, how to hide some items in a module (think <code>private</code> of Java/C++) via <code>.mli</code> file signatures</li>
-    </ul>
-  </li>
-  <li>Also we will cover how most modules are <em>libraries</em> of auxiliary functions but how modules may also define <em>executables</em>.</li>
-  <li>… there are also many more fancy module features which we will cover later</li>
-  <li>We are going to use a running example to explain these concepts; see <a href="../examples/set-example.zip">set-example.zip</a> for the full example</li>
+  <li>What are modules in OCaml?</li>
+  <li>How do files become modules?</li>
+  <li>How can we hide details with signatures (<code>.mli</code> files)?</li>
+  <li>How do we work with modules in the toploop?</li>
+  <li>How do nested modules work?</li>
 </ul>
 
-<h3 id="ml-files-are-modules"><code>.ml</code> files are modules</h3>
+<p>In future lectures, we’ll learn more advanced features like functions on modules. But first, the basics.</p>
 
-<p>The contents of the file <code>simple_set.ml</code> in the above is the following:</p>
+<h2 id="what-is-a-module">What is a module?</h2>
+
+<p>A module is a <em>collection</em> of OCaml definitions:</p>
+<ul>
+  <li>types</li>
+  <li>values (including functions, which are values)</li>
+  <li>other modules</li>
+</ul>
+
+<p>Since we know records: records are collections of values, each with a name.</p>
+
+<p>A module is a <em>bit</em> like a record, but it can hold many different kinds of things, not just values. However, modules are not first class values like records.</p>
+
+<h2 id="ml-files-are-modules"><code>.ml</code> files are modules</h2>
+
+<p>OCaml has a simple rule:</p>
+<ul>
+  <li>The contents of a file <code>foo.ml</code> define the module <code>Foo</code>.
+    <ul>
+      <li>Capitalize the first letter (only) and drop the <code>.ml</code>.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>In this lecture, we’ll work with a running example. See <a href="../examples/set-example.zip">set-example.zip</a> for the full code.</p>
+
+<p>Here is <code>string_set.ml</code> from that example:</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span>
 
-<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span>
-<span class="k">let</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">[]</span>
-<span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span>
-<span class="k">let</span> <span class="k">rec</span> <span class="n">remove</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">equal</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="c">(* the type of a string set is a list of strings *)</span>
+
+<span class="k">let</span> <span class="n">empty</span> <span class="o">:</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">[]</span> <span class="c">(* the one canonical empty set *)</span>
+
+<span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="n">t</span> <span class="o">=</span> <span class="n">x</span> <span class="o">::</span> <span class="n">s</span>
+
+<span class="k">let</span> <span class="k">rec</span> <span class="n">remove</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="n">t</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"item is not in set"</span>
   <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
-    <span class="k">if</span> <span class="n">equal</span> <span class="n">hd</span> <span class="n">x</span> <span class="k">then</span> <span class="n">tl</span>
-    <span class="k">else</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">remove</span> <span class="n">x</span> <span class="n">tl</span> <span class="n">equal</span>
-<span class="k">let</span> <span class="k">rec</span> <span class="n">contains</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">equal</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span>
+    <span class="k">if</span> <span class="nn">String</span><span class="p">.</span><span class="n">equal</span> <span class="n">hd</span> <span class="n">x</span>
+    <span class="k">then</span> <span class="n">tl</span> <span class="c">(* we don't remove from the tail: this is actually a multiset *)</span>
+    <span class="k">else</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">remove</span> <span class="n">x</span> <span class="n">tl</span>
+
+<span class="k">let</span> <span class="k">rec</span> <span class="n">contains</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">false</span>
   <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
-    <span class="k">if</span> <span class="n">equal</span> <span class="n">x</span> <span class="n">hd</span> <span class="k">then</span> <span class="bp">true</span> <span class="k">else</span> <span class="n">contains</span> <span class="n">x</span> <span class="n">tl</span> <span class="n">equal</span>
-
+    <span class="k">if</span> <span class="nn">String</span><span class="p">.</span><span class="n">equal</span> <span class="n">x</span> <span class="n">hd</span> 
+    <span class="k">then</span> <span class="bp">true</span> 
+    <span class="k">else</span> <span class="n">contains</span> <span class="n">x</span> <span class="n">tl</span>
 </code></pre></div></div>
+
+<p>This creates a module <code>String_set</code> with:</p>
 <ul>
-  <li>The above code defines module <code>Simple_set</code> since it is in the file <code>simple_set.ml</code>
+  <li>a type <code>t</code></li>
+  <li>four values <code>empty</code>, <code>add</code>, <code>remove</code>, and <code>contains</code>.</li>
+</ul>
+
+<h3 id="using-it-in-utop">Using it in <code>utop</code></h3>
+
+<p>Use <code>dune utop</code> to fire up the OCaml toploop with the module loaded.</p>
+<ul>
+  <li>Then access the module’s contents in <code>String_set</code>.</li>
+</ul>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>dune utop
+</code></pre></div></div>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">add</span> <span class="s2">"hello"</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">empty</span> <span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"hello"</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Or open the module with <code>open String_set</code> to put everything from inside it into scope:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">open</span> <span class="nc">String_set</span> <span class="p">;;</span>
+<span class="o">#</span> <span class="n">add</span> <span class="s2">"hello"</span> <span class="n">empty</span> <span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"hello"</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>Here, the fact that we used a <code>list</code> is <em>exposed</em> in the type and the value.</p>
+<ul>
+  <li>We made the <em>type abbreviation</em> with <code>type t = string list</code>. So <code>t</code> is a synonym for <code>string list</code>.</li>
+  <li>Naming the type <code>t</code> is standard for “the” underlying type in a module.</li>
+  <li>Then, <code>String_set.t</code> is read as “string set’s type`.</li>
+</ul>
+
+<h2 id="hiding-details-with-module-types">Hiding details with module types</h2>
+
+<p>Modules have <em>types</em>, called <strong>module types</strong> or <strong>signatures</strong>.</p>
+<ul>
+  <li>The latter term is used in math, e.g. “a DFA has signature D = (S, Σ, τ, s0, F)”</li>
+</ul>
+
+<p>The type of <code>String_set</code> can be written out and put in the <code>string_set.mli</code> file.</p>
+<ul>
+  <li>The added “i” is for “interface”.</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">t</span> <span class="c">(* Declare a type t, but don't define it, so the type is hidden to all users *)</span>
+<span class="k">val</span> <span class="n">empty</span> <span class="o">:</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+<span class="k">val</span> <span class="n">contains</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+</code></pre></div></div>
+
+<p>The type <code>t</code> has been made abstract. We did not write <code>type t = string list</code>.</p>
+
+<p>Now in <code>utop</code>:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">add</span> <span class="s2">"hello"</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">empty</span> <span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<p>The printed value is now <code>&lt;abstr&gt;</code>, not <code>["hello"]</code> like before.</p>
+<ul>
+  <li>The type is hidden; so are the values.</li>
+</ul>
+
+<p>Why do this?</p>
+<ul>
+  <li>Good:
     <ul>
-      <li>Capitalize first letter (only) in file name and remove <code>.ml</code> to get module name</li>
+      <li>Program to interfaces, not implementations.</li>
+      <li>We can change the implementation without changing client code.</li>
+      <li>The abstraction prevents misuse and maintains invariants.</li>
     </ul>
   </li>
-  <li>Modules are just collections of top-level definable things (things you could type into top loop)</li>
-  <li>Assignment 1 file <code>submission.ml</code> is in fact making a module as well, named <code>Submission</code>.
+  <li>Bad:
     <ul>
-      <li><code>dune utop</code> fires up OCaml with that module loaded;</li>
-      <li><code>open Submission;;</code> then allows you to avoid typing long name <code>Submission.fibonacci</code> etc.</li>
-    </ul>
-  </li>
-  <li>This particular set module is just a set implemented as a list; it is in fact a multiset</li>
-  <li>The line <code>type 'a t = 'a list</code> is a <em>type abbreviation</em>, <code>'a t</code> is a synonym for <code>'a list</code>
-    <ul>
-      <li>below we will show how to <em>hide</em> the fact that it is a list.</li>
-    </ul>
-  </li>
-  <li>Naming a type just <code>t</code> is the standard for “the” underlying type of a module
-    <ul>
-      <li>When outsiders use this module the type will be <code>Simple_set.t</code>, read “Simple set’s type”</li>
-      <li><code>Core</code> extensively uses this type naming convention in libraries: <code>List.t</code>, <code>Option.t</code> etc.</li>
-    </ul>
-  </li>
-  <li>Notice how the functions needing <code>=</code> we have to pass it in explicitly to be polymorphic
-    <ul>
-      <li>In <code>Core.Set</code> there is in fact a much better solution but involves fancier modules which we cover later
-        <h4 id="building-the-library">Building the library</h4>
-      </li>
+      <li>It’s hard to see what’s going on in <code>utop</code>.</li>
+      <li>It can be harder to test our module.</li>
     </ul>
   </li>
 </ul>
 
-<p>This file can be built as a library module with the dune file in <code>src/dune</code> (remember to execute <code>dune</code> from the project top-level, it automatically finds the build files in subdirectories)</p>
+<p>Further, anything define in the <code>.ml</code> that is not declared in the <code>.mli</code> is not accessible to users.</p>
+<ul>
+  <li>It’s like those types/values are <code>private</code>.</li>
+  <li>If there is nothing to hide, then you don’t need an <code>.mli</code> file at all. The type of the module will be inferred.</li>
+  <li>All assignments come with an <code>.mli</code> file so you get used to the format, and they serve as documentation, which is always good!</li>
+</ul>
 
-<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">library</span>
- <span class="p">(</span><span class="nf">name</span> <span class="nv">simple_set</span><span class="p">)</span>
- <span class="p">(</span><span class="nf">modules</span> <span class="nv">simple_set</span><span class="p">)</span> 
+<h2 id="building-modules">Building modules</h2>
+
+<p>We use <code>dune</code> to build our code in this class.</p>
+
+<p>To make a library module from the <code>string_set.ml</code> file, we use this <code>dune</code>.</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">; in file `src/dune`</span>
+<span class="p">(</span><span class="nf">library</span>
+ <span class="p">(</span><span class="nf">name</span> <span class="nv">string_set</span><span class="p">)</span>
+ <span class="p">(</span><span class="nf">modules</span> <span class="nv">string_set</span><span class="p">)</span> 
  <span class="p">(</span><span class="nf">libraries</span> <span class="nv">core</span><span class="p">)</span>
 <span class="p">)</span>
 </code></pre></div></div>
 
-<p>And if you want to play with your library module, command <code>dune utop</code> from the same directory will load it into the top loop:</p>
+<p>See <a href="../examples/set-example.zip">set-example.zip</a> for the full code.</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">myshell</span> <span class="o">$</span> <span class="n">dune</span> <span class="n">utop</span>
-<span class="o">...</span>
-<span class="n">utop</span> <span class="o">#</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">add</span> <span class="mi">4</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">emptyset</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<h2 id="writing-executables">Writing executables</h2>
+
+<p>So far, we have only made libraries. Now, we’ll write a small OCaml executable.</p>
+
+<p>We will write the executable in <code>set_main.ml</code>, which takes a string and a file name and looks for that line in the file.</p>
+
+<p>Executables work by running all statements in the file from top to bottom. Any side effects are the “outputs” of the executable.</p>
+
+<p>Typically, the main work in an executable is put under a <code>let () = ...</code> statement. The <code>...</code> evaluates to <code>() : unit</code>, and the side effects it performs are what we see.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Just a helper function. Does not run until it's given arguments in `let () = ...` *)</span>
+<span class="k">let</span> <span class="n">do_search</span> <span class="n">search_string</span> <span class="n">filename</span> <span class="o">=</span>
+  <span class="k">let</span> <span class="n">my_set</span> <span class="o">=</span>
+    <span class="n">filename</span>
+    <span class="o">|&gt;</span> <span class="nn">In_channel</span><span class="p">.</span><span class="n">read_lines</span>
+    <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">set</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">add</span> <span class="n">elt</span> <span class="n">set</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="nn">String_set</span><span class="p">.</span><span class="n">empty</span>
+  <span class="k">in</span>
+  <span class="k">if</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">contains</span> <span class="n">search_string</span> <span class="n">my_set</span>
+  <span class="k">then</span> <span class="n">print_string</span> <span class="o">@@</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">"</span> <span class="o">^</span> <span class="n">search_string</span> <span class="o">^</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> found</span><span class="se">\n</span><span class="s2">"</span>
+  <span class="k">else</span> <span class="n">print_string</span> <span class="o">@@</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">"</span> <span class="o">^</span> <span class="n">search_string</span> <span class="o">^</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> not found</span><span class="se">\n</span><span class="s2">"</span>
+
+<span class="c">(* This statement has some printing side effects that we observe when running the executable *)</span>
+<span class="k">let</span> <span class="bp">()</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="nn">Array</span><span class="p">.</span><span class="n">to_list</span> <span class="p">(</span><span class="nn">Sys</span><span class="p">.</span><span class="n">get_argv</span> <span class="bp">()</span><span class="p">)</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="n">_</span> <span class="o">::</span> <span class="n">search_string</span> <span class="o">::</span> <span class="n">filename</span> <span class="o">::</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">do_search</span> <span class="n">search_string</span> <span class="n">filename</span>
+  <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"Invalid arguments: requires two parameters, search string and file name"</span>
 </code></pre></div></div>
 
-<ul>
-  <li>One thing potentially annoying here is the fact that we used a list to implement our set gets exposed here</li>
-  <li>But, we can use <em>type abstraction</em> to hide this; next topic</li>
-</ul>
+<h3 id="building-executables">Building executables</h3>
 
-<h4 id="other-ways-to-load-a-module-into-the-top-loop-besides-dune-utop">Other ways to load a module into the top loop besides <code>dune utop</code></h4>
+<p>To build an executable, the <code>dune</code> file has a stanza for an <code>executable</code> instead of a <code>library</code>:</p>
 
-<ul>
-  <li>If you type <code>#use "simple_set.ml";;</code> it is just like copy/pasting the code of the file in – you won’t get a module.</li>
-  <li>If you want to “paste a file in the top loop as a module”, there is a command for that:<br />
-<code>#mod_use "simple_set.ml";;</code></li>
-  <li>And if that was not enough there is one more method: you can <code>#use_output "dune top"</code>
-    <ul>
-      <li>this runs the shell command <code>dune top</code> and pastes the output into the top loop; that <code>dune</code> command generates byte code files and then spits out a bunch of <code>#load</code> commands to load all the libraries as well as your code.</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="information-hiding-with-module-types-aka-signatures">Information Hiding with Module Types aka Signatures</h3>
-
-<ul>
-  <li>Modules also have types, they are called either <em>module types</em> or <em>signatures</em>
-    <ul>
-      <li>The latter term is used in math, e.g. “a DFA has signature D = (S, Σ, τ, s0, F)”</li>
-    </ul>
-  </li>
-  <li>When a module is defined in a file <code>simple_set.ml</code>, make a file <code>simple_set.mli</code> for its corresponding module type
-    <ul>
-      <li>the added “<code>i</code>” is for “interface”</li>
-    </ul>
-  </li>
-  <li>You don’t need an <code>.mli</code> file if there is nothing to hide, the module type will be inferred
-    <ul>
-      <li>But, even if nothing is hidden the <code>.mli</code> is important as a document of what is provided to users</li>
-      <li>all assignments come with an <code>.mli</code> file so you can get used to that format.</li>
-    </ul>
-  </li>
-</ul>
-
-<p>So, here the <code>simple_set.mli</code> file from the above zip after we have hidden the type of <code>'a t</code> by removing <code>= 'a list</code>:</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>  <span class="c">(* can also hide the type here by not giving it in signature: remove the = 'a list  *)</span>
-    <span class="k">val</span> <span class="n">emptyset</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">add</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span><span class="k">'</span><span class="n">a</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span>  <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">contains</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span>  <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> 
-</code></pre></div></div>
-
-<p>Now if we <code>dune utop</code> with this added file we get</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">myshell</span> <span class="o">$</span> <span class="n">dune</span> <span class="n">utop</span>
-<span class="o">...</span>
-<span class="n">utop</span> <span class="o">#</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">add</span> <span class="mi">4</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">emptyset</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="nn">Simple_set</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span>
-</code></pre></div></div>
-
-<ul>
-  <li>Notice how the <code>int list</code> result type from before is now <code>int Simple_set.t</code>
-    <ul>
-      <li>it is the <code>t</code> type from module <code>Simple_set</code> and the parameter <code>'a</code> there is instantiated to <code>int</code>.</li>
-    </ul>
-  </li>
-  <li>Also notice that the value is <code>&lt;abstr&gt;</code>, not <code>[4]</code> like before; since the type is hidden so are the values</li>
-  <li>This is both
-    <ul>
-      <li>advantageous (program to interfaces, not implementations)</li>
-      <li>not adventageous (sometimes hard to see what is going on, also can make it harder to test)</li>
-    </ul>
-  </li>
-  <li>We will come back to this topic later in the course</li>
-</ul>
-
-<h3 id="making-an-ocaml-executable">Making an OCaml executable</h3>
-
-<ul>
-  <li>So far all we have made is libraries; let us now make a small OCaml executable.</li>
-  <li>We will make a main module <code>Set_main</code> (in file <code>set_main.ml</code> of course) which takes a string and a file name and looks for that line in the file.</li>
-</ul>
-
-<p>Here is what we need to add to the <code>dune</code> file along with the above to build the executable:</p>
-
-<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">; in file `src/dune`</span>
+<span class="p">(</span><span class="nf">executable</span>
   <span class="p">(</span><span class="nf">name</span> <span class="nv">set_main</span><span class="p">)</span>
-  <span class="p">(</span><span class="nf">libraries</span> <span class="nv">simple_set</span> <span class="nv">core</span><span class="p">)</span>
   <span class="p">(</span><span class="nf">modules</span> <span class="nv">set_main</span><span class="p">)</span>
+  <span class="p">(</span><span class="nf">libraries</span> <span class="nv">string_set</span> <span class="nv">core</span><span class="p">)</span> <span class="c1">; uses Core and the String_set module we made</span>
 <span class="p">)</span>
 </code></pre></div></div>
 
-<h4 id="running-executables">Running executables</h4>
+<p>This makes an executable out of the <code>set_main.ml</code> file.</p>
+
+<h3 id="running-executables">Running executables</h3>
 
 <ul>
-  <li>If you declared an executable in <code>dune</code> as above, it will make a file <code>my_main_module.exe</code> so in our case that is <code>set_main.exe</code></li>
-  <li>To exec it you can do <code>dune exec ./src/set_main.exe "open Core" src/simple_set.ml</code></li>
-  <li>Which is really just <code>_build/default/src/set_main.exe "open Core" src/simple_set.ml</code></li>
+  <li>If you declared an executable in <code>dune</code> as above, it will make a file <code>set_main.exe</code></li>
+  <li>To run it, you can do <code>dune exec -- ./src/set_main.exe "open Core" src/simple_set.ml</code></li>
+  <li>Which is really just <code>_build/default/src/set_main.exe "open Core" src/simple_set.ml</code> after building</li>
 </ul>
 
-<h3 id="set_mainml"><code>set_main.ml</code></h3>
-<ul>
-  <li>We will now inspect <code>set_main.ml</code> in VSCode so we can use the tool tips to check out various types</li>
-</ul>
+<h2 id="more-examples">More examples</h2>
 
-<h4 id="the-stdioin_channel-library">The <code>Stdio.In_channel</code> library</h4>
+<h3 id="the-stdioin_channel-library">The <code>Stdio.In_channel</code> library</h3>
 
 <ul>
   <li><code>set_main.ml</code> uses the <code>In_channel</code> module to read in file contents
@@ -268,14 +306,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The Documentation is <a href="https://ocaml.org/p/stdio/latest/doc/Stdio/index.html">here</a>; we will go through it to observe a few points
     <ul>
       <li>First, now that we covered abstract types we can see there is an abstract type <code>t</code> here</li>
-      <li>As with our own set, it is “the underlinying data” for the module, in this case file handles</li>
+      <li>As with our own set, it is “the underlying data” for the module, in this case file handles</li>
       <li>It is hidden though so we don’t get access to the details of how “files are handled”</li>
       <li>If you are used to object-oriented programming you are looking for a constructor/new; in functional code look for functions that only return a <code>t</code>, that is making a new <code>t</code>: <code>create</code> here.</li>
     </ul>
   </li>
 </ul>
 
-<h4 id="optional-arguments-tangent">Optional arguments tangent</h4>
+<h3 id="optional-arguments-tangent">Optional arguments tangent</h3>
 
 <ul>
   <li>One topic we skipped over which is in many of these libraries is <strong>optional arguments</strong></li>
@@ -304,7 +342,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Use them when they are the right thing: will reduce clutter of passing often un-needed items.</li>
 </ul>
 
-<h4 id="the-sys-library">The <code>Sys</code> library</h4>
+<h3 id="the-sys-library">The <code>Sys</code> library</h3>
 
 <ul>
   <li>We are using this library to read in the command line args, via <code>Sys.get_argv</code>.</li>

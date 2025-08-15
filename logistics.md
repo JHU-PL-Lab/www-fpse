@@ -38,7 +38,7 @@ There will be an independent team project at the end of the course worth around 
 
 ### Grades
 
-Grades will be computed approximately as follows: 45% for projects, 30% for homeworks, 10% for the in-class exercises, and 15% for the quiz.  There is no curve but the cutoffs can shift based on assignment difficulty; you can assume they will probably be at or close to the standard 90-80-70 for A/B/C based on previous years.
+Grades will be computed approximately as follows: 50% for projects, 20% for homeworks, 10% for the in-class exercises, and 20% for the quiz.  There is no curve but the cutoffs can shift based on assignment difficulty; you can assume they will probably be at or close to the standard 90-80-70 for A/B/C based on previous years.
 
 ### Collaboration
 

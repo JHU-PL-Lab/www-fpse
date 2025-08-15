@@ -50,7 +50,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="/fpse/assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/9034692226">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -73,7 +73,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>First we will do a few more recursive functions over lists</li>
   <li>Then we will show how the <code>Core.List</code> library functions allow a great many (most?) operations to be written without recursion</li>
   <li>This is <em>combinator programming</em>, solve a task by composing operations on a few standard combinators (“combiners”)</li>
-  <li>(Note for Assignment 1 Part I you will not be able to use the library combinators, they are for Part II)</li>
+  <li>(Note for Assignment 1 you will not be able to use the library combinators, but you will use them in Assignment 2)</li>
 </ul>
 
 <h4 id="reversing-a-list">Reversing a list</h4>
@@ -217,7 +217,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">all_front_back_pairs</span> <span class="n">l</span> <span class="o">=</span> 
   <span class="k">let</span> <span class="n">front</span><span class="o">,</span> <span class="n">back</span> <span class="o">=</span> <span class="n">split_in_half</span> <span class="n">l</span> <span class="k">in</span> 
-    <span class="nn">List</span><span class="p">.</span><span class="n">cartesian_product</span> <span class="n">front</span> <span class="n">back</span><span class="p">;;</span> <span class="c">(* observe how let can itself pattern match pairs *)</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">cartesian_product</span> <span class="n">front</span> <span class="n">back</span><span class="p">;;</span> <span class="c">(* observe how let can itself pattern match pairs *)</span>
 <span class="k">val</span> <span class="n">all_front_back_pairs</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 <span class="o">#</span> <span class="n">all_front_back_pairs</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="mi">6</span><span class="p">];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">list</span> <span class="o">=</span>
@@ -271,7 +271,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>This means the value is either <code>Ok(..)</code> or <code>Unequal_lenghts</code>, very similar to <code>result</code> or <code>option</code>
     <ul>
-      <li>(Why don’t they just use one of those two here instead?? No idea!)</li>
+      <li>Why don’t they just use one of those two here instead??</li>
+      <li>Probably to let the type communicate the reason for the error, rather than some unexplained failure (<code>Option</code>) or some <em>value</em> the communicates the failure (a string message in <code>Result</code>, which would then have to be run to read the reason for error).</li>
+      <li>Since it’s statically known that the only error would be due to unequal lengths, it’s good practice to bake that into the type.</li>
     </ul>
   </li>
   <li>The <code>'a</code> here is the type parameter, more on those later so don’t sweat it now</li>
@@ -471,7 +473,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="s2">""</span> <span class="c">(* ~init above is "", plug it in as the base case *)</span>
   <span class="o">|</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">elts</span> <span class="o">-&gt;</span>  <span class="c">(* as in the above we are calling the current list element `elt` *)</span>
     <span class="k">let</span> <span class="n">accum</span> <span class="o">=</span> <span class="n">char_list_to_string</span> <span class="n">elts</span> <span class="k">in</span> <span class="c">(* this is what `accum` is, the result of recursing on a shorter list *)</span>
-      <span class="p">(</span><span class="nn">Char</span><span class="p">.</span><span class="n">to_string</span> <span class="n">elt</span><span class="p">)</span><span class="o">^</span><span class="n">accum</span> <span class="c">(* now plug in the body of ~f as the calculation done on accum and elt *)</span>
+    <span class="p">(</span><span class="nn">Char</span><span class="p">.</span><span class="n">to_string</span> <span class="n">elt</span><span class="p">)</span><span class="o">^</span><span class="n">accum</span> <span class="c">(* now plug in the body of ~f as the calculation done on accum and elt *)</span>
 </code></pre></div></div>
 
 <p>OK now lets show some potential code for <code>List.fold_right</code> to show how we can pull out this base-case and recursion code as parameters <code>~init</code> and <code>~f</code>.</p>
@@ -481,7 +483,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
   <span class="o">|</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">elts</span> <span class="o">-&gt;</span> 
     <span class="k">let</span> <span class="n">accum</span> <span class="o">=</span> <span class="n">fold_right</span> <span class="n">elts</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span> <span class="k">in</span> 
-      <span class="n">f</span> <span class="n">elt</span> <span class="n">accum</span>
+    <span class="n">f</span> <span class="n">elt</span> <span class="n">accum</span>
 </code></pre></div></div>
 
 <ul>
@@ -659,7 +661,13 @@ Note that the <code>accum</code> we call <code>~init</code> here since that is t
 <ul>
   <li>The <code>Stop</code> variant is like break, here take <code>sum</code> as the final value</li>
   <li><code>Continue</code> wraps the continue-folding case, which adds <code>i</code> to running <code>sum</code> here.</li>
-  <li><code>~finish</code> can post-process the result if the <code>Stop</code> case was not hit; <code>Fn.id</code> is <code>fun x -&gt; x</code>, no additional processing here.</li>
+  <li><code>~finish</code> can post-process the result if the <code>Stop</code> case was not hit; <code>Fn.id</code> is <code>fun x -&gt; x</code>, no additional processing here.
+    <ul>
+      <li>The <code>~finish</code> exists so that the <code>Stop</code> and <code>Continue</code> cases can hold different types: <code>Continue</code> holds an <code>'acc</code>, and <code>Stop</code> holds a <code>'final</code>.</li>
+      <li>If we continued until the very end of the list, we need to tell it how to turn an <code>'acc</code> into a <code>'final</code>.</li>
+      <li>In <code>summate_til_zero</code>, both were <code>int</code>, so we can do nothing.</li>
+    </ul>
+  </li>
 </ul>
       
           </section>
