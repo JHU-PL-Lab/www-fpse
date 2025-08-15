@@ -12,15 +12,13 @@ For Course Assistants we are fortunate to have several course alums as well as s
 
 **Head Teaching Assistant** Brandon Stride
 
-**Course Assistant** Taylor Rohovit
+**Course Assistant** Suizhi Ma
 
 **Course Assistant** Shiwei Weng
 
 **Course Assistant** Earl Wu
 
 **Course Assistant** Farnaz Yousefi
-
-**Course Assistant** Harry Yu
 
 
 ### Office Hours
