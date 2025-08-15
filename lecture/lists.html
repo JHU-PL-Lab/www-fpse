@@ -269,13 +269,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nc">Ok</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">|</span> <span class="nc">Unequal_lengths</span>
 </code></pre></div></div>
 <ul>
-  <li>This means the value is either <code>Ok(..)</code> or <code>Unequal_lenghts</code>, very similar to <code>result</code> or <code>option</code>
-    <ul>
-      <li>Why don’t they just use one of those two here instead??</li>
-      <li>Probably to let the type communicate the reason for the error, rather than some unexplained failure (<code>Option</code>) or some <em>value</em> the communicates the failure (a string message in <code>Result</code>, which would then have to be run to read the reason for error).</li>
-      <li>Since it’s statically known that the only error would be due to unequal lengths, it’s good practice to bake that into the type.</li>
-    </ul>
-  </li>
+  <li>This means the value is either <code>Ok(..)</code> or <code>Unequal_lenghts</code>, very similar to <code>result</code> or <code>option</code></li>
   <li>The <code>'a</code> here is the type parameter, more on those later so don’t sweat it now</li>
   <li>The latter case is for zipping lists of different lengths:</li>
 </ul>

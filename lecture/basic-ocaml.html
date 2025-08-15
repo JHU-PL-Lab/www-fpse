@@ -50,7 +50,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="/fpse/assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/9034692226">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -97,28 +97,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>The OCaml top loop is started with the shell command <code>utop</code>.</li>
-  <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">utop</span> <span class="o">#</span> <span class="mi">3</span><span class="o">+</span><span class="mi">4</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">7</span>
-</code></pre></div></div>
-
-<ul>
+  <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result<br />
+```ocaml<br />
+utop # 3+4;;</li>
+  <li>
+    <p>: int = 7<br />
+```</p>
+  </li>
   <li>Control-D will exit <code>utop</code>.
     <h4 id="the-compilerun-system">The compile/run system</h4>
   </li>
   <li>The compile/run mode is the <code>cc</code>/<code>gcc</code>/<code>javac</code> view and is also used in OCaml</li>
-  <li>In OCaml we can live in <strong>both worlds</strong>: both play with code in top loop, <em>and</em> can use a compiler to compile it to a binary.</li>
-  <li>Let’s cover how we will compile in OCaml.  Suppose the following is in a file <code>helloworld.ml</code>:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span> <span class="c">(* Make the Core libraries directly available *)</span>
+  <li>In OCaml we can live in <strong>both worlds</strong>: both play with code,  in top loop, <em>and</em> can use a compiler to compile it to a binary.</li>
+  <li>Let’s cover how we will compile in OCaml.  Suppose the following is in a file <code>helloworld.ml</code>:
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span> <span class="c">(* Make the Core libraries directly available *)</span>
 <span class="k">let</span> <span class="n">hw</span> <span class="o">=</span> <span class="s2">"hello"</span> <span class="o">^</span> <span class="s2">"world"</span><span class="p">;;</span>
 <span class="n">printf</span> <span class="s2">"the string is %s</span><span class="se">\n</span><span class="s2">"</span> <span class="n">hw</span>
-</code></pre></div></div>
-
-<ul>
+</code></pre></div>    </div>
+  </li>
   <li>The actual compiler is <code>ocamlc</code> or <code>ocamlopt</code>, but we will not be directly invoking it</li>
   <li>Instead we will operate at a higher level and use build tool <code>dune</code> to invoke the compiler</li>
   <li><code>dune</code> is a modern <code>make</code>/<code>Makefile</code> equivalent for OCaml which is very powerful.</li>
@@ -131,7 +127,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div>    </div>
   </li>
   <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.  The notation is S-expressions.</li>
-  <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.16)</code> in it.</li>
+  <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.19)</code> in it.</li>
   <li>Now, type <code>dune build</code> to compile this <code>helloworld.ml</code> code as an executable.</li>
   <li>All of the results are placed in the <code>_build/</code> directory</li>
   <li>Then, run with <code>dune exec ./helloworld.exe</code> - same as typing <code>_build/default/helloworld.exe</code></li>

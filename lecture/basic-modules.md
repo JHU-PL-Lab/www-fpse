@@ -9,7 +9,7 @@ Now it's time to look under the hood:
 * How do we work with modules in the toploop?
 * How do nested modules work?
 
-In future lectures, we'll learn more advanced features like functions on modules. But first, the basics.
+In future lectures, we'll learn about more advanced features like functions on modules. But first, the basics.
 
 ## What is a module?
 
@@ -18,9 +18,7 @@ A module is a _collection_ of OCaml definitions:
 * values (including functions, which are values)
 * other modules
 
-Since we know records: records are collections of values, each with a name.
-
-A module is a _bit_ like a record, but it can hold many different kinds of things, not just values. However, modules are not first class values like records.
+Modules are a _bit_ like records, but they can hold many different kinds of things, not just values. However, modules are not first class values like records -- for example, they can't directly be passed as arguments to functions.
 
 ## `.ml` files are modules
 

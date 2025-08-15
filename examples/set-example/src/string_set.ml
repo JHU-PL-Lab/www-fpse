@@ -1,4 +1,4 @@
-(* strinG-set.ml
+(* string_set.ml
    Defines the module String_set which is a simple functional set data structure on strings.
 *)
 

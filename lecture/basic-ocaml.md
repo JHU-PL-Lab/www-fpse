@@ -17,7 +17,6 @@
   - e.g. shells like `bash`, Python's `python3`, JavaScript `node`, etc.
 * The OCaml top loop is started with the shell command `utop`.  
 * We will run the OCaml top loop and show you you can enter expressions such as `3+4`, follow with `;;` to indicate end of input (`;;` is **required**), and hit return to get the result
-
 ```ocaml
 utop # 3+4;;
 - : int = 7
@@ -27,9 +26,8 @@ utop # 3+4;;
 #### The compile/run system
 
 * The compile/run mode is the `cc`/`gcc`/`javac` view and is also used in OCaml
-* In OCaml we can live in **both worlds**: both play with code in top loop, *and* can use a compiler to compile it to a binary.
+* In OCaml we can live in **both worlds**: both play with code,  in top loop, *and* can use a compiler to compile it to a binary.
 * Let's cover how we will compile in OCaml.  Suppose the following is in a file `helloworld.ml`:
-
 ```ocaml
 open Core;; (* Make the Core libraries directly available *)
 let hw = "hello" ^ "world";;
@@ -48,7 +46,7 @@ printf "the string is %s\n" hw
 )
 ```
 * This is the **build file**, specifying how to compile/test/run the program.  The notation is S-expressions.
-* Also a file `dune-project` is needed with only `(lang dune 3.16)` in it.
+* Also a file `dune-project` is needed with only `(lang dune 3.19)` in it.
 * Now, type `dune build` to compile this `helloworld.ml` code as an executable.
 * All of the results are placed in the `_build/` directory
 * Then, run with `dune exec ./helloworld.exe` - same as typing `_build/default/helloworld.exe`

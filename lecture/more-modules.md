@@ -386,7 +386,7 @@ module SListMap :
   sig ... end
 ```
 
-And remember that we can inline module definitions, so the following will work, too.
+And remember that we can inline module definitions, so the following will work as well.
 
 ```ocaml
 # module SListMap = Map.Make (struct type t = string list [@@deriving compare,sexp] end);;

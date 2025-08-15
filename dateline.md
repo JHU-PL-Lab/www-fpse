@@ -101,7 +101,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Finish <a href="lecture/lists.html">Lists</a>,  <a href="lecture/variants.html">Variants</a></div>
+            <div align="left" class="body">Finish <a href="lecture/lists.html">Lists</a>;  <a href="lecture/variants.html">Variants</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -118,7 +118,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"> Finish <a href="lecture/variants.html">Variants</a>, <a href="lecture/basic-modules.html">Basic Modules</a></div>
+            <div align="left" class="body"> Finish <a href="lecture/variants.html">Variants</a>; <a href="lecture/ppx.html">PPX</a>; <a href="lecture/records.html">Records</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body"><a href="assignments/assignment3.html">A3</a></div>
@@ -135,7 +135,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Finish <a href="lecture/basic-modules.html">Basic Modules</a>, <a href="lecture/records.html">Records</a>, <a href="style-guide.html">Code style</a></div>
+            <div align="left" class="body"><a href="lecture/basic-modules.html">Basic Modules</a>; <a href="style-guide.html">Code style</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -152,7 +152,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/side-effects.html">Side Effects</a></div>
+            <div align="left" class="body"><a href="lecture/more-modules.html">More Modules</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body"><a href="assignments/assignment4.html">A4</a></div>
@@ -186,7 +186,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/more-modules.html">More Modules</a></div>
+            <div align="left" class="body"><a href="lecture/specification-test.html">Specification and Testing</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -220,7 +220,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/specification-test.html">Specification and Testing</a></div>
+            <div align="left" class="body"><a href="lecture/side-effects.html">Side Effects</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -271,7 +271,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="assignments/project.html">The Projects</a>, <a href="lecture/advanced_modules.ml">Advanced Modules</a></div>
+            <div align="left" class="body"><a href="assignments/project.html">The Projects</a>; <a href="lecture/advanced_modules.ml">Advanced Modules</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body"><a href="assignments/project.html">Project</a></div>
@@ -356,7 +356,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a>, <a href="lecture/algebraic_effects.ml">Algebraic Effects</a></div>
+            <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a>; <a href="lecture/algebraic_effects.ml">Algebraic Effects</a></div>
           </td>	
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -537,10 +537,10 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
 	<tr> 
           <td width="8%"> 
-            <div align="center" class="body">Dec 17???</div>
+            <div align="center" class="body">Dec 12th</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Weds</div>
+            <div align="center" class="body">Fri</div>
           </td>
           <td width="30%"> 
             <div align="left" class="body">&nbsp;<strong>Project Demos</strong></div>

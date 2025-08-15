@@ -165,9 +165,6 @@ Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]
 type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
 ```
 * This means the value is either `Ok(..)` or `Unequal_lenghts`, very similar to `result` or `option`
-  - Why don't they just use one of those two here instead?? 
-  - Probably to let the type communicate the reason for the error, rather than some unexplained failure (`Option`) or some _value_ the communicates the failure (a string message in `Result`, which would then have to be run to read the reason for error).
-  - Since it's statically known that the only error would be due to unequal lengths, it's good practice to bake that into the type.
 * The `'a` here is the type parameter, more on those later so don't sweat it now
 * The latter case is for zipping lists of different lengths:
 

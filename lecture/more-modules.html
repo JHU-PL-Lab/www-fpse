@@ -528,7 +528,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="k">sig</span> <span class="o">...</span> <span class="k">end</span>
 </code></pre></div></div>
 
-<p>And remember that we can inline module definitions, so the following will work, too.</p>
+<p>And remember that we can inline module definitions, so the following will work as well.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">SListMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="o">,</span><span class="n">sexp</span><span class="p">]</span> <span class="k">end</span><span class="p">);;</span>
 <span class="k">module</span> <span class="nc">SListMap</span> <span class="o">:</span>
