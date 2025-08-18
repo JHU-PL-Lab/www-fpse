@@ -1,6 +1,6 @@
 (library
   (name justforbuild)
-  (modules advanced_modules algebraic_effects coroutines encoding_effects)
+  (modules advanced_modules algebraic_effects encoding_effects)
   (libraries core ounit2 lwt.unix)
   (preprocess (pps ppx_jane)))
 
