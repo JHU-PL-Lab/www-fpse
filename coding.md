@@ -22,15 +22,18 @@ You will need to run some terminal commands to set up the basics:
    2.  If you didn't get that question or said to do nothing, you will need to add line, `eval $(opam env)`, to your `~/.bash_profile` or `~/.profile` or `~/.bashrc` shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using `zsh` on macs, add line ``eval `opam env` `` instead to your `~/.zshrc` file.
    3. `opam update` to make sure your `opam` is aware of all the versions of OCaml that are out there;
    4. `opam switch create 5.3.0` will build OCaml version 5.3.0.;
-   5.  After any `opam switch` command it will instruct you to reset your path with some instructions like "Run `eval $(opam env --switch=5.3.0)` to update the current shell environment" -- follow those instructions and copy/paste the in the command into the shell (if you are on a Mac you may be using `zsh`; replace the `$(...)` with back-quotes `` `...` ``).
+   5.  After a `opam switch` command it might instruct you to reset your path with some instructions like "Run `eval $(opam env --switch=5.3.0)` to update the current shell environment" -- if you get that message, follow those instructions and copy/paste the in the command into the shell (if you are on a Mac you may be using `zsh`; replace the `$(...)` with back-quotes `` `...` ``).
 
 If you already have an earlier version of OCaml installed via `opam`, start on step 3. above to update to 5.3.0.
 
 #### Required OPAM Standard packages
 
-Once you have `opam` and `ocaml` 5.3.0 installed, run the following `opam` command to install additional necessary packages for the class:
+Once you have `opam` and `ocaml` 5.3.0 installed, run the following `opam` command to install additional necessary packages for the class (just copy/paste these two lines into your shell):
 
-    opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 base base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_ppx
+```sh
+opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 base \
+base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_ppx
+```
 
 Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, create  or edit the file `~/.ocamlinit` to contain the lines below.  The lines in this file are input to the top loop when it first starts.  `topfind` really should be built-in, it allows you to load libraries.  The `require` command is one thing `topfind` adds, here it is loading the `Core` libraries to replace the standard ones coming with OCaml.  We will be using `Core` as they are improved versions.
 ```ocaml
@@ -42,7 +45,8 @@ open Core;;
 
 And here is a shell command which you can simply copy/paste to make the above file:
 ```sh
-(echo '#use "topfind";;'; echo; echo '#require "ppx_jane";;'; echo; echo '#require "core.top";;'; echo; echo 'open Core;;') >~/.ocamlinit
+(echo '#use "topfind";;'; echo; echo '#require "ppx_jane";;'; echo; \
+echo '#require "core.top";;'; echo; echo 'open Core;;') >~/.ocamlinit
 ```
 
 To test that your install works, type the shell command `utop` which will start up an interactive OCaml session (more later on that).  Type `Fn.id;;` into the `utop` prompt followed by return, this is just a test to make sure the `Core` libraries were properly loaded.  If you didn't get an error message you are all good!  Type control-D to quit `utop`.
