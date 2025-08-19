@@ -1,0 +1,211 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/fpse/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+            <li><a href="">Assignments</a>
+                <ul class="menu">
+                <li><a href="/fpse/assignments/assignment1.html">Assignment 1</a></li>
+                <li><a href="/fpse/assignments/assignment2.html">Assignment 2</a></li>
+                <li><a href="/fpse/assignments/assignment3.html">Assignment 3</a></li>
+                <li><a href="/fpse/assignments/assignment4.html">Assignment 4</a></li>
+                <li><a href="/fpse/assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
+                <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
+                <li><a href="/fpse/assignments/project.html">Project</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    
+<h1 id="pre-processor-extensions">Pre-processor extensions</h1>
+
+<p>Pre-Processor eXtensions (PPXs) write code for us. They save us from writing boilerplate code, so our code is shorter and (probably) more correct.</p>
+
+<p>Some examples of code we could get from pre-processor extensions are:</p>
+<ul>
+  <li>Print functions (<code>show</code>)</li>
+  <li>Serialization (<code>sexp</code>, <code>yojson</code>)</li>
+  <li>Comparison (<code>compare</code>, <code>equal</code>)</li>
+  <li>Rank functions on variants (<code>variants</code>)</li>
+</ul>
+
+<h2 id="ppx_jane-and-deriving"><code>ppx_jane</code> and <code>deriving</code></h2>
+
+<ul>
+  <li>In the variants lecture, we wrote a <code>nucleotide</code> type and derived an equality function for it.</li>
+  <li>We put <code>[@@deriving equal]</code> in the nucleotide example to get an <code>=</code> on that type “for free”:
+    <ul>
+      <li>In the top loop, use <code>#require "ppx_jane"</code> to load the pre-processor extension.</li>
+      <li>In dune, put <code>(preprocess (pps (ppx_jane)))</code> as part of the library declaration.</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
+<span class="k">val</span> <span class="n">equal_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>We defined our type <strong>and</strong> got the <code>equal_nucleotide</code> function.
+    <ul>
+      <li>In <code>Core</code>, it is idiomatic to name types <code>t</code>. If we derive a function from a type named <code>t</code>, we wouldn’t get <code>equal_t</code>, we would just get <code>equal</code>.</li>
+    </ul>
+  </li>
+  <li><code>[@@zibbo...]</code> notation in code indicates the line is processed by the macro named <code>ppx_zibbo</code></li>
+  <li>The <code>equal</code> is a parameter to the macro, here it is which <code>deriving</code> extension is added</li>
+  <li>The <code>[@@deriving equal]</code> in particular causes an <code>equal_nucleotide</code> function to be automatically generated</li>
+  <li>Without this function we would have to use pattern matching to write our own equality.</li>
+</ul>
+
+<h3 id="composing-deriving-equal">Composing <code>deriving equal</code></h3>
+
+<ul>
+  <li>If we have an <code>xyy_equal</code> function on component types, <code>deriving</code> can derive <code>equal</code> for a type built from those components. For example equality on <em>lists</em> of nucleotides:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
+<span class="k">val</span> <span class="n">equal_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+
+<span class="o">#</span> <span class="n">equal_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">]</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">A</span><span class="p">];;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span>
+
+<span class="o">#</span> <span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Queue</span><span class="p">.</span><span class="n">t</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Core</span><span class="p">.</span><span class="nn">Queue</span><span class="p">.</span><span class="n">t</span>
+<span class="k">val</span> <span class="n">equal_n_queue</span> <span class="o">:</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+</code></pre></div></div>
+<ul>
+  <li>Notice that the <code>Core</code> libraries are designed to play well as they have <code>List.equal</code>, <code>Queue.equal</code> built in
+    <ul>
+      <li>But, <code>List.equal : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a list -&gt; bool</code> – it needs <code>=</code> on the underlying list data.</li>
+      <li>This is a bit annoying as you keep having to pass <code>=</code> for members to check <code>'</code> for lists</li>
+      <li>.. we will eventually see an alternative to this when we learn about functors in the modules lecture.</li>
+    </ul>
+  </li>
+  <li>Note that in general for a component type that is the <code>t</code> of a module, the name looked for is <code>My_module.equal</code> instead of <code>equal_t</code>
+    <ul>
+      <li>This is standard for types named <code>t</code>, and we saw that above when deriving, too.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="some-other-useful-deriving-type-accessor-extensions-in-ppx_jane">Some other useful <code>@@deriving</code> type accessor extensions in ppx_jane</h3>
+
+<ul>
+  <li><code>sexp</code> generates S-expression printable representations of types which is handy for displaying data internals</li>
+  <li>S-expressions are a general data format like JSON or XML, in fact they are the first such format</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
+<span class="k">val</span> <span class="n">equal_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="k">val</span> <span class="n">nucleotide_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="k">val</span> <span class="n">sexp_of_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
+
+<span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
+<span class="k">val</span> <span class="n">equal_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="k">val</span> <span class="n">n_list_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">=</span> <span class="k">fun</span>
+<span class="k">val</span> <span class="n">sexp_of_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
+
+<span class="o">#</span> <span class="n">sexp_of_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">G</span><span class="p">];;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="nc">A</span> <span class="nc">G</span> <span class="nc">G</span><span class="p">)</span> <span class="c">(* this is the "S-Expression" version of a list.. parens and spaces *)</span>
+
+<span class="o">#</span> <span class="n">n_list_of_sexp</span> <span class="p">(</span><span class="nn">Sexp</span><span class="p">.</span><span class="n">of_string</span> <span class="s2">"(A G G)"</span><span class="p">);;</span> <span class="c">(* how to convert in the other direction *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">=</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span> <span class="nc">G</span><span class="p">;</span> <span class="nc">G</span><span class="p">]</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code>[@@deriving compare]</code> is like <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code></li>
+  <li>We covered this in the variants lecture</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
+<span class="k">val</span> <span class="n">compare_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="k">fun</span>
+
+<span class="o">#</span> <span class="n">compare_nucleotide</span> <span class="nc">A</span> <span class="nc">C</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="o">#</span> <span class="n">compare_nucleotide</span> <span class="nc">C</span> <span class="nc">A</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<h3 id="json-format">JSON format</h3>
+
+<ul>
+  <li>JSON is a common standard for data-as-text and may be useful in your project</li>
+  <li><code>Core</code> does not have libraries for dealing with JSON unfortunately.
+    <ul>
+      <li><code>sexp</code> is the “JSON for Core”</li>
+      <li>Anywhere you want to use JSON, just settle for S-expressions if you want to also use Core.</li>
+    </ul>
+  </li>
+  <li>If you need JSON conversion, use <code>ppx_deriving_yojson</code> which works with the <code>yojson</code> library to do something like what <code>deriving sexp</code> above did.</li>
+  <li><strong>Aside</strong>: <code>ppx_deriving_yojson</code> is not compatible with <code>ppx_jane</code> so if you want to derive equality and comparisons along with <code>yojson</code> you need to use <code>#require "ppx_deriving.eq";; / [@@deriving eq]</code> and <code>#require "ppx_deriving.ord";; / [@@deriving ord]</code> in place of the <code>equal/compare</code> deriving in <code>ppx_jane</code>. <code>ppx_deriving show</code>, which prints variant type data, is also not compatible with <code>ppx_jane</code>.</li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: TEMPLATED
+				</div>			
+
+
+   </body>
+</html>
