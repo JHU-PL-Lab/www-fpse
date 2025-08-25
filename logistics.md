@@ -28,6 +28,7 @@ All assignments are linked from the [dateline](dateline.html). They will all be 
 
 There will be around half a dozen graded in-class exercises to test your OCaml abilities. They cannot be made up so you will need to be attending in-person to get credit.  You will be able to drop your lowest score in case you miss one.
 
+
 ### Exams
 
 There will be no exam.  There will be a quiz around 2/3rds of the way through the course.

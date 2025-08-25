@@ -97,21 +97,26 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>The OCaml top loop is started with the shell command <code>utop</code>.</li>
-  <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result<br />
-```ocaml<br />
-utop # 3+4;;</li>
-  <li>
-    <p>: int = 7<br />
-```</p>
-  </li>
+  <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">utop</span> <span class="o">#</span> <span class="mi">3</span><span class="o">+</span><span class="mi">4</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">7</span>
+</code></pre></div></div>
+
+<ul>
   <li>Control-D will exit <code>utop</code>.</li>
 </ul>
 
-<h4 id="the-compilerun-system">The compile/run system</h4>
+<h4 id="the-standalone-compiler">The Standalone Compiler</h4>
 
 <ul>
-  <li>The compile/run mode is the <code>cc</code>/<code>gcc</code>/<code>javac</code> view and is also used in OCaml</li>
-  <li>In OCaml we can live in <strong>both worlds</strong>: both play with code,  in top loop, <em>and</em> can use a compiler to compile it to a binary.</li>
+  <li>The <code>ocamlc</code> compiler is the analogue of the  <code>cc</code>/<code>gcc</code>/<code>javac</code> compilers you have used
+    <ul>
+      <li>it compiles source code to binaries which you can then invoke from the shell.</li>
+    </ul>
+  </li>
+  <li>In OCaml we can live in <strong>both worlds</strong>: both play with code in a top loop, <em>and</em> use a compiler to compile it to a binary.</li>
   <li>Let’s cover how we will compile in OCaml.  Suppose the following is in a file <code>helloworld.ml</code>:
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span> <span class="c">(* Make the Core libraries directly available *)</span>
 <span class="k">let</span> <span class="n">hw</span> <span class="o">=</span> <span class="s2">"hello"</span> <span class="o">^</span> <span class="s2">"world"</span><span class="p">;;</span>
@@ -141,8 +146,7 @@ utop # 3+4;;</li>
 <h3 id="ocaml-language-basics-in-utop">OCaml Language Basics in <code>utop</code></h3>
 
 <ul>
-  <li>To start with we will only live in the top-loop world, but even on the first assignment you will start working in both worlds.</li>
-  <li>All the following are typed as input into <code>utop</code> with <code>;;</code> ending input.</li>
+  <li>We will start with OCaml by running tiny examples in the top-loop, but by the first assignment you will start working in both worlds.</li>
 </ul>
 
 <h3 id="integers">Integers</h3>

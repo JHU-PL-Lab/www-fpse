@@ -17,6 +17,7 @@
   - e.g. shells like `bash`, Python's `python3`, JavaScript `node`, etc.
 * The OCaml top loop is started with the shell command `utop`.  
 * We will run the OCaml top loop and show you you can enter expressions such as `3+4`, follow with `;;` to indicate end of input (`;;` is **required**), and hit return to get the result
+
 ```ocaml
 utop # 3+4;;
 - : int = 7
@@ -25,10 +26,11 @@ utop # 3+4;;
 * Control-D will exit `utop`.
 
 
-#### The compile/run system
+#### The Standalone Compiler
 
-* The compile/run mode is the `cc`/`gcc`/`javac` view and is also used in OCaml
-* In OCaml we can live in **both worlds**: both play with code,  in top loop, *and* can use a compiler to compile it to a binary.
+* The `ocamlc` compiler is the analogue of the  `cc`/`gcc`/`javac` compilers you have used
+  - it compiles source code to binaries which you can then invoke from the shell.
+* In OCaml we can live in **both worlds**: both play with code in a top loop, *and* use a compiler to compile it to a binary.
 * Let's cover how we will compile in OCaml.  Suppose the following is in a file `helloworld.ml`:
 ```ocaml
 open Core;; (* Make the Core libraries directly available *)
@@ -57,8 +59,7 @@ printf "the string is %s\n" hw
 
 ### OCaml Language Basics in `utop`
 
-* To start with we will only live in the top-loop world, but even on the first assignment you will start working in both worlds.
-* All the following are typed as input into `utop` with `;;` ending input.
+* We will start with OCaml by running tiny examples in the top-loop, but by the first assignment you will start working in both worlds.
  
 ###  Integers
 
