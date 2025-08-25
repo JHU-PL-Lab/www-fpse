@@ -17,7 +17,6 @@
   - e.g. shells like `bash`, Python's `python3`, JavaScript `node`, etc.
 * The OCaml top loop is started with the shell command `utop`.  
 * We will run the OCaml top loop and show you you can enter expressions such as `3+4`, follow with `;;` to indicate end of input (`;;` is **required**), and hit return to get the result
-
 ```ocaml
 utop # 3+4;;
 - : int = 7
