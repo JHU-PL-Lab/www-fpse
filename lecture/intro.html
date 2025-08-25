@@ -50,7 +50,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="/fpse/assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/9034692226">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -84,31 +84,36 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="lack-of-side-effects">Lack of Side Effects</h3>
 <ul>
   <li>FP emphasizes <em>immutability</em>: data structures that cannot be changed after being created</li>
-  <li>More generally than limited mutation, most functions only return data, they have no other behaviors on the side (no “side effects”)
+  <li>More generally, functions <em>only</em> return data, they have no other behaviors on the side (no “side effects”)
     <ul>
       <li>No printing, I/O, mutating, raising exceptions, etc.</li>
     </ul>
   </li>
-  <li>Lack of side effects is called “referential transparency” - variable values don’t change out from under you (follows how math behaves).</li>
-  <li>Functional data structures are analogues of imperative ones: dictionaries, lists, etc, but <em>immutable</em>
+  <li>Lack of side effects is called “referential transparency”
+    <ul>
+      <li>variable values don’t change out from under you (follows how math behaves).</li>
+      <li>to understand what a function does, you <em>only</em> need to look at what you pass and what gets returned, a much narrower interface</li>
+    </ul>
+  </li>
+  <li>There exist functional data structures analogous to imperative ones: dictionaries, lists, etc, but <em>immutable</em>
     <ul>
       <li>Instead of mutating, make a fresh copy.</li>
-      <li>Sounds like it will be extremely inefficient but it is reasonable in “most” cases.</li>
+      <li>Sounds like it will be inefficient but cost is reasonable in most cases.</li>
     </ul>
   </li>
 </ul>
 
 <h3 id="fp-and-math">FP and Math</h3>
 <ul>
-  <li>Mathematical functions are implicitly immutable (think about it - no “assignment” in math!) so FP aligns closely with math
+  <li>Mathematical functions are implicitly immutable (think about it - no assignment/exception/.. in math!) so FP aligns closely with math
     <ul>
-      <li>Think about programming as creating an <em>algebra</em> for the domain you are coding over</li>
+      <li>Think about functional programming as creating an <em>algebra</em> for the domain you are coding over</li>
       <li>It is much easier to write completely correct programs in an FP style for this reason</li>
     </ul>
   </li>
-  <li>Allows for powerful new programming paradigms using functions as data.
+  <li>Additionally, FP allows for powerful new programming paradigms using functions as data.
     <ul>
-      <li>Simple example higher-order function from math is composition: <code>g o f (x) = g(f(x))</code>: <code>o</code> takes two functions and returns a new function, their composition</li>
+      <li>A well-known example from math is composition: <code>g o f (x) = g(f(x))</code>: <code>o</code> takes two functions and returns a new function, their composition.</li>
     </ul>
   </li>
 </ul>
@@ -120,59 +125,53 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>Logic proofs are formal constructions, expressed as programs in the λ-calculus</li>
       <li>The 1930’s λ-calculus is the core of a modern functional programming language</li>
-      <li>Note all of this was before computers even existed - !!</li>
+      <li>All of these ideas arose before computers even existed - !!</li>
     </ul>
   </li>
-  <li>Lisp, late 1950’s (McCarthy)
+  <li>Lisp, late 1950’s, McCarthy
     <ul>
-      <li>λ-calculus is elegant, so build a PL around it</li>
-      <li>Goal application space: artificial intelligence programming</li>
-      <li>Added list data to λ functions: <strong>Lis</strong>t <strong>P</strong>rocessing</li>
-      <li>Lisp is the ancestor of all modern dynamically-typed languages: Python, JavaScript, etc.</li>
+      <li>The λ-calculus is elegant, so build a PL around it</li>
+      <li>Goal application space: artificial intelligence programming (symbolic AI back then)</li>
+      <li>McCarthy added list data to λ functions: <strong>Lis</strong>t <strong>P</strong>rocessing</li>
+      <li>Lisp is the ancestor of all modern dynamically-typed PLs: Python, JavaScript, etc.</li>
     </ul>
   </li>
-  <li>Typed functional languages, 70’s &amp; 80’s: Milner’s ML and its descendents Haskell and OCaml
-    <ul>
-      <li>We will be using OCaml</li>
-    </ul>
-  </li>
-  <li>Modern era: add FP as possibility in mainstream PLs: Python, JavaScript, Java, C++, etc.</li>
+  <li>Typed functional languages, 70’s &amp; 80’s: Milner’s ML and its descendents Haskell and OCaml</li>
+  <li>Modern era: FP added as an extension to mainstream PLs: Python, JavaScript, Java, C++, etc.</li>
 </ul>
 
 <h3 id="imperative-vs-object-oriented-vs-higher-order-functional">Imperative vs Object-Oriented vs Higher-Order Functional</h3>
 
 <ul>
-  <li>Oversimplifying but these are the three modern schools</li>
-  <li>More oversimplifying: “Imperative = C, OO = Java, FP = OCaml”</li>
-  <li>Note many O-O languages now have functions, often called lambdas for the historical reference</li>
+  <li>Lets oversimplify: “Imperative = C, OO = Java, FP = OCaml”</li>
   <li>Goal of this course is to get deeply into the FP mode of programming, which can then be used in your favorite PL - Java, Python, C++, JavaScript, OCaml, etc.</li>
 </ul>
 
-<h3 id="imperative">Imperative</h3>
+<h3 id="imperative-eg-c">Imperative (e.g. C)</h3>
 
 <ul>
-  <li>Imperative also has functions, but there functions often have side effects (e.g. mutate some shared data structures)</li>
-  <li>C has function pointers to pass around functions as data but they are not widely used and lack needed expressiveness (a topic we will cover later).</li>
+  <li>Imperative also has functions, but there functions often have side effects (e.g. mutating some shared data structures, raising exceptions)</li>
+  <li>C has function pointers to pass around functions as data but they lack critical expressiveness (a topic we will cover later).</li>
   <li>Need to explicitly manage memory with <code>malloc/free</code> and pointers which leads to many errors.</li>
 </ul>
 
-<h3 id="object-oriented-oo">Object-Oriented (OO)</h3>
+<h3 id="object-oriented-eg-java">Object-Oriented (e.g. Java)</h3>
 
 <ul>
   <li>Objects tend to have “their” state encapsulated within their boundary</li>
-  <li>It is usually mutable state - changes over time</li>
-  <li>A function is like an object with one method, <code>call</code>, and with no fields
+  <li>It is usually <em>mutable</em> state - calling a method does more than what it returns, field values could change</li>
+  <li>A function is like an object with one method, <code>apply</code>, and with no fields
     <ul>
       <li>But, that analogy doesn’t fully capture higher-order functions which is why <code>lambda</code> added to Java.</li>
     </ul>
   </li>
 </ul>
 
-<h3 id="functional-fp">Functional (FP)</h3>
+<h3 id="functional-eg-ocaml">Functional (e.g. OCaml)</h3>
 
 <ul>
   <li>Advantages described above: declarative nature and correctness, more composable</li>
-  <li>Sometimes less good at supporting extension: e.g. no notion of subclass in functional paradigm</li>
+  <li>Can be less good at supporting extension: e.g. no notion of subclass in functional paradigm</li>
 </ul>
 
 <h3 id="which-one-wins">Which one wins?</h3>
@@ -193,7 +192,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>There are typed FP languages (OCaml, Haskell, TypeScript, etc) and uptyped ones (Lisp, Scheme, Clojure, Python, JavaScript, etc)</li>
   <li>We are clearly in the types camp here with OCaml but there are trade offs
     <ul>
-      <li>With types we have <em>type-directed programming</em>: types serve as a skeleton of the code structure, and often once all the type errors are fixed the code .. works!</li>
+      <li>With types we have <em>type-directed programming</em>: starting with the type of a function types serve as a skeleton of the code structure (e.g. a function that takes in a list of integers and returns an integer gives important information), and often once all the type errors are fixed the code .. works!</li>
       <li>The downside is types can get in the way both in terms of code maintenance and in terms of expressiveness.</li>
     </ul>
   </li>

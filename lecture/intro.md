@@ -11,59 +11,58 @@ See the [Dateline](../dateline.html)
 
 ### Lack of Side Effects
 * FP emphasizes *immutability*: data structures that cannot be changed after being created
-* More generally than limited mutation, most functions only return data, they have no other behaviors on the side (no "side effects") 
+* More generally, functions *only* return data, they have no other behaviors on the side (no "side effects") 
   - No printing, I/O, mutating, raising exceptions, etc.
-* Lack of side effects is called "referential transparency" - variable values don't change out from under you (follows how math behaves).
-* Functional data structures are analogues of imperative ones: dictionaries, lists, etc, but *immutable* 
+* Lack of side effects is called "referential transparency" 
+  - variable values don't change out from under you (follows how math behaves).
+  - to understand what a function does, you *only* need to look at what you pass and what gets returned, a much narrower interface
+* There exist functional data structures analogous to imperative ones: dictionaries, lists, etc, but *immutable* 
   - Instead of mutating, make a fresh copy.
-  - Sounds like it will be extremely inefficient but it is reasonable in "most" cases.
+  - Sounds like it will be inefficient but cost is reasonable in most cases.
 
 ### FP and Math
-* Mathematical functions are implicitly immutable (think about it - no "assignment" in math!) so FP aligns closely with math
-  - Think about programming as creating an *algebra* for the domain you are coding over
+* Mathematical functions are implicitly immutable (think about it - no assignment/exception/.. in math!) so FP aligns closely with math
+  - Think about functional programming as creating an *algebra* for the domain you are coding over
   - It is much easier to write completely correct programs in an FP style for this reason
-* Allows for powerful new programming paradigms using functions as data.
-  - Simple example higher-order function from math is composition: `g o f (x) = g(f(x))`: `o` takes two functions and returns a new function, their composition
+* Additionally, FP allows for powerful new programming paradigms using functions as data.
+  - A well-known example from math is composition: `g o f (x) = g(f(x))`: `o` takes two functions and returns a new function, their composition.
 
 ### History in brief
 
 * &lambda;-calculus, 1930's - developed by logicians (Church, Turing, Kleene, Curry, etc)
   - Logic proofs are formal constructions, expressed as programs in the &lambda;-calculus
   - The 1930's &lambda;-calculus is the core of a modern functional programming language
-  - Note all of this was before computers even existed - !!
-* Lisp, late 1950's (McCarthy)
-  - &lambda;-calculus is elegant, so build a PL around it
-  - Goal application space: artificial intelligence programming
-  - Added list data to &lambda; functions: **Lis**t **P**rocessing
-  - Lisp is the ancestor of all modern dynamically-typed languages: Python, JavaScript, etc.
+  - All of these ideas arose before computers even existed - !!
+* Lisp, late 1950's, McCarthy
+  - The &lambda;-calculus is elegant, so build a PL around it
+  - Goal application space: artificial intelligence programming (symbolic AI back then)
+  - McCarthy added list data to &lambda; functions: **Lis**t **P**rocessing
+  - Lisp is the ancestor of all modern dynamically-typed PLs: Python, JavaScript, etc.
 * Typed functional languages, 70's & 80's: Milner's ML and its descendents Haskell and OCaml
-  - We will be using OCaml
-* Modern era: add FP as possibility in mainstream PLs: Python, JavaScript, Java, C++, etc.
+* Modern era: FP added as an extension to mainstream PLs: Python, JavaScript, Java, C++, etc.
 
 ### Imperative vs Object-Oriented vs Higher-Order Functional
 
-* Oversimplifying but these are the three modern schools
-* More oversimplifying: "Imperative = C, OO = Java, FP = OCaml"
-* Note many O-O languages now have functions, often called lambdas for the historical reference
+* Lets oversimplify: "Imperative = C, OO = Java, FP = OCaml"
 * Goal of this course is to get deeply into the FP mode of programming, which can then be used in your favorite PL - Java, Python, C++, JavaScript, OCaml, etc.
 
-### Imperative
+### Imperative (e.g. C)
 
-* Imperative also has functions, but there functions often have side effects (e.g. mutate some shared data structures)
-* C has function pointers to pass around functions as data but they are not widely used and lack needed expressiveness (a topic we will cover later).
+* Imperative also has functions, but there functions often have side effects (e.g. mutating some shared data structures, raising exceptions)
+* C has function pointers to pass around functions as data but they lack critical expressiveness (a topic we will cover later).
 * Need to explicitly manage memory with `malloc/free` and pointers which leads to many errors.
 
-### Object-Oriented (OO)
+### Object-Oriented (e.g. Java)
 
 * Objects tend to have "their" state encapsulated within their boundary
-* It is usually mutable state - changes over time
-* A function is like an object with one method, `call`, and with no fields
+* It is usually *mutable* state - calling a method does more than what it returns, field values could change
+* A function is like an object with one method, `apply`, and with no fields
   - But, that analogy doesn't fully capture higher-order functions which is why `lambda` added to Java.
 
-### Functional (FP)
+### Functional (e.g. OCaml)
 
 * Advantages described above: declarative nature and correctness, more composable
-* Sometimes less good at supporting extension: e.g. no notion of subclass in functional paradigm
+* Can be less good at supporting extension: e.g. no notion of subclass in functional paradigm
 
 ### Which one wins?
 Thesis:
@@ -76,5 +75,5 @@ Thesis:
 
 * There are typed FP languages (OCaml, Haskell, TypeScript, etc) and uptyped ones (Lisp, Scheme, Clojure, Python, JavaScript, etc)
 * We are clearly in the types camp here with OCaml but there are trade offs
-  - With types we have *type-directed programming*: types serve as a skeleton of the code structure, and often once all the type errors are fixed the code .. works!
+  - With types we have *type-directed programming*: starting with the type of a function types serve as a skeleton of the code structure (e.g. a function that takes in a list of integers and returns an integer gives important information), and often once all the type errors are fixed the code .. works!
   - The downside is types can get in the way both in terms of code maintenance and in terms of expressiveness.
