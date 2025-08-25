@@ -75,7 +75,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>See <a href="https://pl.cs.jhu.edu/fpse/coding.html">the Coding page</a> for install instructions and lots of other information.</li>
-  <li>Make sure to use the required version of OCaml, 5.2.0, install all the libraries listed via <code>opam</code>, and change your <code>.ocamlinit</code> file as mentioned on that page.
+  <li>Make sure to use the required version of OCaml, 5.3.0, install all the libraries listed via <code>opam</code>, and change your <code>.ocamlinit</code> file as mentioned on that page.
     <ul>
       <li>This will let us all “play in the same sandbox” and avoid confusion</li>
     </ul>
@@ -97,13 +97,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>The OCaml top loop is started with the shell command <code>utop</code>.</li>
-  <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result<br />
-```ocaml<br />
-utop # 3+4;;</li>
-  <li>
-    <p>: int = 7<br />
-```</p>
-  </li>
+  <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">utop</span> <span class="o">#</span> <span class="mi">3</span><span class="o">+</span><span class="mi">4</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">7</span>
+</code></pre></div></div>
+
+<ul>
   <li>Control-D will exit <code>utop</code>.
     <h4 id="the-compilerun-system">The compile/run system</h4>
   </li>

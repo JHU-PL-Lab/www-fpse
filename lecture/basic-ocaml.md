@@ -4,7 +4,7 @@
 ### Installing
 
  * See [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) for install instructions and lots of other information.  
- * Make sure to use the required version of OCaml, 5.2.0, install all the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
+ * Make sure to use the required version of OCaml, 5.3.0, install all the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
     - This will let us all "play in the same sandbox" and avoid confusion
 
 ### The Ecosystem via Hello World in OCaml
@@ -17,6 +17,7 @@
   - e.g. shells like `bash`, Python's `python3`, JavaScript `node`, etc.
 * The OCaml top loop is started with the shell command `utop`.  
 * We will run the OCaml top loop and show you you can enter expressions such as `3+4`, follow with `;;` to indicate end of input (`;;` is **required**), and hit return to get the result
+
 ```ocaml
 utop # 3+4;;
 - : int = 7
