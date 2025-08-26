@@ -91,8 +91,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Lack of side effects is called “referential transparency”
     <ul>
-      <li>variable values don’t change out from under you (follows how math behaves).</li>
-      <li>to understand what a function does, you <em>only</em> need to look at what you pass and what gets returned, a much narrower interface</li>
+      <li>Variable values don’t change out from under you (follows how math behaves).</li>
+      <li>To understand what a function does, you <em>only</em> need to look at what you pass and what gets returned, a much narrower interface</li>
     </ul>
   </li>
   <li>There exist functional data structures analogous to imperative ones: dictionaries, lists, etc, but <em>immutable</em>
@@ -192,8 +192,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>There are typed FP languages (OCaml, Haskell, TypeScript, etc) and uptyped ones (Lisp, Scheme, Clojure, Python, JavaScript, etc)</li>
   <li>We are clearly in the types camp here with OCaml but there are trade offs
     <ul>
-      <li>With types we have <em>type-directed programming</em>: starting with the type of a function types serve as a skeleton of the code structure (e.g. a function that takes in a list of integers and returns an integer gives important information), and often once all the type errors are fixed the code .. works!</li>
-      <li>The downside is types can get in the way both in terms of code maintenance and in terms of expressiveness.</li>
+      <li>With types we have <em>type-directed programming</em>
+        <ul>
+          <li>The type of a function serves as a skeleton of the code structure before writing any code</li>
+          <li>For example, a function that takes in a list of integers and returns an integer gives important information</li>
+          <li>Often once all the type errors are fixed the code .. works!</li>
+        </ul>
+      </li>
+      <li>The downside is types can get in the way both in terms of code maintenance (more work) and in terms of expressiveness (programs with no runtime type errors won’t pass the typechecker).</li>
     </ul>
   </li>
 </ul>

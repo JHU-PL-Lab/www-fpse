@@ -29,8 +29,8 @@ utop # 3+4;;
 #### The Standalone Compiler
 
 * The `ocamlc` compiler is the analogue of the  `cc`/`gcc`/`javac` compilers you have used
-  - it compiles source code to binaries which you can then invoke from the shell.
-* In OCaml we can live in **both worlds**: both play with code in a top loop, *and* use a compiler to compile it to a binary.
+  - Compilers translate source code to a binary which you can then run from the shell.
+* In OCaml it is useful to live in **both worlds**: both play with code in a top loop, *and* use a compiler to compile it to a binary.
 * Let's cover how we will compile in OCaml.  Suppose the following is in a file `helloworld.ml`:
 ```ocaml
 open Core;; (* Make the Core libraries directly available *)
@@ -38,7 +38,7 @@ let hw = "hello" ^ "world";;
 printf "the string is %s\n" hw
 ```
 
-* The actual compiler is `ocamlc` or `ocamlopt`, but we will not be directly invoking it
+* (The actual compiler is `ocamlc` or `ocamlopt`, but we will never be directly invoking it)
 * Instead we will operate at a higher level and use build tool `dune` to invoke the compiler
 * `dune` is a modern `make`/`Makefile` equivalent for OCaml which is very powerful.
 * So, in same directory, there should be a `dune` file with the following contents:
@@ -52,23 +52,23 @@ printf "the string is %s\n" hw
 * This is the **build file**, specifying how to compile/test/run the program.  The notation is S-expressions.
 * Also a file `dune-project` is needed with only `(lang dune 3.19)` in it.
 * Now, type `dune build` to compile this `helloworld.ml` code as an executable.
-* All of the results are placed in the `_build/` directory
+* All of the results are placed in a new `_build/` sub-directory
 * Then, run with `dune exec ./helloworld.exe` - same as typing `_build/default/helloworld.exe`
 * We will be using `dune` to build libraries and binaries, and `utop` to play with them.
 * If you want to try these commands yourself the above `helloworld.ml` and dune files are in [this zip](helloworld.zip), just unzip and the `dune` commands above should work from within the `helloworld` directory.
 
 ### OCaml Language Basics in `utop`
 
-* We will start with OCaml by running tiny examples in the top-loop, but by the first assignment you will start working in both worlds.
+* We will start with OCaml by running tiny examples in the top-loop, but for the first assignment you will be working in both worlds.
  
 ###  Integers
 
 ```ocaml
-3 + 4;; (* outputs `- : int = 7` -- the value is 7, int is the type, "-" names no-name given *)
-let x = 3 + 4;; (* give the value a name, via let. *)
-let y = x + 5;; (* can use x now *)
+3 + 4;; (* outputs `- : int = 7` -- the value is 7, int is the type, "-" means no name given *)
+let x = 3 + 4;; (* outputs `val x : int = 7` - give the result value a name, via let. *)
+let y = x + 5;; (* the above defines `x` so can use it subsequently *)
 let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
-(* z is not defined here: z + 1 ;; will give an error. *)
+(* z is not defined after the `in` is over: z + 1 ;; will give an error. *)
 ```
 
 #### Boolean operations
@@ -94,7 +94,7 @@ true || false;;
 
 Let's declare a function `squared` with `x` as its one parameter.  `return` is  implicit.
 ```ocaml
-let squared x = x * x;; (* returns   val squared : int -> int = <fun>     *)
+let squared x = x * x;; (* outputs `val squared : int -> int = <fun>` *)
 squared 4;; (* to call a function -- separate arguments with S P A C E S - ! *)
 ```
  *  OCaml has no `return` statement; value of the whole body-expression is what gets returned
@@ -106,7 +106,7 @@ squared 4;; (* to call a function -- separate arguments with S P A C E S - ! *)
 Let's write a well-known function with recursion and if-then-else syntax
 
 ```ocaml
-let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
+let rec fib n = (* the "rec" keyword needs to be added to allow recursion *)
   if n <= 0 then 0
   else if n = 1 then 1
   else fib (n - 1) + fib (n - 2);; (* notice again everything is an expression, no "return" *)
@@ -114,7 +114,7 @@ let rec fib n =     (* the "rec" keyword needs to be added to allow recursion *)
 fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)
 ```
 
-Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read `fib` using pattern `match` notation similar to Java/C `switch` which we will cover in detail later:
+Nested conditionals as above are generally avoided in OCaml since they are not very readable.  For example here is an easier to read `fib` using pattern `match` notation similar to Java/C `switch` (we will cover `match` in detail later):
 
 ```ocaml
 let rec fib x = match x with
@@ -128,13 +128,13 @@ let rec fib x = match x with
 * Much of this course will be showing how this is useful
 
 ```ocaml
-let add1 x = x + 1;; (* a normal add1 definition *)
+let add1 x = x + 1;; (* the normal way to define an add1 function in OCaml *)
 add1 3;;
 let anon_add1 = (function x -> x + 1);; (* equivalent to above; "x" is argument here *)
-let anon_add1 = (fun x -> x + 1);;      (*  shorthand notation -- cut off the "ction" *)
+let anon_add1 = (fun x -> x + 1);;      (* shorthand notation -- cut off the "ction" *)
 anon_add1 3;;
 (anon_add1 4) + 7;; 
-((fun x -> x + 1) 4) + 7;; (* can inline anonymous function definition *)
+((fun x -> x + 1) 4) + 7;; (* can also inline an anonymous function definition *)
 ```
 
 * Multiple arguments - just leave s p a c e s between multiple arguments in both definitions and uses
@@ -143,14 +143,16 @@ anon_add1 3;;
 let add x y = x + y;;
 add 3 4;;
 (add 3) 4;; (* same meaning as previous application -- two applications, " " associates LEFT *)
-let add3 = add 3;; (* No need to give all arguments at once!  Type of add is int -> (int -> int) - "CURRIED" *)
+let add3 = add 3;; (* No need to give all arguments at once - !  
+                      Type of add is int -> (int -> int) - "CURRIED" *)
 add3 4;;
 add3 20;;
-(+) 3 4;; (* Putting () around any infix operator turns it into a regular 2-argument function *)
+(+) 3 4;; (* Putting () around any infix operator turns it into a 2-argument function *)
 ```
 
-Conclusion: add is a function taking an integer, and returning a **function** which takes ints to ints.
-So, add is a **higher-order function**: it either takes a function as an argument, or returns a function as result.
+* Conclusion: add is a function taking an integer, and returning a **function** which takes ints to ints.
+* So, add is a **higher-order function**: it returns a function as result.
+* Other forms of higher-order function take functions as arguments (e.g. the math compose example `o`)
 
 Observe `int -> int -> int` is parenthesized as `int -> (int -> int)` -- **right** associativity which is opposite of arithmetic operators
 

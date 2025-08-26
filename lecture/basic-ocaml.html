@@ -113,17 +113,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>The <code>ocamlc</code> compiler is the analogue of the  <code>cc</code>/<code>gcc</code>/<code>javac</code> compilers you have used
     <ul>
-      <li>it compiles source code to binaries which you can then invoke from the shell.</li>
+      <li>Compilers translate source code to a binary which you can then run from the shell.</li>
     </ul>
   </li>
-  <li>In OCaml we can live in <strong>both worlds</strong>: both play with code in a top loop, <em>and</em> use a compiler to compile it to a binary.</li>
+  <li>In OCaml it is useful to live in <strong>both worlds</strong>: both play with code in a top loop, <em>and</em> use a compiler to compile it to a binary.</li>
   <li>Let’s cover how we will compile in OCaml.  Suppose the following is in a file <code>helloworld.ml</code>:
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span> <span class="c">(* Make the Core libraries directly available *)</span>
 <span class="k">let</span> <span class="n">hw</span> <span class="o">=</span> <span class="s2">"hello"</span> <span class="o">^</span> <span class="s2">"world"</span><span class="p">;;</span>
 <span class="n">printf</span> <span class="s2">"the string is %s</span><span class="se">\n</span><span class="s2">"</span> <span class="n">hw</span>
 </code></pre></div>    </div>
   </li>
-  <li>The actual compiler is <code>ocamlc</code> or <code>ocamlopt</code>, but we will not be directly invoking it</li>
+  <li>(The actual compiler is <code>ocamlc</code> or <code>ocamlopt</code>, but we will never be directly invoking it)</li>
   <li>Instead we will operate at a higher level and use build tool <code>dune</code> to invoke the compiler</li>
   <li><code>dune</code> is a modern <code>make</code>/<code>Makefile</code> equivalent for OCaml which is very powerful.</li>
   <li>So, in same directory, there should be a <code>dune</code> file with the following contents:
@@ -137,7 +137,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.  The notation is S-expressions.</li>
   <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.19)</code> in it.</li>
   <li>Now, type <code>dune build</code> to compile this <code>helloworld.ml</code> code as an executable.</li>
-  <li>All of the results are placed in the <code>_build/</code> directory</li>
+  <li>All of the results are placed in a new <code>_build/</code> sub-directory</li>
   <li>Then, run with <code>dune exec ./helloworld.exe</code> - same as typing <code>_build/default/helloworld.exe</code></li>
   <li>We will be using <code>dune</code> to build libraries and binaries, and <code>utop</code> to play with them.</li>
   <li>If you want to try these commands yourself the above <code>helloworld.ml</code> and dune files are in <a href="helloworld.zip">this zip</a>, just unzip and the <code>dune</code> commands above should work from within the <code>helloworld</code> directory.</li>
@@ -146,16 +146,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="ocaml-language-basics-in-utop">OCaml Language Basics in <code>utop</code></h3>
 
 <ul>
-  <li>We will start with OCaml by running tiny examples in the top-loop, but by the first assignment you will start working in both worlds.</li>
+  <li>We will start with OCaml by running tiny examples in the top-loop, but for the first assignment you will be working in both worlds.</li>
 </ul>
 
 <h3 id="integers">Integers</h3>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* outputs `- : int = 7` -- the value is 7, int is the type, "-" names no-name given *)</span>
-<span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* give the value a name, via let. *)</span>
-<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* can use x now *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* outputs `- : int = 7` -- the value is 7, int is the type, "-" means no name given *)</span>
+<span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* outputs `val x : int = 7` - give the result value a name, via let. *)</span>
+<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* the above defines `x` so can use it subsequently *)</span>
 <span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span> <span class="k">in</span> <span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* let .. in defines a local variable z *)</span>
-<span class="c">(* z is not defined here: z + 1 ;; will give an error. *)</span>
+<span class="c">(* z is not defined after the `in` is over: z + 1 ;; will give an error. *)</span>
 </code></pre></div></div>
 
 <h4 id="boolean-operations">Boolean operations</h4>
@@ -178,7 +178,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="simple-functions-on-integers">Simple functions on integers</h4>
 
 <p>Let’s declare a function <code>squared</code> with <code>x</code> as its one parameter.  <code>return</code> is  implicit.</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">squared</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;;</span> <span class="c">(* returns   val squared : int -&gt; int = &lt;fun&gt;     *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">squared</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;;</span> <span class="c">(* outputs `val squared : int -&gt; int = &lt;fun&gt;` *)</span>
 <span class="n">squared</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* to call a function -- separate arguments with S P A C E S - ! *)</span>
 </code></pre></div></div>
 <ul>
@@ -191,7 +191,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Let’s write a well-known function with recursion and if-then-else syntax</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="n">n</span> <span class="o">=</span>     <span class="c">(* the "rec" keyword needs to be added to allow recursion *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="n">n</span> <span class="o">=</span> <span class="c">(* the "rec" keyword needs to be added to allow recursion *)</span>
   <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span>
   <span class="k">else</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">then</span> <span class="mi">1</span>
   <span class="k">else</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">);;</span> <span class="c">(* notice again everything is an expression, no "return" *)</span>
@@ -199,7 +199,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">fib</span> <span class="mi">10</span><span class="p">;;</span> <span class="c">(* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)</span>
 </code></pre></div></div>
 
-<p>Nested conditionals as above are generally avoided in OCaml since they are not so readable.  For example here is an easier to read <code>fib</code> using pattern <code>match</code> notation similar to Java/C <code>switch</code> which we will cover in detail later:</p>
+<p>Nested conditionals as above are generally avoided in OCaml since they are not very readable.  For example here is an easier to read <code>fib</code> using pattern <code>match</code> notation similar to Java/C <code>switch</code> (we will cover <code>match</code> in detail later):</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="n">x</span> <span class="o">=</span> <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
   <span class="o">|</span> <span class="mi">0</span> <span class="o">-&gt;</span> <span class="mi">0</span> 
@@ -213,13 +213,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Much of this course will be showing how this is useful</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add1</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* a normal add1 definition *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add1</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* the normal way to define an add1 function in OCaml *)</span>
 <span class="n">add1</span> <span class="mi">3</span><span class="p">;;</span>
 <span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">function</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* equivalent to above; "x" is argument here *)</span>
-<span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span>      <span class="c">(*  shorthand notation -- cut off the "ction" *)</span>
+<span class="k">let</span> <span class="n">anon_add1</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span>      <span class="c">(* shorthand notation -- cut off the "ction" *)</span>
 <span class="n">anon_add1</span> <span class="mi">3</span><span class="p">;;</span>
 <span class="p">(</span><span class="n">anon_add1</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> 
-<span class="p">((</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(* can inline anonymous function definition *)</span>
+<span class="p">((</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span> <span class="c">(* can also inline an anonymous function definition *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -229,14 +229,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;;</span>
 <span class="n">add</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span>
 <span class="p">(</span><span class="n">add</span> <span class="mi">3</span><span class="p">)</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* same meaning as previous application -- two applications, " " associates LEFT *)</span>
-<span class="k">let</span> <span class="n">add3</span> <span class="o">=</span> <span class="n">add</span> <span class="mi">3</span><span class="p">;;</span> <span class="c">(* No need to give all arguments at once!  Type of add is int -&gt; (int -&gt; int) - "CURRIED" *)</span>
+<span class="k">let</span> <span class="n">add3</span> <span class="o">=</span> <span class="n">add</span> <span class="mi">3</span><span class="p">;;</span> <span class="c">(* No need to give all arguments at once - !  
+                      Type of add is int -&gt; (int -&gt; int) - "CURRIED" *)</span>
 <span class="n">add3</span> <span class="mi">4</span><span class="p">;;</span>
 <span class="n">add3</span> <span class="mi">20</span><span class="p">;;</span>
-<span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* Putting () around any infix operator turns it into a regular 2-argument function *)</span>
+<span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* Putting () around any infix operator turns it into a 2-argument function *)</span>
 </code></pre></div></div>
 
-<p>Conclusion: add is a function taking an integer, and returning a <strong>function</strong> which takes ints to ints.<br />
-So, add is a <strong>higher-order function</strong>: it either takes a function as an argument, or returns a function as result.</p>
+<ul>
+  <li>Conclusion: add is a function taking an integer, and returning a <strong>function</strong> which takes ints to ints.</li>
+  <li>So, add is a <strong>higher-order function</strong>: it returns a function as result.</li>
+  <li>Other forms of higher-order function take functions as arguments (e.g. the math compose example <code>o</code>)</li>
+</ul>
 
 <p>Observe <code>int -&gt; int -&gt; int</code> is parenthesized as <code>int -&gt; (int -&gt; int)</code> – <strong>right</strong> associativity which is opposite of arithmetic operators</p>
 

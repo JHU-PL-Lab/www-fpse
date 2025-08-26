@@ -14,8 +14,8 @@ See the [Dateline](../dateline.html)
 * More generally, functions *only* return data, they have no other behaviors on the side (no "side effects") 
   - No printing, I/O, mutating, raising exceptions, etc.
 * Lack of side effects is called "referential transparency" 
-  - variable values don't change out from under you (follows how math behaves).
-  - to understand what a function does, you *only* need to look at what you pass and what gets returned, a much narrower interface
+  - Variable values don't change out from under you (follows how math behaves).
+  - To understand what a function does, you *only* need to look at what you pass and what gets returned, a much narrower interface
 * There exist functional data structures analogous to imperative ones: dictionaries, lists, etc, but *immutable* 
   - Instead of mutating, make a fresh copy.
   - Sounds like it will be inefficient but cost is reasonable in most cases.
@@ -75,5 +75,8 @@ Thesis:
 
 * There are typed FP languages (OCaml, Haskell, TypeScript, etc) and uptyped ones (Lisp, Scheme, Clojure, Python, JavaScript, etc)
 * We are clearly in the types camp here with OCaml but there are trade offs
-  - With types we have *type-directed programming*: starting with the type of a function types serve as a skeleton of the code structure (e.g. a function that takes in a list of integers and returns an integer gives important information), and often once all the type errors are fixed the code .. works!
-  - The downside is types can get in the way both in terms of code maintenance and in terms of expressiveness.
+  - With types we have *type-directed programming*
+    - The type of a function serves as a skeleton of the code structure before writing any code
+    - For example, a function that takes in a list of integers and returns an integer gives important information
+    - Often once all the type errors are fixed the code .. works!
+  - The downside is types can get in the way both in terms of code maintenance (more work) and in terms of expressiveness (programs with no runtime type errors won't pass the typechecker).
