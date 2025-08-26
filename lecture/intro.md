@@ -41,36 +41,6 @@ See the [Dateline](../dateline.html)
 * Typed functional languages, 70's & 80's: Milner's ML and its descendents Haskell and OCaml
 * Modern era: FP added as an extension to mainstream PLs: Python, JavaScript, Java, C++, etc.
 
-### Imperative vs Object-Oriented vs Higher-Order Functional
-
-* Lets oversimplify: "Imperative = C, OO = Java, FP = OCaml"
-* Goal of this course is to get deeply into the FP mode of programming, which can then be used in your favorite PL - Java, Python, C++, JavaScript, OCaml, etc.
-
-### Imperative (e.g. C)
-
-* Imperative also has functions, but there functions often have side effects (e.g. mutating some shared data structures, raising exceptions)
-* C has function pointers to pass around functions as data but they lack critical expressiveness (a topic we will cover later).
-* Need to explicitly manage memory with `malloc/free` and pointers which leads to many errors.
-
-### Object-Oriented (e.g. Java)
-
-* Objects tend to have "their" state encapsulated within their boundary
-* It is usually *mutable* state - calling a method does more than what it returns, field values could change
-* A function is like an object with one method, `apply`, and with no fields
-  - But, that analogy doesn't fully capture higher-order functions which is why `lambda` added to Java.
-
-### Functional (e.g. OCaml)
-
-* Advantages described above: declarative nature and correctness, more composable
-* Can be less good at supporting extension: e.g. no notion of subclass in functional paradigm
-
-### Which one wins?
-Thesis:
-* Imperative often wins for low-level code: underlying machine instructions are in the imperative domain, will run faster.
-* O-O often wins for very large apps with shallow logic: UI's, etc.
-* Functional often wins for complex algorithms with deep inner logic, and also for data manipulation focus
-  - Gets too confusing with mutation, and better composition of functions makes code easier to understand.
- 
 ### Typed Functional vs Untyped Functional
 
 * There are typed FP languages (OCaml, Haskell, TypeScript, etc) and uptyped ones (Lisp, Scheme, Clojure, Python, JavaScript, etc)

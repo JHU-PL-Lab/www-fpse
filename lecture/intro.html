@@ -140,52 +140,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Modern era: FP added as an extension to mainstream PLs: Python, JavaScript, Java, C++, etc.</li>
 </ul>
 
-<h3 id="imperative-vs-object-oriented-vs-higher-order-functional">Imperative vs Object-Oriented vs Higher-Order Functional</h3>
-
-<ul>
-  <li>Lets oversimplify: “Imperative = C, OO = Java, FP = OCaml”</li>
-  <li>Goal of this course is to get deeply into the FP mode of programming, which can then be used in your favorite PL - Java, Python, C++, JavaScript, OCaml, etc.</li>
-</ul>
-
-<h3 id="imperative-eg-c">Imperative (e.g. C)</h3>
-
-<ul>
-  <li>Imperative also has functions, but there functions often have side effects (e.g. mutating some shared data structures, raising exceptions)</li>
-  <li>C has function pointers to pass around functions as data but they lack critical expressiveness (a topic we will cover later).</li>
-  <li>Need to explicitly manage memory with <code>malloc/free</code> and pointers which leads to many errors.</li>
-</ul>
-
-<h3 id="object-oriented-eg-java">Object-Oriented (e.g. Java)</h3>
-
-<ul>
-  <li>Objects tend to have “their” state encapsulated within their boundary</li>
-  <li>It is usually <em>mutable</em> state - calling a method does more than what it returns, field values could change</li>
-  <li>A function is like an object with one method, <code>apply</code>, and with no fields
-    <ul>
-      <li>But, that analogy doesn’t fully capture higher-order functions which is why <code>lambda</code> added to Java.</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="functional-eg-ocaml">Functional (e.g. OCaml)</h3>
-
-<ul>
-  <li>Advantages described above: declarative nature and correctness, more composable</li>
-  <li>Can be less good at supporting extension: e.g. no notion of subclass in functional paradigm</li>
-</ul>
-
-<h3 id="which-one-wins">Which one wins?</h3>
-<p>Thesis:</p>
-<ul>
-  <li>Imperative often wins for low-level code: underlying machine instructions are in the imperative domain, will run faster.</li>
-  <li>O-O often wins for very large apps with shallow logic: UI’s, etc.</li>
-  <li>Functional often wins for complex algorithms with deep inner logic, and also for data manipulation focus
-    <ul>
-      <li>Gets too confusing with mutation, and better composition of functions makes code easier to understand.</li>
-    </ul>
-  </li>
-</ul>
-
 <h3 id="typed-functional-vs-untyped-functional">Typed Functional vs Untyped Functional</h3>
 
 <ul>
