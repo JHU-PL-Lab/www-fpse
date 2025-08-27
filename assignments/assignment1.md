@@ -20,7 +20,7 @@ In this assignment, you are to write several small programs in OCaml.
 Here is a reminder of some resources at your disposal.
 
 -   Consult the [Course Coding page](https://pl.cs.jhu.edu/fpse/coding.html) for information on installing OCaml and getting a good toolchain setup for development.
--   Consult the [Basic OCaml lecture notes](https://pl.cs.jhu.edu/fpse/basic-ocaml.html), and if you want to re-watch any lecture they are on Panopto as per the link pinned on Courselore.
+-   Consult the [Basic OCaml lecture notes](https://pl.cs.jhu.edu/fpse/lecture/basic-ocaml.html), and if you want to re-watch any lecture they are on Panopto as per the link pinned on Courselore.
 -   [Real World OCaml Chapter 1](https://dev.realworldocaml.org/guided-tour.html) is another tutorial introdution in a somewhat different order than we are doing.
 -   If you are looking for how some standard library function is expressed in OCaml, like not equal, etc, consult the [Caml Stdlib](https://v2.ocaml.org/manual/stdlib.html) which are the predefined functions available in OCaml.
  - Note that `Core` overrides some of these including the comparison operations which only work on `int`s.  To perform `=`, `<` or the like on e.g. floats you need to write `Float.(3.2 = 4.7)` for example to check for equality on `3.2` and `4.7`, and similarly for `<` etc.  To see what is actually loaded look at the [Core documentation](https://ocaml.org/p/core/latest/doc/index.html).
