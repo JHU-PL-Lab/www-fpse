@@ -124,3 +124,10 @@ nth_exn [33;22;11] 3;;
 # List.nth [1;2;3] 2;;
 - : int option = Some 3
 
+let rec zero_negs l =
+  match l with
+  |  [] -> []
+  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl
+in
+zero_negs [1;-2;3];;
+

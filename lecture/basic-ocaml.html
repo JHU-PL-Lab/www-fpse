@@ -244,7 +244,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Observe <code>int -&gt; int -&gt; int</code> is parenthesized as <code>int -&gt; (int -&gt; int)</code> – <strong>right</strong> associativity which is opposite of arithmetic operators</p>
 
-<p>Be careful on operator precedence with this goofy (aka stupid) way that function application doesn’t need parens!</p>
+<p>Be careful on operator precedence with this unusual way that function application doesn’t need parens!</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">add3</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">);;</span>
 <span class="n">add3</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* NOT the previous - this is the same as (add3 3) * 2 - application binds tighter than * *)</span>
 <span class="n">add3</span> <span class="o">@@</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* LIKE the original - @@ is like the " " for application but binds LOOSER than other ops *)</span>
@@ -293,7 +293,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">5</span>
 </code></pre></div></div>
 
-<p>There is a downside with this though, you can’t just use <code>nice_div</code> like <code>/</code>:</p>
+<ul>
+  <li>This allows an explicit failure value, <code>None</code>, to be propagated</li>
+  <li>There is a downside with this though, you can’t just use <code>nice_div</code> like <code>/</code>:</li>
+</ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="p">(</span><span class="n">nice_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span><span class="p">;;</span>
 <span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">0</span><span class="o">-</span><span class="mi">14</span><span class="o">:</span>
@@ -315,11 +318,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>The <code>then</code> and <code>else</code> branches must return the same type, here they do not.</li>
   <li>The <code>int</code> and <code>int option</code> types have no overlap of members!  Generally true across OCaml.</li>
-  <li><code>null</code> or similar value can sneak in to a type in other languages, but no such sneaking in OCaml.</li>
-  <li>It can make a little more code sometimes but it is more exact/rigorous/debuggable
-    <h4 id="using-pattern-matching-to-use-nice_div">Using pattern matching to use <code>nice_div</code></h4>
-  </li>
+  <li><code>null</code> or similar value can sneak in to a type in other languages, but no such sneaking can happen in OCaml.</li>
+  <li>It can make a little more code sometimes but it is more exact/rigorous/debuggable</li>
+  <li>It also puts more information in the type itself – a function returning <code>int option</code> means the caller needs to case on it.</li>
 </ul>
+
+<h4 id="using-pattern-matching-to-use-nice_div">Using pattern matching to use <code>nice_div</code></h4>
 
 <p>Here is how we can in fact use <code>nice_div</code>:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">match</span> <span class="p">(</span><span class="n">nice_div</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="k">with</span> 
@@ -331,12 +335,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>This shows how OCaml lets us <em>destruct</em> option values, via the <code>match</code> syntax.</li>
   <li><code>match</code> is similar to <code>switch</code> in C/Java/.. but is much more flexible in OCaml</li>
   <li>The LHS in OCaml can be a general pattern which binds variables (the <code>i</code> here), etc</li>
-  <li>Note that we turned <code>None</code> into a runtime exception via <code>failwith</code>.</li>
+  <li>Note that here we turned <code>None</code> into a runtime exception via <code>failwith</code>.</li>
 </ul>
 
 <h4 id="result">Result</h4>
 
-<p>A very similar approach to the above is to use the <code>result</code> type, which like <code>option</code> but is specialized for error handling.</p>
+<p>A similar approach to the above is to use the <code>result</code> type, which like <code>option</code> but is specialized for error handling.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">nicer_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">Error</span> <span class="s2">"Divide by zero"</span> <span class="k">else</span> <span class="nc">Ok</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">);;</span>
 <span class="k">val</span> <span class="n">nicer_div</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="kt">int</span><span class="o">,</span> <span class="kt">string</span><span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
@@ -368,12 +372,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>This has the property of not needing a match on the result.</li>
   <li>Note that the built-in <code>/</code> also raises an exception.</li>
-  <li>Exceptions are side effects though, we want to minimize their usage to avoid error-at-a-distance.</li>
+  <li>Exceptions are side effects though, and we want to minimize their usage to avoid error-at-a-distance.</li>
   <li>The above examples show how exceptional conditions can either be handled via exceptions or in the return value;
     <ul>
       <li>A key dimension of this course is this side effect vs direct passing trade-off</li>
-      <li>Many bugs, security leaks, etc are due to ignorance of side effects; the <code>Error/Ok</code> approach keeps them “in your face” as a programmer</li>
-      <li>Also recall <code>Error/Ok</code> keeps us completely in math-land, the return result tells everything.</li>
+      <li>Many bugs, security leaks, etc are due to ignorance of side effects; the <code>Error/Ok</code> approach keeps them “in your face” by being in the return type</li>
+      <li>Also recall <code>Error/Ok</code> keeps us completely in math-land, the return result tells everything.  Exceptions are not math.</li>
     </ul>
   </li>
 </ul>
@@ -381,9 +385,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="lists">Lists</h3>
 
 <ul>
-  <li>Finally we can use a real data structure to write some real programs!</li>
+  <li>Finally we can use a real data structure to write some real programs</li>
   <li>Lists are the most common data structure in OCaml, similar to dictionaries/objects for Python/JavaScript.</li>
-  <li>They are <strong>immutable</strong> so while they look something like arrays or vectors they are <strong>not</strong></li>
+  <li>They are <strong>immutable</strong> so while they look something like arrays or vectors they most certainly are <strong>not</strong></li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
@@ -424,7 +428,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>An alternative to avoid the exception effect is to return <code>Ok/Error</code>:</li>
+  <li>Note that an alternative to avoid the exception effect is to return <code>Ok/Error</code>:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl</span> <span class="n">l</span> <span class="o">=</span>
@@ -438,9 +442,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">let</span> <span class="n">l''</span> <span class="o">=</span> <span class="n">tl</span> <span class="n">l'</span> <span class="c">(* Oops this fails!  As in the div example above need to case on `Ok/Error` *)</span>
 </code></pre></div></div>
 
-<ul>
-  <li>Lists are not random access like arrays; if you want to get the nth element, you need to work for it.</li>
-</ul>
+<h3 id="recursive-functions-on-lists">Recursive Functions on Lists</h3>
+
+<p>For the first homework many of the programs you need to write work on list inputs.  Recursion is the key here.  Here is an example: get the nth element of a list.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">nth_exn</span> <span class="n">l</span> <span class="n">n</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
@@ -451,6 +455,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">nth_exn</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">3</span><span class="p">;;</span>
 </code></pre></div></div>
 
+<p>Key points</p>
+
+<ol>
+  <li>Pattern match on the list input: its either empty or not</li>
+  <li>Recursively call the function on the tail of the list (plus other arguments): it <strong>should work for shorter lists by induction</strong></li>
+</ol>
+
 <p>Fortunately many common operations are already in the <code>List</code> module in the <code>Core</code> library:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="mi">2</span><span class="p">;;</span>
@@ -460,7 +471,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>This library uses the <code>option</code> type instead of raising an exception like we did</li>
   <li><code>List.nth_exn</code> raises an exception like ours does.  Both versions are useful.
     <ul>
-      <li>Note this function is also <code>Core.List.nth_exn</code> but we always <code>open Core;;</code> to make <code>Core</code> module functions implicitly available</li>
+      <li>(Note this function is also <code>Core.List.nth_exn</code> but we always <code>open Core;;</code> to make <code>Core</code> module functions implicitly available)</li>
     </ul>
   </li>
   <li>On Assignment 1 you <strong>cannot</strong> use <code>List.</code> libraries, you first need to practice using <code>let rec</code>
@@ -469,6 +480,22 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
 </ul>
+
+<h3 id="an-example-of-a-function-taking-and-returning-a-list">An Example of a function taking and returning a list</h3>
+
+<ul>
+  <li>Goal: write a function to zero out all the negative elements in a list of integers</li>
+  <li>C solution: <code>for</code>-loop over it and <strong>mutate</strong> all negatives to 0</li>
+  <li>OCaml immutable list solution: recurse on list structure, construct a completely <strong>new</strong> list with the negative elements zeroed</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">zero_negs</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
+  <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
+  <span class="o">|</span>  <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">if</span> <span class="n">hd</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">hd</span><span class="p">)</span> <span class="o">::</span> <span class="n">zero_negs</span> <span class="n">tl</span>
+<span class="k">in</span>
+<span class="n">zero_negs</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span>
+</code></pre></div></div>
 
       
           </section>

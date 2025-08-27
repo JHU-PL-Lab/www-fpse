@@ -156,7 +156,7 @@ add3 20;;
 
 Observe `int -> int -> int` is parenthesized as `int -> (int -> int)` -- **right** associativity which is opposite of arithmetic operators
 
-Be careful on operator precedence with this goofy (aka stupid) way that function application doesn't need parens!
+Be careful on operator precedence with this unusual way that function application doesn't need parens!
 ```ocaml
 add3 (3 * 2);;
 add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - application binds tighter than * *)
@@ -201,7 +201,8 @@ val nice_div : int -> int -> int option = <fun>
 - : int option = Some 5
 ```
 
-There is a downside with this though, you can't just use `nice_div` like `/`:
+* This allows an explicit failure value, `None`, to be propagated
+* There is a downside with this though, you can't just use `nice_div` like `/`:
 
 ```ocaml
 # (nice_div 5 2) + 7;;
@@ -222,8 +223,10 @@ Error: This expression has type int but an expression was expected of type
 ```
 - The `then` and `else` branches must return the same type, here they do not.
 - The `int` and `int option` types have no overlap of members!  Generally true across OCaml.
-- `null` or similar value can sneak in to a type in other languages, but no such sneaking in OCaml.
+- `null` or similar value can sneak in to a type in other languages, but no such sneaking can happen in OCaml.
 - It can make a little more code sometimes but it is more exact/rigorous/debuggable
+- It also puts more information in the type itself -- a function returning `int option` means the caller needs to case on it.
+
 #### Using pattern matching to use `nice_div`
 
 Here is how we can in fact use `nice_div`:
@@ -236,11 +239,11 @@ Here is how we can in fact use `nice_div`:
 * This shows how OCaml lets us *destruct* option values, via the `match` syntax.
 * `match` is similar to `switch` in C/Java/.. but is much more flexible in OCaml
 * The LHS in OCaml can be a general pattern which binds variables (the `i` here), etc
-* Note that we turned `None` into a runtime exception via `failwith`.
+* Note that here we turned `None` into a runtime exception via `failwith`.
 
 #### Result
 
-A very similar approach to the above is to use the `result` type, which like `option` but is specialized for error handling.
+A similar approach to the above is to use the `result` type, which like `option` but is specialized for error handling.
 
 ```ocaml
 # let nicer_div m n = if n = 0 then Error "Divide by zero" else Ok (m / n);;
@@ -269,17 +272,17 @@ div_exn 3 4;;
 
 * This has the property of not needing a match on the result.  
 * Note that the built-in `/` also raises an exception.
-* Exceptions are side effects though, we want to minimize their usage to avoid error-at-a-distance.
+* Exceptions are side effects though, and we want to minimize their usage to avoid error-at-a-distance.
 * The above examples show how exceptional conditions can either be handled via exceptions or in the return value; 
    - A key dimension of this course is this side effect vs direct passing trade-off
-   - Many bugs, security leaks, etc are due to ignorance of side effects; the `Error/Ok` approach keeps them "in your face" as a programmer
-   - Also recall `Error/Ok` keeps us completely in math-land, the return result tells everything.
+   - Many bugs, security leaks, etc are due to ignorance of side effects; the `Error/Ok` approach keeps them "in your face" by being in the return type
+   - Also recall `Error/Ok` keeps us completely in math-land, the return result tells everything.  Exceptions are not math.
 
 ### Lists
 
-* Finally we can use a real data structure to write some real programs!
+* Finally we can use a real data structure to write some real programs
 * Lists are the most common data structure in OCaml, similar to dictionaries/objects for Python/JavaScript.
-* They are **immutable** so while they look something like arrays or vectors they are **not**
+* They are **immutable** so while they look something like arrays or vectors they most certainly are **not**
 
 ```ocaml
 let l1 = [1; 2; 3];;
@@ -319,7 +322,7 @@ let l'' =  tl_exn l' (* So to get tail of tail, take tail of l' not 2 x tail of 
 tl_exn [];; (* Raises an `invalid_arg` exception if the list had no tail *)
 ```
 
-* An alternative to avoid the exception effect is to return `Ok/Error`:
+* Note that an alternative to avoid the exception effect is to return `Ok/Error`:
 
 ```ocaml
 let tl l =
@@ -333,7 +336,9 @@ tl [];;
 let l'' = tl l' (* Oops this fails!  As in the div example above need to case on `Ok/Error` *)
 ```
 
-* Lists are not random access like arrays; if you want to get the nth element, you need to work for it.
+### Recursive Functions on Lists
+
+For the first homework many of the programs you need to write work on list inputs.  Recursion is the key here.  Here is an example: get the nth element of a list.
 
 ```ocaml
 let rec nth_exn l n =
@@ -345,6 +350,11 @@ nth_exn [33;22;11] 1;;
 nth_exn [33;22;11] 3;;
 ```
 
+Key points
+
+1. Pattern match on the list input: its either empty or not
+2. Recursively call the function on the tail of the list (plus other arguments): it **should work for shorter lists by induction**
+
 Fortunately many common operations are already in the `List` module in the `Core` library:
 
 ```ocaml
@@ -353,8 +363,23 @@ Fortunately many common operations are already in the `List` module in the `Core
 ```
 * This library uses the `option` type instead of raising an exception like we did
 * `List.nth_exn` raises an exception like ours does.  Both versions are useful.
-   - Note this function is also `Core.List.nth_exn` but we always `open Core;;` to make `Core` module functions implicitly available
+   - (Note this function is also `Core.List.nth_exn` but we always `open Core;;` to make `Core` module functions implicitly available)
 * On Assignment 1 you **cannot** use `List.` libraries, you first need to practice using `let rec`
    - On Assignment 2 you will start using the `List.` libraries.
 
+
+### An Example of a function taking and returning a list
+
+* Goal: write a function to zero out all the negative elements in a list of integers
+* C solution: `for`-loop over it and **mutate** all negatives to 0
+* OCaml immutable list solution: recurse on list structure, construct a completely **new** list with the negative elements zeroed
+
+```ocaml
+let rec zero_negs l =
+  match l with
+  |  [] -> []
+  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl
+in
+zero_negs [1;-2;3];;
+```
 

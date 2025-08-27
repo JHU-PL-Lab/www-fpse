@@ -8,13 +8,6 @@ rev [1;2;3];; (* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)
 # List.rev [1;2;3];;
 - : int list = [3; 2; 1]
 
-let rec zero_negs l =
-  match l with
-  |  [] -> []
-  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl
-in
-zero_negs [1;-2;3];;
-
 List.length ["d";"ss";"qwqw"];;
 List.is_empty [];;
 List.last_exn [1;2;3];; (* get last element; raises an exception if list is empty *)

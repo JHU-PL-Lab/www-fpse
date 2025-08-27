@@ -33,20 +33,6 @@ Of course `rev` is also in `Core.List` since it is a common operation:
 - : int list = [3; 2; 1]
 ```
 
-**Another Example: zero out all the negative elements in a list of numbers**
-
-* C solution: `for`-loop over it and mutate all negatives to 0
-* OCaml immutable list solution: recurse on list structure, build the new list as we go
-
-```ocaml
-let rec zero_negs l =
-  match l with
-  |  [] -> []
-  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl
-in
-zero_negs [1;-2;3];;
-```
-
 ### Core.List library functions
 
 * We already saw a few of these previously, e.g. `List.rev` and `List.nth`.
