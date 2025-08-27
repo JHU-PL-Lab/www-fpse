@@ -75,8 +75,7 @@ Error: This expression has type (int * int) list List.Or_unequal_lengths.t
 Review example: with partial parameters applied, the remaining types hint at what is still needed.
 
 ```ocaml
-let l = [[3;3]; [4;4]; [22;17]] in
-List.map l;;
+# let l = [[3;3]; [4;4]; [22;17]] in List.map l;;
 - : f:(int list -> '_weak1) -> '_weak1 list = <fun>
 ```
  - The type shows that `f` needs to be a function taking an `int list` as argument.
@@ -105,14 +104,14 @@ let count_parties (l : voter list) =
 Adding a `Gre` for green party: first just change the type, and chase errors
 
 ```ocaml
-type party = Dem | Rep | Gre
-type voter = { name : string; party: party }
-let count_parties (l : voter list) =
-  List.fold l ~init: (0,0) 
-    ~f:(fun (cd,cr) -> fun {party; _} -> 
-     match party with 
-     | Dem -> (cd+1, cr)
-     | Rep -> (cd, cr+1) );;
+# type party = Dem | Rep | Gre
+  type voter = { name : string; party: party }
+  let count_parties (l : voter list) =
+    List.fold l ~init: (0,0) 
+      ~f:(fun (cd,cr) -> fun {party; _} -> 
+      match party with 
+      | Dem -> (cd+1, cr)
+      | Rep -> (cd, cr+1) );;
 Lines 6-8, characters 5-24:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
@@ -140,23 +139,22 @@ Conclusion: Don't **wrestle** with OCaml's types, *dance* with them
 Let us consider some preconditions and postconditions on the `Simple_set.Make` functor example [(click for zipfile)](../examples/set-example-functor.zip):
 
 ```ocaml
-module Make (M: Eq) = 
-struct
-open Core
-type t = M.t list
-let emptyset : t = []
-let add (x : M.t) (s : t) = (x :: s)
-let rec remove (x : M.t) (s: t) =
-  match s with
-  | [] -> failwith "item is not in set"
-  | hd :: tl ->
-    if M.equal hd x then tl
-    else hd :: remove x tl
-let rec contains (x: M.t) (s: t) =
-  match s with
-  | [] -> false
-  | hd :: tl ->
-    if M.equal x hd then true else contains x tl
+module Make (M : EQ) = struct
+  type t = M.t list
+
+  let empty : t = []
+
+  let add (x : M.t) (s : t) : t = x :: s
+
+  let rec remove (x : M.t) (s : t) : t =
+    match s with
+    | [] -> failwith "item is not in set"
+    | hd :: tl -> if M.equal hd x then tl else hd :: remove x tl
+
+  let rec contains (x : M.t) (s : t) : bool =
+    match s with
+    | [] -> false
+    | hd :: tl -> if M.equal x hd then true else contains x tl
 end
 ```
 
@@ -226,11 +224,11 @@ let rec rev l =
 (* invariant for length: accum is length of list up to here *)
 let length l = List.fold ~init:0 ~f:(fun accum _ -> accum + 1) l 
 (* invariant for rev: accum is reverse of list up to here *)
-let rev l = List.fold ~init:[]  ~f:(fun accum elt -> elt::accum) l 
+let rev l = List.fold ~init:[] ~f:(fun accum elt -> elt :: accum) l 
 (* invariant for map: accum is f applied to each element of list up to here *)
-let map ~f l = List.fold_right ~init:[]  ~f:(fun elt accum -> (f elt)::accum) l
+let map ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> (f elt) :: accum) l
 (* etc *)
-let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then elt::accum else accum) l
+let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then elt :: accum else accum) l
 ```
 
 ### Formal Verification
@@ -286,12 +284,13 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
 * To review, here is your standard simple `tests.ml` file, this one is from the simple-set example:
   ```ocaml
   open OUnit2 (* we usually open OUnit2 since it is pervasively used in test files *)
-  open Simple_set
+  module Int_set = Simple_set.Make (Int)
+  open Int_set
 
-  let tests = "test suite for set" >::: [
-    "empty"  >:: (fun _ -> assert_equal (emptyset) (emptyset));
-    "3-elt"    >:: (fun _ -> assert_equal true (contains 5 (add 5 emptyset) (=)));
-    "1-elt nested" >:: (fun _ -> assert_equal false (contains 5 (remove 5 (add 5 emptyset) (=))(=)));
+  let tests = "test suite for simple set" >::: [ 
+    "empty"        >:: (fun _ -> assert_equal empty empty) ;
+    "3-elt"        >:: (fun _ -> assert_equal true (contains 5 (add 5 empty))) ;
+    "1-elt nested" >:: (fun _ -> assert_equal false (contains 5 (remove 5 (add 5 empty))))
   ]
 
   let () = run_test_tt_main tests
@@ -347,7 +346,7 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
     ounit2
     simple_set
   ))
-  ```
+```
 
 
 ### Higher-order testing
@@ -357,13 +356,13 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
 * Example: lets make a bunch of different tests on the same invariant, that reversing a list twice is a no-op:
 
 ```ocaml
-# let make_rev_test l = ("test test" >:: (fun _ -> assert_equal(List.rev @@ List.rev l) l));; 
+# let make_rev_test l = ("test test" >:: (fun _ -> assert_equal (List.rev @@ List.rev l) l));; 
 val make_rev_test : 'a list -> test = <fun>
 ```
 
 ```ocaml
 let make_rev_suite ll = 
-  "suite of rev rev tests" >::: List.map ll ~f:(fun l -> make_rev_test l);;
+  "suite of rev rev tests" >::: List.map ll ~f:make_rev_test ;;
 val make_rev_suite : 'a list list -> test = <fun>
 ```
 
@@ -377,8 +376,8 @@ let () = run_test_tt_main s;; (* recall this crashes the top loop when finished 
 
 ```ocaml
 let s' = "id tests" >::: 
-  ["one" >:: (fun _ -> assert_equal (Fn.id 4) 4) ;
-   "two" >:: (fun _ -> assert_equal (Fn.id "hello") "hello")];;
+  [ "one" >:: (fun _ -> assert_equal (Fn.id 4) 4)
+  ; "two" >:: (fun _ -> assert_equal (Fn.id "hello") "hello") ];;
 let suites = test_list [s;s'];; (* make suite of suites *)
 let named_suites = "revrev and Fn.id" >: suites (* any tree of tests can be named with >: *)
 ```
@@ -409,9 +408,9 @@ type test =
 * There is no magic to this, you can also do it:
 
 ```ocaml
-utop # let (^^) x y = x + y;;
+# let (^^) x y = x + y;;
 val ( ^^ ) : int -> int -> int = <fun>
-utop # 3 ^^ 5;;
+# 3 ^^ 5;;
 - : int = 8
 ```
 * Note that unlike in C++ we are *not* overloading operators, `^^` only works on two ints now.
