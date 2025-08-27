@@ -7,7 +7,7 @@
 #### Reversing a list
 
 * Let us write a somewhat more interesting function, reversing a list.
-* Lists are immutable so it is going to create a completely new list, not change the original.
+* Since lists are immutable so it is going to create a completely new list.
 * This style of programming is called "Data structure corresponds to control flow" - the program needs to touch and reconstruct the whole data structure as it runs.
 
 ```ocaml
