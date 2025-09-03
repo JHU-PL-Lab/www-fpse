@@ -69,18 +69,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
     <h2 id="list-programming">List programming</h2>
-<ul>
-  <li>First we will do a few more recursive functions over lists</li>
-  <li>Then we will show how the <code>Core.List</code> library functions allow a great many (most?) operations to be written without recursion</li>
-  <li>This is <em>combinator programming</em>, solve a task by composing operations on a few standard combinators (“combiners”)</li>
-  <li>(Note for Assignment 1 you will not be able to use the library combinators, but you will use them in Assignment 2)</li>
-</ul>
+
+<p>Let’s write a few more recursive functions on lists.</p>
 
 <h4 id="reversing-a-list">Reversing a list</h4>
 
 <ul>
-  <li>Let us write a somewhat more interesting function, reversing a list.</li>
-  <li>Since lists are immutable so it is going to create a completely new list.</li>
+  <li>Since lists are immutable, reverse will create a completely new list.</li>
   <li>This style of programming is called “Data structure corresponds to control flow” - the program needs to touch and reconstruct the whole data structure as it runs.</li>
 </ul>
 
@@ -107,7 +102,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>QED, the function is proved correct! (actually partially correct, this induction argument does not rule out infinite loops)</li>
 </ul>
 
-<p>Of course <code>rev</code> is also in <code>Core.List</code> since it is a common operation:</p>
+<p><code>rev</code> is also in <code>Core.List</code> since it is a common operation:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">1</span><span class="p">]</span>
@@ -124,158 +119,135 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>(Note that <code>List.hd</code> is also available, but you should nearly always be pattern matching to take apart lists; don’t use <code>List.hd</code> on the homework.)</li>
+  <li>(Also, read the homeworks carefully, on A1 you <em>cannot</em> use <code>List...</code> functions and on some questions of A2 you <em>must</em> use the <code>List...</code> functions.)</li>
   <li>Let us peek at the documentation <a href="https://ocaml.org/p/core/v0.15.0/doc/Core/List/index.html"><code>Core.List</code></a> to see what is available; we will cover a few of them now.</li>
 </ul>
 
-<h4 id="some-simple-but-very-handy-list-library-functions">Some simple but very handy <code>List</code> library functions</h4>
+<h4 id="some-handy-list-library-functions">Some handy <code>List</code> library functions</h4>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="p">[</span><span class="s2">"d"</span><span class="p">;</span><span class="s2">"ss"</span><span class="p">;</span><span class="s2">"qwqw"</span><span class="p">];;</span>
 <span class="nn">List</span><span class="p">.</span><span class="n">is_empty</span> <span class="bp">[]</span><span class="p">;;</span>
-<span class="nn">List</span><span class="p">.</span><span class="n">last_exn</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> <span class="c">(* get last element; raises an exception if list is empty *)</span>
-<span class="nn">List</span><span class="p">.</span><span class="n">join</span> <span class="p">[[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">];[</span><span class="mi">22</span><span class="p">;</span><span class="mi">33</span><span class="p">];[</span><span class="mi">444</span><span class="p">;</span><span class="mi">5555</span><span class="p">]];;</span>
-<span class="nn">List</span><span class="p">.</span><span class="n">append</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">]</span> <span class="p">[</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">];;</span> <span class="c">(* Usually the infix @ syntax is used for append *)</span>
+<span class="nn">List</span><span class="p">.</span><span class="n">last_exn</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> <span class="c">(* gets last element; raises an exception if list is empty *)</span>
+<span class="nn">List</span><span class="p">.</span><span class="n">last</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> <span class="c">(* alternate to previous which returns an option type, `None` on empty list *)</span>
+<span class="nn">List</span><span class="p">.</span><span class="n">join</span> <span class="p">[[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">];[</span><span class="mi">22</span><span class="p">;</span><span class="mi">33</span><span class="p">];[</span><span class="mi">444</span><span class="p">;</span><span class="mi">5555</span><span class="p">]];;</span> <span class="c">(* squiiiiish! *)</span>
+<span class="nn">List</span><span class="p">.</span><span class="n">append</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">]</span> <span class="p">[</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">];;</span> <span class="c">(* Note you should use the more convenient infix @ syntax for listappend *)</span>
 </code></pre></div></div>
 <h4 id="-and-their-types">… And their types</h4>
 
 <ul>
-  <li>The types of the functions are additional hints to their purpose, get used to reading them</li>
+  <li>Types of functions are additional hints to their purpose, get used to reading them</li>
   <li>Much of the time when you mis-use a function you will get a type error</li>
-  <li>Recall that <code>'a list</code> etc is a polymorphic aka generic type, <code>'a</code> can be <em>any</em> type</li>
-</ul>
+  <li>
+    <p>Recall that <code>'a list</code> etc is a polymorphic aka generic type, <code>'a</code> can be <em>any</em> type</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span> <span class="c">(* "for ANY type 'a, List.length will take a list of 'a and return an integer" *)</span>
 <span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">is_empty</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 <span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">last_exn</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">last</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">option</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 <span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">join</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 <span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">append</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span><span class="p">;;</span>  <span class="c">(* We will do this one below *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-</code></pre></div></div>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span><span class="p">;;</span>  <span class="c">(* Foreshadowing; we will review this function below *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span> <span class="c">(* takes in a function; "f:" is a named argument, more below *)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>We coded <code>nth</code> and <code>rev</code> previously; here is one more, <code>join</code>:</p>
 
-<ul>
-  <li>We coded <code>nth</code> and <code>rev</code> before, here is one more, <code>join</code>:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">join</span> <span class="p">(</span><span class="n">l</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span> <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">join</span> <span class="p">(</span><span class="n">l</span><span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span> <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span> <span class="c">(* "joining together a list of no-lists is an empty list" *)</span>
-  <span class="o">|</span> <span class="n">l</span> <span class="o">::</span> <span class="n">ls</span> <span class="o">-&gt;</span> <span class="n">l</span> <span class="o">@</span> <span class="n">join</span> <span class="n">ls</span> <span class="c">(* "by induction assume (join ls) will turn list-of-lists to single list" *)</span>
-</code></pre></div></div>
+  <span class="o">|</span> <span class="n">l</span> <span class="o">::</span> <span class="n">ls</span> <span class="o">-&gt;</span> <span class="n">l</span> <span class="o">@</span> <span class="n">join</span> <span class="n">ls</span> <span class="c">(* by induction assume (join ls) will turn a list-of-lists into a single list *)</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
 
 <h4 id="ocaml-tuples-and-some-list-library-functions-using-tuples">OCaml tuples and some <code>List</code> library functions using tuples</h4>
 
 <ul>
   <li>Along with lists <code>[1;2;3]</code> OCaml has tuples, <code>(1,2.,"3")</code></li>
   <li>It is like a fixed-length list, but tuple elements <strong>can have different types</strong></li>
-  <li>You can also pattern match on tuples</li>
-</ul>
+  <li>
+    <p>You can also pattern match on tuples</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">.,</span><span class="s2">"3"</span><span class="p">);;</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">.,</span><span class="s2">"3"</span><span class="p">);;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">float</span> <span class="o">*</span> <span class="kt">string</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">.,</span> <span class="s2">"3"</span><span class="p">)</span>
 <span class="o">#</span> <span class="p">[</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="p">];;</span> <span class="c">(* a common error, parens not always needed so this is a singleton list of a 3-tuple, not a list of ints *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="p">)]</span>
-</code></pre></div></div>
-
-<ul>
+</code></pre></div>    </div>
+  </li>
   <li>Here is a simple function to break a list in half using the <code>List.split_n</code> function
     <ul>
       <li>a pair of lists is returned by <code>split_n</code>, dividing it at the nth position</li>
     </ul>
-  </li>
-</ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">split_in_half</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">split_n</span> <span class="n">l</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">l</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);;</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">split_in_half</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">split_n</span> <span class="n">l</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">length</span> <span class="n">l</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);;</span>
 <span class="n">split_in_half</span> <span class="p">[</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="mi">99</span><span class="p">];;</span>
-</code></pre></div></div>
-
-<ul>
+</code></pre></div>    </div>
+  </li>
   <li>Now, using the <code>List.cartesian_product</code> function we can make all possible pairs of (front,back) elements
     <ul>
       <li>(Also observe how these OCaml combinators have overlap with math combinators we already knew)</li>
     </ul>
-  </li>
-</ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">all_front_back_pairs</span> <span class="n">l</span> <span class="o">=</span> 
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">all_front_back_pairs</span> <span class="n">l</span> <span class="o">=</span> 
   <span class="k">let</span> <span class="n">front</span><span class="o">,</span> <span class="n">back</span> <span class="o">=</span> <span class="n">split_in_half</span> <span class="n">l</span> <span class="k">in</span> 
   <span class="nn">List</span><span class="p">.</span><span class="n">cartesian_product</span> <span class="n">front</span> <span class="n">back</span><span class="p">;;</span> <span class="c">(* observe how let can itself pattern match pairs *)</span>
-<span class="k">val</span> <span class="n">all_front_back_pairs</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="k">val</span> <span class="n">all_front_back_pairs</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span> <span class="c">(* return type is a *list of pairs* *)</span>
 <span class="o">#</span> <span class="n">all_front_back_pairs</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="mi">6</span><span class="p">];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">list</span> <span class="o">=</span>
 <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">4</span><span class="p">);</span> <span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">5</span><span class="p">);</span> <span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">6</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">5</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">6</span><span class="p">);</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="p">);</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">5</span><span class="p">);</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">6</span><span class="p">)]</span>
-</code></pre></div></div>
+</code></pre></div>    </div>
+  </li>
+  <li>Fact: lists-of-pairs are isomorphic to pairs-of-lists (of the same length)</li>
+  <li>
+    <p>zipping and unzipping library functions can convert between these two equivalent forms.</p>
 
-<ul>
-  <li>Fact: lists of pairs are isomorphic to pairs of lists (of the same length)</li>
-  <li>zipping and unzipping library functions can convert between these two equivalent forms.</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">unzip</span> <span class="o">@@</span> <span class="n">all_front_back_pairs</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="mi">6</span><span class="p">];;</span>
-</code></pre></div></div>
-
-<ul>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">unzip</span> <span class="o">@@</span> <span class="n">all_front_back_pairs</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="mi">6</span><span class="p">];;</span> <span class="c">(* returns a pair-of-lists *)</span>
+</code></pre></div>    </div>
+  </li>
   <li>Note the use of <code>@@</code> here, recall it is function application but with “loosest binding”, avoids need for parens</li>
-  <li>Here is an even cooler way to write the same thing, with pipe operation <code>|&gt;</code> (based on shell pipe <code>|</code>)</li>
-</ul>
+  <li>
+    <p>Here is a cooler way to write the same thing, with pipe operation <code>|&gt;</code> (based on shell pipe <code>|</code>)</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="mi">6</span><span class="p">]</span> <span class="o">|&gt;</span> <span class="n">all_front_back_pairs</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">unzip</span><span class="p">;;</span>
-</code></pre></div></div>
-<ul>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="mi">6</span><span class="p">]</span> <span class="o">|&gt;</span> <span class="n">all_front_back_pairs</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">unzip</span><span class="p">;;</span>
+</code></pre></div>    </div>
+  </li>
   <li>In a series of pipes, the leftmost argument is data, and all the others are functions</li>
-  <li>The data is fed into first function, output of first function fed as input to second, etc</li>
+  <li>The data is fed into first function, output of first function fed as input to second, etc
+    <ul>
+      <li>its like an <em>assembly line</em> for building the result</li>
+    </ul>
+  </li>
   <li>This is exactly what the shell <code>|</code> does with standard input / standard output.</li>
   <li>
-    <p>Please use pipes <em>as much as possible</em> on Assignment 2 - will make the code more readable</p>
+    <p>Please use pipes <em>as much as possible</em> on Assignment 2 - it will make the code more readable</p>
   </li>
-  <li><code>List.zip</code> is the opposite of unzip: take two lists and make a single list pairing elements</li>
-</ul>
+  <li>
+    <p><code>List.zip</code> is the opposite of unzip: take two lists and make a single list pairing elements</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">zip</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="mi">6</span><span class="p">];;</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">zip</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="mi">6</span><span class="p">];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">list</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
 <span class="nn">Core</span><span class="p">.</span><span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="nc">Ok</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">4</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">5</span><span class="p">);</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">6</span><span class="p">)]</span>
-</code></pre></div></div>
-<ul>
+</code></pre></div>    </div>
+  </li>
   <li>The strange result type is dealing with the case where the lists supplied may not be same length</li>
-  <li>This type and value are hard to read, let us take a crack at it.</li>
-  <li><code>((int * int) list) List.Or_unequal_lengths.t</code> is the proper parentheses.</li>
-  <li><code>List.Or_unequal_lengths.t</code> is referring to the type <code>t</code> found in the <code>List.Or_unequal_lengths</code> module (a module <code>Or_unequal_lengths</code> inside the <code>List</code> module)
+  <li>This type is the same as an <code>option</code> type, but with <code>Ok</code> replacing <code>Some</code> and <code>Unequal_lengths</code> replacing <code>None</code></li>
+  <li>We will figure out why the type is a <code>List.Or_unequal_lengths.t</code> soon, you can ignore that mess for now.</li>
+  <li>Note <code>List.zip_exn</code> will just raise an exception for unequal-length lists, avoiding the wrapper ugliness
     <ul>
-      <li>one of the great things about modules is they can also contain types (like C’s <code>.h</code> files but more principled)</li>
-    </ul>
-  </li>
-  <li>We can use the <code>#show_type</code> directive in the top loop to see what <code>t</code> actually is:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span><span class="p">;;</span>
-<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nc">Ok</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">|</span> <span class="nc">Unequal_lengths</span>
-</code></pre></div></div>
-<ul>
-  <li>This means the value is either <code>Ok(..)</code> or <code>Unequal_lenghts</code>, very similar to <code>result</code> or <code>option</code></li>
-  <li>The <code>'a</code> here is the type parameter, more on those later so don’t sweat it now</li>
-  <li>The latter case is for zipping lists of different lengths:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">zip</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span><span class="mi">5</span><span class="p">];;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">list</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
-<span class="nn">Core</span><span class="p">.</span><span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="nc">Unequal_lengths</span>
-</code></pre></div></div>
-
-<ul>
-  <li>In the original same-length case we got the result from the first clause in this type, <code>Core.List.Or_unequal_lengths.Ok [(1, 4); (2, 5); (3, 6)]</code>.</li>
-  <li>Note <code>List.zip_exn</code> will just raise an exception for unequal-length lists, avoiding all of this wrapper ugliness
-    <ul>
-      <li>but in larger programs we want to avoid exceptions at a distance so it is often worth the suffering</li>
+      <li>But, in larger programs we want to avoid exceptions at a distance so it is often worth wrapping</li>
     </ul>
   </li>
 </ul>
 
-<h4 id="zipunzip-and-currying">zip/unzip and Currying</h4>
+<h4 id="zipunzip-and-currying">Zip/unzip and Currying</h4>
 
-<p>We should be able to zip and then unzip as a no-op, one should undo the other (we will use the <code>_exn</code> version to avoid the above error wrapper issue).</p>
+<p>We should be able to zip and then unzip as a no-op, one should undo the other (we will use the <code>_exn</code> version here to avoid having to unwrap wrappers).</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">unzip</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">]</span> <span class="p">[</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">];;</span>
 </code></pre></div></div>
@@ -290,14 +262,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Oops! It fails.  What happened here?</li>
   <li><code>List.zip_exn</code> takes two curried arguments, lists to zip (its type is <code>'a list -&gt; 'b list -&gt; ('a * 'b) list </code>), whereas <code>List.unzip</code> returns a <em>pair of lists</em>.</li>
-  <li>No worries, we can write a wrapper (an <em>adapter</em>) turning <code>List.zip_exn</code> into a version taking a pair of lists:</li>
-</ul>
+  <li>
+    <p>No worries, we can write a wrapper (an <em>adapter</em>) turning <code>List.zip_exn</code> into a version taking a pair of lists:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">zip_pair</span> <span class="p">(</span><span class="n">l</span><span class="o">,</span><span class="n">r</span><span class="p">)</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="n">l</span> <span class="n">r</span> <span class="k">in</span> 
-<span class="n">zip_pair</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">unzip</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="p">)];;</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">zip_pair</span> <span class="p">(</span><span class="n">l</span><span class="o">,</span><span class="n">r</span><span class="p">)</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="n">l</span> <span class="n">r</span> <span class="k">in</span> <span class="c">(* Notice there is ONE argument here, a PAIR pattern (l,r) *)</span>
+<span class="n">zip_pair</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">unzip</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="p">)];;</span> <span class="c">(* should be a no-op *)</span>
 <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="p">)]</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">unzip</span><span class="o">|&gt;</span> <span class="n">zip_pair</span> <span class="p">;;</span> <span class="c">(* Pipe equivalent form *)</span>
-</code></pre></div></div>
-<ul>
+</code></pre></div>    </div>
+  </li>
   <li>Congratulations, we just wrote a fancy no-op function 😁</li>
   <li>The general principle here is a <em>curried</em> 2-argument function like <code>int -&gt; int -&gt; int</code> is <strong>isomorphic</strong> to <code>int * int -&gt; int</code></li>
   <li>The latter form looks more like a standard function taking multiple arguments and is the <strong>uncurried</strong> form.</li>
@@ -323,7 +295,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>We can now use our new combinator to build <code>zip_pair</code> directly:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">zip_pair</span>  <span class="o">=</span> <span class="n">uncurry</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span><span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">zip_pair</span>  <span class="o">=</span> <span class="n">uncurry</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <h4 id="one-last-higher-order-function-compose">One last higher-order function: compose</h4>
@@ -331,7 +303,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Composition function g o f: take two functions, return their composition</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">compose</span> <span class="n">g</span> <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">g</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">));;</span>
-<span class="n">compose</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span> <span class="mi">10</span><span class="p">;;</span>
+<span class="n">compose</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="mi">10</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <ul>
@@ -346,14 +318,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>We can express the Zip/unzip composition explicitly with <code>compose</code>:</li>
+  <li>We can express the Zip/unzip composition with <code>compose</code>:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="p">(</span><span class="n">compose</span> <span class="n">zip_pair</span> <span class="nn">List</span><span class="p">.</span><span class="n">unzip</span><span class="p">)</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="p">)];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="p">);</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="p">)]</span>
 </code></pre></div></div>
 
-<h4 id="list-module-functions-which-take-function-arguments"><code>List</code> module functions which take function arguments</h4>
+<h4 id="list-functions-which-take-function-arguments"><code>List</code> functions which take function arguments</h4>
 
 <ul>
   <li>So far we have done the “easier” functions in <code>List</code>; the real meat are the functions taking other functions</li>
@@ -362,7 +334,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>makes functional code a lot easier to read once you are familiar with these “recursion combinators”</li>
     </ul>
   </li>
-  <li>Lets warm up with <code>List.filter</code>: remove all elements not meeting a condition which we supply a function to check</li>
+  <li>Lets warm up with <code>List.filter</code>: remove all list elements not meeting a condition which we supply a function to check</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">]</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">);;</span>
@@ -372,8 +344,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Cool, we can “glue in” any checking function (boolean-returning, i.e. a <em>predicate</em>) and <code>List.filter</code> will do the rest</li>
   <li>Note though that we got a strange warning on the above, “label f was omitted” - ??</li>
   <li>This is because <code>List.filter</code> has type <code>'a list -&gt; f:('a -&gt; bool) -&gt; 'a list</code> – the <code>f:</code> is declaring a <em>named argument</em></li>
-  <li>OCaml gives warnings if you leave off a name so please always use them</li>
-  <li>We can put args out of order if we give name via <code>~f:</code> syntax:</li>
+  <li>The top loop gives warnings if you leave off a name (and, the compiler will error) so please always use them</li>
+  <li>We can also put args out of order when we give name via <code>~f:</code> syntax:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
@@ -386,11 +358,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">remove_negatives</span>  <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
 </code></pre></div></div>
 
-<p>Note that you can either inline the function as a <code>fun</code> or can declare it in advance:</p>
+<p>Note that you can either inline the function as an anonymous <code>fun</code> or can declare it in advance:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">gtz</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">;;</span>
 <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="n">gtz</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
 </code></pre></div></div>
-<p>Usually for short functions it is better to inline them, it makes the code more readable.</p>
+<p>Usually for short functions it is better to inline them as it is more concise</p>
 
 <p>Let us use <code>filter</code> to write a function determining if a list has any negative elements:</p>
 
@@ -408,7 +380,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="listmap">List.map</h4>
 
 <ul>
-  <li><code>List.map</code> is super powerful, apply some operation we supply to every element of a list:</li>
+  <li><code>List.map</code> is very powerful, apply some operation we supply to every element of a list making a new list:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
@@ -416,46 +388,49 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">0</span><span class="p">];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">true</span><span class="p">;</span> <span class="bp">false</span><span class="p">;</span> <span class="bp">true</span><span class="p">;</span> <span class="bp">false</span><span class="p">;</span> <span class="bp">true</span><span class="p">]</span>
 <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="p">);(</span><span class="mi">3</span><span class="o">,</span><span class="mi">4</span><span class="p">)];;</span> <span class="c">(* turns list of number pairs into list of their sums *)</span>
+<span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="n">uncurry</span> <span class="p">(</span><span class="o">+</span><span class="p">))</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="p">);(</span><span class="mi">3</span><span class="o">,</span><span class="mi">4</span><span class="p">)];;</span> <span class="c">(* equivalent: its an uncurried add function that is needed *)</span>
 </code></pre></div></div>
 
 <h3 id="folding">Folding</h3>
 
 <ul>
   <li>OK, so far we have been cruising along on impulse power; its now time for warp speed!</li>
-  <li>Some of the most powerful combinators are the folds: <code>fold_right</code>, and <code>fold_left</code> aka simply <code>fold</code>.</li>
+  <li>The most powerful list combinators are the folds: <code>fold_right</code>, and <code>fold_left</code> aka simply <code>fold</code>.</li>
   <li>They “fold together” list data using an operator.</li>
-  <li>Think of fold as something you feed just the “base case” and the “recursive case” code to and it makes a recursive function for you.
+  <li>Think of <code>fold</code> as something you feed a “base case” and “recursive case” code to, and it makes a recursive function for you.
     <ul>
       <li>this recursive function will make one recursive call on the tail of the list</li>
     </ul>
   </li>
-  <li>Here for example is how we can turn a list of characters into a string with <code>fold_right</code></li>
-</ul>
+  <li>
+    <p>Here for example is how we can turn a list of characters into a string with <code>fold_right</code></p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">[</span><span class="k">'</span><span class="n">a'</span><span class="p">;</span><span class="k">'</span><span class="n">b'</span><span class="p">;</span><span class="k">'</span><span class="n">c'</span><span class="p">]</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="s2">""</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nn">Char</span><span class="p">.</span><span class="n">to_string</span> <span class="n">elt</span><span class="p">)</span><span class="o">^</span><span class="n">accum</span><span class="p">);;</span> <span class="c">(* computes "a"^("b"^("c"^"")) *)</span>
-</code></pre></div></div>
-
-<ul>
-  <li>The base case is <code>~init</code>, the empty string</li>
-  <li><code>~f</code> is plugging in the code for the recursive call
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">[</span><span class="k">'</span><span class="n">a'</span><span class="p">;</span><span class="k">'</span><span class="n">b'</span><span class="p">;</span><span class="k">'</span><span class="n">c'</span><span class="p">]</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="s2">""</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nn">Char</span><span class="p">.</span><span class="n">to_string</span> <span class="n">elt</span><span class="p">)</span><span class="o">^</span><span class="n">accum</span><span class="p">);;</span> <span class="c">(* computes "a"^("b"^("c"^"")) *)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>The base case is argument <code>~init</code>, the empty string here</li>
+  <li><code>~f</code> is how we plug in the code for the recursive call
     <ul>
       <li><code>elt</code> is the current element of the list</li>
-      <li><code>accum</code> is the result of recursing on the tail of the list</li>
+      <li><code>accum</code> is going to be the result of recursing on the tail of the list</li>
     </ul>
   </li>
 </ul>
 
-<p>Before showing potential code for <code>List.fold_right</code> let’s manually implement the above use with <code>let rec</code> to compare.</p>
+<p>Before showing potential code for <code>List.fold_right</code> let’s manually implement <code>char_list_to_string</code> with <code>let rec</code> to compare.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">char_list_to_string</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span> 
-  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="s2">""</span> <span class="c">(* ~init above is "", plug it in as the base case *)</span>
+  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="s2">""</span> <span class="c">(* ~init above is this "", plug it in as the base case *)</span>
   <span class="o">|</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">elts</span> <span class="o">-&gt;</span>  <span class="c">(* as in the above we are calling the current list element `elt` *)</span>
-    <span class="k">let</span> <span class="n">accum</span> <span class="o">=</span> <span class="n">char_list_to_string</span> <span class="n">elts</span> <span class="k">in</span> <span class="c">(* this is what `accum` is, the result of recursing on a shorter list *)</span>
+    <span class="k">let</span> <span class="n">accum</span> <span class="o">=</span> <span class="n">char_list_to_string</span> <span class="n">elts</span> <span class="k">in</span> <span class="c">(* this is also what `accum` is above, the result of recursing on a shorter list *)</span>
     <span class="p">(</span><span class="nn">Char</span><span class="p">.</span><span class="n">to_string</span> <span class="n">elt</span><span class="p">)</span><span class="o">^</span><span class="n">accum</span> <span class="c">(* now plug in the body of ~f as the calculation done on accum and elt *)</span>
 </code></pre></div></div>
 
-<p>OK now lets show some potential code for <code>List.fold_right</code> to show how we can pull out this base-case and recursion code as parameters <code>~init</code> and <code>~f</code>.</p>
+<ul>
+  <li>OK now lets code <code>fold_right</code> by taking the above code and making the <code>""</code> and <code>(Char.to_string elt)^accum</code>  explicit parameters <code>~init</code> and <code>~f</code> respectively.</li>
+  <li>(since the code <code>(Char.to_string elt)^accum</code> refers to <code>elt</code> and <code>accum</code> we also need to make them parameters, <code>~f</code> will be <code>fun elt accum -&gt; (Char.to_string elt)^accum</code>)</li>
+</ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold_right</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
@@ -466,14 +441,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>If we now plug in <code>""</code> for <code>~init</code> and <code>(fun elt -&gt; fun accum -&gt; (Char.to_string elt)^accum)</code> for <code>~f</code> we get exactly <code>char_list_to_string</code> above.</li>
+  <li>If we now plug in <code>""</code> for <code>~init</code> and <code>(fun elt accum -&gt; (Char.to_string elt)^accum)</code> for <code>~f</code> we get <code>char_list_to_string</code> above.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fold_right</span> <span class="p">[</span><span class="k">'</span><span class="n">a'</span><span class="p">;</span><span class="k">'</span><span class="n">b'</span><span class="p">;</span><span class="k">'</span><span class="n">c'</span><span class="p">]</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="s2">""</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nn">Char</span><span class="p">.</span><span class="n">to_string</span> <span class="n">elt</span><span class="p">)</span><span class="o">^</span><span class="n">accum</span><span class="p">);;</span>
 </code></pre></div></div>
 
 <ul>
-  <li>observe how we have to keep forwarding <code>~f</code> and <code>~init</code> down the calls to make them available; we could have instead made an aux function without those:</li>
+  <li>Aside: observe how we have to keep forwarding <code>~f</code> and <code>~init</code> down the recursion to keep them available; we could have instead made an aux function without those:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">fold_right</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span> <span class="o">=</span>
