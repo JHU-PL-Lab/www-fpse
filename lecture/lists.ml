@@ -3,7 +3,7 @@ let rec rev l =
   |  [] -> []
   |  hd :: tl -> rev tl @ [hd]
 ;;
-rev [1;2;3];; (* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)
+rev [1;2;3];; (* recall this list is 1 :: [2;3] which is the tree 1 :: ( 2 :: ( 3 :: [])) *)
 
 # List.rev [1;2;3];;
 - : int list = [3; 2; 1]

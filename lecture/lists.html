@@ -70,7 +70,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h2 id="list-programming">List programming</h2>
 
-<p>Let’s write a few more recursive functions on lists.</p>
+<p>Let’s warm up by writing a few more recursive functions on lists.</p>
 
 <h4 id="reversing-a-list">Reversing a list</h4>
 
@@ -84,19 +84,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
   <span class="o">|</span>  <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">rev</span> <span class="n">tl</span> <span class="o">@</span> <span class="p">[</span><span class="n">hd</span><span class="p">]</span>
 <span class="p">;;</span>
-<span class="n">rev</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> <span class="c">(* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)</span>
+<span class="n">rev</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> <span class="c">(* recall this list is 1 :: [2;3] which is the tree 1 :: ( 2 :: ( 3 :: [])) *)</span>
 </code></pre></div></div>
 
 <ul>
-  <li>Correctness of a recursive function by induction: assume recursive call does what you expect in arguing it is overall correct.</li>
+  <li>Correctness of a recursive function follows by induction: assume recursive call does what you expect in arguing it is overall correct.</li>
   <li>For this example, can assume <code>rev tl</code> always reverses the tail of the list,
     <ul>
       <li>(e.g. in computing <code>rev [1;2;3]</code> we match <code>hd</code> = <code>1</code> and <code>tl</code> = <code>[2;3]</code> and can assume <code>rev [2;3]</code> = <code>[3;2]</code> )</li>
     </ul>
   </li>
-  <li>Given that fact, <code>rev tl @ [hd]</code> should clearly reverse the whole list
+  <li>Given that fact, the code <code>rev tl @ [hd]</code> should clearly reverse the whole list
     <ul>
-      <li>(e.g. <code>[3;2] @ [1]</code> = <code>[3;2;1]</code> for the example)</li>
+      <li>(e.g. <code>rev [2;3] @ [1] = [3;2] @ [1]</code> = <code>[3;2;1]</code>)</li>
     </ul>
   </li>
   <li>QED, the function is proved correct! (actually partially correct, this induction argument does not rule out infinite loops)</li>

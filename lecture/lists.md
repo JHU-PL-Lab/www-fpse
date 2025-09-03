@@ -1,6 +1,6 @@
 ## List programming
 
-Let's write a few more recursive functions on lists.
+Let's warm up by writing a few more recursive functions on lists.
 
 #### Reversing a list
 
@@ -13,14 +13,14 @@ let rec rev l =
   |  [] -> []
   |  hd :: tl -> rev tl @ [hd]
 ;;
-rev [1;2;3];; (* recall input list is the tree 1 :: ( 2 :: ( 3 :: [])) *)
+rev [1;2;3];; (* recall this list is 1 :: [2;3] which is the tree 1 :: ( 2 :: ( 3 :: [])) *)
 ```
 
-* Correctness of a recursive function by induction: assume recursive call does what you expect in arguing it is overall correct.
+* Correctness of a recursive function follows by induction: assume recursive call does what you expect in arguing it is overall correct.
 * For this example, can assume `rev tl` always reverses the tail of the list,  
     - (e.g. in computing `rev [1;2;3]` we match `hd` = `1` and `tl` = `[2;3]` and can assume `rev [2;3]` = `[3;2]` )
-* Given that fact, `rev tl @ [hd]` should clearly reverse the whole list 
-    - (e.g. `[3;2] @ [1]` = `[3;2;1]` for the example)
+* Given that fact, the code `rev tl @ [hd]` should clearly reverse the whole list 
+    - (e.g. `rev [2;3] @ [1] = [3;2] @ [1]` = `[3;2;1]`)
 * QED, the function is proved correct! (actually partially correct, this induction argument does not rule out infinite loops)
 
 `rev` is also in `Core.List` since it is a common operation:
