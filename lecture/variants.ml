@@ -5,7 +5,7 @@ Floating 4.0;; (* tag 4.0 as a Floating *)
 
 let ff_as_int x =
     match x with
-    | Fixed n -> n    (* variants fit well into pattern matching syntax *)
+    | Fixed n -> n    (* pattern match like with option/list/result - those types are also variants *)
     | Floating z -> int_of_float z;;
 
 ff_as_int (Fixed 5);;
@@ -39,7 +39,7 @@ let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int,
   | List.Or_unequal_lengths.Unequal_lengths -> Error "left and right strands must be of equal length"
   | List.Or_unequal_lengths.Ok l ->
     l
-    |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) 
+    |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b))
     |> List.length 
     |> fun x -> Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
 

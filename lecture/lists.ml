@@ -66,8 +66,8 @@ let rec char_list_to_string l =
   match l with 
   | [] -> "" (* ~init above is this "", plug it in as the base case *)
   | elt :: elts ->  (* as in the above we are calling the current list element `elt` *)
-    let accum = char_list_to_string elts in (* this is also what `accum` is above, the result of recursing on a shorter list *)
-    (Char.to_string elt)^accum (* now plug in the body of ~f as the calculation done on accum and elt *)
+    let accum = char_list_to_string elts in (* this is also what `accum` is above, the result of recursing on the tail *)
+    (Char.to_string elt)^accum (* same as the body of ~f above, the calculation done on accum and elt *)
 
 let rec fold_right l ~f ~init =
   match l with
@@ -82,16 +82,16 @@ List.fold_right ~f:(+) ~init:0 [3; 5; 7];;
 
 List.fold ~f:(fun accum elt -> accum + elt) ~init:0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
 
-let rec char_list_to_string l accum =
+let rec char_list_to_string l accum = (* invariant: accum is the accumulated result thus far *)
   match l with 
   | [] -> accum (* we are totally done at this point, `accum`` is the final result and just pop pop pop *)
   | elt :: elts -> 
-    char_list_to_string elts (accum^(Char.to_string elt));;  (* we are computing the `~f` to accumulate result on the way *down* the recursion now *)
+    char_list_to_string elts (accum^(Char.to_string elt));;  (* we are computing the `~f` to accumulate result on the way *down* the recursion *)
 char_list_to_string ['a';'d'] "";; (* we need to prime the accum pump with "" here *)
 
-let exists l ~f =  (* Note: ~f is **declaring** a named argument f; ~f is shorthand for ~f:f *)
+let exists l ~f =
   l
-  |> List.map ~f    (* ~f alone as an argument is again shorthand for ~f:f *)
+  |> List.map ~f
   |> List.fold ~f:(||) ~init:false;; (* the List.map output is a list of booleans, just fold them up here *)
 # exists ~f:(fun x -> x >= 0) [-1;-2];;
 - : bool = false

@@ -72,8 +72,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Variants build or-data (this-or-this-or-this); records build and-data (this-and-this-and-this)</li>
-  <li>They are the fundamental data constructors</li>
-  <li>We start with variants</li>
+  <li>All data combination is fundamentally either <em>and</em> or <em>or</em>, similar to the fundamental operators of boolean logic.</li>
+  <li>We start with variants (or), and then do records (and) next.</li>
 </ul>
 
 <h3 id="variants-1">Variants</h3>
@@ -81,7 +81,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The <code>option</code> and <code>result</code> types we have been using are simple forms of <em>variant types</em></li>
   <li>Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the specific form</li>
   <li>They are related to <code>union</code> types in C or <code>enums</code> in Java, but are more safe than C and more general than Java</li>
-  <li>Like OCaml lists and tuples they are by default immutable</li>
+  <li>Like lists and tuples they are by default immutable</li>
 </ul>
 
 <p>Example variant type for doing mixed arithmetic (integers and floats)</p>
@@ -102,18 +102,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Constructors must start with a Capital Letter to distinguish from variables</li>
   <li>Variants must be declared but once declared type inference can infer them.</li>
   <li>The <code>of</code> indicates what type is under the wrapper</li>
-  <li>Note constructors look like functions but they are <strong>not</strong> – you always need to give the argument</li>
+  <li>(Note constructors look like functions but they are <strong>not</strong> – you always need to give the argument)</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">ff_as_int</span> <span class="n">x</span> <span class="o">=</span>
     <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
-    <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span>    <span class="c">(* variants fit well into pattern matching syntax *)</span>
+    <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span>    <span class="c">(* pattern match like with option/list/result - those types are also variants *)</span>
     <span class="o">|</span> <span class="nc">Floating</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">int_of_float</span> <span class="n">z</span><span class="p">;;</span>
 
 <span class="n">ff_as_int</span> <span class="p">(</span><span class="nc">Fixed</span> <span class="mi">5</span><span class="p">);;</span>
 </code></pre></div></div>
 
-<p>A non-trivial function using the above variant type</p>
+<p>A function using the above variant type</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">ff_add</span> <span class="n">n1</span> <span class="n">n2</span> <span class="o">=</span>
    <span class="k">match</span> <span class="n">n1</span><span class="o">,</span> <span class="n">n2</span> <span class="k">with</span>    <span class="c">(* note use of pair here to parallel-match on two variables  *)</span>
@@ -142,8 +142,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="an-example-of-variants-plus-list-libraries">An Example of Variants plus List. libraries</h4>
 
 <ul>
-  <li>Here is a small Hamming distance calculator for DNA.</li>
-  <li>Observe the <code>[@@deriving equal]</code>, this is a <em>macro</em> (called a “ppx extension” in OCaml)</li>
+  <li>Lets write Hamming distance calculator for DNA</li>
+  <li>Goal beyond using variants is to cover some useful OCaml programming patterns.</li>
+  <li><code>[@@deriving equal]</code> in the below is a <em>macro</em> (called a “ppx extension” in OCaml)</li>
   <li>It automatically generates a function <code>equal_nucleotide</code> (<code>equal_the-types-name-here</code> in general)</li>
   <li>You will need to use this with <code>Core</code> since regular <code>=</code> will not work on <code>nucleotide</code>s.</li>
 </ul>
@@ -160,7 +161,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="o">|</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="nc">Unequal_lengths</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"left and right strands must be of equal length"</span>
   <span class="o">|</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="nc">Ok</span> <span class="n">l</span> <span class="o">-&gt;</span>
     <span class="n">l</span>
-    <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">not</span> <span class="p">(</span><span class="n">equal_nucleotide</span> <span class="n">a</span> <span class="n">b</span><span class="p">))</span> 
+    <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">not</span> <span class="p">(</span><span class="n">equal_nucleotide</span> <span class="n">a</span> <span class="n">b</span><span class="p">))</span>
     <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> 
     <span class="o">|&gt;</span> <span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="nc">Ok</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c">(* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)</span>
 
@@ -176,7 +177,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <span class="o">|&gt;</span> <span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="nc">Ok</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </code></pre></div></div>
 <h4 id="parametric-variant-types">Parametric variant types</h4>
-<p>We have used several of these but just have not looked at the type so carefully.</p>
+<p>We have used several of these but have not looked at the type too carefully.</p>
 
 <p>Here is the system’s declaration of the <code>option</code> type – the <code>#show_type</code> top loop directive (or just <code>#show</code>) will print it:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="n">option</span><span class="p">;;</span>
@@ -219,7 +220,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Homebrew lists as a warm-up - the built-in <code>list</code> type is in fact not needed
     <ul>
-      <li>Note you will never need to do this, just use the built-in ones!  This example is just for understanding.</li>
+      <li>Note you will never need to do this, use the built-in ones!  This example is just for understanding.</li>
     </ul>
   </li>
 </ul>

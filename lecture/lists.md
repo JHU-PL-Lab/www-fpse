@@ -305,7 +305,7 @@ List.map ~f:(uncurry (+)) [(1,2);(3,4)];; (* equivalent: its an uncurried add fu
 * The base case is argument `~init`, the empty string here
 * `~f` is how we plug in the code for the recursive call
   - `elt` is the current element of the list
-  - `accum` is going to be the result of recursing on the tail of the list
+  - `accum` is going to be the result of recursing on the tail of the list (a string here)
 
 Before showing potential code for `List.fold_right` let's manually implement `char_list_to_string` with `let rec` to compare.
 
@@ -314,8 +314,8 @@ let rec char_list_to_string l =
   match l with 
   | [] -> "" (* ~init above is this "", plug it in as the base case *)
   | elt :: elts ->  (* as in the above we are calling the current list element `elt` *)
-    let accum = char_list_to_string elts in (* this is also what `accum` is above, the result of recursing on a shorter list *)
-    (Char.to_string elt)^accum (* now plug in the body of ~f as the calculation done on accum and elt *)
+    let accum = char_list_to_string elts in (* this is also what `accum` is above, the result of recursing on the tail *)
+    (Char.to_string elt)^accum (* same as the body of ~f above, the calculation done on accum and elt *)
 ```
 
 
@@ -380,11 +380,11 @@ List.fold ~f:(fun accum elt -> accum + elt) ~init:0 [3; 5; 7];; (* this is ((0 +
 Let us understand how left folding differs by again looking at an implementation for the char list to string function.
 
 ```ocaml
-let rec char_list_to_string l accum =
+let rec char_list_to_string l accum = (* invariant: accum is the accumulated result thus far *)
   match l with 
   | [] -> accum (* we are totally done at this point, `accum`` is the final result and just pop pop pop *)
   | elt :: elts -> 
-    char_list_to_string elts (accum^(Char.to_string elt));;  (* we are computing the `~f` to accumulate result on the way *down* the recursion now *)
+    char_list_to_string elts (accum^(Char.to_string elt));;  (* we are computing the `~f` to accumulate result on the way *down* the recursion *)
 char_list_to_string ['a';'d'] "";; (* we need to prime the accum pump with "" here *)
 ```
 
@@ -392,7 +392,7 @@ Here is the general `fold`, pulling out the `~f` in the above as a parameter.
 Note that the `accum` we call `~init` here since that is the exterior interface.
 
 ```ocaml 
-let rec fold l ~init ~f =
+let rec fold l ~init ~f = (* Note: e.g. ~f is **declaring** a named argument f; ~f is shorthand for ~f:f *)
   match l with
   | [] -> init
   | elt::elts -> fold elts ~init:(f init elt) ~f (*observe f is invoked **before** the call -- accumulating left-first *)
@@ -403,7 +403,7 @@ let rec fold l ~init ~f =
    - The `'a` here is the type of the list elements
    - The `'acc` is the type of the result being accumulated
 * The type of `List.fold_right` is `'a list -> f:('a -> 'acc -> 'acc) -> init:'acc -> 'acc`
-  - Notice that the arguments to `f` are swapped here compared to the `fold` left version
+  - (Notice that the arguments to `f` are swapped here compared to the `fold` left version)
 
 #### More fold examples
 
@@ -411,9 +411,9 @@ let rec fold l ~init ~f =
 * We can for example implement `List.exists` above with map and fold:
 
 ```ocaml
-let exists l ~f =  (* Note: ~f is **declaring** a named argument f; ~f is shorthand for ~f:f *)
+let exists l ~f =
   l
-  |> List.map ~f    (* ~f alone as an argument is again shorthand for ~f:f *)
+  |> List.map ~f
   |> List.fold ~f:(||) ~init:false;; (* the List.map output is a list of booleans, just fold them up here *)
 # exists ~f:(fun x -> x >= 0) [-1;-2];;
 - : bool = false
@@ -427,12 +427,12 @@ let exists l ~f =
   List.fold l ~f:(fun accum elt -> accum || f elt) ~init:false;;
 ```
 
-Which hints that `map` itself is easily definable with a `fold`:
+Which hints that `map` itself is definable with a `fold`; we accumulate a new *list* here:
 ```ocaml
 let map l ~f = List.fold ~f:(fun accum elt -> accum @ [f elt]) ~init:[] l
 ```
 
-If you wanted to use `fold_right` to build map it would be somewhat similar:
+If you wanted to use `fold_right` to build map it would be similar:
 ```ocaml
 let map_right l ~f = List.fold_right ~f:(fun elt accum -> (f elt) :: accum) ~init:[] l;;
 ```
@@ -463,9 +463,10 @@ let rec fold_left l ~init ~f =
 
 `fold_left` is in fact more efficient than `fold_right` so it is preferred all things being equal:
  - Observe how the value of the `fold_left` function above is what is directly returned from the base case, it bubbles all the way out
- - Such a function is *tail recursive*
+ - Such a function is *tail recursive*: there is *no work to do* after the (sole) recursive call finishes
  - The compiler doesn't need to use a call stack for such functions since nothing happens upon return
-   - so it replaces push/pop with jumps in and one jump out when done -- its just a loop.
+   - there is nothing it needs to mark as a point to go back to
+   - so, it replaces push/pop with jumps in and one jump out when done -- its just a loop.
  - Important when lists get really long that you don't use stack unless required.
  - Observe that `fold_right` is not tail recursive, so it needs the stack and will be slower
 

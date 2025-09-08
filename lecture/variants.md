@@ -1,14 +1,14 @@
 ### Variants
 
 * Variants build or-data (this-or-this-or-this); records build and-data (this-and-this-and-this)
-* They are the fundamental data constructors
-* We start with variants
+* All data combination is fundamentally either *and* or *or*, similar to the fundamental operators of boolean logic.
+* We start with variants (or), and then do records (and) next.
 
 ### Variants
 * The `option` and `result` types we have been using are simple forms of *variant types*
 * Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the specific form
 * They are related to `union` types in C or `enums` in Java, but are more safe than C and more general than Java
-* Like OCaml lists and tuples they are by default immutable
+* Like lists and tuples they are by default immutable
 
 Example variant type for doing mixed arithmetic (integers and floats)
 
@@ -25,18 +25,18 @@ Floating 4.0;; (* tag 4.0 as a Floating *)
  * Constructors must start with a Capital Letter to distinguish from variables
  * Variants must be declared but once declared type inference can infer them.
  * The `of` indicates what type is under the wrapper
- * Note constructors look like functions but they are **not** -- you always need to give the argument
+ * (Note constructors look like functions but they are **not** -- you always need to give the argument)
 
 ```ocaml
 let ff_as_int x =
     match x with
-    | Fixed n -> n    (* variants fit well into pattern matching syntax *)
+    | Fixed n -> n    (* pattern match like with option/list/result - those types are also variants *)
     | Floating z -> int_of_float z;;
 
 ff_as_int (Fixed 5);;
 ```
 
-A non-trivial function using the above variant type
+A function using the above variant type
 
 ```ocaml
 let ff_add n1 n2 =
@@ -64,8 +64,9 @@ let ocaml_annoyance = Fn.id @@ Nonzero(3.2,11.2);; (* so use @@ instead of " " *
 
 #### An Example of Variants plus List. libraries
 
-* Here is a small Hamming distance calculator for DNA.
-* Observe the `[@@deriving equal]`, this is a *macro* (called a "ppx extension" in OCaml) 
+* Lets write Hamming distance calculator for DNA
+* Goal beyond using variants is to cover some useful OCaml programming patterns.
+* `[@@deriving equal]` in the below is a *macro* (called a "ppx extension" in OCaml) 
 * It automatically generates a function `equal_nucleotide` (`equal_the-types-name-here` in general)
 * You will need to use this with `Core` since regular `=` will not work on `nucleotide`s.
 
@@ -82,7 +83,7 @@ let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int,
   | List.Or_unequal_lengths.Unequal_lengths -> Error "left and right strands must be of equal length"
   | List.Or_unequal_lengths.Ok l ->
     l
-    |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b)) 
+    |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b))
     |> List.length 
     |> fun x -> Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
 
@@ -99,7 +100,7 @@ let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int,
     |> fun x -> Ok(x)
 ```
 #### Parametric variant types
-We have used several of these but just have not looked at the type so carefully.
+We have used several of these but have not looked at the type too carefully.
 
 Here is the system's declaration of the `option` type -- the `#show_type` top loop directive (or just `#show`) will print it:
 ```ocaml
@@ -135,7 +136,7 @@ type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
   - Unlike with functions, no need for `rec`
 
  - Homebrew lists as a warm-up - the built-in `list` type is in fact not needed
-   - Note you will never need to do this, just use the built-in ones!  This example is just for understanding.
+   - Note you will never need to do this, use the built-in ones!  This example is just for understanding.
 
 ```ocaml
 type 'a homebrew_list = Mt | Cons of 'a * 'a homebrew_list;;
