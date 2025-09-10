@@ -62,15 +62,15 @@ type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
 # #show_type List.Or_unequal_lengths.t;;
 type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
 
-type 'a homebrew_list = Mt | Cons of 'a * 'a homebrew_list;;
-let hb_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
+type 'a lizt = Mt | Cons of 'a * 'a lizt;; (* the recursive "'a lizt" on the rhs is a lizt of 'a *)
+let lizt_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
 
-let rec homebrew_map (ml : 'a homebrew_list) ~(f : 'a -> 'b) : ('b homebrew_list) =
+let rec lizt_map (ml : 'a lizt) ~(f : 'a -> 'b) : ('b lizt) =
   match ml with
     | Mt -> Mt
-    | Cons(hd,tl) -> Cons(f hd,homebrew_map tl ~f)
+    | Cons(hd,tl) -> Cons(f hd,lizt_map tl ~f)
 
-let map_eg = homebrew_map (Cons(3,Cons(5,Cons(7,Mt)))) ~f:(fun x -> x - 1)
+let map_eg = lizt_map (Cons(3,Cons(5,Cons(7,Mt)))) ~f:(fun x -> x - 1)
 
 # #show_type list;;
 type 'a list = [] | (::) of 'a * 'a list

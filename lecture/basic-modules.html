@@ -367,6 +367,53 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>In the remainder of the file you can access the contents of <code>Sub</code> as <code>Sub.blah</code>, and outside of the <code>foo.ml</code> file <code>Foo.Sub.blah</code> will access.</li>
   <li>Assignment 3 includes some nested modules, this time with more purpose; we will take a look.</li>
 </ul>
+
+<h3 id="disambiguating-types-declared-in-modules">Disambiguating types declared in modules.</h3>
+
+<p>Here are a few ways to make it clear which type is being used.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Suppose A.t is { x : int ; y : bool } *)</span>
+<span class="c">(* Also suppose B.t is { x : int ; z : float } *)</span>
+
+<span class="k">let</span> <span class="n">r</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* uh oh! It doesn't know label x because the types are inside modules *)</span>
+
+<span class="k">let</span> <span class="n">r</span> <span class="o">=</span> <span class="nn">A</span><span class="p">.{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* this clears it up: pop open A for a sec *)</span>
+</code></pre></div></div>
+
+<p>Now if these modules are both opened, so that their <code>t</code> is put in scope, the most recent will win.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">A</span>
+<span class="k">open</span> <span class="nc">B</span>
+
+<span class="k">let</span> <span class="n">f</span> <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="c">(* type inferred for r is B.t, just like with newratio *)</span>
+
+<span class="c">(* clarify with type annotation (prefered) *)</span>
+<span class="k">let</span> <span class="n">f</span> <span class="p">(</span><span class="n">r</span> <span class="o">:</span> <span class="nn">A</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
+
+<span class="c">(* or with pattern matching *)</span>
+<span class="k">let</span> <span class="n">f</span> <span class="p">{</span> <span class="n">x</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_</span> <span class="p">}</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
+
+<span class="c">(* or namespace annotation (not so prefered here) *)</span>
+<span class="k">let</span> <span class="n">f</span> <span class="nn">A</span><span class="p">.{</span> <span class="n">x</span> <span class="p">;</span> <span class="n">_</span> <span class="p">}</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
+</code></pre></div></div>
+
+<h3 id="deriving-in-modules">@@deriving in modules</h3>
+
+<p><code>@@deriving</code> names things slightly differently when used in a module.</p>
+
+<p>Suppose we made an actual module out of our previous nucleotide example.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">=</span> <span class="k">struct</span>
+
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">]</span>
+
+<span class="k">let</span> <span class="n">hamming_distance</span> <span class="n">l</span> <span class="o">=</span> <span class="n">failwith</span> <span class="s2">"dummy"</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<ul>
+  <li>when this type was called <code>nucleotide</code> not in a module the <code>ppx</code> made a function <code>equal_nucleotide</code></li>
+  <li>Here the <code>ppx</code> is smarter, instead of <code>Nucleotide.equal_t</code> it just makes <code>Nucleotide.equal</code> - <code>t</code> is a special type in the module.</li>
+</ul>
       
           </section>
         </div>

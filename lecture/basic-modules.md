@@ -253,3 +253,51 @@ val f : ?x:int -> int -> int = <fun>
 * This syntax is also how we can directly define a module in `utop` without putting it in a file.
 * In the remainder of the file you can access the contents of `Sub` as `Sub.blah`, and outside of the `foo.ml` file `Foo.Sub.blah` will access.
 * Assignment 3 includes some nested modules, this time with more purpose; we will take a look.
+
+### Disambiguating types declared in modules.
+
+Here are a few ways to make it clear which type is being used.
+
+```ocaml
+(* Suppose A.t is { x : int ; y : bool } *)
+(* Also suppose B.t is { x : int ; z : float } *)
+
+let r = { x = 0 ; y = true } (* uh oh! It doesn't know label x because the types are inside modules *)
+
+let r = A.{ x = 0 ; y = true } (* this clears it up: pop open A for a sec *)
+```
+
+Now if these modules are both opened, so that their `t` is put in scope, the most recent will win.
+
+```ocaml
+open A
+open B
+
+let f r = r.x (* type inferred for r is B.t, just like with newratio *)
+
+(* clarify with type annotation (prefered) *)
+let f (r : A.t) : int = r.x
+
+(* or with pattern matching *)
+let f { x ; y = _ } = r.x
+
+(* or namespace annotation (not so prefered here) *)
+let f A.{ x ; _ } = r.x
+```
+
+### @@deriving in modules
+
+`@@deriving` names things slightly differently when used in a module.
+
+Suppose we made an actual module out of our previous nucleotide example.
+
+```ocaml
+module Nucleotide = struct
+
+type t = A | C | G | T [@@deriving equal]
+
+let hamming_distance l = failwith "dummy"
+end
+```
+* when this type was called `nucleotide` not in a module the `ppx` made a function `equal_nucleotide`
+* Here the `ppx` is smarter, instead of `Nucleotide.equal_t` it just makes `Nucleotide.equal` - `t` is a special type in the module.

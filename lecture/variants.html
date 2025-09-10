@@ -208,7 +208,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="recursive-data-structures">Recursive data structures</h4>
 <ul>
-  <li>A common use of variant types is to build self-referential data structures</li>
+  <li>A common use of variant types is to build recursive data structures (trees)</li>
   <li>Functional programming is fantastic for computing over tree-structured data</li>
   <li>Recursive types can refer to themselves in their own definition
     <ul>
@@ -218,37 +218,36 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>
     <p>Unlike with functions, no need for <code>rec</code></p>
   </li>
-  <li>Homebrew lists as a warm-up - the built-in <code>list</code> type is in fact not needed
+  <li>Homebrew lists <code>lizt</code> as a warm-up - the built-in <code>list</code> type is in fact not needed
     <ul>
-      <li>Note you will never need to do this, use the built-in ones!  This example is just for understanding.</li>
+      <li>Note this example is just for understanding, use the built-in lists if you just want lists.</li>
     </ul>
   </li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">homebrew_list</span> <span class="o">=</span> <span class="nc">Mt</span> <span class="o">|</span> <span class="nc">Cons</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">homebrew_list</span><span class="p">;;</span>
-<span class="k">let</span> <span class="n">hb_eg</span> <span class="o">=</span> <span class="nc">Cons</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">5</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">7</span><span class="o">,</span><span class="nc">Mt</span><span class="p">)));;</span> <span class="c">(* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">lizt</span> <span class="o">=</span> <span class="nc">Mt</span> <span class="o">|</span> <span class="nc">Cons</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">lizt</span><span class="p">;;</span> <span class="c">(* the recursive "'a lizt" on the rhs is a lizt of 'a *)</span>
+<span class="k">let</span> <span class="n">lizt_eg</span> <span class="o">=</span> <span class="nc">Cons</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">5</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">7</span><span class="o">,</span><span class="nc">Mt</span><span class="p">)));;</span> <span class="c">(* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)</span>
 </code></pre></div></div>
-<p>Coding over homebrew lists is nearly identical to built-in lists.</p>
+<p>Coding over lizts is nearly identical to built-in lists; here is mapping:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">homebrew_map</span> <span class="p">(</span><span class="n">ml</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">homebrew_list</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">b</span> <span class="n">homebrew_list</span><span class="p">)</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">lizt_map</span> <span class="p">(</span><span class="n">ml</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">lizt</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">b</span> <span class="n">lizt</span><span class="p">)</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">ml</span> <span class="k">with</span>
     <span class="o">|</span> <span class="nc">Mt</span> <span class="o">-&gt;</span> <span class="nc">Mt</span>
-    <span class="o">|</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">hd</span><span class="o">,</span><span class="n">tl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">f</span> <span class="n">hd</span><span class="o">,</span><span class="n">homebrew_map</span> <span class="n">tl</span> <span class="o">~</span><span class="n">f</span><span class="p">)</span>
+    <span class="o">|</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">hd</span><span class="o">,</span><span class="n">tl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">f</span> <span class="n">hd</span><span class="o">,</span><span class="n">lizt_map</span> <span class="n">tl</span> <span class="o">~</span><span class="n">f</span><span class="p">)</span>
 
-<span class="k">let</span> <span class="n">map_eg</span> <span class="o">=</span> <span class="n">homebrew_map</span> <span class="p">(</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">5</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">7</span><span class="o">,</span><span class="nc">Mt</span><span class="p">))))</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">let</span> <span class="n">map_eg</span> <span class="o">=</span> <span class="n">lizt_map</span> <span class="p">(</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">5</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">7</span><span class="o">,</span><span class="nc">Mt</span><span class="p">))))</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>Lets look at the built-in <code>list</code> type:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="kt">list</span><span class="p">;;</span>
 <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">=</span> <span class="bp">[]</span> <span class="o">|</span> <span class="p">(</span><span class="o">::</span><span class="p">)</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span>
 </code></pre></div></div>
-<p>Looks just like our homebrew one other than names for the components</p>
+<p>This is the exact same structure as <code>lizt</code></p>
 
 <h3 id="binary-trees">Binary trees</h3>
 
 <ul>
   <li>Binary trees are like lists but with two self-referential sub-structures instead of one</li>
-  <li>Binary trees also show how arbitrary recursive variants work; same idea but more variants.</li>
   <li>Here is a tree with data in the intermediate <em>nodes</em> but not in the leaves.</li>
 </ul>
 
@@ -292,7 +291,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Use your combinators without needing <code>let rec</code></li>
     </ol>
   </li>
-  <li>Here is a simple recursive function over binary trees for example:
+  <li>Here is a simple recursive function over binary trees:
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">add_gobble</span> <span class="n">binstringtree</span> <span class="o">=</span>
  <span class="k">match</span> <span class="n">binstringtree</span> <span class="k">with</span>
  <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Leaf</span>
@@ -317,7 +316,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Fold is also natural on binary trees, apply operation f to node value and each subtree result.
     <ul>
-      <li>This is a fold right (post-processed), folding left on a tree isn’t so useful because there are two subtrees to go down in to.</li>
+      <li>This is a fold right (post-processed), folding left on a tree isn’t sensible because there are two subtrees to go down in to.</li>
     </ul>
   </li>
 </ul>
@@ -341,9 +340,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li><code>length</code> (<code>size</code> or <code>depth</code> for a tree), <code>forall</code>, <code>exists</code>, <code>filter</code> (filter out a subtree), etc etc.</li>
     </ul>
   </li>
-  <li>For some operations we need to know how to compare the tree elements,</li>
-  <li>e.g. if it is a binary (sorted) tree an insertion requires comparison</li>
-  <li>For integers at least this is easy as we have <code>&lt;=</code>:</li>
+  <li>For some operations we need to know how to compare the tree elements
+    <ul>
+      <li>e.g. if it is a binary (sorted) tree an insertion requires comparison</li>
+      <li>here for example we compare node elements for integer node values</li>
+    </ul>
+  </li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">insert_int</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="n">bt</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">=</span>
@@ -357,7 +359,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Like list operations this is not mutating – it returns a whole new tree.</li>
-  <li>Well, recall for lists that if we have list <code>l</code> then <code>0 :: l</code> can share the <code>l</code> due to immutability</li>
+  <li><strong>But</strong>, recall for lists that if we have a list <code>l</code> then <code>0 :: l</code> can share the <code>l</code> due to immutability</li>
   <li>So, for here, only one path through tree is not shared: on average only log n new nodes need to be made.  <a href="efficiency.html">More later in lecture on efficiency</a>.</li>
 </ul>
 
@@ -366,11 +368,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>For non-integers , we need to explicitly supply any equal or comparison function.
-    <ul>
-      <li>recall <code>=</code> in <code>Core</code> works on integers only.</li>
-    </ul>
-  </li>
+  <li>For non-integers, we need to explicitly supply any equal or comparison function.</li>
   <li>Library functions needing to compare will in fact take a comparision operation as argument</li>
   <li>For example in the <code>List</code> library, the <a href="https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort"><code>List.sort</code> function</a></li>
   <li>Here is an example of how to sort a string list with <code>List.sort</code>:</li>

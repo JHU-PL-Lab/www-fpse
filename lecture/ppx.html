@@ -71,14 +71,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     
 <h1 id="pre-processor-extensions">Pre-processor extensions</h1>
 
-<p>Pre-Processor eXtensions (PPXs) write code for us. They save us from writing boilerplate code, so our code is shorter and (probably) more correct.</p>
+<p>Pre-Processor eXtensions (PPXs) are macros, they write code for us. They save us from writing boilerplate code, so our code is shorter and (probably) more correct.</p>
 
-<p>Some examples of code we could get from pre-processor extensions are:</p>
+<p>Some examples of boilerplate code ppx extensions can produce include</p>
 <ul>
   <li>Print functions (<code>show</code>)</li>
-  <li>Serialization (<code>sexp</code>, <code>yojson</code>)</li>
+  <li>Serialization (<code>sexp</code>, <code>yojson</code>) (turning arbitrary OCaml data into strings)</li>
   <li>Comparison (<code>compare</code>, <code>equal</code>)</li>
-  <li>Rank functions on variants (<code>variants</code>)</li>
 </ul>
 
 <h2 id="ppx_jane-and-deriving"><code>ppx_jane</code> and <code>deriving</code></h2>
@@ -87,8 +86,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>In the variants lecture, we wrote a <code>nucleotide</code> type and derived an equality function for it.</li>
   <li>We put <code>[@@deriving equal]</code> in the nucleotide example to get an <code>=</code> on that type “for free”:
     <ul>
-      <li>In the top loop, use <code>#require "ppx_jane"</code> to load the pre-processor extension.</li>
-      <li>In dune, put <code>(preprocess (pps (ppx_jane)))</code> as part of the library declaration.</li>
+      <li>In the top loop, type <code>#require "ppx_jane"</code> to load it (but its in the course <code>.ocamlinit</code> so can skip)</li>
+      <li>In dune, put <code>(preprocess (pps (ppx_jane)))</code> as part of the library declaration (needed!).</li>
     </ul>
   </li>
 </ul>
@@ -99,15 +98,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>We defined our type <strong>and</strong> got the <code>equal_nucleotide</code> function.
-    <ul>
-      <li>In <code>Core</code>, it is idiomatic to name types <code>t</code>. If we derive a function from a type named <code>t</code>, we wouldn’t get <code>equal_t</code>, we would just get <code>equal</code>.</li>
-    </ul>
-  </li>
-  <li><code>[@@zibbo...]</code> notation in code indicates the line is processed by the macro named <code>ppx_zibbo</code></li>
-  <li>The <code>equal</code> is a parameter to the macro, here it is which <code>deriving</code> extension is added</li>
-  <li>The <code>[@@deriving equal]</code> in particular causes an <code>equal_nucleotide</code> function to be automatically generated</li>
-  <li>Without this function we would have to use pattern matching to write our own equality.</li>
+  <li>We defined our type <strong>and</strong> got the <code>equal_nucleotide</code> function for free.</li>
+  <li>Without this macro we would have had to use pattern matching to write our own equality.</li>
 </ul>
 
 <h3 id="composing-deriving-equal">Composing <code>deriving equal</code></h3>
@@ -135,18 +127,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>.. we will eventually see an alternative to this when we learn about functors in the modules lecture.</li>
     </ul>
   </li>
-  <li>Note that in general for a component type that is the <code>t</code> of a module, the name looked for is <code>My_module.equal</code> instead of <code>equal_t</code>
-    <ul>
-      <li>This is standard for types named <code>t</code>, and we saw that above when deriving, too.</li>
-    </ul>
-  </li>
+  <li>Note that in general for a component type that is the <code>t</code> of a module, the name looked for is <code>My_module.equal</code> instead of <code>equal_t</code></li>
 </ul>
 
 <h3 id="some-other-useful-deriving-type-accessor-extensions-in-ppx_jane">Some other useful <code>@@deriving</code> type accessor extensions in ppx_jane</h3>
 
 <ul>
   <li><code>sexp</code> generates S-expression printable representations of types which is handy for displaying data internals</li>
-  <li>S-expressions are a general data format like JSON or XML, in fact they are the first such format</li>
+  <li>S-expressions are a general data format like JSON or XML, in fact they are the oldest such format</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
@@ -170,7 +158,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li><code>[@@deriving compare]</code> is like <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code></li>
-  <li>We covered this in the variants lecture</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="p">];;</span>
@@ -183,6 +170,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">#</span> <span class="n">compare_nucleotide</span> <span class="nc">C</span> <span class="nc">A</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div></div>
+<p>Note that existing types such as <code>int</code>, <code>string</code>, etc come with <code>Int.compare</code>, <code>String.compare</code>, etc, along with the <code>Int.equal</code>, <code>String.equal</code>.</p>
 
 <h3 id="json-format">JSON format</h3>
 

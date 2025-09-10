@@ -71,21 +71,28 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     
 <h2 id="records">Records</h2>
 <ul>
-  <li>Records make <strong>and</strong> data: they have this-and-this-and-this.</li>
-  <li>Tuples also make <strong>and</strong> data, but records have labels for each component.
+  <li>Records make <strong>and</strong> data: they have this-and-this-and-this</li>
+  <li>Tuples also make <strong>and</strong> data, but records have labels for each component
     <ul>
-      <li>Labels help with type checking and readability.</li>
+      <li>Labels help with type checking and readability</li>
     </ul>
   </li>
-  <li>Record fields are immutable by default.
+  <li>Record fields are immutable by default
     <ul>
-      <li>We’ll see a way to make them mutable in a future lecture on side effects.</li>
+      <li>(We’ll see a way to make them mutable in a future lecture on side effects)</li>
     </ul>
   </li>
 </ul>
 
-<h3 id="example-a-simple-record-type-to-represent-rational-numbers">Example: a simple record type to represent rational numbers</h3>
+<p>Note that a record type must be declared before you make any values with that type</p>
+<ul>
+  <li>similar to variants, but not like inferred variants or tuples</li>
+</ul>
 
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">7</span> <span class="p">}</span> <span class="c">(* doesn't work! Its type isn't defined yet *)</span>
+</code></pre></div></div>
+
+<p>So let’s define the type:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">ratio</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">}</span>
 </code></pre></div></div>
 
@@ -95,163 +102,86 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><code>denom</code> is a label with an <code>int</code> value, too.</li>
 </ul>
 
-<p>Record types are written <code>label : type</code>. This should be familiar because we are used to using colons for types.</p>
-
-<p>Record <em>values</em> of that type are written <code>label = value</code>, like so:</p>
-
+<p>To make a value of a type simply replace the <code>:</code> with <code>=</code>:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">q</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">53</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">6</span> <span class="p">}</span>
 </code></pre></div></div>
 
-<p>Note that a record type <strong>must</strong> be declared before you make any values with that type. For example, the following will <strong>not</strong> work because there is no type defined for it yet.</p>
+<h3 id="taking-apart-records">Taking apart records</h3>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">42</span><span class="o">.</span><span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">50</span><span class="o">.</span><span class="mi">1</span> <span class="p">}</span> <span class="c">(* doesn't work! Its type isn't defined yet *)</span>
-</code></pre></div></div>
+<p>There are many ways to take apart record values.</p>
 
-<p>There are many ways to use record values. We will compare functions that do <strong>the exact same thing</strong> and are just different ways of writing it.</p>
-
-<p>First, you may “project” the field from a record using dot notation: “record dot label”. This is just like a struct or object in C/C++/Java etc.</p>
+<ol>
+  <li>Follow C/C++/Java/JS/Python etc: dot notation.</li>
+</ol>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat_to_int</span> <span class="n">r</span> <span class="o">=</span>
   <span class="n">r</span><span class="o">.</span><span class="n">num</span> <span class="o">/</span> <span class="n">d</span><span class="o">.</span><span class="n">denom</span> <span class="c">(* project the labels out from r *)</span>
 </code></pre></div></div>
 
-<h3 id="pattern-matching">Pattern matching</h3>
-
-<p>You may also match on the fields in records:</p>
+<ol>
+  <li>Pattern matching</li>
+</ol>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat_to_int</span> <span class="n">r</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">r</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="n">n</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">/</span> <span class="n">d</span>
+  <span class="o">|</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="n">n</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">/</span> <span class="n">d</span> <span class="c">(* variable n contains numerator, d contains denominator *)</span>
 </code></pre></div></div>
-
-<p>Here, the <code>num</code> field in <code>r</code> gets bound to the variable name <code>n</code>, and <code>denom</code> gets bound to the name <code>d</code>. We are matching on the record and binding its fields into variable names so that we don’t need to do dot projections.</p>
 <ul>
-  <li>Important! <code>num =</code> and <code>denom =</code> are the <strong>labels</strong>, and <code>n</code> and <code>d</code> are <strong>variables</strong>. There is a distinction because labels are not first class.</li>
+  <li>Note that <code>num =</code> and <code>denom =</code> are the <strong>labels</strong>, and <code>n</code> and <code>d</code> are <strong>variables</strong>. This is just like an object or struct field name vs a variable name in Java/C/C++/etc.</li>
 </ul>
 
-<p>We can shortcut this and not rename them at all, but instead bind the fields <code>num</code> and <code>denom</code> from <code>r</code> straight into those names: <code>num</code> and <code>denom</code>. We call this “punning”.</p>
+<ol>
+  <li>Punning by reusing the field name as a variable</li>
+</ol>
+
+<p>The following pun binds the <em>fields</em> <code>num</code> and <code>denom</code> from <code>r</code> straight into those same names as <em>variables</em>:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat_to_int</span> <span class="n">r</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">r</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="n">num</span> <span class="o">/</span> <span class="n">denom</span> <span class="c">(* no `=` sign when not renaming *)</span>
+  <span class="o">|</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="n">num</span> <span class="o">/</span> <span class="n">denom</span> <span class="c">(* sugar for { num = num ; denom = denom } -&gt; .. *)</span>
 </code></pre></div></div>
 
-<p>The above is simply sugar for this:</p>
+<ol>
+  <li>Inlining pattern matchings with <code>let</code></li>
+</ol>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat_to_int</span> <span class="n">r</span> <span class="o">=</span>
-  <span class="k">match</span> <span class="n">r</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">denom</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="n">num</span> <span class="o">/</span> <span class="n">denom</span>
-</code></pre></div></div>
+<p>Pattern <code>match</code>ing on only one pattern is too verbose, don’t do it.  Like with pairs, we can put the (sole) pattern as a function parameter or in a <code>let</code> definition.</p>
 
-<p>We can do this to any subset of the fields, e.g. the match case and body is allowed to be <code>| { num ; denom = d } -&gt; num / d</code>.</p>
-
-<p>Because we have written <strong>one pattern that captures all values with the type</strong> <code>ratio</code>, we can inline it at the function parameter or with a <code>let</code> expression:</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat_to_int</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="n">n</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d</span> <span class="p">}</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat_to_int</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="n">n</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d</span> <span class="p">}</span> <span class="o">=</span> <span class="c">(* pattern as a function parameter *)</span>
   <span class="n">n</span> <span class="o">/</span> <span class="n">d</span>
 
-<span class="k">let</span> <span class="n">rat_to_int</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="p">}</span> <span class="o">=</span>
+<span class="k">let</span> <span class="n">rat_to_int</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="p">}</span> <span class="o">=</span> <span class="c">(* pattern parameter plus punning on labels/variables *)</span>
   <span class="n">num</span> <span class="o">/</span> <span class="n">denom</span>
 
 <span class="k">let</span> <span class="n">rat_to_int</span> <span class="n">r</span> <span class="o">=</span>
-  <span class="k">let</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="p">}</span> <span class="o">=</span> <span class="n">r</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="p">}</span> <span class="o">=</span> <span class="n">r</span> <span class="k">in</span> <span class="c">(* pattern in a value let definition *)</span>
   <span class="n">num</span> <span class="o">/</span> <span class="n">denom</span>
 </code></pre></div></div>
 
-<p>Notice in the first two that <code>r</code> is not bound anymore. We have no name for the whole record; we only have names for its fields.</p>
+<ol>
+  <li>Yet another shortcut, <code>; _</code> can be used for dont-care fields:</li>
+</ol>
 
-<p>Note that this inlining will not work when one pattern does not capture all values with that type. The compiler will warn that there are missing match cases. For example with options:</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">value_exn</span> <span class="p">(</span><span class="nc">Some</span> <span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">option</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">=</span> <span class="c">(* bad! There is a missing match case on None *)</span>
-  <span class="n">x</span>
-</code></pre></div></div>
-
-<p>Okay, back to records now.</p>
-
-<p>What about pattern matching when there are fields we don’t need? Just capture them with an underscore! Like the above examples, both of the following will do the same thing.</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">numerator</span> <span class="n">r</span> <span class="o">=</span> 
-  <span class="k">match</span> <span class="n">r</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">_</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="n">num</span> <span class="c">(* the _ catches all the other labels, no matter how many there are *)</span>
-
-<span class="k">let</span> <span class="n">numerator</span> <span class="n">r</span> <span class="o">=</span> 
-  <span class="k">match</span> <span class="n">r</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">_</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="n">num</span> <span class="c">(* binding denom into the unusable variable name _ *)</span>
-</code></pre></div></div>
-
-<p>Like before, these patterns can be inlined.</p>
-
-<p>Note that in the top loop, where some warnings are disabled, you can completely omit labels. Typically, though, the compiler will issue a warning, and you should not write patterns like this.</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">numerator</span> <span class="n">r</span> <span class="o">=</span>
-  <span class="k">match</span> <span class="n">r</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="p">{</span> <span class="n">num</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="n">num</span> <span class="c">(* okay, but there is a warning, so you shouldn't do this *)</span>
-</code></pre></div></div>
-
-<h3 id="back-to-dot-notation">Back to dot notation</h3>
-
-<p>Here is dot notation to make an addition of ratios:</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add_ratio</span> <span class="n">r1</span> <span class="n">r2</span> <span class="o">=</span>
-  <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="n">r1</span><span class="o">.</span><span class="n">num</span> <span class="o">*</span> <span class="n">r2</span><span class="o">.</span><span class="n">denom</span> <span class="o">+</span> <span class="n">r2</span><span class="o">.</span><span class="n">num</span> <span class="o">*</span> <span class="n">r1</span><span class="o">.</span><span class="n">denom</span>
-  <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">r1</span><span class="o">.</span><span class="n">denom</span> <span class="o">*</span> <span class="n">r2</span><span class="o">.</span><span class="n">denom</span> <span class="p">}</span>
-
-<span class="n">add_ratio</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">3</span><span class="p">}</span> <span class="p">{</span><span class="n">num</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">5</span><span class="p">}</span>
-</code></pre></div></div>
-
-<p>And here is a preferred pattern equivalent, where we cannot “pun” the labels because there are two records of the same type.</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add_ratio</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="n">n1</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d1</span> <span class="p">}</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="n">n2</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d2</span> <span class="p">}</span> <span class="o">=</span> 
-  <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="n">n1</span> <span class="o">*</span> <span class="n">d2</span> <span class="o">+</span> <span class="n">n2</span> <span class="o">*</span> <span class="n">d1</span>
-  <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d1</span> <span class="o">*</span> <span class="n">d2</span> <span class="p">}</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">numerator</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">_</span> <span class="p">}</span> <span class="o">=</span> <span class="c">(* the _ catches all the other labels, no matter how many there are *)</span>
+   <span class="n">num</span> 
 </code></pre></div></div>
 
 <h3 id="shadowing-shared-labels-and-namespaces">Shadowing, shared labels, and namespaces</h3>
 
-<p>If there are record types that share some labels, and we use dot notation, the type checker will infer the most recent type defined with that label.</p>
+<p>If there are record types that share some labels, and we use dot notation, the type inferencer will infer the most recent type defined with that label.</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">newratio</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">coeff</span> <span class="o">:</span> <span class="kt">float</span> <span class="p">}</span> <span class="c">(* shadows ratio's label num *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">newratio</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">coeff</span> <span class="o">:</span> <span class="kt">float</span> <span class="p">}</span> <span class="c">(* shadows above ratio type's label num *)</span>
 
-<span class="c">(* inferred type for x is newratio because its num field is more recent *)</span>
+<span class="c">(* Inferred type for x is newratio because its num field is more recent *)</span>
 <span class="k">let</span> <span class="n">get_num</span> <span class="n">x</span> <span class="o">=</span> 
+  <span class="n">x</span><span class="o">.</span><span class="n">num</span>
+
+<span class="c">(* Resolve the ambiguity by explicitly declaring x's type *)</span>
+<span class="k">let</span> <span class="n">get_new_num</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="n">newratio</span><span class="p">)</span> <span class="o">=</span> 
   <span class="n">x</span><span class="o">.</span><span class="n">num</span>
 </code></pre></div></div>
 
-<p>The solution is to avoid dot, or to use modules to avoid a global namespace of record labels.</p>
-
-<p>Here are a few ways to make it clear which type is being used.</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Suppose A.t is { x : int ; y : bool } *)</span>
-<span class="c">(* Also suppose B.t is { x : int ; z : float } *)</span>
-
-<span class="k">let</span> <span class="n">r</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* uh oh! It doesn't know label x because the types are inside modules *)</span>
-
-<span class="k">let</span> <span class="n">r</span> <span class="o">=</span> <span class="p">{</span> <span class="nn">A</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* this clears it up *)</span>
-
-<span class="k">let</span> <span class="n">r</span> <span class="o">=</span> <span class="nn">A</span><span class="p">.{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* so does this, and the difference rarely matters *)</span>
-</code></pre></div></div>
-
-<p>Now if these modules are both opened, so that their <code>t</code> is put in scope, the most recent will win again.</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">A</span>
-<span class="k">open</span> <span class="nc">B</span>
-
-<span class="k">let</span> <span class="n">f</span> <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="c">(* type inferred for r is B.t, just like with newratio *)</span>
-
-<span class="c">(* clarify with type annotation (prefered) *)</span>
-<span class="k">let</span> <span class="n">f</span> <span class="p">(</span><span class="n">r</span> <span class="o">:</span> <span class="nn">A</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
-
-<span class="c">(* or with pattern matching *)</span>
-<span class="k">let</span> <span class="n">f</span> <span class="p">{</span> <span class="n">x</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_</span> <span class="p">}</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
-
-<span class="c">(* or namespace annotation (not so prefered here) *)</span>
-<span class="k">let</span> <span class="n">f</span> <span class="nn">A</span><span class="p">.{</span> <span class="n">x</span> <span class="p">;</span> <span class="n">_</span> <span class="p">}</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
-<span class="k">let</span> <span class="n">f</span> <span class="p">{</span> <span class="nn">A</span><span class="p">.</span><span class="n">x</span> <span class="p">;</span> <span class="n">_</span> <span class="p">}</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
-</code></pre></div></div>
-
-<h3 id="record-creation">Record creation</h3>
-
-<p>Records can be <strong>made</strong> with punning, too. We previously only <em>extracted</em> the label with punning. We can also <em>create</em> with punning.</p>
+<h3 id="puns-for-record-creation">Puns for record creation</h3>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">make_ratio</span> <span class="p">(</span><span class="n">num</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="n">denom</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">=</span>
   <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="p">}</span> <span class="c">(* sugar for { num = num ; denom = denom } *)</span>
@@ -259,35 +189,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">make_ratio</span> <span class="mi">1</span> <span class="mi">2</span>
 </code></pre></div></div>
 
-<p>When there are many labels, and we want to copy a record and only change a few, we use the <code>with</code> keyword.</p>
-<ul>
-  <li>Very useful for records with many fields</li>
-  <li>Note that by “change” we do <strong>not</strong> mean a mutation. A brand new record is constructed.</li>
-</ul>
+<p>When there are many labels and you are making a new record with only a few fields changed, use <code>with</code>:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">clear_bad_denom</span> <span class="n">r</span> <span class="o">=</span>
-  <span class="k">match</span> <span class="n">r</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="p">{</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">_</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">r</span> <span class="k">with</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">}</span> <span class="c">(* same as { denom = r.denom ; num = 0 } *)</span>
-  <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">r</span>
-
-<span class="n">clear_bad_denom</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">}</span>
-</code></pre></div></div>
-
-<p>We can do this with more than one label, too.</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">b</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">c</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">}</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">abc</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">b</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">c</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">}</span>
 
 <span class="k">let</span> <span class="n">r1</span> <span class="o">=</span> <span class="p">{</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">}</span>
 
-<span class="k">let</span> <span class="n">r2</span> <span class="o">=</span> <span class="p">{</span> <span class="n">r1</span> <span class="k">with</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span> <span class="p">}</span> <span class="c">(* use semicolons to separate fields after "with" *)</span>
+<span class="k">let</span> <span class="n">r2</span> <span class="o">=</span> <span class="p">{</span> <span class="n">r1</span> <span class="k">with</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">4</span> <span class="p">}</span> <span class="c">(* same as writing { a = 4; b = r1.b; c = r1.c } - implicitly copy over others *)</span>
+<span class="c">(* Note this is a COPY, NOT a mutate - ! *)</span>
+
+<span class="k">let</span> <span class="n">r2</span> <span class="o">=</span> <span class="p">{</span> <span class="n">r1</span> <span class="k">with</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">3</span> <span class="p">}</span> <span class="c">(* use semicolons for multiple overrides *)</span>
 
 <span class="k">let</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="k">let</span> <span class="n">r3</span> <span class="o">=</span> <span class="p">{</span> <span class="n">r1</span> <span class="k">with</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span> <span class="n">c</span> <span class="p">}</span> <span class="c">(* we can pun here, too! *)</span>
+<span class="k">let</span> <span class="n">r3</span> <span class="o">=</span> <span class="p">{</span> <span class="n">r1</span> <span class="k">with</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">;</span> <span class="n">c</span> <span class="p">}</span> <span class="c">(* combining puns, `c = c` can again shorten to `c` *)</span>
 </code></pre></div></div>
 
 <h3 id="records-as-variant-payloads">Records as variant payloads</h3>
 
-<p>When a variant constructor has many components to its payload, we may like to name them with records.</p>
+<p>When a variant constructor has many components to its payload, name them with records.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">gbu</span> <span class="o">=</span>
   <span class="o">|</span> <span class="nc">Good</span> <span class="k">of</span> <span class="p">{</span> <span class="n">sugar</span> <span class="o">:</span> <span class="kt">string</span> <span class="p">;</span> <span class="n">units</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">}</span>
@@ -313,14 +232,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="o">|</span> <span class="nc">Bad</span> <span class="n">_</span> <span class="o">|</span> <span class="nc">Ugly</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"unhandled"</span>
 </code></pre></div></div>
 
-<p>We’ll do this with our binary tree type to get nice naming with record notation:</p>
+<p>For a binary tree type the record labels are handy so you don’t get the order mixed up</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="o">=</span> 
   <span class="o">|</span> <span class="nc">Leaf</span> 
   <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="p">{</span> <span class="n">data</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="p">;</span> <span class="n">left</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="p">;</span> <span class="n">right</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="p">}</span>
 </code></pre></div></div>
 
-<p>With this version, we don’t have to remember the order of the triple. It’s named for us, so we can’t forget!</p>
+<p>If you write <code>{left = Leaf; node = 5; right = Leaf}</code> you are still fine</p>
+<ul>
+  <li>like with named function arguments the order doesn’t matter if there is a name that disambiguates</li>
+</ul>
       
           </section>
         </div>

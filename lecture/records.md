@@ -1,13 +1,20 @@
 
 ## Records
-- Records make **and** data: they have this-and-this-and-this.
-- Tuples also make **and** data, but records have labels for each component.
-  - Labels help with type checking and readability.
-- Record fields are immutable by default.
-  - We'll see a way to make them mutable in a future lecture on side effects.
+- Records make **and** data: they have this-and-this-and-this
+- Tuples also make **and** data, but records have labels for each component
+  - Labels help with type checking and readability
+- Record fields are immutable by default
+  - (We'll see a way to make them mutable in a future lecture on side effects)
 
-### Example: a simple record type to represent rational numbers
 
+Note that a record type must be declared before you make any values with that type
+ - similar to variants, but not like inferred variants or tuples
+
+```ocaml
+let rat = { num = 5; denom = 7 } (* doesn't work! Its type isn't defined yet *)
+```
+
+So let's define the type:
 ```ocaml
 type ratio = { num : int ; denom : int }
 ```
@@ -16,176 +23,81 @@ This defined the `ratio` type, a record type with two labels:
 - `num` is label with an `int` value.
 - `denom` is a label with an `int` value, too.
 
-Record types are written `label : type`. This should be familiar because we are used to using colons for types.
-
-Record _values_ of that type are written `label = value`, like so:
-
+To make a value of a type simply replace the `:` with `=`:
 ```ocaml
 let q = { num = 53 ; denom = 6 }
 ```
 
-Note that a record type **must** be declared before you make any values with that type. For example, the following will **not** work because there is no type defined for it yet.
+### Taking apart records
 
-```ocaml
-let p = { x = 42.0 ; y = 50.1 } (* doesn't work! Its type isn't defined yet *)
-```
+There are many ways to take apart record values.
 
-There are many ways to use record values. We will compare functions that do **the exact same thing** and are just different ways of writing it.
-
-First, you may "project" the field from a record using dot notation: "record dot label". This is just like a struct or object in C/C++/Java etc.
+1. Follow C/C++/Java/JS/Python etc: dot notation.
 
 ```ocaml
 let rat_to_int r =
   r.num / d.denom (* project the labels out from r *)
 ```
 
-### Pattern matching
-
-You may also match on the fields in records:
+2. Pattern matching
 
 ```ocaml
 let rat_to_int r =
   match r with
-  | { num = n ; denom = d } -> n / d
+  | { num = n ; denom = d } -> n / d (* variable n contains numerator, d contains denominator *)
 ```
+- Note that `num =` and `denom =` are the **labels**, and `n` and `d` are **variables**. This is just like an object or struct field name vs a variable name in Java/C/C++/etc.
 
-Here, the `num` field in `r` gets bound to the variable name `n`, and `denom` gets bound to the name `d`. We are matching on the record and binding its fields into variable names so that we don't need to do dot projections.
-- Important! `num =` and `denom =` are the **labels**, and `n` and `d` are **variables**. There is a distinction because labels are not first class.
+3. Punning by reusing the field name as a variable
 
-We can shortcut this and not rename them at all, but instead bind the fields `num` and `denom` from `r` straight into those names: `num` and `denom`. We call this "punning".
+The following pun binds the *fields* `num` and `denom` from `r` straight into those same names as *variables*:
 
 ```ocaml
 let rat_to_int r =
   match r with
-  | { num ; denom } -> num / denom (* no `=` sign when not renaming *)
+  | { num ; denom } -> num / denom (* sugar for { num = num ; denom = denom } -> .. *)
 ```
 
-The above is simply sugar for this:
+4. Inlining pattern matchings with `let` 
+
+Pattern `match`ing on only one pattern is too verbose, don't do it.  Like with pairs, we can put the (sole) pattern as a function parameter or in a `let` definition.
 
 ```ocaml
-let rat_to_int r =
-  match r with
-  | { num = num ; denom = denom } -> num / denom
-```
-
-We can do this to any subset of the fields, e.g. the match case and body is allowed to be `| { num ; denom = d } -> num / d`. 
-
-Because we have written **one pattern that captures all values with the type** `ratio`, we can inline it at the function parameter or with a `let` expression:
-
-```ocaml
-let rat_to_int { num = n ; denom = d } =
+let rat_to_int { num = n ; denom = d } = (* pattern as a function parameter *)
   n / d
 
-let rat_to_int { num ; denom } =
+let rat_to_int { num ; denom } = (* pattern parameter plus punning on labels/variables *)
   num / denom
 
 let rat_to_int r =
-  let { num ; denom } = r in
+  let { num ; denom } = r in (* pattern in a value let definition *)
   num / denom
 ```
 
-Notice in the first two that `r` is not bound anymore. We have no name for the whole record; we only have names for its fields.
-
-Note that this inlining will not work when one pattern does not capture all values with that type. The compiler will warn that there are missing match cases. For example with options:
+5. Yet another shortcut, `; _` can be used for dont-care fields:
 
 ```ocaml
-let value_exn (Some x : 'a option) : 'a = (* bad! There is a missing match case on None *)
-  x
-```
-
-Okay, back to records now.
-
-What about pattern matching when there are fields we don't need? Just capture them with an underscore! Like the above examples, both of the following will do the same thing.
-
-```ocaml
-let numerator r = 
-  match r with
-  | { num ; _ } -> num (* the _ catches all the other labels, no matter how many there are *)
-
-let numerator r = 
-  match r with
-  | { num ; denom = _ } -> num (* binding denom into the unusable variable name _ *)
-```
-
-Like before, these patterns can be inlined.
-
-Note that in the top loop, where some warnings are disabled, you can completely omit labels. Typically, though, the compiler will issue a warning, and you should not write patterns like this.
-
-```ocaml
-let numerator r =
-  match r with
-  | { num } -> num (* okay, but there is a warning, so you shouldn't do this *)
-```
-
-### Back to dot notation
-
-Here is dot notation to make an addition of ratios:
-
-```ocaml
-let add_ratio r1 r2 =
-  { num = r1.num * r2.denom + r2.num * r1.denom
-  ; denom = r1.denom * r2.denom }
-
-add_ratio {num = 1; denom = 3} {num = 2; denom = 5}
-```
-
-And here is a preferred pattern equivalent, where we cannot "pun" the labels because there are two records of the same type.
-
-```ocaml
-let add_ratio { num = n1 ; denom = d1 } { num = n2 ; denom = d2 } = 
-  { num = n1 * d2 + n2 * d1
-  ; denom = d1 * d2 }
+let numerator { num ; _ } = (* the _ catches all the other labels, no matter how many there are *)
+   num 
 ```
 
 ### Shadowing, shared labels, and namespaces
 
-If there are record types that share some labels, and we use dot notation, the type checker will infer the most recent type defined with that label.
+If there are record types that share some labels, and we use dot notation, the type inferencer will infer the most recent type defined with that label.
 
 ```ocaml
-type newratio = { num : int ; coeff : float } (* shadows ratio's label num *)
+type newratio = { num : int ; coeff : float } (* shadows above ratio type's label num *)
 
-(* inferred type for x is newratio because its num field is more recent *)
+(* Inferred type for x is newratio because its num field is more recent *)
 let get_num x = 
+  x.num
+
+(* Resolve the ambiguity by explicitly declaring x's type *)
+let get_new_num (x : newratio) = 
   x.num
 ```
 
-The solution is to avoid dot, or to use modules to avoid a global namespace of record labels.
-
-Here are a few ways to make it clear which type is being used.
-
-```ocaml
-(* Suppose A.t is { x : int ; y : bool } *)
-(* Also suppose B.t is { x : int ; z : float } *)
-
-let r = { x = 0 ; y = true } (* uh oh! It doesn't know label x because the types are inside modules *)
-
-let r = { A.x = 0 ; y = true } (* this clears it up *)
-
-let r = A.{ x = 0 ; y = true } (* so does this, and the difference rarely matters *)
-```
-
-Now if these modules are both opened, so that their `t` is put in scope, the most recent will win again.
-
-```ocaml
-open A
-open B
-
-let f r = r.x (* type inferred for r is B.t, just like with newratio *)
-
-(* clarify with type annotation (prefered) *)
-let f (r : A.t) : int = r.x
-
-(* or with pattern matching *)
-let f { x ; y = _ } = r.x
-
-(* or namespace annotation (not so prefered here) *)
-let f A.{ x ; _ } = r.x
-let f { A.x ; _ } = r.x
-```
-
-### Record creation
-
-Records can be **made** with punning, too. We previously only _extracted_ the label with punning. We can also _create_ with punning.
+### Puns for record creation
 
 ```ocaml
 let make_ratio (num : int) (denom : int) =
@@ -194,35 +106,25 @@ let make_ratio (num : int) (denom : int) =
 make_ratio 1 2
 ```
 
-When there are many labels, and we want to copy a record and only change a few, we use the `with` keyword.
-- Very useful for records with many fields
-- Note that by "change" we do **not** mean a mutation. A brand new record is constructed.
+When there are many labels and you are making a new record with only a few fields changed, use `with`:
 
 ```ocaml
-let clear_bad_denom r =
-  match r with
-  | { denom = 0 ; _ } -> { r with num = 0 } (* same as { denom = r.denom ; num = 0 } *)
-  | _ -> r
-
-clear_bad_denom { num = 4; denom = 0 }
-``` 
-
-We can do this with more than one label, too.
-
-```ocaml
-type t = { a : int ; b : int ; c : int }
+type abc = { a : int ; b : int ; c : int }
 
 let r1 = { a = 0 ; b = 1 ; c = 2 }
 
-let r2 = { r1 with b = 2 ; c = 3 } (* use semicolons to separate fields after "with" *)
+let r2 = { r1 with a = 4 } (* same as writing { a = 4; b = r1.b; c = r1.c } - implicitly copy over others *)
+(* Note this is a COPY, NOT a mutate - ! *)
+
+let r2 = { r1 with b = 2 ; c = 3 } (* use semicolons for multiple overrides *)
 
 let c = 4
-let r3 = { r1 with b = 2 ; c } (* we can pun here, too! *)
+let r3 = { r1 with b = 2 ; c } (* combining puns, `c = c` can again shorten to `c` *)
 ```
 
 ### Records as variant payloads
 
-When a variant constructor has many components to its payload, we may like to name them with records.
+When a variant constructor has many components to its payload, name them with records.
 
 ```ocaml
 type gbu =
@@ -250,7 +152,7 @@ let return_good_record v =
   | Bad _ | Ugly -> failwith "unhandled"
 ```
 
-We'll do this with our binary tree type to get nice naming with record notation:
+For a binary tree type the record labels are handy so you don't get the order mixed up
 
 ```ocaml
 type 'a bin_tree = 
@@ -258,4 +160,5 @@ type 'a bin_tree =
   | Node of { data : 'a ; left : 'a bin_tree ; right : 'a bin_tree }
 ```
 
-With this version, we don't have to remember the order of the triple. It's named for us, so we can't forget!
+If you write `{left = Leaf; node = 5; right = Leaf}` you are still fine
+ - like with named function arguments the order doesn't matter if there is a name that disambiguates

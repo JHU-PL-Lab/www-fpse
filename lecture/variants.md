@@ -129,28 +129,28 @@ type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
 ```
 
 #### Recursive data structures 
-  - A common use of variant types is to build self-referential data structures
+  - A common use of variant types is to build recursive data structures (trees)
   - Functional programming is fantastic for computing over tree-structured data
   - Recursive types can refer to themselves in their own definition
      - similar in spirit to how C structs can be recursive (but, no pointers needed here)
   - Unlike with functions, no need for `rec`
 
- - Homebrew lists as a warm-up - the built-in `list` type is in fact not needed
-   - Note you will never need to do this, use the built-in ones!  This example is just for understanding.
+ - Homebrew lists `lizt` as a warm-up - the built-in `list` type is in fact not needed
+   - Note this example is just for understanding, use the built-in lists if you just want lists.
 
 ```ocaml
-type 'a homebrew_list = Mt | Cons of 'a * 'a homebrew_list;;
-let hb_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
+type 'a lizt = Mt | Cons of 'a * 'a lizt;; (* the recursive "'a lizt" on the rhs is a lizt of 'a *)
+let lizt_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
 ```
-Coding over homebrew lists is nearly identical to built-in lists.
+Coding over lizts is nearly identical to built-in lists; here is mapping:
 
 ```ocaml
-let rec homebrew_map (ml : 'a homebrew_list) ~(f : 'a -> 'b) : ('b homebrew_list) =
+let rec lizt_map (ml : 'a lizt) ~(f : 'a -> 'b) : ('b lizt) =
   match ml with
     | Mt -> Mt
-    | Cons(hd,tl) -> Cons(f hd,homebrew_map tl ~f)
+    | Cons(hd,tl) -> Cons(f hd,lizt_map tl ~f)
 
-let map_eg = homebrew_map (Cons(3,Cons(5,Cons(7,Mt)))) ~f:(fun x -> x - 1)
+let map_eg = lizt_map (Cons(3,Cons(5,Cons(7,Mt)))) ~f:(fun x -> x - 1)
 ```
 
 Lets look at the built-in `list` type:
@@ -158,12 +158,11 @@ Lets look at the built-in `list` type:
 # #show_type list;;
 type 'a list = [] | (::) of 'a * 'a list
 ```
-Looks just like our homebrew one other than names for the components
+This is the exact same structure as `lizt`
 
 ### Binary trees
 
 * Binary trees are like lists but with two self-referential sub-structures instead of one
-* Binary trees also show how arbitrary recursive variants work; same idea but more variants.
 * Here is a tree with data in the intermediate *nodes* but not in the leaves.
 
 ```ocaml
@@ -202,7 +201,7 @@ Node("fiddly",Node(0,Leaf,Leaf),Leaf);;
    1. Define the combinators you need (maps, folds, node counts, etc.) using `let rec`
    2. Use your combinators without needing `let rec`
 
-* Here is a simple recursive function over binary trees for example:
+* Here is a simple recursive function over binary trees:
 ```ocaml
 let rec add_gobble binstringtree =
    match binstringtree with
@@ -226,7 +225,7 @@ let rec map (tree : 'a bin_tree) ~(f : 'a -> 'b) : ('b bin_tree) =
 let add_gobble tree = map ~f:(fun s -> s ^ "gobble") tree
 ```
 * Fold is also natural on binary trees, apply operation f to node value and each subtree result.
-  - This is a fold right (post-processed), folding left on a tree isn't so useful because there are two subtrees to go down in to.
+  - This is a fold right (post-processed), folding left on a tree isn't sensible because there are two subtrees to go down in to.
 
 ```ocaml
 let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'acc -> 'acc -> 'acc) ~(leaf : 'acc) : 'acc =
@@ -245,9 +244,9 @@ let inc_nodes tree = fold ~f:(fun elt la ra -> Node(elt+1,la,ra)) ~leaf:Leaf tre
 * Many of the other `List` functions have analogues on binary trees and recursive variants in general
    - `length` (`size` or `depth` for a tree), `forall`, `exists`, `filter` (filter out a subtree), etc etc.
 
-* For some operations we need to know how to compare the tree elements, 
-* e.g. if it is a binary (sorted) tree an insertion requires comparison
-* For integers at least this is easy as we have `<=`:
+* For some operations we need to know how to compare the tree elements 
+   - e.g. if it is a binary (sorted) tree an insertion requires comparison
+   - here for example we compare node elements for integer node values
 
 ```ocaml
 let rec insert_int (x : int) (bt : int bin_tree) : (int bin_tree) =
@@ -260,7 +259,7 @@ let rec insert_int (x : int) (bt : int bin_tree) : (int bin_tree) =
 ```
 
 * Like list operations this is not mutating -- it returns a whole new tree.
-* Well, recall for lists that if we have list `l` then `0 :: l` can share the `l` due to immutability
+* **But**, recall for lists that if we have a list `l` then `0 :: l` can share the `l` due to immutability
 * So, for here, only one path through tree is not shared: on average only log n new nodes need to be made.  [More later in lecture on efficiency](efficiency.html).
 
 ```ocaml
@@ -268,8 +267,7 @@ let bt' = insert_int 4 bt;;
 let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent insert *)
 ```
 
-* For non-integers , we need to explicitly supply any equal or comparison function.
-   - recall `=` in `Core` works on integers only.
+* For non-integers, we need to explicitly supply any equal or comparison function.
 * Library functions needing to compare will in fact take a comparision operation as argument
 * For example in the `List` library, the [`List.sort` function](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort)
 * Here is an example of how to sort a string list with `List.sort`:
