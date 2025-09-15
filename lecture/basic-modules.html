@@ -101,7 +101,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span>
 
-<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="c">(* the type of a string set is a list of strings *)</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="c">(* This is a *type abreviation*: a string set is a list of strings *)</span>
 
 <span class="k">let</span> <span class="n">empty</span> <span class="o">:</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">[]</span> <span class="c">(* the one canonical empty set *)</span>
 
@@ -124,13 +124,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <span class="k">else</span> <span class="n">contains</span> <span class="n">x</span> <span class="n">tl</span>
 </code></pre></div></div>
 
-<p>This creates a module <code>String_set</code> with:</p>
-<ul>
-  <li>a type <code>t</code></li>
-  <li>four values <code>empty</code>, <code>add</code>, <code>remove</code>, and <code>contains</code>.</li>
-</ul>
-
-<h3 id="using-it-in-utop">Using it in <code>utop</code></h3>
+<h3 id="loading-a-module-into-utop">Loading a module into <code>utop</code></h3>
 
 <p>Use <code>dune utop</code> to fire up the OCaml toploop with the module loaded.</p>
 <ul>
@@ -141,21 +135,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">add</span> <span class="s2">"hello"</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">empty</span> <span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"hello"</span><span class="p">]</span>
+<span class="o">-</span> <span class="o">:</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"hello"</span><span class="p">]</span>
 </code></pre></div></div>
 
 <p>Or open the module with <code>open String_set</code> to put everything from inside it into scope:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">open</span> <span class="nc">String_set</span> <span class="p">;;</span>
 <span class="o">#</span> <span class="n">add</span> <span class="s2">"hello"</span> <span class="n">empty</span> <span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"hello"</span><span class="p">]</span>
+<span class="o">-</span> <span class="o">:</span> <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"hello"</span><span class="p">]</span>
 </code></pre></div></div>
 
-<p>Here, the fact that we used a <code>list</code> is <em>exposed</em> in the type and the value.</p>
 <ul>
-  <li>We made the <em>type abbreviation</em> with <code>type t = string list</code>. So <code>t</code> is a synonym for <code>string list</code>.</li>
-  <li>Naming the type <code>t</code> is standard for “the” underlying type in a module.</li>
-  <li>Then, <code>String_set.t</code> is read as “string set’s type`.</li>
+  <li>Here, the fact that we used a <code>list</code> to implement the set is exposed to library users.</li>
+  <li>Naming the type <code>t</code> is standard for “the” underlying type in a module (if there is one).
+    <ul>
+      <li>Built-in libraries also use this: for example, <code>Int.t</code> is an alias for <code>int</code>, etc.</li>
+    </ul>
+  </li>
+  <li>Then, <code>String_set.t</code> is read as “string set’s underlying type`.</li>
 </ul>
 
 <h2 id="hiding-details-with-module-types">Hiding details with module types</h2>
@@ -163,23 +160,35 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Modules have <em>types</em>, called <strong>module types</strong> or <strong>signatures</strong>.</p>
 <ul>
   <li>The latter term is used in math, e.g. “a DFA has signature D = (S, Σ, τ, s0, F)”</li>
+  <li>In a signature all the types of entities in the module are declared</li>
+  <li>And, types declared in a module are repeated in the signature again (a bit odd, but for a reason)</li>
+  <li>Module types are also placed in files, just put an <code>i</code> on the end
+    <ul>
+      <li>So for example the module type of <code>String_set</code> is in the <code>string_set.mli</code> file.</li>
+    </ul>
+  </li>
+  <li>Here are the contents of that file:</li>
 </ul>
 
-<p>The type of <code>String_set</code> can be written out and put in the <code>string_set.mli</code> file.</p>
-<ul>
-  <li>The added “i” is for “interface”.</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">t</span> <span class="c">(* Declare a type t, but don't define it, so the type is hidden to all users *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="c">(* Type declarations are by default copied from .ml to .mli file *)</span>
+<span class="c">(* type t (* this alternate version of type t declaration *hides* t's internals *) *)</span>
 <span class="k">val</span> <span class="n">empty</span> <span class="o">:</span> <span class="n">t</span>
 <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
 <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
 <span class="k">val</span> <span class="n">contains</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
 </code></pre></div></div>
 
-<p>The type <code>t</code> has been made abstract. We did not write <code>type t = string list</code>.</p>
+<ul>
+  <li>See how we repeat the <code>type t =</code> alias declaration in this <code>.mli</code> file</li>
+  <li>But, there is an alterative way to write that declaration: remove <code>= string list</code>
+    <ul>
+      <li>comment the first line and uncomment the second to get that version</li>
+    </ul>
+  </li>
+  <li>By doing this, the type <code>t</code> has been made <em>abstract</em>: users no longer can see <code>t</code> is a list</li>
+</ul>
 
-<p>Now in <code>utop</code>:</p>
+<p>Now if we save that change and type <code>dune utop</code>:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">add</span> <span class="s2">"hello"</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">empty</span> <span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="nn">String_set</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span>
@@ -211,14 +220,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>It’s like those types/values are <code>private</code>.</li>
   <li>If there is nothing to hide, then you don’t need an <code>.mli</code> file at all. The type of the module will be inferred.</li>
-  <li>All assignments come with an <code>.mli</code> file so you get used to the format, and they serve as documentation, which is always good!</li>
+  <li>All assignments come with an <code>.mli</code> file so you get used to the format
+    <ul>
+      <li>Also the documentation specifying what a function does should go in the <code>.mli</code> file by convention</li>
+      <li>We have followed that pattern for Assignment 3</li>
+    </ul>
+  </li>
 </ul>
 
 <h2 id="building-modules">Building modules</h2>
 
-<p>We use <code>dune</code> to build our code in this class.</p>
-
-<p>To make a library module from the <code>string_set.ml</code> file, we use this <code>dune</code>.</p>
+<p>Recall that <code>dune</code> files are like <code>Makefile</code>s for OCaml<br />
+To make a library module from the <code>string_set.ml</code> file, we include this in the <code>dune</code> file:</p>
 
 <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">; in file `src/dune`</span>
 <span class="p">(</span><span class="nf">library</span>
@@ -228,17 +241,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="p">)</span>
 </code></pre></div></div>
 
-<p>See <a href="../examples/set-example.zip">set-example.zip</a> for the full code.</p>
-
 <h2 id="writing-executables">Writing executables</h2>
 
-<p>So far, we have only made libraries. Now, we’ll write a small OCaml executable.</p>
+<p>Let’s make an actual executable program to do something, not just a library.</p>
 
-<p>We will write the executable in <code>set_main.ml</code>, which takes a string and a file name and looks for that line in the file.</p>
-
-<p>Executables work by running all statements in the file from top to bottom. Any side effects are the “outputs” of the executable.</p>
-
-<p>Typically, the main work in an executable is put under a <code>let () = ...</code> statement. The <code>...</code> evaluates to <code>() : unit</code>, and the side effects it performs are what we see.</p>
+<ul>
+  <li>The file <code>set_main.ml</code> is our example, it takes a string and a file name and looks for that line in the file.</li>
+  <li>Executables work by running all statements in the file from top to bottom. Any side effects are the “outputs” of the executable.</li>
+  <li>Note that pure functional programs are useless as executables, input and output is a side effect and we need it to write applications.</li>
+  <li>Typically, the main work in an executable is put under a <code>let () = ...</code> statement. The <code>...</code> evaluates to <code>() : unit</code>, and the side effects it performs are what we see.</li>
+</ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Just a helper function. Does not run until it's given arguments in `let () = ...` *)</span>
 <span class="k">let</span> <span class="n">do_search</span> <span class="n">search_string</span> <span class="n">filename</span> <span class="o">=</span>
@@ -260,7 +272,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h3 id="building-executables">Building executables</h3>
 
-<p>To build an executable, the <code>dune</code> file has a stanza for an <code>executable</code> instead of a <code>library</code>:</p>
+<p>To build our executable, the <code>dune</code> file has a stanza for an <code>executable</code>:</p>
 
 <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">; in file `src/dune`</span>
 <span class="p">(</span><span class="nf">executable</span>
@@ -276,13 +288,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>If you declared an executable in <code>dune</code> as above, it will make a file <code>set_main.exe</code></li>
-  <li>To run it, you can do <code>dune exec -- ./src/set_main.exe "open Core" src/simple_set.ml</code></li>
-  <li>Which is really just <code>_build/default/src/set_main.exe "open Core" src/simple_set.ml</code> after building</li>
+  <li>To run it, you can do <code>dune exec -- ./src/set_main.exe "open Core" src/string_set.ml</code></li>
+  <li>Which is really just <code>_build/default/src/set_main.exe "open Core" src/string_set.ml</code> after building</li>
 </ul>
 
-<h2 id="more-examples">More examples</h2>
-
-<h3 id="the-stdioin_channel-library">The <code>Stdio.In_channel</code> library</h3>
+<h3 id="aside-the-stdioin_channel-library-used-in-this-executable">Aside: the <code>Stdio.In_channel</code> library used in this executable</h3>
 
 <ul>
   <li><code>set_main.ml</code> uses the <code>In_channel</code> module to read in file contents
@@ -296,27 +306,27 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>First, now that we covered abstract types we can see there is an abstract type <code>t</code> here</li>
       <li>As with our own set, it is “the underlying data” for the module, in this case file handles</li>
       <li>It is hidden though so we don’t get access to the details of how “files are handled”</li>
-      <li>If you are used to object-oriented programming you are looking for a constructor/new; in functional code look for functions that only return a <code>t</code>, that is making a new <code>t</code>: <code>create</code> here.</li>
+      <li>In Visual Studio hover over a function definition to get the docs</li>
     </ul>
   </li>
 </ul>
 
-<h3 id="optional-arguments-tangent">Optional arguments tangent</h3>
+<h3 id="aside-optional-arguments">Aside: Optional arguments</h3>
 
 <ul>
   <li>One topic we skipped over which is in many of these libraries is <strong>optional arguments</strong></li>
   <li>They are named arguments but you don’t need to give them, indicated by a <code>?</code> before the name.</li>
-  <li>If  you <em>do</em> give them, they are like named aguments, use <code>~name:</code> syntax</li>
-  <li>e.g. in <code>In_channel.create</code>, <code>val create : ?⁠binary:Base.bool -&gt; Base.string -&gt; t</code>
+  <li>If you <em>do</em> give them, they are like named aguments, use <code>~name:</code> syntax</li>
+  <li>e.g. in <code>In_channel.read_lines</code>, <code>?fix_win_eol</code> is an optional boolean argument
     <ul>
-      <li>an optional flag <code>~binary:true</code> could be passed to make a binary file handle</li>
-      <li>example usage: <code>In_channel.create ~binary:false "/tmp/wowfile"</code></li>
+      <li>To use it just add <code>~fix_win_eol: true</code> (since its optional and we want the default false we left it off)</li>
+      <li>If you write a function with an optional argument it will show up to you as an <code>option</code>-typed object: <code>Some</code> (given) or <code>None</code> (not given).</li>
     </ul>
   </li>
-  <li>Many languages now support optional arguments (not so 10 years ago - newer feature)</li>
+  <li>Many languages now support optional arguments</li>
 </ul>
 
-<p>Writing your own functions with optional arguments is easy: the value passed in is an <code>option</code> type</p>
+<p>Example of writing a function with an optional argument:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">f</span> <span class="o">?</span><span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="k">match</span> <span class="n">x</span> <span class="k">with</span> <span class="nc">Some</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="n">y</span> <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="p">;;</span>
 <span class="k">val</span> <span class="n">f</span> <span class="o">:</span> <span class="o">?</span><span class="n">x</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
@@ -330,18 +340,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Use them when they are the right thing: will reduce clutter of passing often un-needed items.</li>
 </ul>
 
-<h3 id="the-sys-library">The <code>Sys</code> library</h3>
+<h3 id="aside-the-sys-library-in-the-set_mainml-code">Aside: The <code>Sys</code> library in the <code>set_main.ml</code> code</h3>
 
 <ul>
   <li>We are using this library to read in the command line args, via <code>Sys.get_argv</code>.</li>
-  <li>We will also take a quick look at its documentation <a href="https://ocaml.org/p/core/latest/doc/Core/Sys/index.html">here</a>
+  <li>The documentation is <a href="https://ocaml.org/p/core/latest/doc/Core/Sys/index.html">here</a>
     <ul>
       <li>Notice how this particular module has no carrier type <code>t</code>, it is just a collection of utility functions.</li>
     </ul>
   </li>
 </ul>
 
-<h3 id="modules-within-modules">Modules within modules</h3>
+<h3 id="aside-modules-within-modules">Aside: Modules within modules</h3>
 
 <ul>
   <li>It is often useful to have modules inside of modules for further code “modularization”</li>
@@ -355,43 +365,42 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>This syntax is also how we can directly define a module in <code>utop</code> without putting it in a file.</li>
   <li>In the remainder of the file you can access the contents of <code>Sub</code> as <code>Sub.blah</code>, and outside of the <code>foo.ml</code> file <code>Foo.Sub.blah</code> will access.</li>
-  <li>Assignment 3 includes some nested modules, this time with more purpose; we will take a look.</li>
 </ul>
 
-<h3 id="disambiguating-types-declared-in-modules">Disambiguating types declared in modules.</h3>
+<h3 id="aside-referencing-and-disambiguating-types-declared-in-modules">Aside: Referencing and disambiguating types declared in modules</h3>
 
-<p>Here are a few ways to make it clear which type is being used.</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">A</span> <span class="o">=</span> <span class="k">struct</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">bool</span> <span class="p">}</span>
+<span class="k">end</span>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Suppose A.t is { x : int ; y : bool } *)</span>
-<span class="c">(* Also suppose B.t is { x : int ; z : float } *)</span>
+<span class="k">let</span> <span class="n">ra</span> <span class="o">=</span> <span class="nn">A</span><span class="p">.{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* Need to write `A.` here to make the type `A.t` visible *)</span>
 
-<span class="k">let</span> <span class="n">r</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* uh oh! It doesn't know label x because the types are inside modules *)</span>
+<span class="k">module</span> <span class="nc">B</span> <span class="o">=</span> <span class="k">struct</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">z</span> <span class="o">:</span> <span class="kt">float</span> <span class="p">}</span>
+<span class="k">end</span>
 
-<span class="k">let</span> <span class="n">r</span> <span class="o">=</span> <span class="nn">A</span><span class="p">.{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* this clears it up: pop open A for a sec *)</span>
+<span class="k">let</span> <span class="n">rb</span> <span class="o">=</span> <span class="nn">B</span><span class="p">.{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">1</span><span class="o">.</span><span class="mi">1</span> <span class="p">}</span>
 </code></pre></div></div>
 
-<p>Now if these modules are both opened, so that their <code>t</code> is put in scope, the most recent will win.</p>
+<ul>
+  <li>Recall that <code>open</code> makes the contents of a module directly available.</li>
+  <li>Now if <code>A</code> and <code>B</code> are both opened, the most recently opened <code>t</code> will win.</li>
+</ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">A</span>
 <span class="k">open</span> <span class="nc">B</span>
 
 <span class="k">let</span> <span class="n">f</span> <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="c">(* type inferred for r is B.t, just like with newratio *)</span>
 
-<span class="c">(* clarify with type annotation (prefered) *)</span>
+<span class="c">(* A type annotation will disambiguate: *)</span>
 <span class="k">let</span> <span class="n">f</span> <span class="p">(</span><span class="n">r</span> <span class="o">:</span> <span class="nn">A</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
-
-<span class="c">(* or with pattern matching *)</span>
-<span class="k">let</span> <span class="n">f</span> <span class="p">{</span> <span class="n">x</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_</span> <span class="p">}</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
-
-<span class="c">(* or namespace annotation (not so prefered here) *)</span>
-<span class="k">let</span> <span class="n">f</span> <span class="nn">A</span><span class="p">.{</span> <span class="n">x</span> <span class="p">;</span> <span class="n">_</span> <span class="p">}</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
 </code></pre></div></div>
 
-<h3 id="deriving-in-modules">@@deriving in modules</h3>
+<h3 id="aside-deriving-in-modules">Aside: @@deriving in modules</h3>
 
 <p><code>@@deriving</code> names things slightly differently when used in a module.</p>
 
-<p>Suppose we made an actual module out of our previous nucleotide example.</p>
+<p>Suppose we made a module out of our previous nucleotide example, either by putting in a file <code>nucleotide.ml</code> or adding <code>module Nucleotide = struct .. end</code> to make a top-loop or nested module:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">=</span> <span class="k">struct</span>
 
@@ -401,8 +410,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">end</span>
 </code></pre></div></div>
 <ul>
-  <li>when this type was called <code>nucleotide</code> not in a module the <code>ppx</code> made a function <code>equal_nucleotide</code></li>
-  <li>Here the <code>ppx</code> is smarter, instead of <code>Nucleotide.equal_t</code> it just makes <code>Nucleotide.equal</code> - <code>t</code> is a special type in the module.</li>
+  <li>When this type was called <code>nucleotide</code> not in a module the <code>ppx</code> made a function <code>equal_nucleotide</code></li>
+  <li>Here the <code>ppx</code> is smarter, instead of <code>Nucleotide.equal_t</code> it just makes <code>Nucleotide.equal</code> - <code>t</code> is a special type in the module</li>
+  <li>Note that <code>[@@deriving ..]</code> declarations in types in the <code>.ml</code> file need to be repeated in the <code>.mli</code> file if the types are not hidden</li>
 </ul>
       
           </section>

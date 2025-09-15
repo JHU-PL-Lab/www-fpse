@@ -27,7 +27,7 @@ Here is `string_set.ml` from that example:
 ```ocaml
 open Core
 
-type t = string list (* the type of a string set is a list of strings *)
+type t = string list (* This is a *type abreviation*: a string set is a list of strings *)
 
 let empty : t = [] (* the one canonical empty set *)
 
@@ -50,11 +50,7 @@ let rec contains (x : string) (s : t) : bool =
     else contains x tl
 ```
 
-This creates a module `String_set` with:
-* a type `t`
-* four values `empty`, `add`, `remove`, and `contains`.
-
-### Using it in `utop`
+### Loading a module into `utop`
 
 Use `dune utop` to fire up the OCaml toploop with the module loaded.
 - Then access the module's contents in `String_set`.
@@ -65,7 +61,7 @@ $ dune utop
 
 ```ocaml
 # String_set.add "hello" String_set.empty ;;
-- : string list = ["hello"]
+- : String_set.t = ["hello"]
 ```
 
 Or open the module with `open String_set` to put everything from inside it into scope:
@@ -73,33 +69,39 @@ Or open the module with `open String_set` to put everything from inside it into 
 ```ocaml
 # open String_set ;;
 # add "hello" empty ;;
-- : string list = ["hello"]
+- : t = ["hello"]
 ```
 
-Here, the fact that we used a `list` is _exposed_ in the type and the value.
-- We made the _type abbreviation_ with `type t = string list`. So `t` is a synonym for `string list`.
-- Naming the type `t` is standard for "the" underlying type in a module.
-- Then, `String_set.t` is read as "string set's type`.
+- Here, the fact that we used a `list` to implement the set is exposed to library users.
+- Naming the type `t` is standard for "the" underlying type in a module (if there is one).
+  - Built-in libraries also use this: for example, `Int.t` is an alias for `int`, etc.
+- Then, `String_set.t` is read as "string set's underlying type`.
 
 ## Hiding details with module types
 
 Modules have _types_, called **module types** or **signatures**.
 - The latter term is used in math, e.g. "a DFA has signature D = (S, Σ, τ, s0, F)"
-
-The type of `String_set` can be written out and put in the `string_set.mli` file.
-- The added "i" is for "interface".
+- In a signature all the types of entities in the module are declared
+- And, types declared in a module are repeated in the signature again (a bit odd, but for a reason)
+- Module types are also placed in files, just put an `i` on the end
+  - So for example the module type of `String_set` is in the `string_set.mli` file.
+- Here are the contents of that file:
 
 ```ocaml
-type t (* Declare a type t, but don't define it, so the type is hidden to all users *)
+type t = string list (* Type declarations are by default copied from .ml to .mli file *)
+(* type t (* this alternate version of type t declaration *hides* t's internals *) *)
 val empty : t
 val add : string -> t -> t
 val remove : string -> t -> t
 val contains : string -> t -> bool
 ```
 
-The type `t` has been made abstract. We did not write `type t = string list`.
+* See how we repeat the `type t =` alias declaration in this `.mli` file
+* But, there is an alterative way to write that declaration: remove `= string list`
+  - comment the first line and uncomment the second to get that version
+* By doing this, the type `t` has been made *abstract*: users no longer can see `t` is a list
 
-Now in `utop`:
+Now if we save that change and type `dune utop`:
 
 ```ocaml
 # String_set.add "hello" String_set.empty ;;
@@ -121,13 +123,14 @@ Why do this?
 Further, anything define in the `.ml` that is not declared in the `.mli` is not accessible to users.
 - It's like those types/values are `private`.
 - If there is nothing to hide, then you don't need an `.mli` file at all. The type of the module will be inferred.
-- All assignments come with an `.mli` file so you get used to the format, and they serve as documentation, which is always good!
+- All assignments come with an `.mli` file so you get used to the format
+   - Also the documentation specifying what a function does should go in the `.mli` file by convention
+   - We have followed that pattern for Assignment 3
 
 ## Building modules
 
-We use `dune` to build our code in this class.
-
-To make a library module from the `string_set.ml` file, we use this `dune`.
+Recall that `dune` files are like `Makefile`s for OCaml
+To make a library module from the `string_set.ml` file, we include this in the `dune` file:
 
 ```scheme
 ; in file `src/dune`
@@ -138,17 +141,14 @@ To make a library module from the `string_set.ml` file, we use this `dune`.
 )
 ```
 
-See [set-example.zip](../examples/set-example.zip) for the full code.
-
 ## Writing executables
 
-So far, we have only made libraries. Now, we'll write a small OCaml executable.
+Let's make an actual executable program to do something, not just a library.
 
-We will write the executable in `set_main.ml`, which takes a string and a file name and looks for that line in the file.
-
-Executables work by running all statements in the file from top to bottom. Any side effects are the "outputs" of the executable.
-
-Typically, the main work in an executable is put under a `let () = ...` statement. The `...` evaluates to `() : unit`, and the side effects it performs are what we see.
+* The file `set_main.ml` is our example, it takes a string and a file name and looks for that line in the file.
+* Executables work by running all statements in the file from top to bottom. Any side effects are the "outputs" of the executable.
+* Note that pure functional programs are useless as executables, input and output is a side effect and we need it to write applications.
+* Typically, the main work in an executable is put under a `let () = ...` statement. The `...` evaluates to `() : unit`, and the side effects it performs are what we see.
 
 ```ocaml
 (* Just a helper function. Does not run until it's given arguments in `let () = ...` *)
@@ -171,7 +171,7 @@ let () =
 
 ### Building executables
 
-To build an executable, the `dune` file has a stanza for an `executable` instead of a `library`:
+To build our executable, the `dune` file has a stanza for an `executable`:
 
 ```scheme
 ; in file `src/dune`
@@ -187,12 +187,10 @@ This makes an executable out of the `set_main.ml` file.
 ### Running executables
 
 * If you declared an executable in `dune` as above, it will make a file `set_main.exe`
-* To run it, you can do `dune exec -- ./src/set_main.exe "open Core" src/simple_set.ml`
-* Which is really just `_build/default/src/set_main.exe "open Core" src/simple_set.ml` after building
+* To run it, you can do `dune exec -- ./src/set_main.exe "open Core" src/string_set.ml`
+* Which is really just `_build/default/src/set_main.exe "open Core" src/string_set.ml` after building
 
-## More examples
-
-### The `Stdio.In_channel` library
+### Aside: the `Stdio.In_channel` library used in this executable
 
 * `set_main.ml` uses the `In_channel` module to read in file contents
   - (Note that I/O is a **side effect**, I/O functions do things besides the value returned)
@@ -201,19 +199,19 @@ This makes an executable out of the `set_main.ml` file.
   - First, now that we covered abstract types we can see there is an abstract type `t` here
   - As with our own set, it is "the underlying data" for the module, in this case file handles
   - It is hidden though so we don't get access to the details of how "files are handled"
-  - If you are used to object-oriented programming you are looking for a constructor/new; in functional code look for functions that only return a `t`, that is making a new `t`: `create` here.
+  - In Visual Studio hover over a function definition to get the docs
 
-### Optional arguments tangent
+### Aside: Optional arguments
 
 * One topic we skipped over which is in many of these libraries is **optional arguments**
 * They are named arguments but you don't need to give them, indicated by a `?` before the name.
-* If  you *do* give them, they are like named aguments, use `~name:` syntax
-* e.g. in `In_channel.create`, `val create : ?⁠binary:Base.bool -> Base.string -> t`
-  - an optional flag `~binary:true` could be passed to make a binary file handle
-  - example usage: `In_channel.create ~binary:false "/tmp/wowfile"`
-* Many languages now support optional arguments (not so 10 years ago - newer feature)
+* If you *do* give them, they are like named aguments, use `~name:` syntax
+* e.g. in `In_channel.read_lines`, `?fix_win_eol` is an optional boolean argument
+  - To use it just add `~fix_win_eol: true` (since its optional and we want the default false we left it off)
+  - If you write a function with an optional argument it will show up to you as an `option`-typed object: `Some` (given) or `None` (not given).
+* Many languages now support optional arguments
 
-Writing your own functions with optional arguments is easy: the value passed in is an `option` type
+Example of writing a function with an optional argument:
 
 ```ocaml
 # let f ?x y = match x with Some z -> z + y | None -> y;;
@@ -226,14 +224,14 @@ val f : ?x:int -> int -> int = <fun>
 
 * Use them when they are the right thing: will reduce clutter of passing often un-needed items.
 
-### The `Sys` library
+### Aside: The `Sys` library in the `set_main.ml` code
 
 * We are using this library to read in the command line args, via `Sys.get_argv`.
-* We will also take a quick look at its documentation [here](https://ocaml.org/p/core/latest/doc/Core/Sys/index.html)
+* The documentation is [here](https://ocaml.org/p/core/latest/doc/Core/Sys/index.html)
   - Notice how this particular module has no carrier type `t`, it is just a collection of utility functions.
 
 
-### Modules within modules
+### Aside: Modules within modules
 
 * It is often useful to have modules inside of modules for further code "modularization"
 * The way it is declared is in e.g. `foo.ml` (which itself defines the items for module `Foo` using the above convention), add
@@ -246,22 +244,26 @@ val f : ?x:int -> int -> int = <fun>
   where the `...` are the same kinds of declarations that are in files like `foo.ml`.
 * This syntax is also how we can directly define a module in `utop` without putting it in a file.
 * In the remainder of the file you can access the contents of `Sub` as `Sub.blah`, and outside of the `foo.ml` file `Foo.Sub.blah` will access.
-* Assignment 3 includes some nested modules, this time with more purpose; we will take a look.
 
-### Disambiguating types declared in modules.
+### Aside: Referencing and disambiguating types declared in modules
 
-Here are a few ways to make it clear which type is being used.
 
 ```ocaml
-(* Suppose A.t is { x : int ; y : bool } *)
-(* Also suppose B.t is { x : int ; z : float } *)
+module A = struct
+type t = { x : int ; y : bool }
+end
 
-let r = { x = 0 ; y = true } (* uh oh! It doesn't know label x because the types are inside modules *)
+let ra = A.{ x = 0 ; y = true } (* Need to write `A.` here to make the type `A.t` visible *)
 
-let r = A.{ x = 0 ; y = true } (* this clears it up: pop open A for a sec *)
+module B = struct
+type t = { x : int ; z : float }
+end
+
+let rb = B.{ x = 0 ; z = 1.1 }
 ```
 
-Now if these modules are both opened, so that their `t` is put in scope, the most recent will win.
+* Recall that `open` makes the contents of a module directly available.
+* Now if `A` and `B` are both opened, the most recently opened `t` will win.
 
 ```ocaml
 open A
@@ -269,21 +271,15 @@ open B
 
 let f r = r.x (* type inferred for r is B.t, just like with newratio *)
 
-(* clarify with type annotation (prefered) *)
+(* A type annotation will disambiguate: *)
 let f (r : A.t) : int = r.x
-
-(* or with pattern matching *)
-let f { x ; y = _ } = r.x
-
-(* or namespace annotation (not so prefered here) *)
-let f A.{ x ; _ } = r.x
 ```
 
-### @@deriving in modules
+### Aside: @@deriving in modules
 
 `@@deriving` names things slightly differently when used in a module.
 
-Suppose we made an actual module out of our previous nucleotide example.
+Suppose we made a module out of our previous nucleotide example, either by putting in a file `nucleotide.ml` or adding `module Nucleotide = struct .. end` to make a top-loop or nested module:
 
 ```ocaml
 module Nucleotide = struct
@@ -293,5 +289,6 @@ type t = A | C | G | T [@@deriving equal]
 let hamming_distance l = failwith "dummy"
 end
 ```
-* when this type was called `nucleotide` not in a module the `ppx` made a function `equal_nucleotide`
-* Here the `ppx` is smarter, instead of `Nucleotide.equal_t` it just makes `Nucleotide.equal` - `t` is a special type in the module.
+* When this type was called `nucleotide` not in a module the `ppx` made a function `equal_nucleotide`
+* Here the `ppx` is smarter, instead of `Nucleotide.equal_t` it just makes `Nucleotide.equal` - `t` is a special type in the module
+* Note that `[@@deriving ..]` declarations in types in the `.ml` file need to be repeated in the `.mli` file if the types are not hidden

@@ -68,7 +68,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <link rel="stylesheet" href="/fpse/css/friendly.css" />
 <meta charset="utf-8" />
-    <h1 id="ocaml-style-guide-for-functional-programming-in-software-engineering">OCaml Style Guide for Functional Programming in Software Engineering</h1>
+    <h1 id="ocaml-style-guide-for-fpse">OCaml Style Guide for FPSE</h1>
 
 <p>Author: Kelvin Qian with updates by Scott Smith</p>
 
@@ -120,7 +120,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <span class="o">|</span> <span class="nc">Ok</span> <span class="n">z</span> <span class="o">-&gt;</span>
    <span class="k">match</span> <span class="n">z</span> <span class="k">with</span>
    <span class="o">|</span> <span class="nc">Some</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
-   <span class="o">|</span> <span class="nc">Non</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
+   <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
  <span class="o">|</span> <span class="nc">Error</span> <span class="n">msg</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
 </code></pre></div>    </div>
   </li>
@@ -230,7 +230,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <p>Many people think that documentation = comments, but that is not necessarily true.  We already mentioned the “give descriptive names” guideline as one example.  Another example is using type annotations like <code>(x : int)</code> for function arguments and return types (which has the bonus benefit of helping the compiler perform type inference).  Good variable names and type annotations can be just as descriptive as comments to someone familiar with OCaml.</p>
   </li>
   <li>
-    <p>A key place to put comments is the <code>.mli</code> file, where functions and other parts of the module signature are described.  You can also put comments in the <code>.ml</code> file, but putting most of your documentation in the interface allows for comments to focus on <em>what</em> something is doing or <em>why</em> it exists, rather than <em>how</em> it works; it also serves as API documentation if you choose to release your library to the wider world.</p>
+    <p>The key place to put comments is the <code>.mli</code> file, where functions and types of the module signature are described.  You can also put comments in the <code>.ml</code> file, but putting most of your documentation in the interface allows for comments to focus on <em>what</em> something is doing or <em>why</em> it exists, rather than <em>how</em> it works; it also serves as API documentation if you choose to release your library to the wider world.</p>
   </li>
   <li>
     <p>Both of the previous points hint at how over-documentation is a thing.  Over-documentation clutters the code and can make it unreadable.  For example, you should not spam the body of your functions with comments describing every little thing it does; instead, the bulk of the explaining should be done by the code.  That said, do put comments if the code isn’t clear enough, or if there’s unusual behavior, weird edge cases, interesting algorithms, etc. in your functions, but make sure to do so judiciously.</p>
@@ -249,11 +249,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>
     <p>Use the power of pattern matching in <code>let</code>, for tuples and records, e.g. <code>let x, y = tuple_fn 0 in ...</code>, and in function definitions, <code>let get_numerator {num, denom} = num</code></p>
   </li>
-  <li>
-    <p>Use <code>@@</code> or <code>begin ... end</code> syntax to avoid too many parentheses.</p>
+  <li>Use <code>@@</code> or <code>begin ... end</code> syntax to avoid too many parentheses.  The latter is just “big parentheses”, e.g.
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="mi">70</span> <span class="o">*</span>
+   <span class="k">begin</span> 
+     <span class="nn">Int</span><span class="p">.</span><span class="n">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">44</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">2</span>
+   <span class="k">end</span>
+</code></pre></div>    </div>
+    <ul>
+      <li>This is useful when there is a large code block in an expression</li>
+    </ul>
   </li>
   <li>
-    <p><code>match ... with ...</code> is not the only pattern matching syntax around; you can perform destructuring using <code>let</code> bindings if there’s only one case to match. <code>let</code> destructuring is often more concise than using <code>match ... with ...</code>.  For anonymous functions you can also directly pattern match in what was the argument position if you use the <code>function</code> keyword: <code>function [] -&gt; [] | x :: xs -&gt; xs</code>.</p>
+    <p>For anonymous functions you can also directly pattern match in what was the argument position if you use the <code>function</code> keyword: <code>let tl = function [] -&gt; [] | x :: xs -&gt; xs</code>.</p>
   </li>
   <li>
     <p>Use <code>|&gt;</code> <strong>very</strong> liberally, since it makes a “pipeline” of function operations which is much easier to intuitively understand.</p>
@@ -264,9 +271,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>
     <p>Take advantage of label punning.  For labeled arguments, <code>my_fun ~compare x y</code> is more concise than <code>my_fun ~compare:compare x y</code>.  For record labels, <code>let {num, denom} = rational</code> is a more concise version of <code>let {num=num, denom=denom} = rational</code>.</p>
   </li>
-  <li>
-    <p>If you have large records, use the <code>with</code> keyword if you only need to update a few values.</p>
-  </li>
+  <li>If you have large records, use the <code>with</code> keyword if you only need to update a few values.</li>
 </ol>
       
           </section>

@@ -1,4 +1,4 @@
-# OCaml Style Guide for Functional Programming in Software Engineering
+# OCaml Style Guide for FPSE
 
 Author: Kelvin Qian with updates by Scott Smith
 
@@ -43,7 +43,7 @@ This document would not have been made possible without input of the original FP
     | Ok z ->
       match z with
       | Some y -> (* ... *)
-      | Non -> (* ... *)
+      | None -> (* ... *)
     | Error msg -> (* ... *)
     ```
 
@@ -138,7 +138,7 @@ One thing to point out is that it's bad form to over-indent. These tools should 
 
 1. Many people think that documentation = comments, but that is not necessarily true.  We already mentioned the "give descriptive names" guideline as one example.  Another example is using type annotations like `(x : int)` for function arguments and return types (which has the bonus benefit of helping the compiler perform type inference).  Good variable names and type annotations can be just as descriptive as comments to someone familiar with OCaml.
 
-2. A key place to put comments is the `.mli` file, where functions and other parts of the module signature are described.  You can also put comments in the `.ml` file, but putting most of your documentation in the interface allows for comments to focus on _what_ something is doing or _why_ it exists, rather than _how_ it works; it also serves as API documentation if you choose to release your library to the wider world.
+2. The key place to put comments is the `.mli` file, where functions and types of the module signature are described.  You can also put comments in the `.ml` file, but putting most of your documentation in the interface allows for comments to focus on _what_ something is doing or _why_ it exists, rather than _how_ it works; it also serves as API documentation if you choose to release your library to the wider world.
 
 3. Both of the previous points hint at how over-documentation is a thing.  Over-documentation clutters the code and can make it unreadable.  For example, you should not spam the body of your functions with comments describing every little thing it does; instead, the bulk of the explaining should be done by the code.  That said, do put comments if the code isn't clear enough, or if there's unusual behavior, weird edge cases, interesting algorithms, etc. in your functions, but make sure to do so judiciously.
 
@@ -150,9 +150,16 @@ One thing to point out is that it's bad form to over-indent. These tools should 
 
 1. Use the power of pattern matching in `let`, for tuples and records, e.g. `let x, y = tuple_fn 0 in ...`, and in function definitions, `let get_numerator {num, denom} = num`
 
-2. Use `@@` or `begin ... end` syntax to avoid too many parentheses.
+2. Use `@@` or `begin ... end` syntax to avoid too many parentheses.  The latter is just "big parentheses", e.g.
+    ```ocaml
+    70 *
+      begin 
+        Int.abs(-44) + 1 * 2
+      end
+    ```
+    - This is useful when there is a large code block in an expression
 
-3. `match ... with ...` is not the only pattern matching syntax around; you can perform destructuring using `let` bindings if there's only one case to match. `let` destructuring is often more concise than using `match ... with ...`.  For anonymous functions you can also directly pattern match in what was the argument position if you use the `function` keyword: `function [] -> [] | x :: xs -> xs`.
+3. For anonymous functions you can also directly pattern match in what was the argument position if you use the `function` keyword: `let tl = function [] -> [] | x :: xs -> xs`.
 
 4. Use `|>` **very** liberally, since it makes a "pipeline" of function operations which is much easier to intuitively understand.
 
