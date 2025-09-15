@@ -1,30 +1,24 @@
 # Modules Basics
 
-We've already _used_ modules without thinking too much about them: `List.map`, `Float.(2 = 3)`, `Fn.id` -- all these come from modules in the `Core` library.
+We've been using modules without thinking too much about them: `List.map`, `Float.(2 = 3)`, `Fn.id` -- these are uses of modules `List`, `Float`, and `Fn` that are in the `Core` library.
 
-Now it's time to look under the hood:
-* What are modules in OCaml?
-* How do files become modules?
-* How can we hide details with signatures (`.mli` files)?
-* How do we work with modules in the toploop?
-* How do nested modules work?
-
-In future lectures, we'll learn about more advanced features like functions on modules. But first, the basics.
+Now we will look at how to define our own modules to make our own libraries and code components.
 
 ## What is a module?
 
-A module is a _collection_ of OCaml definitions:
+A module is a collection of OCaml definitions:
+* `let`-defined entities, i.e. functions and values
 * types
-* values (including functions, which are values)
 * other modules
 
-Modules are a _bit_ like records, but they can hold many different kinds of things, not just values. However, modules are not first class values like records -- for example, they can't directly be passed as arguments to functions.
+* Modules are something like records, but they can also hold e.g. types which makes them much more powerful.
+* But, modules are not first class values like records -- for example, they can't directly be passed as arguments to functions.
 
 ## `.ml` files are modules
 
 OCaml has a simple rule:
 * The contents of a file `foo.ml` define the module `Foo`.
-  - Capitalize the first letter (only) and drop the `.ml`.
+* Capitalize the first letter (only) and drop the `.ml` to turn a file name into its module name.
 
 In this lecture, we'll work with a running example. See [set-example.zip](../examples/set-example.zip) for the full code.
 

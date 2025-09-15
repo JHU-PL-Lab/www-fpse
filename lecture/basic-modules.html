@@ -70,39 +70,29 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h1 id="modules-basics">Modules Basics</h1>
 
-<p>We’ve already <em>used</em> modules without thinking too much about them: <code>List.map</code>, <code>Float.(2 = 3)</code>, <code>Fn.id</code> – all these come from modules in the <code>Core</code> library.</p>
+<p>We’ve been using modules without thinking too much about them: <code>List.map</code>, <code>Float.(2 = 3)</code>, <code>Fn.id</code> – these are uses of modules <code>List</code>, <code>Float</code>, and <code>Fn</code> that are in the <code>Core</code> library.</p>
 
-<p>Now it’s time to look under the hood:</p>
-<ul>
-  <li>What are modules in OCaml?</li>
-  <li>How do files become modules?</li>
-  <li>How can we hide details with signatures (<code>.mli</code> files)?</li>
-  <li>How do we work with modules in the toploop?</li>
-  <li>How do nested modules work?</li>
-</ul>
-
-<p>In future lectures, we’ll learn about more advanced features like functions on modules. But first, the basics.</p>
+<p>Now we will look at how to define our own modules to make our own libraries and code components.</p>
 
 <h2 id="what-is-a-module">What is a module?</h2>
 
-<p>A module is a <em>collection</em> of OCaml definitions:</p>
+<p>A module is a collection of OCaml definitions:</p>
 <ul>
+  <li><code>let</code>-defined entities, i.e. functions and values</li>
   <li>types</li>
-  <li>values (including functions, which are values)</li>
-  <li>other modules</li>
+  <li>
+    <p>other modules</p>
+  </li>
+  <li>Modules are something like records, but they can also hold e.g. types which makes them much more powerful.</li>
+  <li>But, modules are not first class values like records – for example, they can’t directly be passed as arguments to functions.</li>
 </ul>
-
-<p>Modules are a <em>bit</em> like records, but they can hold many different kinds of things, not just values. However, modules are not first class values like records – for example, they can’t directly be passed as arguments to functions.</p>
 
 <h2 id="ml-files-are-modules"><code>.ml</code> files are modules</h2>
 
 <p>OCaml has a simple rule:</p>
 <ul>
-  <li>The contents of a file <code>foo.ml</code> define the module <code>Foo</code>.
-    <ul>
-      <li>Capitalize the first letter (only) and drop the <code>.ml</code>.</li>
-    </ul>
-  </li>
+  <li>The contents of a file <code>foo.ml</code> define the module <code>Foo</code>.</li>
+  <li>Capitalize the first letter (only) and drop the <code>.ml</code> to turn a file name into its module name.</li>
 </ul>
 
 <p>In this lecture, we’ll work with a running example. See <a href="../examples/set-example.zip">set-example.zip</a> for the full code.</p>
