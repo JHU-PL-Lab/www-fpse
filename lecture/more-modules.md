@@ -80,13 +80,13 @@ We can take this similarity even further. Just like we have functions on values,
 ## Functors
 
 * Functors are parametric modules, i.e. functions from modules to modules
-* They let us define a generic code library to which we can plug in some concrete code
-    - in other words, just like what higher-order functions do except for modules
+* They let us define a generic code library to which we can plug in some concrete code later
+    <!-- - in other words, just like what higher-order functions do except for modules
     - the main advantage is we get to include *types* as parameters since modules have types in them: very powerful!!
-      * When we say "very powerful", we mean it! Don't overlook this!
-* You only want to use a functor when there could be multiple modules to plug in.
+      * When we say "very powerful", we mean it! Don't overlook this! -->
+<!-- * You want to use a functor when there could be multiple modules to plug in.
   - Example A: if you just want to write code depending on our `String_set` module, use put `(libraries string_set)` in the `dune` file and use it. 
-  - Example B: on the other hand if you want to be able to "plug in" which implementation of sets you use, make a functor where the set module is a parameter.
+  - Example B: on the other hand if you want to be able to "plug in" which implementation of sets you use, make a functor where the set module is a parameter. -->
 
 ### Simple example
 
@@ -153,7 +153,7 @@ let make_set (m : eq) = ... (* like `module Make_set (M : EQ) = struct ... end` 
 
 * Pass a module to a functor to make a new module
 * In other words, just like function application but on modules
-  - The syntax is annoying that we need parentheses around all functor arguments, but we should still use spaces between arguments.
+  - The syntax is annoying that we need parentheses around all functor arguments
 * Top loop example:
 
 ```ocaml
@@ -169,7 +169,7 @@ module Int_set :
 ```
 
 * Note that we passed in a `Int` module where the parameter had the `EQ` module type - why did this work?
-* Answer: `Int.t` is the underlying type of the string, and `Int.equal` exists as an equality operation on strings, so `Int` matches the `EQ` module type
+* Answer: `Int.t` is just `int`, and `Int.equal` exists as an equality operation on ints, so `Int` matches the `EQ` module type
    - (`utop` command `#show_module Int` will dump the full module if you want to verify `t` and `equal` are there)
 * Note `Int` also has a whole **ton** of other functions, types, etc
   - but like with subclasses or Java interfaces you match a `sig` if you have "at least" the stuff needed.
@@ -197,9 +197,9 @@ ALARM!
 module Int3 : sig type t = int val equal : t -> t -> bool end
 ```
 
-### Instantiating functors with our own custom type
+### Using functors with our own custom type
 
-Here is how we could instantiate the `Make_set` functor with our own data type. We'll do it on nucleotides in the top loop.
+Here is how we could apply the `Make_set` functor with our own data type. We'll do it on nucleotides in the top loop.
 
 ```ocaml
 # #require "ppx_jane";;
@@ -251,19 +251,17 @@ end
 ```
 
 * Observe the type is generally `functor (M : MODULE_TYPE) -> sig ... end`
+  * The `functor` keyword is not needed. It can be left off.
 * Notice how the argument module `M` occurs in the result type!
   - Such a type is called a *dependent type*: the type of the result depends on the value of the argument.
 * Functor types are module types. Just like function types are regular types.
-  - Writing `type f = t1 -> t2` is similar to writing `module type F = functor (X : S1) -> S2`
+  - Writing `type f = t1 -> t2` is similar to writing `module type F = (X : S1) -> S2`
   - Function types are types; functor types are module types.
 
 ### Type Hiding
 
 * In the above functor we were exposing the underlying implementation of the set, which used a list.
 * But, we can again do the same hiding trick we did in the `.mli` file etc: leave that off the type.
-* Observe now that we have `type t` whereas in the original simple set we had `'a t`
-   - it's not a parametric type any more, the type parameter is in the module passed in
-   - so after applying the functor that type is "baked in" to the resulting module.
 
 ```ocaml
 module type MAKE_SET_HIDDEN = functor (M : EQ) -> sig
@@ -303,11 +301,11 @@ module Int_set_hidden = Make_set_hidden (Int)
 module FloatMap = Map.Make (Float) (* Or Char/Int/String/Bool/etc. Anything that is comparable and serializable *)
 
 (* Alias the empty map -- maps are functional, so there is one canonical empty map *)
-let mm : 'a Floatmap.t = FloatMap.empty
+let mm : 'a FloatMap.t = FloatMap.empty
 
 (* Use the Map module to work with all maps. *)
-let mm' : int Floatmap.t = Map.add_exn mm ~key:0.4 ~data:5
-(* int Floatmap.t is equivalent to 
+let mm' : int FloatMap.t = Map.add_exn mm ~key:0.4 ~data:5
+(* int FloatMap.t is equivalent to 
 
     val mm' : (float, int, FloatMap.Key.comparator_witness) Map.t
 
