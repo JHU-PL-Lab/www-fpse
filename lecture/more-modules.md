@@ -187,7 +187,7 @@ module Int2 : EQ
 - Note that `Int2` is restricted to *only* have `t`/`equal` with this declaration.
   - Everything else has been chopped off.
 
-ALARM!
+<!-- ALARM!
 - The type `t` in `EQ` is abstract. This means the type in `Int2` is now abstract; it is not observably equivalent to `int`.
 - This is a slightly complex issue. We'll address it later in detail.
 - But for the curious, here is a way we could make sure the type is still observably `int`.
@@ -195,7 +195,8 @@ ALARM!
 ```ocaml
 # module Int3 : (EQ with type t = int) = Int;;
 module Int3 : sig type t = int val equal : t -> t -> bool end
-```
+``` 
+-->
 
 ### Using functors with our own custom type
 
