@@ -237,7 +237,7 @@ val f : ?x:int -> int -> int = <fun>
 * The way it is declared is in e.g. `foo.ml` (which itself defines the items for module `Foo` using the above convention), add
   ```ocaml
   module Sub = struct 
-   let blah = ...
+    let blah = ...
    ...
   end
   ```
@@ -250,13 +250,13 @@ val f : ?x:int -> int -> int = <fun>
 
 ```ocaml
 module A = struct
-type t = { x : int ; y : bool }
+  type t = { x : int ; y : bool }
 end
 
 let ra = A.{ x = 0 ; y = true } (* Need to write `A.` here to make the type `A.t` visible *)
 
 module B = struct
-type t = { x : int ; z : float }
+  type t = { x : int ; z : float }
 end
 
 let rb = B.{ x = 0 ; z = 1.1 }
@@ -283,10 +283,9 @@ Suppose we made a module out of our previous nucleotide example, either by putti
 
 ```ocaml
 module Nucleotide = struct
+  type t = A | C | G | T [@@deriving equal]
 
-type t = A | C | G | T [@@deriving equal]
-
-let hamming_distance l = failwith "dummy"
+  let hamming_distance l = failwith "dummy"
 end
 ```
 * When this type was called `nucleotide` not in a module the `ppx` made a function `equal_nucleotide`
