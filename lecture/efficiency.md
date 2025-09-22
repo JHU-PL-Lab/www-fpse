@@ -10,23 +10,23 @@
 * Assume a grid of n elements (a square-root n by square-root n grid)
 
 
-Our initial implementation  [using a list of strings](https://pl.cs.jhu.edu/fpse/examples/minesweeper.ml)
+Our initial implementation  [using a list of strings](https://pl.cs.jhu.edu/fpse/examples/random-examples/minesweeper.ml)
 * Each call to `get x y` is O(sqrt n) since we need to march down the lists to find element (x,y)
 * So O(sqrt n) for each inc operation so O(n * sqrt n) overall.
 
-Our implementation  [using a functional 2D array](https://pl.cs.jhu.edu/fpse/examples/mine_array.ml)
+Our implementation  [using a functional 2D array](https://pl.cs.jhu.edu/fpse/examples/random-examples/mine_array.ml)
 * The array is in fact never mutated, only used for random access to fixed array
 * Otherwise this implementation is the same as the above
 * `get x y` is now O(1) since it is an array -- random access.
 * O(1) for each inc operation so O(n) in total.
 
-Stateful version [using an array](https://pl.cs.jhu.edu/fpse/examples/mine_mutate.ml)
+Stateful version [using an array](https://pl.cs.jhu.edu/fpse/examples/random-examples/mine_mutate.ml)
 * Instead of counting mines around each empty square once and for all, for each mine increment all its non-mine neighbors
 * It is a fundamentally mutating alternative algorithm.
 * O(n) as with the previous functional array version
 
 Monadic state version 
-* A  [state monad version of the original minesweeper](https://pl.cs.jhu.edu/fpse/examples/mine_monadic.ml)
+* A  [state monad version of the original minesweeper](https://pl.cs.jhu.edu/fpse/examples/random-examples/mine_monadic.ml)
 * We will follow the data structure of the original minesweeper, the list of strings
 * But do the imperative increment-the-mine-neighbors instead of the functional count-the-mines
 * Each grid square increment will take O(n) since the whole list of strings has to be rebuilt with one change

@@ -144,9 +144,9 @@ Summary: functional data structures
 * Here are example codebases we will spend some time inspecting and critiqueing.
 
   * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io 
-    - [This functional implementation](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c) shows several nice OCaml patterns. [Here](../examples/minesweeper.ml) is the version we reviewed in class which has several variations on the original implementation.
-    - We made a [variation on the functional version](../examples/mine_array.ml) to be cleaner and more efficient
-    - Will look at an [imperative approach](../examples/mine_mutate.ml) which has some really poor abstractions and fails to use combinators.
+    - [This functional implementation](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c) shows several nice OCaml patterns. [Here](../examples/random-examples/minesweeper.ml) is the version we reviewed in class which has several variations on the original implementation.
+    - We made a [variation on the functional version](../examples/random-examples/mine_array.ml) to be cleaner and more efficient
+    - Will look at an [imperative approach](../examples/random-examples/mine_mutate.ml) which has some really poor abstractions and fails to use combinators.
   * [ocaml-cuid](https://github.com/marcoonroad/ocaml-cuid) is a utility to generate highly random string IDs for webpages etc.
      - Lots of nice piping here plus use of functors to build Unix and JavaScript variations
   * [dolog](https://github.com/UnixJunkie/dolog) is a very simple logging utility

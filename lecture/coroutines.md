@@ -194,7 +194,7 @@ state p;; (* now a Return "hello" *)
 
 * So far we have only shown promises, not general coroutines
 * For coroutines we need to call `Lwt_main.run` which works best in a standalone executable
-* See [lwteg.zip](../examples/lwteg.zip) for a zipfile of the examples below (most from Lwt manual)
+* See [lwteg.zip](../examples/random-examples/lwteg.zip) for a zipfile of the examples below (most from Lwt manual)
 * Note you can also invoke `Lwt_main.run` in the top loop but it could run forever
 
 ### A simple Example

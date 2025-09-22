@@ -483,7 +483,7 @@ We will check how well my tests of the [simple set example](../examples/set-exam
   2. Shrinkers, `Quickcheck.Shrinker` - if a failing case is discovered, try to make it smaller (we will not cover these in detail)
   3. Runner, `Quickcheck.test` etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.
 
-* We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](../examples/quickcheck_examples.ml)
+* We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](../examples/random-examples/quickcheck_examples.ml)
 
 * [Base_quickcheck docs](https://ocaml.org/p/base_quickcheck/v0.15.0/doc/Base_quickcheck/index.html)
 * The [Real World OCaml](https://dev.realworldocaml.org/testing.html#property-testing-with-quickcheck) book has a short tutorial (note it uses `ppx_inline_tests` and not `OUnit2`)

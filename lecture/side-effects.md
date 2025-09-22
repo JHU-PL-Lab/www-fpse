@@ -485,7 +485,7 @@ val s : '_weak3 t = <abstr> (* Stack.t is the underlying implementation and is h
 ### Summing Up Effects With an Example: A Parentheses Matching Function
 
 * To show how to use effects and some of the trade-offs, we look at a small example
-* See file [matching.ml](../examples/matching.ml) which has several versions of a simple parenthesis matching function
+* See file [matching.ml](../examples/random-examples/matching.ml) which has several versions of a simple parenthesis matching function
 * It shows uses of `Stack`, and some trade-offs of using exceptions vs option type.
 * Lastly there is a pure functional version which is arguably simpler
  - Yes, you **don't** need that mutation!

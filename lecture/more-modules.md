@@ -416,9 +416,9 @@ type 'a intpairmaptree =
   ```
 
 ### A Small Example Using Core.Map
-* We will go over the code of [school.ml](../examples/school.ml), simple code that uses a `Core.Map`.
+* We will go over the code of [school.ml](../examples/random-examples/school.ml), simple code that uses a `Core.Map`.
 * Note that there is an alternative to `Map.Make` using advanced features we will cover in detail later: *first-class modules*.
-  - We will briefly look at [cool_school.ml](../examples/cool_school.ml) which re-writes the `school.ml` example to use first-class modules
+  - We will briefly look at [cool_school.ml](../examples/random-examples/cool_school.ml) which re-writes the `school.ml` example to use first-class modules
   - The advantage of this code is you don't need to make a new module for every type you use it at
   - Also avoids the `Map.add` vs `IntMap.empty` issue of two different interfaces to use same map.
 
