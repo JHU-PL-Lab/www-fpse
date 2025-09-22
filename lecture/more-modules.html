@@ -157,20 +157,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Functors are parametric modules, i.e. functions from modules to modules</li>
-  <li>They let us define a generic code library to which we can plug in some concrete code
+  <li>They let us define a generic code library to which we can plug in some concrete code later<br />
+  &lt;!– - in other words, just like what higher-order functions do except for modules
     <ul>
-      <li>in other words, just like what higher-order functions do except for modules</li>
       <li>the main advantage is we get to include <em>types</em> as parameters since modules have types in them: very powerful!!
         <ul>
-          <li>When we say “very powerful”, we mean it! Don’t overlook this!</li>
+          <li>When we say “very powerful”, we mean it! Don’t overlook this! –&gt;<br />
+&lt;!– * You want to use a functor when there could be multiple modules to plug in.</li>
         </ul>
       </li>
-    </ul>
-  </li>
-  <li>You only want to use a functor when there could be multiple modules to plug in.
-    <ul>
       <li>Example A: if you just want to write code depending on our <code>String_set</code> module, use put <code>(libraries string_set)</code> in the <code>dune</code> file and use it.</li>
-      <li>Example B: on the other hand if you want to be able to “plug in” which implementation of sets you use, make a functor where the set module is a parameter.</li>
+      <li>Example B: on the other hand if you want to be able to “plug in” which implementation of sets you use, make a functor where the set module is a parameter. –&gt;</li>
     </ul>
   </li>
 </ul>
@@ -248,7 +245,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Pass a module to a functor to make a new module</li>
   <li>In other words, just like function application but on modules
     <ul>
-      <li>The syntax is annoying that we need parentheses around all functor arguments, but we should still use spaces between arguments.</li>
+      <li>The syntax is annoying that we need parentheses around all functor arguments</li>
     </ul>
   </li>
   <li>Top loop example:</li>
@@ -267,7 +264,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Note that we passed in a <code>Int</code> module where the parameter had the <code>EQ</code> module type - why did this work?</li>
-  <li>Answer: <code>Int.t</code> is the underlying type of the string, and <code>Int.equal</code> exists as an equality operation on strings, so <code>Int</code> matches the <code>EQ</code> module type
+  <li>Answer: <code>Int.t</code> is just <code>int</code>, and <code>Int.equal</code> exists as an equality operation on ints, so <code>Int</code> matches the <code>EQ</code> module type
     <ul>
       <li>(<code>utop</code> command <code>#show_module Int</code> will dump the full module if you want to verify <code>t</code> and <code>equal</code> are there)</li>
     </ul>
@@ -296,20 +293,20 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<p>ALARM!</p>
-<ul>
-  <li>The type <code>t</code> in <code>EQ</code> is abstract. This means the type in <code>Int2</code> is now abstract; it is not observably equivalent to <code>int</code>.</li>
-  <li>This is a slightly complex issue. We’ll address it later in detail.</li>
-  <li>But for the curious, here is a way we could make sure the type is still observably <code>int</code>.</li>
-</ul>
+<!-- ALARM!
+- The type `t` in `EQ` is abstract. This means the type in `Int2` is now abstract; it is not observably equivalent to `int`.
+- This is a slightly complex issue. We'll address it later in detail.
+- But for the curious, here is a way we could make sure the type is still observably `int`.
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">Int3</span> <span class="o">:</span> <span class="p">(</span><span class="nc">EQ</span> <span class="k">with</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">int</span><span class="p">)</span> <span class="o">=</span> <span class="nc">Int</span><span class="p">;;</span>
-<span class="k">module</span> <span class="nc">Int3</span> <span class="o">:</span> <span class="k">sig</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">int</span> <span class="k">val</span> <span class="n">equal</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="k">end</span>
-</code></pre></div></div>
+```ocaml
+# module Int3 : (EQ with type t = int) = Int;;
+module Int3 : sig type t = int val equal : t -> t -> bool end
+``` 
+-->
 
-<h3 id="instantiating-functors-with-our-own-custom-type">Instantiating functors with our own custom type</h3>
+<h3 id="using-functors-with-our-own-custom-type">Using functors with our own custom type</h3>
 
-<p>Here is how we could instantiate the <code>Make_set</code> functor with our own data type. We’ll do it on nucleotides in the top loop.</p>
+<p>Here is how we could apply the <code>Make_set</code> functor with our own data type. We’ll do it on nucleotides in the top loop.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_jane"</span><span class="p">;;</span>
 
@@ -365,7 +362,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Observe the type is generally <code>functor (M : MODULE_TYPE) -&gt; sig ... end</code></li>
+  <li>Observe the type is generally <code>functor (M : MODULE_TYPE) -&gt; sig ... end</code>
+    <ul>
+      <li>The <code>functor</code> keyword is not needed. It can be left off.</li>
+    </ul>
+  </li>
   <li>Notice how the argument module <code>M</code> occurs in the result type!
     <ul>
       <li>Such a type is called a <em>dependent type</em>: the type of the result depends on the value of the argument.</li>
@@ -373,7 +374,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Functor types are module types. Just like function types are regular types.
     <ul>
-      <li>Writing <code>type f = t1 -&gt; t2</code> is similar to writing <code>module type F = functor (X : S1) -&gt; S2</code></li>
+      <li>Writing <code>type f = t1 -&gt; t2</code> is similar to writing <code>module type F = (X : S1) -&gt; S2</code></li>
       <li>Function types are types; functor types are module types.</li>
     </ul>
   </li>
@@ -384,12 +385,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>In the above functor we were exposing the underlying implementation of the set, which used a list.</li>
   <li>But, we can again do the same hiding trick we did in the <code>.mli</code> file etc: leave that off the type.</li>
-  <li>Observe now that we have <code>type t</code> whereas in the original simple set we had <code>'a t</code>
-    <ul>
-      <li>it’s not a parametric type any more, the type parameter is in the module passed in</li>
-      <li>so after applying the functor that type is “baked in” to the resulting module.</li>
-    </ul>
-  </li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="k">type</span> <span class="nc">MAKE_SET_HIDDEN</span> <span class="o">=</span> <span class="k">functor</span> <span class="p">(</span><span class="nc">M</span> <span class="o">:</span> <span class="nc">EQ</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">sig</span>
@@ -441,11 +436,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">FloatMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="nc">Float</span><span class="p">)</span> <span class="c">(* Or Char/Int/String/Bool/etc. Anything that is comparable and serializable *)</span>
 
 <span class="c">(* Alias the empty map -- maps are functional, so there is one canonical empty map *)</span>
-<span class="k">let</span> <span class="n">mm</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="nn">Floatmap</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">empty</span>
+<span class="k">let</span> <span class="n">mm</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">empty</span>
 
 <span class="c">(* Use the Map module to work with all maps. *)</span>
-<span class="k">let</span> <span class="n">mm'</span> <span class="o">:</span> <span class="kt">int</span> <span class="nn">Floatmap</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="n">add_exn</span> <span class="n">mm</span> <span class="o">~</span><span class="n">key</span><span class="o">:</span><span class="mi">0</span><span class="o">.</span><span class="mi">4</span> <span class="o">~</span><span class="n">data</span><span class="o">:</span><span class="mi">5</span>
-<span class="c">(* int Floatmap.t is equivalent to 
+<span class="k">let</span> <span class="n">mm'</span> <span class="o">:</span> <span class="kt">int</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="n">add_exn</span> <span class="n">mm</span> <span class="o">~</span><span class="n">key</span><span class="o">:</span><span class="mi">0</span><span class="o">.</span><span class="mi">4</span> <span class="o">~</span><span class="n">data</span><span class="o">:</span><span class="mi">5</span>
+<span class="c">(* int FloatMap.t is equivalent to 
 
     val mm' : (float, int, FloatMap.Key.comparator_witness) Map.t
 
@@ -542,7 +537,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>This assumes the keys are integer pairs, and the values can be any type (<code>'a</code>).</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">=</span> <span class="nc">Leaf</span> <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="nn">IPMap</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span><span class="p">;;</span> 
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">=</span> 
+    <span class="o">|</span> <span class="nc">Leaf</span> 
+    <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="nn">IPMap</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span><span class="p">;;</span> 
 <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">=</span>
     <span class="nc">Leaf</span>
   <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="nn">IPMap</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">intpairmaptree</span>
@@ -552,7 +549,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>The keys are integer pairs, that is built-in to <code>IPMap.t</code>, and the values are <code>'a</code>s, the parameter here</li>
       <li>Compare with <code>'a list</code> instead of a map in the nodes; <code>'a List.t</code> is just an alias for that type:
-        <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">listtree</span> <span class="o">=</span> <span class="nc">Leaf</span> <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="nn">List</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">listtree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">listtree</span><span class="p">;;</span> 
+        <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">listtree</span> <span class="o">=</span> 
+<span class="o">|</span> <span class="nc">Leaf</span> 
+<span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="nn">List</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">listtree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">listtree</span><span class="p">;;</span> 
 </code></pre></div>        </div>
       </li>
     </ul>
@@ -561,10 +560,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h3 id="a-small-example-using-coremap">A Small Example Using Core.Map</h3>
 <ul>
-  <li>We will go over the code of <a href="../examples/school.ml">school.ml</a>, simple code that uses a <code>Core.Map</code>.</li>
+  <li>We will go over the code of <a href="../examples/random-examples/school.ml">school.ml</a>, simple code that uses a <code>Core.Map</code>.</li>
   <li>Note that there is an alternative to <code>Map.Make</code> using advanced features we will cover in detail later: <em>first-class modules</em>.
     <ul>
-      <li>We will briefly look at <a href="../examples/cool_school.ml">cool_school.ml</a> which re-writes the <code>school.ml</code> example to use first-class modules</li>
+      <li>We will briefly look at <a href="../examples/random-examples/cool_school.ml">cool_school.ml</a> which re-writes the <code>school.ml</code> example to use first-class modules</li>
       <li>The advantage of this code is you don’t need to make a new module for every type you use it at</li>
       <li>Also avoids the <code>Map.add</code> vs <code>IntMap.empty</code> issue of two different interfaces to use same map.</li>
     </ul>
@@ -655,7 +654,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="k">val</span> <span class="n">equal</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
 <span class="k">end</span>
 
-<span class="k">module</span> <span class="nc">Make_pair_dumb</span> <span class="p">(</span><span class="nc">Datum1</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="p">(</span><span class="nc">Datum2</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="o">:</span> <span class="nc">PAIR</span> <span class="o">=</span> <span class="k">struct</span>
+<span class="k">module</span> <span class="nc">Make_pair_too_hidden</span> <span class="p">(</span><span class="nc">Datum1</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="p">(</span><span class="nc">Datum2</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="o">:</span> <span class="nc">PAIR</span> <span class="o">=</span> <span class="k">struct</span>
   <span class="k">type</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">Datum1</span><span class="p">.</span><span class="n">t</span> <span class="c">(* Oops this gets hidden since PAIR type just has "type l" *)</span>
   <span class="k">type</span> <span class="n">r</span> <span class="o">=</span> <span class="nn">Datum2</span><span class="p">.</span><span class="n">t</span> <span class="c">(* ditto *)</span>
   <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span>
@@ -664,13 +663,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="k">let</span> <span class="n">equal</span> <span class="p">(</span><span class="n">p1</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">p2</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="nn">Datum1</span><span class="p">.</span><span class="n">equal</span> <span class="p">(</span><span class="n">left</span> <span class="n">p1</span><span class="p">)</span> <span class="p">(</span><span class="n">left</span> <span class="n">p2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nn">Datum2</span><span class="p">.</span><span class="n">equal</span> <span class="p">(</span><span class="n">right</span> <span class="n">p1</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="n">p2</span><span class="p">)</span>
 <span class="k">end</span>
 
-<span class="k">module</span> <span class="nc">Example_pair_dumb</span> <span class="o">=</span> <span class="nc">Make_pair_dumb</span> <span class="p">(</span><span class="nc">Int</span><span class="p">)</span> <span class="p">(</span><span class="nc">String</span><span class="p">)</span>
-<span class="c">(* Example_pair_dumb.left (1,"e") fails, we hid the fact that l/r are int/string *)</span>
+<span class="k">module</span> <span class="nc">Example_pair_too_hidden</span> <span class="o">=</span> <span class="nc">Make_pair_too_hidden</span> <span class="p">(</span><span class="nc">Int</span><span class="p">)</span> <span class="p">(</span><span class="nc">String</span><span class="p">)</span>
+<span class="c">(* Example_pair_too_hidden.left (1,"e") fails, we hid the fact that l/r are int/string *)</span>
 </code></pre></div></div>
 
 <p>Let us fix this by specializing the <code>Pair</code> module type with <code>with</code>:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Make_pair_smarter</span> <span class="p">(</span><span class="nc">Datum1</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="p">(</span><span class="nc">Datum2</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="nc">PAIR</span> <span class="k">with</span> <span class="k">type</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">Datum1</span><span class="p">.</span><span class="n">t</span> <span class="k">with</span> <span class="k">type</span> <span class="n">r</span> <span class="o">=</span> <span class="nn">Datum2</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="k">struct</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Make_pair_unhidden</span> <span class="p">(</span><span class="nc">Datum1</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="p">(</span><span class="nc">Datum2</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="nc">PAIR</span> <span class="k">with</span> <span class="k">type</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">Datum1</span><span class="p">.</span><span class="n">t</span> <span class="k">with</span> <span class="k">type</span> <span class="n">r</span> <span class="o">=</span> <span class="nn">Datum2</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="k">struct</span>
   <span class="k">type</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">Datum1</span><span class="p">.</span><span class="n">t</span>
   <span class="k">type</span> <span class="n">r</span> <span class="o">=</span> <span class="nn">Datum2</span><span class="p">.</span><span class="n">t</span>
   <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="n">l</span> <span class="o">*</span> <span class="n">r</span>
@@ -679,12 +678,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="k">let</span> <span class="n">equal</span> <span class="p">(</span><span class="n">p1</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">p2</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="nn">Datum1</span><span class="p">.</span><span class="n">equal</span> <span class="p">(</span><span class="n">left</span> <span class="n">p1</span><span class="p">)</span> <span class="p">(</span><span class="n">left</span> <span class="n">p2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nn">Datum2</span><span class="p">.</span><span class="n">equal</span> <span class="p">(</span><span class="n">right</span> <span class="n">p1</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="n">p2</span><span class="p">)</span>
 <span class="k">end</span>
 
-<span class="k">module</span> <span class="nc">Example_pair_smarter</span> <span class="o">=</span> <span class="nc">Make_pair_smarter</span> <span class="p">(</span><span class="nc">Int</span><span class="p">)</span> <span class="p">(</span><span class="nc">String</span><span class="p">)</span>
+<span class="k">module</span> <span class="nc">Example_pair_unhidden</span> <span class="o">=</span> <span class="nc">Make_pair_unhidden</span> <span class="p">(</span><span class="nc">Int</span><span class="p">)</span> <span class="p">(</span><span class="nc">String</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>Sometimes we might want to <em>inline</em> the types we are instantiating in <code>with</code>: use <code>:=</code> in place of <code>=</code> for that:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Make_pair_smartest</span> <span class="p">(</span><span class="nc">Datum1</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="p">(</span><span class="nc">Datum2</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="nc">PAIR</span> <span class="k">with</span> <span class="k">type</span> <span class="n">l</span> <span class="o">:=</span> <span class="nn">Datum1</span><span class="p">.</span><span class="n">t</span> <span class="k">with</span> <span class="k">type</span> <span class="n">r</span> <span class="o">:=</span> <span class="nn">Datum2</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="k">struct</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Make_pair</span> <span class="p">(</span><span class="nc">Datum1</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="p">(</span><span class="nc">Datum2</span> <span class="o">:</span> <span class="nc">DATUM</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="nc">PAIR</span> <span class="k">with</span> <span class="k">type</span> <span class="n">l</span> <span class="o">:=</span> <span class="nn">Datum1</span><span class="p">.</span><span class="n">t</span> <span class="k">with</span> <span class="k">type</span> <span class="n">r</span> <span class="o">:=</span> <span class="nn">Datum2</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="k">struct</span>
   <span class="c">(* type l = Datum1.t *)</span> <span class="c">(* Not needed! They were destructively substituted! *)</span>
   <span class="c">(* type r = Datum2.t *)</span>
   <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nn">Datum1</span><span class="p">.</span><span class="n">t</span> <span class="o">*</span> <span class="nn">Datum2</span><span class="p">.</span><span class="n">t</span>
@@ -693,7 +692,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="k">let</span> <span class="n">equal</span> <span class="p">(</span><span class="n">p1</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">p2</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="nn">Datum1</span><span class="p">.</span><span class="n">equal</span> <span class="p">(</span><span class="n">left</span> <span class="n">p1</span><span class="p">)</span> <span class="p">(</span><span class="n">left</span> <span class="n">p2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nn">Datum2</span><span class="p">.</span><span class="n">equal</span> <span class="p">(</span><span class="n">right</span> <span class="n">p1</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="n">p2</span><span class="p">)</span>
 <span class="k">end</span>
 
-<span class="k">module</span> <span class="nc">Example_pair_smartest</span> <span class="o">=</span> <span class="nc">Make_pair_smartest</span> <span class="p">(</span><span class="nc">Int</span><span class="p">)</span> <span class="p">(</span><span class="nc">String</span><span class="p">)</span>
+<span class="k">module</span> <span class="nc">Example_pair</span> <span class="o">=</span> <span class="nc">Make_pair</span> <span class="p">(</span><span class="nc">Int</span><span class="p">)</span> <span class="p">(</span><span class="nc">String</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>This could use an example to really spell out:</p>
@@ -725,7 +724,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Imperative data structures:
     <ul>
-      <li><code>Stack</code> and <code>Queue</code> as we previously discussed (which don’t need <code>Make</code>/<code>compare</code>), plus <code>Hash_queue</code>, <code>Hash_set</code>, <code>Hashtbl</code> (mutable hashed queue/set/map),  <code>Linked_queue</code>,  <code>Bag</code> (a multi-set)</li>
+      <li><code>Stack</code> and <code>Queue</code> (which don’t need <code>Make</code>/<code>compare</code>), plus <code>Hash_queue</code>, <code>Hash_set</code>, <code>Hashtbl</code> (mutable hashed queue/set/map),  <code>Linked_queue</code>,  <code>Bag</code> (a multi-set)</li>
     </ul>
   </li>
 </ul>

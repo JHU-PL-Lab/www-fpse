@@ -26,6 +26,6 @@ let rec contains (x : string) (s : t) : bool =
   match s with
   | [] -> false
   | hd :: tl ->
-    if String.equal x hd 
+    if String.(x = hd)
     then true 
     else contains x tl

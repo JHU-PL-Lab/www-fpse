@@ -82,13 +82,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Assume a grid of n elements (a square-root n by square-root n grid)</li>
 </ul>
 
-<p>Our initial implementation  <a href="https://pl.cs.jhu.edu/fpse/examples/minesweeper.ml">using a list of strings</a></p>
+<p>Our initial implementation  <a href="https://pl.cs.jhu.edu/fpse/examples/random-examples/minesweeper.ml">using a list of strings</a></p>
 <ul>
   <li>Each call to <code>get x y</code> is O(sqrt n) since we need to march down the lists to find element (x,y)</li>
   <li>So O(sqrt n) for each inc operation so O(n * sqrt n) overall.</li>
 </ul>
 
-<p>Our implementation  <a href="https://pl.cs.jhu.edu/fpse/examples/mine_array.ml">using a functional 2D array</a></p>
+<p>Our implementation  <a href="https://pl.cs.jhu.edu/fpse/examples/random-examples/mine_array.ml">using a functional 2D array</a></p>
 <ul>
   <li>The array is in fact never mutated, only used for random access to fixed array</li>
   <li>Otherwise this implementation is the same as the above</li>
@@ -96,7 +96,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>O(1) for each inc operation so O(n) in total.</li>
 </ul>
 
-<p>Stateful version <a href="https://pl.cs.jhu.edu/fpse/examples/mine_mutate.ml">using an array</a></p>
+<p>Stateful version <a href="https://pl.cs.jhu.edu/fpse/examples/random-examples/mine_mutate.ml">using an array</a></p>
 <ul>
   <li>Instead of counting mines around each empty square once and for all, for each mine increment all its non-mine neighbors</li>
   <li>It is a fundamentally mutating alternative algorithm.</li>
@@ -105,7 +105,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Monadic state version</p>
 <ul>
-  <li>A  <a href="https://pl.cs.jhu.edu/fpse/examples/mine_monadic.ml">state monad version of the original minesweeper</a></li>
+  <li>A  <a href="https://pl.cs.jhu.edu/fpse/examples/random-examples/mine_monadic.ml">state monad version of the original minesweeper</a></li>
   <li>We will follow the data structure of the original minesweeper, the list of strings</li>
   <li>But do the imperative increment-the-mine-neighbors instead of the functional count-the-mines</li>
   <li>Each grid square increment will take O(n) since the whole list of strings has to be rebuilt with one change

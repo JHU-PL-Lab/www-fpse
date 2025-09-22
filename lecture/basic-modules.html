@@ -357,7 +357,7 @@ To make a library module from the <code>string_set.ml</code> file, we include th
   <li>It is often useful to have modules inside of modules for further code “modularization”</li>
   <li>The way it is declared is in e.g. <code>foo.ml</code> (which itself defines the items for module <code>Foo</code> using the above convention), add
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Sub</span> <span class="o">=</span> <span class="k">struct</span> 
- <span class="k">let</span> <span class="n">blah</span> <span class="o">=</span> <span class="o">...</span>
+  <span class="k">let</span> <span class="n">blah</span> <span class="o">=</span> <span class="o">...</span>
  <span class="o">...</span>
 <span class="k">end</span>
 </code></pre></div>    </div>
@@ -370,13 +370,13 @@ To make a library module from the <code>string_set.ml</code> file, we include th
 <h3 id="aside-referencing-and-disambiguating-types-declared-in-modules">Aside: Referencing and disambiguating types declared in modules</h3>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">A</span> <span class="o">=</span> <span class="k">struct</span>
-<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">bool</span> <span class="p">}</span>
+  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">bool</span> <span class="p">}</span>
 <span class="k">end</span>
 
 <span class="k">let</span> <span class="n">ra</span> <span class="o">=</span> <span class="nn">A</span><span class="p">.{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* Need to write `A.` here to make the type `A.t` visible *)</span>
 
 <span class="k">module</span> <span class="nc">B</span> <span class="o">=</span> <span class="k">struct</span>
-<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">z</span> <span class="o">:</span> <span class="kt">float</span> <span class="p">}</span>
+  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">z</span> <span class="o">:</span> <span class="kt">float</span> <span class="p">}</span>
 <span class="k">end</span>
 
 <span class="k">let</span> <span class="n">rb</span> <span class="o">=</span> <span class="nn">B</span><span class="p">.{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">1</span><span class="o">.</span><span class="mi">1</span> <span class="p">}</span>
@@ -403,10 +403,9 @@ To make a library module from the <code>string_set.ml</code> file, we include th
 <p>Suppose we made a module out of our previous nucleotide example, either by putting in a file <code>nucleotide.ml</code> or adding <code>module Nucleotide = struct .. end</code> to make a top-loop or nested module:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">=</span> <span class="k">struct</span>
+  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">]</span>
 
-<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">]</span>
-
-<span class="k">let</span> <span class="n">hamming_distance</span> <span class="n">l</span> <span class="o">=</span> <span class="n">failwith</span> <span class="s2">"dummy"</span>
+  <span class="k">let</span> <span class="n">hamming_distance</span> <span class="n">l</span> <span class="o">=</span> <span class="n">failwith</span> <span class="s2">"dummy"</span>
 <span class="k">end</span>
 </code></pre></div></div>
 <ul>
