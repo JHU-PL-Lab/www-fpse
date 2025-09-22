@@ -399,7 +399,9 @@ module SListMap :
 * This assumes the keys are integer pairs, and the values can be any type (`'a`).
 
 ```ocaml
-# type 'a intpairmaptree = Leaf | Node of ('a IPMap.t) * 'a intpairmaptree * 'a intpairmaptree;; 
+# type 'a intpairmaptree = 
+    | Leaf 
+    | Node of ('a IPMap.t) * 'a intpairmaptree * 'a intpairmaptree;; 
 type 'a intpairmaptree =
     Leaf
   | Node of 'a IPMap.t * 'a intpairmaptree * 'a intpairmaptree
@@ -408,7 +410,9 @@ type 'a intpairmaptree =
   - The keys are integer pairs, that is built-in to `IPMap.t`, and the values are `'a`s, the parameter here
   - Compare with `'a list` instead of a map in the nodes; `'a List.t` is just an alias for that type:
   ```ocaml
-  type 'a listtree = Leaf | Node of ('a List.t) * 'a listtree * 'a listtree;; 
+  type 'a listtree = 
+    | Leaf 
+    | Node of ('a List.t) * 'a listtree * 'a listtree;; 
   ```
 
 ### A Small Example Using Core.Map
@@ -505,7 +509,7 @@ module type DATUM = sig
   val equal : t -> t -> bool
 end
 
-module Make_pair_dumb (Datum1 : DATUM) (Datum2 : DATUM) : PAIR = struct
+module Make_pair_too_hidden (Datum1 : DATUM) (Datum2 : DATUM) : PAIR = struct
   type l = Datum1.t (* Oops this gets hidden since PAIR type just has "type l" *)
   type r = Datum2.t (* ditto *)
   type t = l * r
@@ -514,14 +518,14 @@ module Make_pair_dumb (Datum1 : DATUM) (Datum2 : DATUM) : PAIR = struct
   let equal (p1 : t) (p2 : t) = Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
 end
 
-module Example_pair_dumb = Make_pair_dumb (Int) (String)
-(* Example_pair_dumb.left (1,"e") fails, we hid the fact that l/r are int/string *)
+module Example_pair_too_hidden = Make_pair_too_hidden (Int) (String)
+(* Example_pair_too_hidden.left (1,"e") fails, we hid the fact that l/r are int/string *)
 ```
 
 Let us fix this by specializing the `Pair` module type with `with`:
 
 ```ocaml
-module Make_pair_smarter (Datum1 : DATUM) (Datum2 : DATUM) : (PAIR with type l = Datum1.t with type r = Datum2.t) = struct
+module Make_pair_unhidden (Datum1 : DATUM) (Datum2 : DATUM) : (PAIR with type l = Datum1.t with type r = Datum2.t) = struct
   type l = Datum1.t
   type r = Datum2.t
   type t = l * r
@@ -530,13 +534,13 @@ module Make_pair_smarter (Datum1 : DATUM) (Datum2 : DATUM) : (PAIR with type l =
   let equal (p1 : t) (p2 : t) = Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
 end
 
-module Example_pair_smarter = Make_pair_smarter (Int) (String)
+module Example_pair_unhidden = Make_pair_unhidden (Int) (String)
 ```
 
 Sometimes we might want to *inline* the types we are instantiating in `with`: use `:=` in place of `=` for that:
 
 ```ocaml
-module Make_pair_smartest (Datum1 : DATUM) (Datum2 : DATUM) : (PAIR with type l := Datum1.t with type r := Datum2.t) = struct
+module Make_pair (Datum1 : DATUM) (Datum2 : DATUM) : (PAIR with type l := Datum1.t with type r := Datum2.t) = struct
   (* type l = Datum1.t *) (* Not needed! They were destructively substituted! *)
   (* type r = Datum2.t *)
   type t = Datum1.t * Datum2.t
@@ -545,7 +549,7 @@ module Make_pair_smartest (Datum1 : DATUM) (Datum2 : DATUM) : (PAIR with type l 
   let equal (p1 : t) (p2 : t) = Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
 end
 
-module Example_pair_smartest = Make_pair_smartest (Int) (String)
+module Example_pair = Make_pair (Int) (String)
 ```
 
 This could use an example to really spell out:
@@ -573,7 +577,7 @@ end
 * Functional data structures in `Core`:
   - `Set`, `Map`, `Doubly_linked` (list), `Fqueue`, `Fdeque` (functional (double-ended) queue)
 * Imperative data structures:
-  - `Stack` and `Queue` as we previously discussed (which don't need `Make`/`compare`), plus `Hash_queue`, `Hash_set`, `Hashtbl` (mutable hashed queue/set/map),  `Linked_queue`,  `Bag` (a multi-set)
+  - `Stack` and `Queue` (which don't need `Make`/`compare`), plus `Hash_queue`, `Hash_set`, `Hashtbl` (mutable hashed queue/set/map),  `Linked_queue`,  `Bag` (a multi-set)
 
 ### Tangent:  Summary of Important Directives for `utop`
 * `#show_val` - shows the type of a value
