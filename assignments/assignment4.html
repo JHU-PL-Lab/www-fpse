@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/fpse/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+            <li><a href="">Assignments</a>
+                <ul class="menu">
+                <li><a href="/fpse/assignments/assignment1.html">Assignment 1</a></li>
+                <li><a href="/fpse/assignments/assignment2.html">Assignment 2</a></li>
+                <li><a href="/fpse/assignments/assignment3.html">Assignment 3</a></li>
+                <li><a href="/fpse/assignments/assignment4.html">Assignment 4</a></li>
+                <li><a href="/fpse/assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
+                <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
+                <li><a href="/fpse/assignments/project.html">Project</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="assignment-4-executables-file-io-s-expressions">Assignment 4: Executables, File I/O, S-expressions</h2>
+
+<p>In this assignment, you will write an executable to count the number of occurances of each OCaml keyword in a given directory.</p>
+
+<h3 id="file-structure-and-requirements">File structure and requirements</h3>
+
+<ul>
+  <li><a href="assignment4.zip">Use this zip file</a> as the starting point for your assignment.</li>
+  <li>You are given instructions in <code>src/lib/histogram.mli</code> to write a <code>Histogram</code> module that you will use to count keywords.
+    <ul>
+      <li>Implement this module in <code>src/lib/histogram.ml</code>.</li>
+      <li>The starter code is incomplete as given. You will need to read the <code>mli</code> file and fill in some well-typed value in the <code>ml</code> file for each declaration to get the project to build.</li>
+      <li>You may <em>add</em> to the <code>mli</code> if needed, but you may not change or delete anything that exists there as given.</li>
+      <li>The histogram works on keywords. A <code>Keyword</code> module is implemented for you in <code>src/lib/keyword.ml</code>.</li>
+    </ul>
+  </li>
+  <li>You’ll write an executable in <code>bin/keywordcount.ml</code>. There are full instructions in that file, and there are lots of tips for this assignment. Some starter code is provided to help with command-line argument parsing.
+    <ul>
+      <li>Before beginning anything on this assignment, you should read <code>src/bin/keywordcount.ml</code>.</li>
+    </ul>
+  </li>
+  <li>If you need any helper functions that might be tested, then they go in <code>src/lib/utils.ml(i)</code>.</li>
+  <li>You are given some initial (incomplete) tests in <code>src-test/hist_tests.ml</code> and <code>src-test/exec_tests.ml</code>.
+    <ul>
+      <li>You must add at least 10 non-redundant <code>assert_equal</code> statements to <code>src-test/tests.ml</code> to test your code in the <code>Histogram</code> and/or <code>Utils</code> modules.</li>
+      <li>You are not graded on the total testing coverage of any part of your code, but moving helper functions to <code>src/lib/utils.ml(i)</code> gives you more ways to hit those 10 non-redundant <code>assert_equal</code> statements.</li>
+    </ul>
+  </li>
+  <li>We have given you <code>dune</code> files which generally should work, but you can add libraries if needed.</li>
+</ul>
+
+<h3 id="submission-and-grading">Submission and Grading</h3>
+<ul>
+  <li>Follow the same protocol for Gradescope submission as previous assignments.
+    <ul>
+      <li>do a final <code>dune clean; dune build</code> from the main directory and submit the <code>_build/default/assignment4.zip</code> file.</li>
+    </ul>
+  </li>
+  <li>The submitted files include only the files you are supposed to edit, along with your <code>dune</code> files and any additional testing resources in the <code>test/</code> directory. You do not submit the provided <code>ml</code> test files, but you will submit the <code>mli</code> files.</li>
+  <li>We will grade the style of your code. Please consult the <a href="https://pl.cs.jhu.edu/fpse/style-guide.html">FPSE Style Guide</a>.</li>
+  <li>You will also be graded on your added tests.</li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: TEMPLATED
+				</div>			
+
+
+   </body>
+</html>
