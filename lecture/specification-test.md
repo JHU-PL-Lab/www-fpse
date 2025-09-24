@@ -8,27 +8,28 @@
 
 ### Correctness
 
-* The high-level goal is to have software that is "correct"
-* There are many levels of interpretation for "correct"
-   - Informal spec.: we had some vague idea of what the code should do, wrote it, iteratively addressed feedback of users until bug reports shrunk to very low levels.
+* The high-level goal is to have software that is *correct*
+* There are many levels of interpretation for correct
+   - Informal spec.: we had some vague idea of what the code should do, wrote it, and iteratively addressed feedback of users until bug reports shrunk to very low levels.
    - Semi-formal spec.: Sat down with stakeholders, wrote out a specification document in English with a few pictures/formulas, added many tests to code which affirmed all aspects of this spec.
    - Rigorous spec.: Have an unambiguous mathematical notion of what correct behavior should be, write it out as the formal specification, make sure code meets it.
 * The best mode from the above depends on the project: how complex are the algorithms/architecture, and how mission-critical is it?
-   - Need to go further down the above list as complexity/mission-critical aspects increase
+   - Need to go further down the above list as complexity and mission-critical aspects increase
 
 ### Forms of specification
 Specifications can range from informal to completely rigorous and unambiguous
 
 * Requirements and Design documents: high-level informal descriptions of what the app should do
-  - This is the classic form of specification in software engineering; includes description/pictures/etc but far from code
+  - This is the classic form of specification in software engineering; includes description/pictures/etc but is far from code
 * Types, e.g. writing an `.mli` file before implementing the code
   - Gives a very rigorous, compiler-checked skeleton for the code; we are doing this for you on the assignments
-  - Much more precise than the previous in terms of code/spec relationship, but limited expressiveness since types can express only so much
+  - Much more precise than design docss in terms of code/spec relationship
+  - But, limited expressiveness since types can express only so much (no "the tree is balanced" in an OCaml type)
 * Tests
-  - A test suite constitutes a specification on a finite window of behavior - can't run all infinite cases
-  - Can be 100% accurate on the cases tested, but could be woefully incomplete
-  - *Coverage* measurements can be used to help close the incompleteness gap somewhat (never fully however)
-* Full logical assertions specifying code behavior in terms of math
+  - A test suite constitutes a specification on a finite window of behavior - can't run on the unbounded input possibilities
+  - So, 100% accurate on the cases tested, but could miss many important cases if tests are not thoughtfully written.
+  - *Coverage* measurements can be used to improve tests: what lines of code were not reached by any test?
+* Assertions specifying code behavior in mathematical logic
   - a *precondition* is a logical constraint on function arguments (before it is called: "pre")
   - a *postcondition* is a constraint on the value returned from a function
   - an *invariant* is a property internal to the function or internal to a data structure that always holds (it "invariably" holds)
@@ -37,32 +38,36 @@ Specifications can range from informal to completely rigorous and unambiguous
     - *precondition* on a function that tree parameter is a *balanced* binary tree
     - *postcondition* that `List.sort` always returns a sorted list
     - *precondition*/*postcondition* on tree `add` function that if the input tree is balanced the output tree will also be.
-    - *invariants* on data structures such as a `Set` implementation which uses an underlying always-sorted list.
+    - *invariants* on internal data structures such as a `Set` implementation which uses an underlying always-sorted list.
     - *inductive invariants* on recursive algorithms, e.g. assuming in the body of list `reverse` that it works on a shorter list.
   - Logical assertions are more general than tests since they are for *all* inputs
     - but not necessarily verified (but, invariants do guide tests - write tests to verify on lots of examples)
 * Verified assertions aka formal methods
-  - After making the above logical assertions, *verify* the code meets the assertions using a verification tool
-  - Now this is mostly research, but becoming more mainstream
+  - *Verify* the code meets preconditions/postconditions/invariants using a tool (Roq/Lean/Dafne/Z3/etc)
+  - This is like nuclear fusion: a research topic for 50+ years, very slowly becoming more viable.
 
 ### Type-directed programming
 
-Fact: types outline the "shape" of the code you need to write and serve as a "structural" spec.
+* As mentioned above, types are a very lightweight layer of code specification
+  - Particularly nice in that they are all quickly checked and can even be inferred.
+  - Think of types as outlining the "shape" of the code you need to write in terms of the data structures/functions.
 
- * You have been doing type-directed programming all along
-   - We give you the types for most HW questions
- * Principle is: writing code that matches declared type will get you well on the way to an implementation
-   - type errors point to code errors to be fixed
-   - when the last type error drops, the code may directly work
+
+What is Type-Directed Programming??
+
+ * In fact, you have been doing type-directed programming all along
+   - We gave you the types for the HW questions, and those types are useful in debugging your code, right??
+ * That is all the principle is: writing code that matches declared type will get you well on the way to an implementation
+   - So, *start* with the type
+   - Type errors are definitely errors, no need to run tests to find them, the editor will yell at you immediately.
+   - When the last type error drops, the code often will directly work
  * Type-directed programming is 100% rigorous, but is incomplete: types only express *rough shapes* of data 
    - e.g. `int list` is a rough shape compared to "sorted `int list`" but the latter isn't a type in OCaml
+   - Our lab (and others) are working on type systems which allow you to state `{ l : int list | is_sorted(l) }`"
 
+#### Simple type-directed programming examples
 
-#### Type-directed programming examples
-
-(These examples are super simple, they only serve to clarify what the term means.)
-
-Example: not bubbling up `option` or other wrapped results properly
+Not bubbling up `option` or other wrapped results properly
 
 ```ocaml
 # let zadd (l1 : int list) (l2 : int list) : (int list) = let l = List.zip l1 l2 in List.map ~f:(fun (x,y) -> x+y) l;;
@@ -70,9 +75,10 @@ Line 1, characters 74-75:
 Error: This expression has type (int * int) list List.Or_unequal_lengths.t
        but an expression was expected of type 'c list
 ```
- - To solve this type error you will need to `match` on the result, which should fix both type error and behavior
+ - Recall that `List.zip` doesn't just return a list, the programmer missed that here
+ - To solve this type error you will need to `match` on the result, which should fix both type error *and* code behavior
 
-Review example: with partial parameters applied, the remaining types hint at what is still needed.
+Variation on type-directed programming: with only some parameters applied, the remaining types hint at what is still needed.
 
 ```ocaml
 # let l = [[3;3]; [4;4]; [22;17]] in List.map l;;
@@ -80,15 +86,15 @@ Review example: with partial parameters applied, the remaining types hint at wha
 ```
  - The type shows that `f` needs to be a function taking an `int list` as argument.
 
-Review example: the type in an `.mli` file can direct your implementation, e.g. `map` on `dict` example from HW2 (`t` here is the `simpledict`)
+The type in an `.mli` file can direct your implementation, e.g. `map` on `simpledict` example from Assn3 (recall that `t` here is the `simpledict`)
 ```ocaml
 val map : 'a t -> f:(string -> 'a -> 'b) -> 'b t
 ```
- - Q: "how can I get a dict of `'b`'s built from a dict of `'a`'s here
- - A: "Use the function from `'a` to `'b` on elements of `'a dict`.
+ - Q: "How can I get a dict of `'b`'s built from a dict of `'a`'s here?"
+ - A: "Use the function from `'a` to `'b` to make elements of `'b simpledict`.
 
 
-Extension example: add a new field to a record or a new variant case, chase the type errors to patch
+Variant extension: add a new variant case, chase the type errors to patch the code (similar tactic for record field addition)
 
 ```ocaml
 type party = Dem | Rep
@@ -101,7 +107,7 @@ let count_parties (l : voter list) =
      | Rep -> (cd, cr+1) );;
 ```
 
-Adding a `Gre` for green party: first just change the type, and chase errors
+Adding a `Gre` for green party: first **just** change the type, and chase/fix errors
 
 ```ocaml
 # type party = Dem | Rep | Gre
@@ -130,11 +136,7 @@ Conclusion: Don't **wrestle** with OCaml's types, *dance* with them
 
 ### Preconditions, Postconditions, and Data Structure Invariants
 
-* Types are fine for high-level structural information, but cannot express deeper properties.
-  - "a function only takes non-negative input"
-  - "a function returns a sorted list"
-  - etc
-* Preconditions, postconditions, and invariants allow properties beyond types to be expressed
+We covered these above, now lets put them into practice in our OCaml code
 
 Let us consider some preconditions and postconditions on the `Simple_set.Make` functor example [(click for zipfile)](../examples/set-example-functor.zip):
 
@@ -158,16 +160,17 @@ module Make (M : EQ) = struct
 end
 ```
 
-* Precondition on `remove`: `s` is not empty (it would always fail otherwise)
+Here are some pre/post conditions in the above code:
+* Precondition on `remove`: `s` is not empty (fails otherwise)
 * Stronger precondition on `remove`: `contains x s` must hold
 * Postcondition on `remove` for it returning set `s'`:  `not(contains x s')` - ??
-  - No, this simple "set" data structure is in fact a multiset and this will not always hold
-  - If we were trying to implement an actual set this postcondition would let us catch an error
+  - This simple "set" data structure is in fact a **multiset** and this will not always hold
+  - If we were trying to implement a true set this postcondition would help us catch an error
 * Postcondition on `add x s`: for the resulting set `s'`, `contains x s'` holds
 
 #### Assertions in code
 
-* OCaml `assert` can be placed in code to directly verify properties
+* OCaml `assert` statements can be placed in code to directly verify properties
   - program dies if the assertion fails, it should always hold
   - silently returns `()` if it succeeds
 * Example new version of `add` above:
@@ -176,7 +179,7 @@ let add (x : M.t) (s : t) =
   let s' = (x :: s) in assert (contains x s'); s'
 ```
 * Asserts are handy for development mode, but not after deployment (slows things down)
-* Generally it is better to make tests to spot-check assertions instead of using `assert`
+* Generally it is better to make *tests* to spot-check assertions instead of using `assert`
   - But, one thing handy about `assert` is it puts the assertions in the code, as "rigorous comments"
   - Middle approach: [`ppx_inline_tests`](https://github.com/janestreet/ppx_inline_test) is a library where you can write tests in-line with your code
   - example: 
@@ -184,15 +187,18 @@ let add (x : M.t) (s : t) =
   let%test "add adds" = contains (add (add 5 emptyset) 22) 22
   ```
   - inline tests both document invariants and serve as tests: two-for-one!
-  - They also allow functions and data structures hidden in a module to be tested
-    - one issue with OCaml's modules is the tester module needs to see the local functions in the library module so they need to be made non-local for that - oops!
+  - They also allow functions and data structures hidden in a module to be tested within that module
+    - This also gets around an issue with OCaml's modules and hidden code that needs to be tested
+      - The tester module needs to see the local-only functions in the library module to test them 
+        (recall we make local-only things in an `.ml` file by leaving them out of the `.mli`)
+      - So, they would need to be made non-local for that, defeating the locality
+      - Besides `ppx_test` and exposing, a third solution is to put the local functions in a separate `local.ml` module with no `.mli`
 
 ### Data structure invariants
 
-* It is often the case that there are additional restrictions on values allowed in a data structure type
+* As discussed above, data structure invariants are useful when not all elements of a type are "good" to have around in a context
   - for example the "ordered tree" and "balanced tree" examples mentioned above
 * Example from `simpledict` on homework: `is_ordered` must hold for the `Simpletree.t`.
-* Such data structure invariants should be made clear in the code documentation
 
 ### Recursion Invariants
 
@@ -206,59 +212,55 @@ let rec rev l =
   | [] -> []
   | x::xs -> let rxs = rev xs in assert(Poly.(List.rev xs = rxs)); rxs @ [x]
 ```
- * Note that we have to use the built-in `List.rev` to test our version - somewhat circular (note `Poly` quick-open lets `=` work on any type)
- * In general a big issue with specification is it is often very difficult to give a code-based definition of the full spec.
+ * Note that we have to use the built-in `List.rev` to test our version - somewhat circular (note `Poly` quick-open lets `=` work on any type, its also what `assert_equal` in `OUnit` is doing)
+ * In general a major issue with specification is it is often very difficult to give a code-based definition of the full spec.
  * So, the main focus should be on *partial* specs, give sanity conditions
 
-### Invariants over folds as examples
+### Examples of Invariants Over Folds
 
 * In re-implementing some of the common `List` functions with `fold`s it helps to think of the invariant
 * Folding left (`List.fold`):
    - Suppose we are at some arbitrary point processing the fold;
-   - assume accumulation `accum` has "the result of the task" for all elements to the left in the list
+   - assume accumulation `accum` has "the result of the task" for all elements to the *left* in the list
    - require `~f` to then "do the task" to incorporate the current element `elt`
    - also assume `accum` is initially `init`
-* Folding right: almost identical; "for all elements to the *right* in the list", not "left"
+* Folding right: very similar, but `accum` is result for all elements to the *right* in the list
 
 ```ocaml
-(* invariant for length: accum is length of list up to here *)
+(* invariant for length fold: accum is number of elements to the left of the current `elt` we are at *)
 let length l = List.fold ~init:0 ~f:(fun accum _ -> accum + 1) l 
-(* invariant for rev: accum is reverse of list up to here *)
+(* invariant for rev fold: accum is reverse of list up to here *)
 let rev l = List.fold ~init:[] ~f:(fun accum elt -> elt :: accum) l 
-(* invariant for map: accum is f applied to each element of list up to here *)
+(* invariant for map fold: accum is f applied to each element of list up to here *)
 let map ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> (f elt) :: accum) l
 (* etc *)
 let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then elt :: accum else accum) l
 ```
 
-### Formal Verification
-
-* Formal verification is *proving* the invariants hold (e.g. that `rev` really reverses the list)
-* It is currently of only limited applicability in mainstream SE but is becoming more common as tools improve
-* A simple view of what it is is the preconditions/postconditions/invariants/`asserts` above will be **verified** to always hold by a computer program.
-  - Like how a compiler verifies type declarations but on a much grander scale.
-  - End goal is to do this over a full spec. but verification of partial spec is also good (e.g. dictionary is a balanced binary tree)
-
 ### Specification and Abstraction
 
 * The more completely a module is specified the less the users need to know about the underlying implementation
-* `Core.Map` is an example where the users need to know almost nothing about the implementation
-* Note that *documentation* of the specification in the interface is important; sometimes `Core` is weak there
-* On your own libraries you can do the same
-  - it will make it a lot easier for your users, they can just think about the spec. view.
+* `Core.Map` is an example where the users need to know limited information about the implementation
+  - they still *do* need to know it is O(log n) for add/remove/find, that should be in the docs (`.mli`/odoc)
+  - (Unfortunately Core is not always so good about that; for `Map` they give big-O of more advanced ops but assume users know complexity of these basic ones.  Bad Core!)
+* On your own libraries you will want to document them well
+  - It will make it a lot easier for your users, they can just think about the spec. view.
+  - `odoc` formatting for `.mli` files is in the FPSE Style Guide
 
 ## Testing
 
-* Testing wears two very different but very useful hats
-  1. Specification-based: use tests to define and refine what the code should do
-  2. Implementation-based: find bugs in code, for example when you change code make sure you didn't break it.
-* Both hats are important
-  - Writing tests before fully coding the answer lets the tests serve as your "coding spec"
-  - Adding tests for corner cases will flesh out the spec
-  - Adding tests covering past bugs will make sure they are caught quickly next time
- * Equivalent terminology you may see: black-box (spec) and glass-box (code-based) testing
-  - Black-box tests are those written against the spec
-  - Glass-box tests are in the context of bugs in the code and other code properties
+* Writing tests has two important and distinct goals
+  1. For specification: use tests to define and refine what the code should do
+    - Writing tests before fully coding the answer lets the tests serve as your "coding spec"
+    - Adding tests for corner cases will clarify the behavior in those cases 
+      (e.g. does removing an element from a set which doesn't contain the element raise an exception, or does it just return the set unchanged?)
+  2. For implementation: use tests to find bugs in code
+    - Before the code is working the tests will point out which cases are failing
+    - Adding tests covering past bugs will make sure they are caught quickly next time
+      - Related term: *regression testing*, running tests after an update to make sure your code didn't regress, i.e. old bugs resurfaced
+* Related terminology you may see
+  - *Black-box* tests are tests written against the spec
+  - *Glass-box* tests are in the context of bugs in the code and other code properties
 
 ### Standard categories of tests
 * **Unit testing**: what you have mainly done -- test the small pieces of the app; no I/O testing
@@ -281,16 +283,15 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
 * We have been using the `OUnit2` library mostly as a black box up to now
 * Now we will go through the details, which are in fact very simple
   - There is not much in `OUnit2` per se, if you want something extra just write some higher-order functions to do it
-* To review, here is your standard simple `tests.ml` file, this one is from the simple-set example:
+* To review, here is your standard simple `tests.ml` file, this one is from the String set example:
   ```ocaml
-  open OUnit2 (* we usually open OUnit2 since it is pervasively used in test files *)
-  module Int_set = Simple_set.Make (Int)
-  open Int_set
+  open OUnit2
+  open String_set
 
-  let tests = "test suite for simple set" >::: [ 
-    "empty"        >:: (fun _ -> assert_equal empty empty) ;
-    "3-elt"        >:: (fun _ -> assert_equal true (contains 5 (add 5 empty))) ;
-    "1-elt nested" >:: (fun _ -> assert_equal false (contains 5 (remove 5 (add 5 empty))))
+  let tests = "test suite for simple set" >::: [
+  "empty"  >:: (fun _ -> assert_equal empty empty);
+  "3-elt"    >:: (fun _ -> assert_equal true (contains "5" (add "5" empty)));
+  "1-elt nested" >:: (fun _ -> assert_equal false (contains "5" (remove "5" (add "5" empty))));
   ]
 
   let () = run_test_tt_main tests
@@ -315,7 +316,7 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
       TestCase (Short, <fun>))])
   ```
 * Then, `OUnit2.run_test_tt_main tests` will run the suite `tests` 
-  - (note this will work but will then freeze the top loop unfortunately)
+  - (Note this will work but will then freeze the top loop - `OUnit` is designed to run in the command line only)
 
 #### How the tests run when you say dune test
 * The above `tests.ml` file is just defining an executable, like `keywordcount.exe` on HW4
@@ -430,9 +431,11 @@ val ( ^^ ) : int -> int -> int = <fun>
 As always, see the documentation for more details: 
 OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
 
-### Testing executables with cram
+### Tangent: Testing executables with cram
 * As mentioned above `OUnit` can be used to test executables: `OUnit2.assert_command` can run any shell command (in particular, your OCaml `.exe` file)
+ - This is probably the approach you should use
 * `dune` also contains an extension called `cram` which allows for output to be compared against expected output for a given input
+ - It makes it really easy to write tests for a command-line executable
 * It is very general, you just specify the shell command to run and expected output
 * See the [`cram` docs](https://dune.readthedocs.io/en/stable/tests.html#cram-tests) if you are interested
 * An example in a file `cramtest.t`.  Non-indented lines are comments, $ is the input and after the input is implicitly the expected output (4 here)
