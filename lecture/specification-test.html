@@ -689,28 +689,36 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
 <p>We will check how well my tests of the <a href="../examples/set-example.zip">simple set example</a> covered the code using Bisect.  The only addition to code is the <code>(preprocess (pps bisect_ppx))</code> added to <code>src/dune</code> for the library.</p>
 
 <p><a name="quickcheck"></a></p>
-<h2 id="base_quickcheck-and-random-aka-property-based-testing">Base_quickcheck and Random aka Property-Based Testing</h2>
-<h3 id="the-big-picture-of-random-testing">The big picture of random testing</h3>
-
-<ol>
-  <li>Suppose we have one function <code>f</code> that we want to test.</li>
-  <li>We need to be able to generate random data which is the parameters of <code>f</code></li>
-  <li>We run <code>f</code> on different random data many times (say 100 or 10000 times)</li>
-  <li>We need to know if the test worked or not on the random data
-    <ul>
-      <li>So, tests usually verify that invariants hold or some bad exception not raised etc.</li>
-      <li>This is another reason invariants are good, they are properties that can be quickchecked
-        <h3 id="using-base_quickcheck">Using <code>Base_quickcheck</code></h3>
-      </li>
-    </ul>
-  </li>
-</ol>
+<h2 id="random-testing-aka-property-based-testing-aka-quickcheck">Random Testing aka Property-Based Testing aka Quickcheck</h2>
 
 <ul>
+  <li>Recall that Quickchecking is making up some random data to test our code</li>
+  <li>To use random testing we need to know when the code is working on that random data
+    <ul>
+      <li>e.g. add a bunch of random key-value maps to a dictionary and delete them: should be the original dictionary again</li>
+      <li>e.g. above of reversing a reversed list gives back the original list</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Here is the methodology</p>
+
+<ol>
+  <li>Given: a function <code>f</code> that we want to test.</li>
+  <li>Have a function to generate random data which is the parameters of <code>f</code></li>
+  <li>Run <code>f</code> on that random data many times (say 1000 times)</li>
+  <li>Verify whether the test worked on that random data</li>
+</ol>
+
+<h3 id="using-base_quickcheck">Using <code>Base_quickcheck</code></h3>
+
+<ul>
+  <li>For step 1. above we want to not have to “roll our own” every time</li>
+  <li><code>Base_quickcheck</code> is a library that will do it for us</li>
   <li><code>Base_quickcheck</code> contains three key algorithms:
     <ol>
       <li>Generators, <code>Quickcheck.Generator</code> - make random data of desired distribution in given type</li>
-      <li>Shrinkers, <code>Quickcheck.Shrinker</code> - if a failing case is discovered, try to make it smaller (we will not cover these in detail)</li>
+      <li>Shrinkers, <code>Quickcheck.Shrinker</code> - if a failing case is discovered, try to make random data smaller, e.g. a shorter list (we will not cover these in detail)</li>
       <li>Runner, <code>Quickcheck.test</code> etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.</li>
     </ol>
   </li>
@@ -727,7 +735,7 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
   <li>Fuzz testing aka fuzzing is to acceptance tests as quickcheck is to unit tests
     <ul>
       <li>fuzzers feed random inputs into an app to see what it does (acceptance test modality)</li>
-      <li>quickcheckers on the other hand are testing single functions (unit test modailty)</li>
+      <li>quickcheckers on the other hand are testing single functions (unit test modality)</li>
     </ul>
   </li>
   <li>Industry fuzz testers do a lot more more than generate totally random data
