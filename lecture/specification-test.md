@@ -357,18 +357,18 @@ let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then el
 * Example: lets make a bunch of different tests on the same invariant, that reversing a list twice is a no-op:
 
 ```ocaml
-# let make_rev_test l = ("test test" >:: (fun _ -> assert_equal (List.rev @@ List.rev l) l));; 
+# let make_rev_test l = ("a rev test" >:: (fun _ -> assert_equal (List.rev @@ List.rev l) l));; 
 val make_rev_test : 'a list -> test = <fun>
 ```
 
 ```ocaml
-let make_rev_suite ll = 
-  "suite of rev rev tests" >::: List.map ll ~f:make_rev_test ;;
-val make_rev_suite : 'a list list -> test = <fun>
+let make_test_suite l ~f = 
+  "suite of tests of f" >::: List.map l ~f ;;
+val make_test_suite : 'a list -> f:('a -> test) -> test = <fun>
 ```
 
 ```ocaml
-let s = make_rev_suite [[];[1;2;3];[2;44;2];[32;2;3;2;1]];;
+let s = make_test_suite [[];[1;2;3];[2;44;2];[32;2;3;2;1]] ~f:make_rev_test ;;
 let () = run_test_tt_main s;; (* recall this crashes the top loop when finished *)
 ```
 

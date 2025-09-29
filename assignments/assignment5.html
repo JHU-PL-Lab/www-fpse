@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/fpse/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+            <li><a href="">Assignments</a>
+                <ul class="menu">
+                <li><a href="/fpse/assignments/assignment1.html">Assignment 1</a></li>
+                <li><a href="/fpse/assignments/assignment2.html">Assignment 2</a></li>
+                <li><a href="/fpse/assignments/assignment3.html">Assignment 3</a></li>
+                <li><a href="/fpse/assignments/assignment4.html">Assignment 4</a></li>
+                <li><a href="/fpse/assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
+                <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
+                <li><a href="/fpse/assignments/project.html">Project</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    <h2 id="assignment-5-functors">Assignment 5: Functors</h2>
+
+<p>In this assignment you will write various modules, module types, and functors.<br />
+You will get practice using these modules and functors by extensively testing<br />
+your code for good coverage.</p>
+
+<h3 id="the-file-structure">The file structure</h3>
+
+<ul>
+  <li><a href="https://pl.cs.jhu.edu/fpse/assignments/assignment5.zip">Use this zip file</a> for your assignment.</li>
+  <li>We are giving you an <code>.mli</code> file that describes the expected behavior. We only provide a very small and simple skeleton for <em>some</em> of your code.
+    <ul>
+      <li>Your implementation goes in <code>src/finite_group.ml</code>.</li>
+    </ul>
+  </li>
+  <li>You need to write a complete test suite to cover your implementation.
+    <ul>
+      <li>Some very basic tests are provided in <code>test/tests.ml</code> to help convey expected behavior. You are to add tests to this file.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="coverage-and-specifications">Coverage and Specifications</h3>
+<ul>
+  <li>You will need to incorporate the <code>Bisect</code> tool into your <code>dune</code> build file as was described in lecture and use its output to improve the coverage of your test suite.  Test coverage will be a component of your grade.
+    <ul>
+      <li>You must have at least 94% coverage of your code to get full points. Partial points will be given if you have less coverage.</li>
+    </ul>
+  </li>
+  <li>You also need to write a special suite of tests that assert five <em>different</em> specifications: either preconditions, postconditions, data structure invariants, or recursion invariants. These properties can be on <em>any</em> of the functions you implemented.  We gave several examples of such propertes <a href="https://pl.cs.jhu.edu/fpse/lecture/specification-test.html#specs">in lecture</a>, for example <code>List.rev @@ List.rev l</code> is <code>l</code> for any list <code>l</code> (hint: note the relation of <code>List.rev</code> to <code>inverse</code> in a finite group). Such properties are useful to verify with quick-checking, but here you need to just test each property on specific cases. For each spec include a comment stating what the general property is; the test(s) will only test a few instances of the property.</li>
+</ul>
+
+<h3 id="resources">Resources</h3>
+<p>Here are a few resources to keep in mind while you work on this assignment.</p>
+
+<ul>
+  <li>Make sure to review the <a href="https://pl.cs.jhu.edu/fpse/lecture/more-modules.html">More Modules lecture notes</a>.</li>
+  <li>If you feel like you need more on the subtleties of information hiding in functors, the <a href="https://dev.realworldocaml.org/functors.html">Real World OCaml book chapter on functors</a> may be worth looking at.</li>
+  <li>For test coverage, see the <a href="https://pl.cs.jhu.edu/fpse/lecture/specification-test.html">Specification and Testing Lecture</a>. These notes also contain links to <code>OUnit</code> and <code>Bisect</code> documentation.</li>
+</ul>
+
+<h3 id="submission-and-grading">Submission and Grading</h3>
+<ul>
+  <li>As usual, run a final <code>dune clean; dune build</code> and then upload <code>_build/default/assignment5.zip</code> to Gradescope. Note we will be giving you very little information in our report since you need to provide good coverage on your own and not rely on Gradescope. We try not to test anything tricky–we only want to test the functionality as it is precisely described in the assignment, and your own tests should be able to cover this. Please ask on Courselore for clarification on anything described ambiguously in this assignment.</li>
+  <li>You are graded on code coverage and code style, and there is an autograder on Gradescope.</li>
+  <li>We will strictly grade code style as it pertains to duplicated code. Functors are helpful for code reuse. Make use of them to de-duplicate your code.</li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: TEMPLATED
+				</div>			
+
+
+   </body>
+</html>
