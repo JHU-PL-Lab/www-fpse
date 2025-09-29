@@ -495,6 +495,8 @@ Here is the methodology
 
 * We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](../examples/random-examples/quickcheck_examples.ml)
 
+* We will look at quickchecking on a `Map` in [school_quickcheck.ml](../examples/quickcheck/school_quickcheck.ml)
+
 * [Base_quickcheck docs](https://ocaml.org/p/base_quickcheck/v0.15.0/doc/Base_quickcheck/index.html)
 * The [Real World OCaml](https://dev.realworldocaml.org/testing.html#property-testing-with-quickcheck) book has a short tutorial (note it uses `ppx_inline_tests` and not `OUnit2`)
 
