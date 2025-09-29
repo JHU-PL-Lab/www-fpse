@@ -470,20 +470,27 @@ We will check how well my tests of the [simple set example](../examples/set-exam
 
 
 <a name = "quickcheck"></a>
-## Base_quickcheck and Random aka Property-Based Testing
-### The big picture of random testing
+## Random Testing aka Property-Based Testing aka Quickcheck
 
-  0. Suppose we have one function `f` that we want to test.
-  1. We need to be able to generate random data which is the parameters of `f`
-  2. We run `f` on different random data many times (say 100 or 10000 times)
-  3. We need to know if the test worked or not on the random data
-     - So, tests usually verify that invariants hold or some bad exception not raised etc.
-     - This is another reason invariants are good, they are properties that can be quickchecked
+* Recall that Quickchecking is making up some random data to test our code
+* To use random testing we need to know when the code is working on that random data
+  - e.g. add a bunch of random key-value maps to a dictionary and delete them: should be the original dictionary again
+  - e.g. above of reversing a reversed list gives back the original list
+
+Here is the methodology
+
+  0. Given: a function `f` that we want to test.
+  1. Have a function to generate random data which is the parameters of `f`
+  2. Run `f` on that random data many times (say 1000 times)
+  3. Verify whether the test worked on that random data
+
 ### Using `Base_quickcheck`
 
+* For step 1. above we want to not have to "roll our own" every time
+* `Base_quickcheck` is a library that will do it for us
 * `Base_quickcheck` contains three key algorithms:
   1. Generators, `Quickcheck.Generator` - make random data of desired distribution in given type
-  2. Shrinkers, `Quickcheck.Shrinker` - if a failing case is discovered, try to make it smaller (we will not cover these in detail)
+  2. Shrinkers, `Quickcheck.Shrinker` - if a failing case is discovered, try to make random data smaller, e.g. a shorter list (we will not cover these in detail)
   3. Runner, `Quickcheck.test` etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.
 
 * We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](../examples/random-examples/quickcheck_examples.ml)
@@ -496,7 +503,7 @@ We will check how well my tests of the [simple set example](../examples/set-exam
 
 * Fuzz testing aka fuzzing is to acceptance tests as quickcheck is to unit tests
   - fuzzers feed random inputs into an app to see what it does (acceptance test modality)
-  - quickcheckers on the other hand are testing single functions (unit test modailty)
+  - quickcheckers on the other hand are testing single functions (unit test modality)
 * Industry fuzz testers do a lot more more than generate totally random data
   - They may be aware that the string input should fit a particular grammar, e.g. html
   - They may be combined with a coverage tool and work to find random data inputs covering all the code

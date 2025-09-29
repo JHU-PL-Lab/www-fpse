@@ -17,13 +17,14 @@ open Core
 let int_gen = Int.quickcheck_generator
 let rand_int = (Quickcheck.random_value ~seed:`Nondeterministic int_gen)
 
-(* `Int.gen_incl` generates ints in a range *)  
+(* `Int.gen_incl` generates ints in a range
+    Don't use the above to test a factorial function, it makes huge values *)  
 
 let int_gen' = Int.gen_incl (-100) 100
 let rand_int' =  (Quickcheck.random_value ~seed:`Nondeterministic int_gen')
 
-(* Note that the ~seed argument is optional; if you leave it out you get the same answer each time
-   This is often useful to get repeatable results from test runs
+(* Note that the ~seed argument is optional; if you leave it out you get the same sequence each time
+   This is useful to get repeatable results from test runs
    If it is used, also use Quickcheck.random_sequence to make an unbounded list of such values 
    -- otherwise you will get the same value every time. *)
 let rand_seq = (Quickcheck.random_sequence int_gen')
@@ -49,6 +50,11 @@ let int_list_gen'' = List.quickcheck_generator int_gen'
 (* Can compose two generators to generate a pair via Quickcheck.Generator.both *)
 let rand_list_pair = rand_from (Quickcheck.Generator.both int_list_gen int_list_gen)
 
+(* Maps are a bit more tricky, need key module, key gen and value gen  *)
+let string_int_map_gen = Map.quickcheck_generator (module String) String.quickcheck_generator Int.quickcheck_generator
+
+let rand_map_as_list = rand_from string_int_map_gen |> Map.to_alist
+
 (* **************************************** *)
 (* Using generators to repeatedly test code *)
 (* **************************************** *)
@@ -59,7 +65,7 @@ let rand_list_pair = rand_from (Quickcheck.Generator.both int_list_gen int_list_
 (* IMPORTANT POINT: we always need to know the "correct" answer for the test and that limits what can be tested *)
 (* So, primarily used to validate invariants or to make sure no exceptions or other failure conditions are raised *)
 
-(* Simple failure example from Real World OCaml *)
+(* Simple failure example from Real World OCaml book *)
 (* Quickcheck.test will run the ~f function on 10000 different random data items by default *)
 (* This example reflects the case that -4611686018427387904 negated is itself .. fun little corner case with integers *)
 let invariant x = assert(Sign.equal (Int.sign (Int.neg x)) (Sign.flip (Int.sign x)))
@@ -81,7 +87,7 @@ let quick_test () = Quickcheck.test ~sexp_of:[%sexp_of: int]
 (* Here it is packaged as an OUnit.test we can run *)
 let ounit_test = OUnit2.("sign test" >:: fun _ -> quick_test ())
 
-let _ = OUnit2.run_test_tt_main ounit_test (* The usual test runner, recall this will crash utop when finished *)
+let _ = OUnit2.run_test_tt_main ounit_test (* The usual test runner, recall this will crash utop if run in top loop *)
 
 (* List Reverse Example *)
 
