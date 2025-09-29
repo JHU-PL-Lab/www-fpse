@@ -1,5 +1,5 @@
 (library
-  (name example)
+  (name school_quickcheck)
   (modules school_quickcheck)
   (libraries core)
   (preprocess (pps ppx_jane)))
