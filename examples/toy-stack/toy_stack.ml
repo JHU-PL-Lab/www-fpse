@@ -13,7 +13,7 @@ let create () : 'a stack = ref Empty;;
 
 let push (s : 'a stack) (v : 'a) : unit = failwith "exercise"
 
-(* If the stack is empty you can fail with `invalid_arg ""` *)
+(* If the stack is empty you can invoke `invalid_arg "empty stack!"` *)
 let pop_exn (s : 'a stack) : unit = failwith "exercise"
 
 let top_exn (s : 'a stack) : 'a = failwith "exercise"
