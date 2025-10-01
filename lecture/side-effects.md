@@ -9,6 +9,7 @@ Side effects of OCaml include
 * Mutatable state - *changing* the contents of a memory location intead of making a new one
     - Three built-in sorts in OCaml: references, mutable record fields, and arrays.
     - Plus many libraries: `Stack`, `Queue`, `Hashtbl`, `Hash_set`, etc
+    - Faster because rebuilding avoided, but slower due to impossibility of sharing sub-components
 * Exceptions (we saw a bit of this already, `failwith "ill-formed"` etc)
 * Input/output (in basic modules lecture we looked at file input and results printing for example)
 * Concurrency and parallelism (will cover later)
@@ -67,50 +68,30 @@ In this way, `!x` in OCaml is not like `*x` in C.
 
 ### Tangent on unit
 
-* We said that `(:=)` returns `()`, so it only performs a side effect. What did we mean by that?
 * `unit` is a terminal type. Only one value called `()` has type `unit`, and it is totally useless.
 * All you can do is pass it around.
 * So what is it good for?
 
-Since `()` is useless, any function that returns it is either useless itself or performs a side effect. It is likely the latter.
+Since `()` is useless, any function that returns it is either useless **or** performs a side effect. It is almost certainly the latter.
 
 ```ocaml
 # print_endline;; (* returns unit; has the side effect of printing *)
 - : string -> unit = <fun>
-```
-
-The `(:=)` infix operator does assignment to the ref cell.
-
-```ocaml
 # (:=);; (* returns unit; has the side effect of assignment to LHS *)
 - : 'a ref -> 'a -> unit = <fun>
-```
-
-```ocaml
 # Hashtbl.set;; (* returns unit, so it has the side effect of assignment *)
 - : ('a, 'b) Core.Hashtbl.t -> key:'a -> data:'b -> unit = <fun>
 ```
 
-We see that hash tables are mutable data structures. Setting a key in a hash table does **not** return a whole new value like `Map.set` does. Instead, `Hashtbl.set` returns `unit` because the given hash table has been mutated!
-
-Alternatively, if you see a function type that has `unit` domain and some other codomain, then it may create a mutable stucture.
+* `Hashtbl.set` returns `unit` so it must be a mutable data structure.
+* On the flip side, functions taking `unit` as argument are often also only performing side effects.
 
 ```ocaml
 # Stack.create;; (* takes unit, so it is making a new mutable data structure *)
 - : unit -> 'a Core.Stack.t = <fun>
-
-# Stack.create ();; (* still uses spaces with unit arguments *)
-- : '_weak1 Core.Stack.t = <abstr> (* more on weak types very soon *)
+# Stack.create ();; (* Note the convention of putting a space here *)
+- : '_weak1 Core.Stack.t = <abstr> (* Its abstract, we can't see internals.. more on weak types soon *)
 ```
-
-* Remember that the body of a function cannot run until it has its argument. 
-* A function taking `unit` is waiting to run. In this case, it is so that it can make a new mutable structure.
-
-The other possibility is that the function performs an expensive computation, and it is waiting until it is told to run.
-* Look into what a "thunk" is for more detail.
-* With a thunk, there may be no side effects.
-
-Okay, now back to ref cells.
 
 ### Variables are still themselves immutable
 
@@ -139,16 +120,14 @@ val x : '_weak1 option ref = {contents = None}
 * Which really is not polymorphic at all - what it means is the type can be only a single type
   - which is not known yet
 * To the first order, a weakly polymorphic type is like a "Schrodinger's type". 
-  - It is ready to be any type until it is observed (i.e. used), after which it is fixed.
+  - It is ready to be any (single) type until it is observed (i.e. used), after which it is fixed.
 * If you think about it, there is no other possibility, can't put int and string in same cell
     - would not know the type when taking out of cell.
 
 ```ocaml
-# x := Some 3;; (* `'_weak1` = `int` after this, permanently *)
-- : unit = ()
-
+# x := Some 3;;
 # !x;;
-- : int option = Some 3 (* now we see the type is int *)
+- : int option = Some 3 (* now we see '_weak1 was touched and its now forevermore an int *)
 ```
 
 * At various points OCaml will infer only weak types on certain things
@@ -177,20 +156,13 @@ let _ = x := Some "hello" (* type error! x is not a string ref *)
 * The keyword mutable on a record field means it can mutate
 
 ```ocaml
-let x = { contents = 4 };; (* identical to x's definition above *)
+let x = { contents = 4 };; (* 100.0% identical to `let x = ref 4` *)
 
-x := 6;;
-x.contents <- 7;;  (* same sort of side effect as previous line: backarrow updates a field *)
 
-!x + 1;;
-x.contents + 1;; (* same thing as previous line (no side effects here) *)
-```
+x.contents <- 7;;  (* identical to `x := 6` *)
 
-So we've seen that we can define the `(:=)` operator like this:
 
-```ocaml
-# let (:=) x v = x.contents <- v;;
-val ( := ) : 'a ref -> 'a -> unit = <fun>
+x.contents + 1;; (* identical to `!x + 1` *)
 ```
 
 ### Declaring Mutable Record Types
@@ -215,26 +187,18 @@ mypoint;;
 
 * Here, the `x` and `y` fields of the point are mutable, but the point as a whole you cannot swap in a different point for.
 
-* Note that `;` is a sequencing operator.
-  * It translates `e ; e'` to  `let () = e in e'`. They are exactly the same!
-
-```ocaml
-let () = print_endline "hello world" in 5
-```
-
-is identical to
-
-```ocaml
-print_endline "hello world"; 5
-```
-
-Note that this means whatever is on the left hand side of `;` should evaluate to `()`. Otherwise, it's discarding usable data.
+* Note that `;` is the standard sequencing operator
+  * But in OCaml everything is an expression so its a bit non-standard
+  * `e ; e'` is roughly the same as `let () = e in e'`: evaluate `e`, ignore result, evaluate `e;`.
+  * `(5 + 2); true` will give you a warning since `5` is not of type `unit`
+  * The reasoning here is if you are using `;` the first thing must be a side effect
+    - and, as we covered above those functions will nearly always return `unit`.
 
 ### Tree with mutable subtrees
 
 ```ocaml
 (* version using ref: *)
-type 'a mtree = MLeaf | MNode of 'a * 'a mtree ref * 'a mtree ref;;
+type 'a mtree_ref = MLeaf | MNode of 'a * 'a mtree ref * 'a mtree ref;;
 (* But, use this type with mutable records - no `!` needed: *)
 type 'a mtree = MLeaf | MNode of { data : 'a ; mutable left : 'a mtree ; mutable right : 'a mtree };;
 ```
@@ -256,6 +220,7 @@ val mt : int mtree = MNode {data = 3; left = MLeaf; right = MLeaf}
   r.left <- MNode {data = 5; left = MLeaf; right = MLeaf};;
 - : unit = ()
 
+(* Lets now verify that mt mutated *)
 # mt;;
 - : int mtree =
 MNode
@@ -264,16 +229,12 @@ MNode
  ; right = MLeaf }
 ```
 
-- Note the use of the `... as r` in the pattern, sometimes something needs a name that didn't have one.
-  - The underlying patterns still worked (`data`, `left`, and `right`), and the entire record is bound to the name `r`.
-- And of course notice that `mt` actually *changed* here unlike with immutables.
-
 ### Physical equality
 
 * Occasionally in imperative programs you need to check for "same pointer".
   * It's also useful in functional programming for fast comparison when data is shared.
   * There's no need to compare entire structures if their memory addresses are identical.
-* `phys_equal` is `Core` notion for for "same pointer" (use `==` in non-Core).
+* `phys_equal` is `Core`'s notion for for "same pointer" (use `==` in non-Core).
 
 ```ocaml
 # phys_equal 2 2;; (* memory layout of 2 is always the same *)
@@ -313,16 +274,8 @@ We can use `phys_equal` to see that data is shared in functional data structures
 
 ### Control structures to help with mutution
 
-* As we saw above, sequencing via `;` becomes useful with side effects
-
-```ocaml
-print_string "hi"; print_string "\n";;
-```
-
-* Again, operations that only have a side effect return `() : unit`
-  - `:=`, `<-`, `print`ing, etc
-  - But sometimes operators will both have effects and return something
-  - Sometimes need to sequence that and you may get an annoying warning if so:
+* As mentioned above, side effecting operations usually return `unit`
+* But occasionally they don't, and you might want to use `;` with them which OCaml will complain about:
 
 ```ocaml
 # let incr = 
@@ -331,18 +284,17 @@ print_string "hi"; print_string "\n";;
     incr;;
 - : unit -> int = <fun>
 
-# incr() ; incr();;
+# incr() ; incr();; (* Increment twice *)
 Line 1, characters 0-6:
 Warning 10: this expression should have type unit.
 ...
 ```
 
-* Gives a warning since it is concerned that the first incr does not return unit.
-* This warning is actually good most of the time in fact, it means `;` was used incorrectly
+* Gives a warning since first `incr()` does not return `unit`
 * To silence warning (once you are clear you are doing the right thing):
 
 ```ocaml
-# ignore (incr ()); incr () (* or, can use let _ = incr () in incr () *)
+# ignore (incr ()); incr () (* or, let _ = incr () in incr () *)
 ```
 
 * `for` and `while` loops are useful with mutable state
@@ -364,6 +316,7 @@ done;;
 ### Arrays
 - They are mutable, and they are also constant time to access nth element unlike lists
 - But, extending an array is inefficient: cannot share sub-array due to mutation
+- And, sub-components of different arrays cannot be shared since they may change
 - Entered and shown as `[| 1; 2; 3 |]` (added "`|`") in top-loop to distinguish from lists.
 - Have to be initialized before using
   - In general, there is no such thing as "uninitialized" in OCaml.
@@ -417,8 +370,8 @@ Exception: (Invalid_argument "length mismatch in zip_exn: 2 <> 3")
 ### OCaml syntax for defining raising and handling exceptions
 
 * New exception names need to be declared via `exception` like `type`s needs to be declared
-* Unfortunately, types do not include what exceptions a function may raise 
-  - an outdated aspect of OCaml; even Java has this
+* Unfortunately, oCaml types do not include what exceptions a function may raise 
+  - an outdated aspect of OCaml; even Java has this with `raises` on method declarations
 * The value returned by an exception is very similar in looks to a variant.
   - under the hood, the `exn` type is an "extensible variant"
 
@@ -446,9 +399,9 @@ g ();;
 ### Mutating data structures in `Core`
 
 * The `Stack` and `Queue` modules in `Core` are *mutable* data structures.
-* (There are no immutable libraries for stack/queue - just use `list`s)
+* (There are no immutable stack/queue libraries in `Core` - just use `list`s)
 * (There is also `Hash_set` which is a (hashed) mutable set and `Hashtbl` which is a mutable hashtable; more on those later)
-* Here is a simple example of playing around with a `Stack` for example.
+* Here is a simple example of playing around with a `Stack`.
 
 ```ocaml
 # let s = Stack.create();;

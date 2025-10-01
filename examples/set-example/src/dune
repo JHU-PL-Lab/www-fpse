@@ -3,6 +3,7 @@
  (name string_set)
  (modules string_set) 
  (libraries core)
+ (preprocess (pps bisect_ppx))
 )
 
 ; To load libraries in a fresh utop top loop use command line

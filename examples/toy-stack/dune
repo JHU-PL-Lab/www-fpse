@@ -1,0 +1,6 @@
+(library
+  (name toy_stack)
+  (modules toy_stack)
+  (libraries core)
+  (preprocess (pps ppx_jane)))
+

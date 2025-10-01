@@ -18,6 +18,7 @@ let are_balanced_stack (s : string) : bool =
     (* Option.value_map is a combinator you feed Some/None match cases to -- same as:
        `match Stack.pop stack_of_lefts with Some c' -> Char.(c = c') | None -> false` *)
   in
+  (* parse parses one character, returns true if succuss, false if fail *)
   let parse = function
     (* can pattern match in anonymous function directly using `function` *)
     | ('(' | '{' | '[') as c ->
@@ -28,10 +29,10 @@ let are_balanced_stack (s : string) : bool =
     | ']' -> match_with '['
     | _ -> true
   in
-  (* Loop over the characters in the string with `String.for_all` (not for/while) : *)
+  (* Loop over the characters in the string with `String.for_all` (avoid for/while in OCaml!) : *)
   let r = String.for_all ~f:(fun c -> parse c) s in
   (* alt to above using fold: `String.fold ~init:true ~f:(fun b c -> b && parse c) s` *)
-  r && Stack.is_empty stack_of_lefts
+  r && Stack.is_empty stack_of_lefts (* at the end the stack needs to be empty! *)
 
 (* Another version which uses an exception for the empty stack pop case.
    The above version is arguably better since there is a good default to return for empty-pop *)
@@ -50,7 +51,7 @@ let are_balanced_exn (s : string) : bool =
     let r = String.fold ~init:true ~f:(fun b c -> b && parse c) s in
     r && Stack.is_empty stack_of_lefts
   with _ -> false
-(* return false if any exception is raised (a bit of a sledgehammer) *)
+(* return false if any exception is raised (a sledgehammer which could catch the wrong raise) *)
 
 (* Yes, you can solve this (more) concisely without any mutation.
    There is no functional stack data structure in OCaml as List is 98% there already.
