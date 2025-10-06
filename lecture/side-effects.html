@@ -324,18 +324,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>So if the tree structure never changes but the node values can, only make the <code>data</code> mutable.</li>
 </ul>
 
-<p>Example use: mutate right tree</p>
+<p>Example use: mutate left subtree</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">mt</span> <span class="o">=</span> <span class="nc">MNode</span> <span class="p">{</span> <span class="n">data</span> <span class="o">=</span> <span class="mi">3</span> <span class="p">;</span> <span class="n">left</span> <span class="o">=</span> <span class="nc">MLeaf</span> <span class="p">;</span> <span class="n">right</span> <span class="o">=</span> <span class="nc">MLeaf</span> <span class="p">};;</span>
 <span class="k">val</span> <span class="n">mt</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">mtree</span> <span class="o">=</span> <span class="nc">MNode</span> <span class="p">{</span><span class="n">data</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">left</span> <span class="o">=</span> <span class="nc">MLeaf</span><span class="p">;</span> <span class="n">right</span> <span class="o">=</span> <span class="nc">MLeaf</span><span class="p">}</span>
 
 <span class="o">#</span> <span class="k">match</span> <span class="n">mt</span> <span class="k">with</span> 
 <span class="o">|</span> <span class="nc">MLeaf</span> <span class="o">-&gt;</span> <span class="bp">()</span>
-<span class="o">|</span> <span class="nc">MNode</span> <span class="p">({</span><span class="n">data</span><span class="p">;</span><span class="n">left</span><span class="p">;</span><span class="n">right</span><span class="p">}</span> <span class="k">as</span> <span class="n">r</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="c">(* "as" keyword captures the whole pattern under one name *)</span>
+<span class="o">|</span> <span class="nc">MNode</span> <span class="p">({</span><span class="n">data</span><span class="p">;</span><span class="n">left</span><span class="p">;</span><span class="n">right</span><span class="p">}</span> <span class="k">as</span> <span class="n">r</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="c">(* "as" captures it all under one name *)</span>
   <span class="n">r</span><span class="o">.</span><span class="n">left</span> <span class="o">&lt;-</span> <span class="nc">MNode</span> <span class="p">{</span><span class="n">data</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="n">left</span> <span class="o">=</span> <span class="nc">MLeaf</span><span class="p">;</span> <span class="n">right</span> <span class="o">=</span> <span class="nc">MLeaf</span><span class="p">};;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
 
-<span class="c">(* Lets now verify that mt mutated *)</span>
+<span class="c">(* Verify that mt mutated *)</span>
 <span class="o">#</span> <span class="n">mt</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">mtree</span> <span class="o">=</span>
 <span class="nc">MNode</span>
@@ -387,7 +387,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span> 
 
 <span class="o">#</span> <span class="n">phys_equal</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">tl_exn</span> <span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">tl_exn</span> <span class="n">y</span><span class="p">)</span> <span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">true</span> <span class="c">(* the tails are shared! They're both big_list *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">true</span> <span class="c">(* the tails are physically identical, they are big_list *)</span>
 </code></pre></div></div>
 
 <h3 id="control-structures-to-help-with-mutution">Control structures to help with mutution</h3>
@@ -510,7 +510,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>The value returned by an exception is very similar in looks to a variant.
     <ul>
-      <li>under the hood, the <code>exn</code> type is an “extensible variant”</li>
+      <li>(tangent: under the hood, the <code>exn</code> type is an extensible variant)</li>
     </ul>
   </li>
 </ul>
@@ -546,7 +546,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">create</span><span class="bp">()</span><span class="p">;;</span>
-<span class="k">val</span> <span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak3</span> <span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span> <span class="c">(* Stack.t is the underlying implementation and is hidden *)</span>
+<span class="k">val</span> <span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak1</span> <span class="nn">Core</span><span class="p">.</span><span class="nn">Stack</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span> <span class="c">(* Stack.t is the underlying implementation and is hidden *)</span>
 
 <span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">push</span> <span class="n">s</span> <span class="s2">"hello"</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span> <span class="c">(* returns unit because s is mutated *)</span>
