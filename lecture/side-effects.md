@@ -208,7 +208,7 @@ type 'a mtree = MLeaf | MNode of { data : 'a ; mutable left : 'a mtree ; mutable
 - The idea is to put mutablility only where you are doing mutation, no more no less.
 - So if the tree structure never changes but the node values can, only make the `data` mutable.
 
-Example use: mutate right tree
+Example use: mutate left subtree
 
 ```ocaml
 # let mt = MNode { data = 3 ; left = MLeaf ; right = MLeaf };;
@@ -216,11 +216,11 @@ val mt : int mtree = MNode {data = 3; left = MLeaf; right = MLeaf}
 
 # match mt with 
 | MLeaf -> ()
-| MNode ({data;left;right} as r) -> (* "as" keyword captures the whole pattern under one name *)
+| MNode ({data;left;right} as r) -> (* "as" captures it all under one name *)
   r.left <- MNode {data = 5; left = MLeaf; right = MLeaf};;
 - : unit = ()
 
-(* Lets now verify that mt mutated *)
+(* Verify that mt mutated *)
 # mt;;
 - : int mtree =
 MNode
@@ -269,7 +269,7 @@ We can use `phys_equal` to see that data is shared in functional data structures
 - : bool = false 
 
 # phys_equal (List.tl_exn x) (List.tl_exn y) ;;
-- : bool = true (* the tails are shared! They're both big_list *)
+- : bool = true (* the tails are physically identical, they are big_list *)
 ```
 
 ### Control structures to help with mutution
@@ -373,7 +373,7 @@ Exception: (Invalid_argument "length mismatch in zip_exn: 2 <> 3")
 * Unfortunately, oCaml types do not include what exceptions a function may raise 
   - an outdated aspect of OCaml; even Java has this with `raises` on method declarations
 * The value returned by an exception is very similar in looks to a variant.
-  - under the hood, the `exn` type is an "extensible variant"
+  - (tangent: under the hood, the `exn` type is an extensible variant)
 
 
 Extend the `exn` type with your exception using the `exception` keyword.
@@ -405,7 +405,7 @@ g ();;
 
 ```ocaml
 # let s = Stack.create();;
-val s : '_weak3 t = <abstr> (* Stack.t is the underlying implementation and is hidden *)
+val s : '_weak1 Core.Stack.t = <abstr> (* Stack.t is the underlying implementation and is hidden *)
 
 # Stack.push s "hello";;
 - : unit = () (* returns unit because s is mutated *)

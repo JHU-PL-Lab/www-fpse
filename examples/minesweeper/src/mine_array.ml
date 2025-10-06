@@ -24,7 +24,7 @@ module Array_2d = struct
 
   let adjacents (b : 'a t) (x : int) (y : int) : 'a list =
     let g xo yo = get b (x + xo) (y + yo) in
-    List.filter_map ~f:Fn.id
+    List.filter_opt (* same as List.filter_map ~f:Fn.id *)
       [
         g (-1) (-1); g 0 (-1); g 1 (-1); g (-1) 0; g 1 0; g (-1) 1; g 0 1; g 1 1;
       ]

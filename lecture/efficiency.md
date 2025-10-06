@@ -1,7 +1,64 @@
-## Case Studies of Efficiency in Functional Programming
+## Efficiency in Functional Programming
 
-* We already covered efficiency general concepts in the [idiomatic FP lecture](https://pl.cs.jhu.edu/fpse/lecture/idiomatic-fp.html#efficiency)
-* It is sometimes important to analyze runtime complexity to make sure the price of using a functional data structure is not too high.
+* Our main goal is conciseness, but in some cases efficiency does matter
+* We already discussed this issue a bit (e.g. cons vs append, tail recursion)
+* Here is more detail on efficiency considerations
+* We will conclude with some examples
+
+### Tail recursion
+
+* We covered this earlier: `List.fold_left` is tail-recursive whereas `List.fold_right` is not
+* A tail-recursive function is a function where there is no work to do after returning from recursive calls
+  - Just bubble up the result
+* Observation: since there is no need to mark the call point to resume from, no stack is needed
+ - Overwrite the parameters going "down", and return the base case as the final result of the recursion.
+* Compilers can see which functions are tail-recursive and eliminate the stack
+* Moral: to save space/time you may need to tail-call
+
+### Imperative vs functional data structures
+
+Let us warm up reviewing `'a list` efficiency
+
+* `hd` and `tl` are O(1)
+* `List.nth` is O(n) -- lists are not random access
+* `append l1 l2` is O(`length l1`) - cons each `l1` elt onto `l2` one by one
+
+Remember that sub-lists are shared since they are immutable
+
+```ocaml
+let l1 = [1;2;3;... n] in
+let l2 = 0    :: l1 in
+let l3 = (-1) :: l1 in ..
+```
+
+* `l2` and `l3` share `l1` and all the above is O(1)
+* If lists were mutable such sharing would not generally be possible
+
+`List` vs `Array`
+ * Adding an element to the front (extending list) is constant time for list, O(n) for array 
+   - array needs to be copied to get more memory
+   - different lists can share tail due to referential transparency
+ * Update of one element in an array is O(1); updating one element of a list is worst-case O(n) - re-build whole list
+ * Random access of nth element: O(n) list, O(1) array.
+ * If you want fast random access to a "list" that is not growing / shrinking / changing, use an `array`.
+
+`Map` vs `Hashtbl`
+ * `Map` is implemented like the `dict` of the homework
+ * O(log n) worst case time for `Map` to look up, add, or change an entry
+   - only the path to the changed node needs updating, all the sub-trees hanging off it are kept
+ * "O(1) amortized" for `Hashtbl` - will only matter for really big data sets.
+
+`Set` vs `Hash_set`
+* See previous, `Set` is like `Map` and `Hash_set` is like `Hashtbl`
+
+* [Here is a summary of OCaml data structure complexity](https://ocaml.org/learn/tutorials/comparison_of_standard_containers.html) (for the standard OCaml library but same results as `Core` version)
+
+Summary: functional data structures
+  - Feel like they should be much more inefficient but its often "at worst a log factor"
+  - In a few cases they are actually better because past states "persist for free"
+    - e.g. sub-lists can be shared since copying never needed, etc
+    - See [Real World OCaml benchmarks (scroll down)](https://dev.realworldocaml.org/maps-and-hashtables.html) for example benchmarks of this
+  - In a few cases speed is critical and mutable structures are required
 
 
 ### Case Study: Monadic Minesweeper

@@ -29,6 +29,7 @@
     - When data sets get large or algorithms get complex
     - Do generally avoid high polynomial or exponential algorithms on potentially large inputs
     - Also pay more attention when data sets get extremely large, even n vs n log n gets noticeable there.
+    - We won't cover performance any more today but there is a [whole lecture](efficiency.html) coming up on the topic.
 
 ### FP Idioms
 
@@ -51,102 +52,56 @@ Here is a list of idioms, many of which are review as we touched on them before
      - This is not just for generic data structures like `Map`/`Set`, it is for app-specific data structures
      - Example: `ChessBoard` is a nontrivial data type for a chess game, make it its own module
   - Hide types `t` in module types if users don't need to see the details
-  - Functional code has everything in the interface so it will make a more precice interface
-    - Or on the other hand perhaps you can have a simpler interface if it is imperative, e.g. `fresh_name : () -> string` making a different string each time called
+  - Functional code has everything in the interface so it will make a more accurate interface
+    - This is not always good though: consider e.g. imperative `fresh_name : () -> string` making a different string each time called
+      ```ocaml
+      let counter = ref 0
+      let fresh_name () : string = (counter := !counter + 1); "name"^(Int.to_string !counter)
+      ```
+    - To make a fresh string in functional code you would need to e.g. pass the previous count and return the next one.
+      ```ocaml
+      let fresh_name (previous : int) : (string * int) = ("name"^(Int.to_string previous), previous + 1)
+      let (name1,count1) = fresh_name 0 in
+      let (name1,count2) = fresh_name count1 in ...
+      ```
+      This is a more accurate interface to what freshness needs, but any function needing to make fresh names would need to be passed and return the current `count` value.  Yuck!
+    - The difficulty for long-time imperative programmers is everything looks like a `fresh_name` case at first, it just seems impossible to write an elegant functional version.  Don't give up, you will learn!
 
 #### Have a focus of responsibility
   - Each function and module should have a clear focus that can be summarized in a sentence
   - Divide one function/module into two if it is doing two different things
-  - Don't add random stuff to module if it doesn't fit with it's summary purpose
+  - Don't add random stuff to a module if it doesn't fit with it's summary purpose
   - If you need more than is in an existing module, make a new one and `include` the old one
 
 #### Concision
 
-(Most of this was already covered in the [FPSE Style Guide](../style-guide.md))
+Many particular low-level points were already covered in the [FPSE Style Guide](../style-guide.md), here is a review:
 
-  - **Combinize**: replace recursion with `map`s, `fold`s and the like
+  - **Combinize**: replace `let rec` with `map`s, `fold`s and the like
     - and, for your own data structures write your own combinators and then use in place of `rec`
   - Use advanced pattern matching (`as`, `with`, deep patterns, partial record patterns, `_`, etc)
   - Use `|>` in place of call sequences, and make your functions amenable to piping
-    - Make sure to have the underlying pipe-type be the *first* unnamed parameter
-    - Core solution: name most of the parameters in `List` etc (but not the list)
+    - To have pipes be effective, the best way is to follow `Core` and name the parameters that are not the underlying data you will often want to pipe on. For example `List.filter : 'a list -> f:('a -> bool) -> 'a list` and since `f` named can apply it first to make an `'a list -> 'a list` function ripe for piping:
+    ```ocaml
+     [2;5;-6;22] |> List.filter ~f:(fun x -> x < 0) |> List.is_empty |> not;;
+     ```
   - Use `@@` in place of parentheses
   - Inline simple `let` definitions to make code read as a concise sentence
     - Also a small function called only once or twice may read better inlined
     - Conversely, make more `let` definitions if the code is too convoluted
 
-<a name ="efficiency"></a>
-## Efficiency
-
-* Our main goal is conciseness, but in some cases efficiency does matter
-* We already discussed this issue a bit (e.g. cons vs append, tail recursion)
-* Here is more detail on efficiency considerations
-* We will also cover some case studies in the [efficiency lecture](./efficiency.html).
-
-### Tail recursion
-
-* We covered this earlier: `List.fold_left` is tail-recursive whereas `List.fold_right` is not
-* A tail-recursive function is a function where there is no work to do after returning from recursive calls
-  - Just bubble up the result
-* Observation: since there is no need to mark the call point to resume from, no stack is needed
- - Overwrite the parameters going "down", and return the base case as the final result of the recursion.
-* Compilers can see which functions are tail-recursive and eliminate the stack
-* Moral: to save space/time you may need to tail-call
-
-### Imperative vs functional data structures
-
-Let us warm up reviewing `'a list` efficiency
-
-* `hd` and `tl` are O(1)
-* `List.nth` is O(n) -- lists are not random access
-* `append l1 l2` is O(`length l1`) - cons each `l1` elt onto `l2` one by one
-
-Remember that sub-lists are shared since they are immutable
-
-```ocaml
-let l1 = [1;2;3;... n] in
-let l2 = 0    :: l1 in
-let l3 = (-1) :: l1 in ..
-```
-
-* `l2` and `l3` share `l1` and all the above is O(1)
-* If lists were mutable such sharing would not generally be possible
-
-`List` vs `Array`
- * Adding an element to the front (extending list) is constant time for list, O(n) for array 
-   - array needs to be copied to get more memory
-   - different lists can share tail due to referential transparency
- * Update of one element in an array is O(1); updating one element of a list is worst-case O(n) - re-build whole list
- * Random access of nth element: O(n) list, O(1) array.
- * If you want fast random access to a "list" that is not growing / shrinking / changing, use an `array`.
-
-`Map` vs `Hashtbl`
- * `Map` is implemented like the `dict` of the homework
- * O(log n) worst case time for `Map` to look up, add, or change an entry
-   - only the path to the changed node needs updating, all the sub-trees hanging off it are kept
- * "O(1) amortized" for `Hashtbl` - will only matter for really big data sets.
-
-`Set` vs `Hash_set`
-* See previous, `Set` is like `Map` and `Hash_set` is like `Hashtbl`
-
-* [Here is a summary of OCaml data structure complexity](https://ocaml.org/learn/tutorials/comparison_of_standard_containers.html) (for the standard OCaml library but same results as `Core` version)
-
-Summary: functional data structures
-  - Feel like they should be much more inefficient but its often "at worst a log factor"
-  - In a few cases they are actually better because past states "persist for free"
-    - e.g. sub-lists can be shared since copying never needed, etc
-    - See [Real World OCaml benchmarks (scroll down)](https://dev.realworldocaml.org/maps-and-hashtables.html) for example benchmarks of this
-  - In a few cases speed is critical and mutable structures are required
-
+Functional code is not always more concise than stateful code, but it is surprisingly good
+- Let us revisit the [parenthesis matching](https://pl.cs.jhu.edu/fpse/examples/random-examples/matching.ml) example from the previous lecture on side effects.
+- At the end of this file is a purely functional version of paren matching; the code is much more concise.
 
 ### Examples of Idiomatic FP
 <a name = "examples"></a>
 * Here are example codebases we will spend some time inspecting and critiqueing.
 
   * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io 
-    - [This functional implementation](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c) shows several nice OCaml patterns. [Here](../examples/random-examples/minesweeper.ml) is the version we reviewed in class which has several variations on the original implementation.
-    - We made a [variation on the functional version](../examples/random-examples/mine_array.ml) to be cleaner and more efficient
-    - Will look at an [imperative approach](../examples/random-examples/mine_mutate.ml) which has some really poor abstractions and fails to use combinators.
+    - [This functional implementation](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c) shows several nice OCaml patterns. [Here](../examples/minesweeper/src/minesweeper.ml) is the version we reviewed in class which has several variations on the original implementation.
+    - We made a [variation on the functional version](../examples/minesweeper/src/mine_array.ml) to be cleaner and more efficient
+    - Will look at an [imperative approach](../examples/minesweeper/src/mine_mutate.ml) which has some really poor abstractions and fails to use combinators.
   * [ocaml-cuid](https://github.com/marcoonroad/ocaml-cuid) is a utility to generate highly random string IDs for webpages etc.
      - Lots of nice piping here plus use of functors to build Unix and JavaScript variations
   * [dolog](https://github.com/UnixJunkie/dolog) is a very simple logging utility
