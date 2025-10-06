@@ -2,38 +2,14 @@
 ## Idiomatic Functional Programming
 
 * Design principles, design patterns, refactoring in Object-Oriented programming
-             = 
-  **Principles & idioms** in Functional Programming
-* **Principles**: overarching principles; **Idioms**: more focused ideas to aid in achieving principles
+             =>
+  **Idioms** in Functional Programming
 * We have touched on much of this so much of this is review
 
-### FP Principles
-
-1. "Concise is nice"
- - Goal of making code as short as possible
- - From the classic Strunk and White English writing guide:
-     > A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts
- - Concise code means that more information will fit in your brain's fixed-size working set
-2. Modularity / focus of responsibility
-  - Make clear divisions of responsibility between different modules and functions
-  - Attempt to make this factoring of responsibilities the most elegant which will aid in theme 1. above.
-3. Generally avoid side effects; it will help you achieve 1. and 2.
-  - Recall how pure functional code is referentially transparent, the behavior is all in the interface with no "hidden" actions.
-  - Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on
-  - Occasionally side effects will make code more concise, that is when to use them
-4. Speed
-  - There is always a trade-off in programming between efficiency and elegance
-  - Much of the time it is possible to prioritize concision and modularity over running time and space
-      - Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority
-  - **But**, sometimes speed really matters
-    - When data sets get large or algorithms get complex
-    - Do generally avoid high polynomial or exponential algorithms on potentially large inputs
-    - Also pay more attention when data sets get extremely large, even n vs n log n gets noticeable there.
-    - We won't cover performance any more today but there is a [whole lecture](efficiency.html) coming up on the topic.
 
 ### FP Idioms
 
-Here is a list of idioms, many of which are review as we touched on them before
+Here is a list of principles/idioms, many of which are review as we touched on them before
 
 #### Don't Repeat Yourself (DRY from OO): 
   - Extract duplicate code into its own function
@@ -43,6 +19,7 @@ Here is a list of idioms, many of which are review as we touched on them before
   - May also entail replacing specific types with generic types `'a` or functor parameter types `t`, `elt` etc
 
 #### Hide it behind an interface
+  - Modularity / focus of responsibility: Make clear divisions of responsibility between different modules and functions
   - Hiding minimizes what programmer-users have to think about, they can think at the higher (simpler) level of the interface
     - and, this again will take up less brain space since they are not seeing lots of low-level details.
   - If a function is auxiliary to only one other function, define it in the body of the latter.
@@ -52,6 +29,11 @@ Here is a list of idioms, many of which are review as we touched on them before
      - This is not just for generic data structures like `Map`/`Set`, it is for app-specific data structures
      - Example: `ChessBoard` is a nontrivial data type for a chess game, make it its own module
   - Hide types `t` in module types if users don't need to see the details
+
+####  Generally avoid side effects
+  - Recall how pure functional code is referentially transparent, the behavior is all in the interface with no "hidden" actions.
+  - Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on
+  - Occasionally side effects will make code more concise, that is the only time to use them
   - Functional code has everything in the interface so it will make a more accurate interface
     - This is not always good though: consider e.g. imperative `fresh_name : () -> string` making a different string each time called
       ```ocaml
@@ -75,6 +57,12 @@ Here is a list of idioms, many of which are review as we touched on them before
 
 #### Concision
 
+"Concise is nice"
+ - Goal of making code as short as possible
+ - From the classic Strunk and White English writing guide:
+     > A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts
+ - Concise code means that more information will fit in your brain's fixed-size working set
+
 Many particular low-level points were already covered in the [FPSE Style Guide](../style-guide.md), here is a review:
 
   - **Combinize**: replace `let rec` with `map`s, `fold`s and the like
@@ -94,14 +82,51 @@ Functional code is not always more concise than stateful code, but it is surpris
 - Let us revisit the [parenthesis matching](https://pl.cs.jhu.edu/fpse/examples/random-examples/matching.ml) example from the previous lecture on side effects.
 - At the end of this file is a purely functional version of paren matching; the code is much more concise.
 
+#### Speed
+  - There is always a trade-off in programming between efficiency and elegance
+  - Much of the time it is possible to prioritize concision, modularity, functional coding over efficiency
+      - Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority
+  - **But**, sometimes speed really matters
+    - When data sets get large or algorithms get complex
+    - Do generally avoid high polynomial or exponential algorithms on potentially large inputs
+    - Also pay more attention when data sets get extremely large, even n vs n log n gets noticeable there.
+      - a functional `Map` may need to be replaced with a mutable `Hashtbl`
+    - We won't cover performance any more today but there is a [whole lecture](efficiency.html) coming up on the topic.
+
+
 ### Examples of Idiomatic FP
 <a name = "examples"></a>
-* Here are example codebases we will spend some time inspecting and critiqueing.
+Here are example codebases we will spend time inspecting and critiqueing.
 
+#### Minesweeper
   * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io 
-    - [This functional implementation](https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c) shows several nice OCaml patterns. [Here](../examples/minesweeper/src/minesweeper.ml) is the version we reviewed in class which has several variations on the original implementation.
-    - We made a [variation on the functional version](../examples/minesweeper/src/mine_array.ml) to be cleaner and more efficient
-    - Will look at an [imperative approach](../examples/minesweeper/src/mine_mutate.ml) which has some really poor abstractions and fails to use combinators.
+  * Its not the full game, just calculating the number of mines adjacent to each non-mine square
+  * Example input/input:
+    ```ocaml
+      [ "  *  ";
+        "  *  ";
+        "*****";
+        "  *  ";
+        "  *  "; ]
+     
+      [ " 2*2 ";
+        "25*52";
+        "*****";
+        "25*52";
+        " 2*2 "; ]
+    ```
+      See [test.ml](../examples/minesweeper/test/test.ml) for more examples
+    - Before getting into the code let's consider algorithms, there are two distinct approaches
+      1. For each non-mine square look around it and add up the mines
+      2. Or, for each mine square increment the count on all non-mine squares around it (start at 0)
+    - The latter is fundamentally more difficult to do functionally
+      - The grid will need to change (mutate) a great many times as counts bump up one by one
+    - The former can produce the complete answer for a given cell in one go, no incrementalism
+    - We will review [this functional solution](../examples/minesweeper/src/minesweeper.ml)
+    - We made another [variation on the functional version](../examples/minesweeper/src/mine_array.ml) to be cleaner and more efficient
+    - Will look at an [imperative approach](../examples/minesweeper/src/mine_mutate.ml) which has some  poor abstractions and fails to use combinators.
+
+#### Other Examples
   * [ocaml-cuid](https://github.com/marcoonroad/ocaml-cuid) is a utility to generate highly random string IDs for webpages etc.
      - Lots of nice piping here plus use of functors to build Unix and JavaScript variations
   * [dolog](https://github.com/UnixJunkie/dolog) is a very simple logging utility

@@ -73,58 +73,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Design principles, design patterns, refactoring in Object-Oriented programming<br />
-           = <br />
-<strong>Principles &amp; idioms</strong> in Functional Programming</li>
-  <li><strong>Principles</strong>: overarching principles; <strong>Idioms</strong>: more focused ideas to aid in achieving principles</li>
+           =&gt;<br />
+<strong>Idioms</strong> in Functional Programming</li>
   <li>We have touched on much of this so much of this is review</li>
 </ul>
 
-<h3 id="fp-principles">FP Principles</h3>
-
-<ol>
-  <li>“Concise is nice”
-    <ul>
-      <li>Goal of making code as short as possible</li>
-      <li>From the classic Strunk and White English writing guide:
-        <blockquote>
-          <p>A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts</p>
-        </blockquote>
-      </li>
-      <li>Concise code means that more information will fit in your brain’s fixed-size working set</li>
-    </ul>
-  </li>
-  <li>Modularity / focus of responsibility
-    <ul>
-      <li>Make clear divisions of responsibility between different modules and functions</li>
-      <li>Attempt to make this factoring of responsibilities the most elegant which will aid in theme 1. above.</li>
-    </ul>
-  </li>
-  <li>Generally avoid side effects; it will help you achieve 1. and 2.
-    <ul>
-      <li>Recall how pure functional code is referentially transparent, the behavior is all in the interface with no “hidden” actions.</li>
-      <li>Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on</li>
-      <li>Occasionally side effects will make code more concise, that is when to use them</li>
-    </ul>
-  </li>
-  <li>Speed
-    <ul>
-      <li>There is always a trade-off in programming between efficiency and elegance</li>
-      <li>Much of the time it is possible to prioritize concision and modularity over running time and space</li>
-    </ul>
-    <ul>
-      <li>Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority<br />
-    - <strong>But</strong>, sometimes speed really matters</li>
-      <li>When data sets get large or algorithms get complex</li>
-      <li>Do generally avoid high polynomial or exponential algorithms on potentially large inputs</li>
-      <li>Also pay more attention when data sets get extremely large, even n vs n log n gets noticeable there.</li>
-      <li>We won’t cover performance any more today but there is a <a href="efficiency.html">whole lecture</a> coming up on the topic.</li>
-    </ul>
-  </li>
-</ol>
-
 <h3 id="fp-idioms">FP Idioms</h3>
 
-<p>Here is a list of idioms, many of which are review as we touched on them before</p>
+<p>Here is a list of principles/idioms, many of which are review as we touched on them before</p>
 
 <h4 id="dont-repeat-yourself-dry-from-oo">Don’t Repeat Yourself (DRY from OO):</h4>
 <ul>
@@ -140,6 +96,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="hide-it-behind-an-interface">Hide it behind an interface</h4>
 <ul>
+  <li>Modularity / focus of responsibility: Make clear divisions of responsibility between different modules and functions</li>
   <li>Hiding minimizes what programmer-users have to think about, they can think at the higher (simpler) level of the interface
     <ul>
       <li>and, this again will take up less brain space since they are not seeing lots of low-level details.</li>
@@ -158,6 +115,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>Hide types <code>t</code> in module types if users don’t need to see the details</li>
+</ul>
+
+<h4 id="generally-avoid-side-effects">Generally avoid side effects</h4>
+<ul>
+  <li>Recall how pure functional code is referentially transparent, the behavior is all in the interface with no “hidden” actions.</li>
+  <li>Side effect world view is a state machine vs functional view as a pipeline explicitly passing data on</li>
+  <li>Occasionally side effects will make code more concise, that is the only time to use them</li>
   <li>Functional code has everything in the interface so it will make a more accurate interface
     <ul>
       <li>This is not always good though: consider e.g. imperative <code>fresh_name : () -&gt; string</code> making a different string each time called
@@ -186,6 +150,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h4 id="concision">Concision</h4>
+
+<p>“Concise is nice”</p>
+<ul>
+  <li>Goal of making code as short as possible</li>
+  <li>From the classic Strunk and White English writing guide:
+    <blockquote>
+      <p>A sentence should contain no unnecessary words, a paragraph no unnecessary sentences, for the same reason that a drawing should have no unnecessary lines and a machine no unnecessary parts</p>
+    </blockquote>
+  </li>
+  <li>Concise code means that more information will fit in your brain’s fixed-size working set</li>
+</ul>
 
 <p>Many particular low-level points were already covered in the <a href="../style-guide.md">FPSE Style Guide</a>, here is a review:</p>
 
@@ -219,33 +194,83 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>At the end of this file is a purely functional version of paren matching; the code is much more concise.</li>
 </ul>
 
-<h3 id="examples-of-idiomatic-fp">Examples of Idiomatic FP</h3>
-<p><a name="examples"></a></p>
+<h4 id="speed">Speed</h4>
 <ul>
-  <li>
-    <p>Here are example codebases we will spend some time inspecting and critiqueing.</p>
-
+  <li>There is always a trade-off in programming between efficiency and elegance</li>
+  <li>Much of the time it is possible to prioritize concision, modularity, functional coding over efficiency
     <ul>
-      <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper">Minesweeper</a> at Exercism.io
-        <ul>
-          <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/ace26e2f446a4a18a3b1bad83dd9487c">This functional implementation</a> shows several nice OCaml patterns. <a href="../examples/minesweeper/src/minesweeper.ml">Here</a> is the version we reviewed in class which has several variations on the original implementation.</li>
-          <li>We made a <a href="../examples/minesweeper/src/mine_array.ml">variation on the functional version</a> to be cleaner and more efficient</li>
-          <li>Will look at an <a href="../examples/minesweeper/src/mine_mutate.ml">imperative approach</a> which has some really poor abstractions and fails to use combinators.</li>
-        </ul>
-      </li>
-      <li><a href="https://github.com/marcoonroad/ocaml-cuid">ocaml-cuid</a> is a utility to generate highly random string IDs for webpages etc.
-        <ul>
-          <li>Lots of nice piping here plus use of functors to build Unix and JavaScript variations</li>
-        </ul>
-      </li>
-      <li><a href="https://github.com/UnixJunkie/dolog">dolog</a> is a very simple logging utility
-        <ul>
-          <li>Shows some nice use of state, <code>include</code>, and a <code>Make</code> functor.</li>
-        </ul>
-      </li>
-      <li>We may also look at a past homework solution so you can compare it with what you did.</li>
+      <li>Note that Python and JavaScript are ~5-10 times slower than C or OCaml, a case in point for speed not a priority</li>
     </ul>
   </li>
+  <li><strong>But</strong>, sometimes speed really matters
+    <ul>
+      <li>When data sets get large or algorithms get complex</li>
+      <li>Do generally avoid high polynomial or exponential algorithms on potentially large inputs</li>
+      <li>Also pay more attention when data sets get extremely large, even n vs n log n gets noticeable there.
+        <ul>
+          <li>a functional <code>Map</code> may need to be replaced with a mutable <code>Hashtbl</code></li>
+        </ul>
+      </li>
+      <li>We won’t cover performance any more today but there is a <a href="efficiency.html">whole lecture</a> coming up on the topic.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="examples-of-idiomatic-fp">Examples of Idiomatic FP</h3>
+<p><a name="examples"></a><br />
+Here are example codebases we will spend time inspecting and critiqueing.</p>
+
+<h4 id="minesweeper">Minesweeper</h4>
+<ul>
+  <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper">Minesweeper</a> at Exercism.io</li>
+  <li>Its not the full game, just calculating the number of mines adjacent to each non-mine square</li>
+  <li>Example input/input:
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">[</span> <span class="s2">"  *  "</span><span class="p">;</span>
+    <span class="s2">"  *  "</span><span class="p">;</span>
+    <span class="s2">"*****"</span><span class="p">;</span>
+    <span class="s2">"  *  "</span><span class="p">;</span>
+    <span class="s2">"  *  "</span><span class="p">;</span> <span class="p">]</span>
+     
+  <span class="p">[</span> <span class="s2">" 2*2 "</span><span class="p">;</span>
+    <span class="s2">"25*52"</span><span class="p">;</span>
+    <span class="s2">"*****"</span><span class="p">;</span>
+    <span class="s2">"25*52"</span><span class="p">;</span>
+    <span class="s2">" 2*2 "</span><span class="p">;</span> <span class="p">]</span>
+</code></pre></div>    </div>
+    <p>See <a href="../examples/minesweeper/test/test.ml">test.ml</a> for more examples</p>
+    <ul>
+      <li>Before getting into the code let’s consider algorithms, there are two distinct approaches
+        <ol>
+          <li>For each non-mine square look around it and add up the mines</li>
+          <li>Or, for each mine square increment the count on all non-mine squares around it (start at 0)</li>
+        </ol>
+      </li>
+      <li>The latter is fundamentally more difficult to do functionally
+        <ul>
+          <li>The grid will need to change (mutate) a great many times as counts bump up one by one</li>
+        </ul>
+      </li>
+      <li>The former can produce the complete answer for a given cell in one go, no incrementalism</li>
+      <li>We will review <a href="../examples/minesweeper/src/minesweeper.ml">this functional solution</a></li>
+      <li>We made another <a href="../examples/minesweeper/src/mine_array.ml">variation on the functional version</a> to be cleaner and more efficient</li>
+      <li>Will look at an <a href="../examples/minesweeper/src/mine_mutate.ml">imperative approach</a> which has some  poor abstractions and fails to use combinators.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="other-examples">Other Examples</h4>
+<ul>
+  <li><a href="https://github.com/marcoonroad/ocaml-cuid">ocaml-cuid</a> is a utility to generate highly random string IDs for webpages etc.
+    <ul>
+      <li>Lots of nice piping here plus use of functors to build Unix and JavaScript variations</li>
+    </ul>
+  </li>
+  <li><a href="https://github.com/UnixJunkie/dolog">dolog</a> is a very simple logging utility
+    <ul>
+      <li>Shows some nice use of state, <code>include</code>, and a <code>Make</code> functor.</li>
+    </ul>
+  </li>
+  <li>We may also look at a past homework solution so you can compare it with what you did.</li>
 </ul>
       
           </section>

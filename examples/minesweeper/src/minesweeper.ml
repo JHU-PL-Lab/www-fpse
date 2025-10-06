@@ -50,8 +50,9 @@ module Board = struct
     | None -> None 
     | Some(row) -> try Some(String.get row x) with Invalid_argument _ -> None  
 
-(* Let us rewrite the above using some Option library functions;
-   Hover over the functions to see their types.  *)    
+(* String.get is an old library function, it raises an exception not an option
+   Option.try_with is a handy adaptor function to convert that exception to a None
+   Let us rewrite the above using some Option library functions  *)    
   let get' (b : t) (x : int) (y : int) : char option =
     List.nth b y
     |> Option.value_map ~default:None ~f:(fun row ->
@@ -64,9 +65,11 @@ module Board = struct
     List.nth b y
     |> Option.bind ~f:(fun row -> Option.try_with (fun () -> String.get row x))
 
-  (* Shorthand pipe notation >>=, it is just infix Option.bind; 
-     need to open Option to enable 
-     This notation is part of monadic programming, more later on that! *)
+  (* Shorthand pipe notation >>=, it is just infix Option.bind;
+     - its like |> but implicitly cases on Some/None 
+     - unwraps Some's and and propagates None's implicitly
+     - Need to open Option to enable 
+     - This notation is part of monadic programming, much more later on that! *)
 
   let get''' (b : t) (x : int) (y : int) : char option =
     Option.(List.nth b y >>= fun row -> try_with (fun () -> String.get row x))
@@ -74,7 +77,7 @@ module Board = struct
   (* Another equivalent notation for Option.bind where you don't need to make the fun row -> ... ;
      instead use let%bind to bind the `row` here.  Need #require "ppx_jane";; for let%bind
      let%bind allows the None case to be implicit in the background: it reads like regular code
-     Compare with the get''' version, it is just a small bit of syntax sugar
+     Compare with the get''' version, it is very similar
  *)
   let get'''' (b : t) (x : int) (y : int) : char option =
     let open Option in (* let open Option in .. is like Option.(...) *)
@@ -95,7 +98,7 @@ module Board = struct
 
   let is_mine = Char.equal '*'
   let is_field = Fn.non is_mine
-  let is_field' c = not @@ is_mine c (* this version without Fn.non shows why non is useful *)
+  let is_field' c = not @@ is_mine c (* this version without Fn.non shows why non is handy *)
 
   (* Apply a function to every non-mine element of the grid to produce a new grid 
      Mapping function f gets the x, y coordinate as well as args 
