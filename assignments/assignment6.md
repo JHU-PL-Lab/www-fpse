@@ -7,9 +7,8 @@ You will write an executable for an n-gram model generator. This is a large assi
 
 * [Use this zip file](http://pl.cs.jhu.edu/fpse/assignments/assignment6.zip) for your assignment. 
 * There is `src/bin/ngrams.ml` that compiles to an executable. Your code with side-effects will go here.
-* There is `src/lib/`, which contains a suggested interface for your library code. Your library code will go here.
-  * You do not have to use the suggested interface. It is only there to help you set up a reasonable project structure, and it is a signficant portion of the interface used for the sample solution.
-  * If you add any new files, you need to add them to the `dune` rule in the top-level directory to submit them in your zip file.
+* There is `src/lib/`, which is where you will put your library code.
+  * For each new file you create, you need to add it to the `dune` rule in the top-level directory to submit them in your zip file.
   * Your library modules must have well-documented `.mli` files. See the provided `.mli` files in this or previous assignments for what we consider to be well-documented.
 * The code to test your library and the executable is in `src-test/`. We provide some tests to convey functionality expectations and to kick off the testing of the executable.
   * All of your tests will go in `src-test/tests.ml`.
@@ -178,9 +177,9 @@ If the option `--most-frequent K-MOST-FREQUENT` is provided:
 
   To stdout, output a sorted sexp-formatted list of length `K-MOST-FREQUENT` containing information about the most common n-grams seen in the `CORPUS-FILE`, like so:
 
-    (((ngram(hello world goodbye))(frequency 5))((ngram(lexicographically greater ngram))(frequency 5))((ngram(less frequent ngram))(frequency 4))...)
+    (((ngram(hello world goodbye))(frequency 5))((ngram(lexicographically greater ngram))(frequency 5))((ngram(less frequent ngram))(frequency 4))((ngram(lesser frequent ngram))(frequency 3)))
 
-  Where the ["hello"; "world"; "goodbye"] n-gram showed up 5 times, and "..." is for the remaining, less-frequent n-grams until `K-MOST-FREQUENT` have been printed. In this example, `N` = 3.
+  Where the ["hello"; "world"; "goodbye"] n-gram showed up 5 times, as did ["lexicographically"; "greater"; "ngram"], and so on. In this example, `N` = 3, and `K-MOST-FREQUENT` = 4.
 
   If there are fewer unique n-grams than `K-MOST-FREQUENT`, then print as many as possible.
 
@@ -190,7 +189,7 @@ You may assume that exactly one of `--sample` or `--most-frequent` will be suppl
 
 Some command line argument parsing is done for you. You should feel free to change the provided code in any way.
 
-We will reveal only a few tests to help you get the right output format, but you are expected to thoroughly test your own code. Testing is an important part of software development. The same tests are revealed on Gradescope as are provided in `src-test/ngrams_tests.ml`. If you feel the desired functionality is still ambiguous, then please ask on Courselore for clarification.
+We will reveal only a few tests to help you get the right output format, but you are expected to thoroughly test your own code. Testing is an important part of software development. The same tests are revealed on Gradescope as are provided in `src-test/ngrams_tests.ml`. If you feel the desired functionality is still ambiguous, then please ask on Courselore for clarification after reading this entire file.
 
 ### Implementation requirements.
 
@@ -198,12 +197,11 @@ There are several requirements to receive full credit for this assignment. You a
 
 #### Architecture requirements
 * You must have a library, so only a very, very small portion of your code is in `src/bin/ngrams.ml`.
-* All library code exposed by the `.mli` files should be well-documented, and all library modules have an `.mli` file.
+* All library code exposed by the `.mli` files should be well-documented (just like how the `.mli` files provided with each prior assignment have been well-documented), and all library modules have an `.mli` file.
 * You need a type to represent an n-gram.
 * You need a type to represent a distribution of many n-grams: how the first "n minus 1" items can be followed by a next item.
 * This must be done with a functor such that the n-gram distributions can be of any item type--strings, ints, anything comparable--even though the executable will only use it with strings.
 * Your code is modular with separation of responsibilities and good use of abstraction.
-* The provided `.mli` files in `src/lib/` are **only a suggestion**. They are not complete, and you don't even need to use them.
 
 #### Code quality requirements
 * Your code is functional with no mutation.
@@ -222,9 +220,42 @@ We also expect that you sufficiently test your code.
 
 If you're about to ask a question on Courselore like "Am I allowed to do x?", first ask yourself if it is in direct conflict with any of the requirements above. What is given above is what must *at least* be in your code; it is not what *only* may be in your code. You can do whatever you'd like outside of the above requirements. Just fulfill those requirements, and you're fine.
 
+### Example interfaces
+
+We do not provide you any starter code for your library, but here, we give you just part of an example interface that might be used to solve this assignment. You do not have to use anything from this interface, and if you do, then you will probably have to add to it. It is not complete.
+
+These interfaces are intentionally not commented or explained. Notice that they are small and modular, and they hide the implementation details.
+
+```ocaml
+(* ngram.mli *)
+open Core
+type 'token t [@@deriving sexp, compare]
+val parse : int -> 'token list -> 'token t list
+val split_last : 'token t -> 'token list * 'token
+module Make (Token : Map.Key) : sig
+  type nonrec t = Token.t t [@@deriving sexp, compare]
+  val k_most_to_string : k:int -> t list -> string
+end
+
+(* distribution.mli *)
+open Core
+module Make (Token : Map.Key) : sig
+  type t 
+  val make : Token.t Ngram.t list -> t
+  val sample : t -> max_length:int -> init:Token.t list option -> Token.t list
+end
+
+(* utils.mli *)
+open Core
+val get_sanitized_words : Filename.t -> string list
+```
+
+Do not get caught up trying to write a solution with exactly this interface. Write your own libraries to best implement your own solution, but take from this as you wish.
+
 ### Submission and grading
 
-* Make sure your `dune` files are updated for each library you make. Your libraries should be dependencies of `ngrams.exe`.
+* Make sure your `dune` files are updated for each library you make. Your libraries should be dependencies of each other or the `ngrams` executable.
 * Any file you create should be added to the zip rule in the top-level `dune`. The provided files are all automatically submitted. If you choose to not use any of them, then delete them from the zip rule.
+  - If you do not update your `dune` files, then the autograder will not give you any output. Make sure you've updated everything before you submit.
 * Run a final `dune clean ; dune build`, and upload `_build/default/assignment6.zip` to Gradescope.
 * Any requirement expressed or suggested in this file is subject to grading. Make sure you've read it carefully. Design and implement your solution with all requirements in mind.

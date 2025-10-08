@@ -77,10 +77,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li><a href="http://pl.cs.jhu.edu/fpse/assignments/assignment6.zip">Use this zip file</a> for your assignment.</li>
   <li>There is <code>src/bin/ngrams.ml</code> that compiles to an executable. Your code with side-effects will go here.</li>
-  <li>There is <code>src/lib/</code>, which contains a suggested interface for your library code. Your library code will go here.
+  <li>There is <code>src/lib/</code>, which is where you will put your library code.
     <ul>
-      <li>You do not have to use the suggested interface. It is only there to help you set up a reasonable project structure, and it is a signficant portion of the interface used for the sample solution.</li>
-      <li>If you add any new files, you need to add them to the <code>dune</code> rule in the top-level directory to submit them in your zip file.</li>
+      <li>For each new file you create, you need to add it to the <code>dune</code> rule in the top-level directory to submit them in your zip file.</li>
       <li>Your library modules must have well-documented <code>.mli</code> files. See the provided <code>.mli</code> files in this or previous assignments for what we consider to be well-documented.</li>
     </ul>
   </li>
@@ -252,10 +251,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>To stdout, output a sorted sexp-formatted list of length <code>K-MOST-FREQUENT</code> containing information about the most common n-grams seen in the <code>CORPUS-FILE</code>, like so:</p>
 
-<pre><code>(((ngram(hello world goodbye))(frequency 5))((ngram(lexicographically greater ngram))(frequency 5))((ngram(less frequent ngram))(frequency 4))...)
+<pre><code>(((ngram(hello world goodbye))(frequency 5))((ngram(lexicographically greater ngram))(frequency 5))((ngram(less frequent ngram))(frequency 4))((ngram(lesser frequent ngram))(frequency 3)))
 </code></pre>
 
-<p>Where the [“hello”; “world”; “goodbye”] n-gram showed up 5 times, and “…” is for the remaining, less-frequent n-grams until <code>K-MOST-FREQUENT</code> have been printed. In this example, <code>N</code> = 3.</p>
+<p>Where the [“hello”; “world”; “goodbye”] n-gram showed up 5 times, as did [“lexicographically”; “greater”; “ngram”], and so on. In this example, <code>N</code> = 3, and <code>K-MOST-FREQUENT</code> = 4.</p>
 
 <p>If there are fewer unique n-grams than <code>K-MOST-FREQUENT</code>, then print as many as possible.</p>
 
@@ -265,7 +264,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Some command line argument parsing is done for you. You should feel free to change the provided code in any way.</p>
 
-<p>We will reveal only a few tests to help you get the right output format, but you are expected to thoroughly test your own code. Testing is an important part of software development. The same tests are revealed on Gradescope as are provided in <code>src-test/ngrams_tests.ml</code>. If you feel the desired functionality is still ambiguous, then please ask on Courselore for clarification.</p>
+<p>We will reveal only a few tests to help you get the right output format, but you are expected to thoroughly test your own code. Testing is an important part of software development. The same tests are revealed on Gradescope as are provided in <code>src-test/ngrams_tests.ml</code>. If you feel the desired functionality is still ambiguous, then please ask on Courselore for clarification after reading this entire file.</p>
 
 <h3 id="implementation-requirements">Implementation requirements.</h3>
 
@@ -274,12 +273,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="architecture-requirements">Architecture requirements</h4>
 <ul>
   <li>You must have a library, so only a very, very small portion of your code is in <code>src/bin/ngrams.ml</code>.</li>
-  <li>All library code exposed by the <code>.mli</code> files should be well-documented, and all library modules have an <code>.mli</code> file.</li>
+  <li>All library code exposed by the <code>.mli</code> files should be well-documented (just like how the <code>.mli</code> files provided with each prior assignment have been well-documented), and all library modules have an <code>.mli</code> file.</li>
   <li>You need a type to represent an n-gram.</li>
   <li>You need a type to represent a distribution of many n-grams: how the first “n minus 1” items can be followed by a next item.</li>
   <li>This must be done with a functor such that the n-gram distributions can be of any item type–strings, ints, anything comparable–even though the executable will only use it with strings.</li>
   <li>Your code is modular with separation of responsibilities and good use of abstraction.</li>
-  <li>The provided <code>.mli</code> files in <code>src/lib/</code> are <strong>only a suggestion</strong>. They are not complete, and you don’t even need to use them.</li>
 </ul>
 
 <h4 id="code-quality-requirements">Code quality requirements</h4>
@@ -312,11 +310,46 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>If you’re about to ask a question on Courselore like “Am I allowed to do x?”, first ask yourself if it is in direct conflict with any of the requirements above. What is given above is what must <em>at least</em> be in your code; it is not what <em>only</em> may be in your code. You can do whatever you’d like outside of the above requirements. Just fulfill those requirements, and you’re fine.</p>
 
+<h3 id="example-interfaces">Example interfaces</h3>
+
+<p>We do not provide you any starter code for your library, but here, we give you just part of an example interface that might be used to solve this assignment. You do not have to use anything from this interface, and if you do, then you will probably have to add to it. It is not complete.</p>
+
+<p>These interfaces are intentionally not commented or explained. Notice that they are small and modular, and they hide the implementation details.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* ngram.mli *)</span>
+<span class="k">open</span> <span class="nc">Core</span>
+<span class="k">type</span> <span class="k">'</span><span class="n">token</span> <span class="n">t</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">sexp</span><span class="o">,</span> <span class="n">compare</span><span class="p">]</span>
+<span class="k">val</span> <span class="n">parse</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">token</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">token</span> <span class="n">t</span> <span class="kt">list</span>
+<span class="k">val</span> <span class="n">split_last</span> <span class="o">:</span> <span class="k">'</span><span class="n">token</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">token</span> <span class="kt">list</span> <span class="o">*</span> <span class="k">'</span><span class="n">token</span>
+<span class="k">module</span> <span class="nc">Make</span> <span class="p">(</span><span class="nc">Token</span> <span class="o">:</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Key</span><span class="p">)</span> <span class="o">:</span> <span class="k">sig</span>
+  <span class="k">type</span> <span class="k">nonrec</span> <span class="n">t</span> <span class="o">=</span> <span class="nn">Token</span><span class="p">.</span><span class="n">t</span> <span class="n">t</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">sexp</span><span class="o">,</span> <span class="n">compare</span><span class="p">]</span>
+  <span class="k">val</span> <span class="n">k_most_to_string</span> <span class="o">:</span> <span class="n">k</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="kt">string</span>
+<span class="k">end</span>
+
+<span class="c">(* distribution.mli *)</span>
+<span class="k">open</span> <span class="nc">Core</span>
+<span class="k">module</span> <span class="nc">Make</span> <span class="p">(</span><span class="nc">Token</span> <span class="o">:</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Key</span><span class="p">)</span> <span class="o">:</span> <span class="k">sig</span>
+  <span class="k">type</span> <span class="n">t</span> 
+  <span class="k">val</span> <span class="n">make</span> <span class="o">:</span> <span class="nn">Token</span><span class="p">.</span><span class="n">t</span> <span class="nn">Ngram</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">t</span>
+  <span class="k">val</span> <span class="n">sample</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">max_length</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span> <span class="n">init</span><span class="o">:</span><span class="nn">Token</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="n">option</span> <span class="o">-&gt;</span> <span class="nn">Token</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
+<span class="k">end</span>
+
+<span class="c">(* utils.mli *)</span>
+<span class="k">open</span> <span class="nc">Core</span>
+<span class="k">val</span> <span class="n">get_sanitized_words</span> <span class="o">:</span> <span class="nn">Filename</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="kt">list</span>
+</code></pre></div></div>
+
+<p>Do not get caught up trying to write a solution with exactly this interface. Write your own libraries to best implement your own solution, but take from this as you wish.</p>
+
 <h3 id="submission-and-grading">Submission and grading</h3>
 
 <ul>
-  <li>Make sure your <code>dune</code> files are updated for each library you make. Your libraries should be dependencies of <code>ngrams.exe</code>.</li>
-  <li>Any file you create should be added to the zip rule in the top-level <code>dune</code>. The provided files are all automatically submitted. If you choose to not use any of them, then delete them from the zip rule.</li>
+  <li>Make sure your <code>dune</code> files are updated for each library you make. Your libraries should be dependencies of each other or the <code>ngrams</code> executable.</li>
+  <li>Any file you create should be added to the zip rule in the top-level <code>dune</code>. The provided files are all automatically submitted. If you choose to not use any of them, then delete them from the zip rule.
+    <ul>
+      <li>If you do not update your <code>dune</code> files, then the autograder will not give you any output. Make sure you’ve updated everything before you submit.</li>
+    </ul>
+  </li>
   <li>Run a final <code>dune clean ; dune build</code>, and upload <code>_build/default/assignment6.zip</code> to Gradescope.</li>
   <li>Any requirement expressed or suggested in this file is subject to grading. Make sure you’ve read it carefully. Design and implement your solution with all requirements in mind.</li>
 </ul>
