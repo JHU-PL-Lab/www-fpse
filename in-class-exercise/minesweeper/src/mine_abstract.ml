@@ -55,7 +55,7 @@ let is_field = Fn.non is_mine
 
 let from_string_list (l : string list) : input_cell Array_2d.t =
   let char_array : char Array_2d.t = (List.to_array (List.map l ~f:(fun s -> String.to_array s))) in
-  Array_2d.mapxy char_array ~f:(fun _ _ _ -> Empty(* fill in*))
+  Array_2d.mapxy char_array ~f:((* fill this in *))
 
 (* Here is the output conversion which we give you *)  
 
