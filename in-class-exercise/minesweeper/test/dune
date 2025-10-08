@@ -1,0 +1,12 @@
+(executable
+  (name test)
+  (libraries
+    base
+    ounit2
+    mine_abstract
+  ))
+
+(rule
+ (alias runtest)
+ (action (chdir %{project_root}
+  (run ./test/test.exe))))

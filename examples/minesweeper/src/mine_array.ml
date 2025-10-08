@@ -69,3 +69,12 @@ let array_annotate (board : char Array_2d.t) : char Array_2d.t =
 (* Overall function requires conversion functions in pipeline, no big deal. *)      
 let annotate (l : string list) : string list =
   l |> from_string_list |> array_annotate |> to_string_list
+
+(* simple test *)  
+let _  = annotate [
+        "  *  ";
+        "  *  ";
+        "*****";
+        "  *  ";
+        "  *  ";
+      ]

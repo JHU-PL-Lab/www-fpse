@@ -1,0 +1,10 @@
+(library
+ (name mine_abstract)
+ (modules mine_abstract)
+ (libraries core)
+ (preprocess (pps ppx_let))
+)
+; To load libraries in a fresh utop top loop use command line
+; `dune utop`
+; or an equivalent means is to start utop or ocaml and enter `#use_output "dune top";;`
+
