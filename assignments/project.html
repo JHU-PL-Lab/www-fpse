@@ -50,7 +50,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="/fpse/assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/9034692226">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
           <li><a href="/fpse/contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -80,13 +80,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>You must use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>OUnit2</code> etc – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 2-4 people.</li>
   <li>OCaml excels for non-trivial algorithms, and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.</li>
-  <li>You are also <strong>required</strong> need to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.</li>
+  <li>You are also <strong>required</strong> to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.</li>
   <li>A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.</li>
 </ul>
 
 <h3 id="project-topic-thrusts">Project Topic Thrusts</h3>
 
-<p>You will need to make a standalone application as in assignments 4 and 6. Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects: a sudoku solver, chess AI, complex-number mathematics with a rasterizer, ASCII image generator, etc.</p>
+<p>You will need to make a standalone application as in assignment 6. Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects: a sudoku solver, chess AI, complex-number mathematics with a rasterizer, ASCII image generator, etc.</p>
 
 <ol>
   <li>A command-line app with persistence.
@@ -118,7 +118,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_lwt_unix</code></a> for web client (API reading / crawling) applications.</li>
-  <li>We recommend <a href="https://aantron.github.io/dream"><code>Dream</code></a> for web applications.  (Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions. on Linux or WSL2 you will probably need to use <code>apt</code> to install similar libraries if you don’t have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, <code>Cohttp</code> (below) is also a good choice.</li>
+  <li>We recommend <a href="https://github.com/camlworks/dream"><code>Dream</code></a> for web applications.  (Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions. on Linux or WSL2 you will probably need to use <code>apt</code> to install similar libraries if you don’t have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, <code>Cohttp</code> (below) is also a good choice.</li>
   <li><a href="https://github.com/rgrinberg/opium"><code>Opium</code></a> is a good alternative to <code>Dream</code> to consider as well.  Both are built on <code>Lwt</code>.</li>
   <li><code>Cohttp</code> also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
   <li>For the client, it is possible to code your client in “OCaml” using <a href="https://rescript-lang.org">ReScript</a> which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  Since ReScript is available we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!</li>
@@ -132,7 +132,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h4 id="data-processing">Data Processing</h4>
-<p>There are some good libraries here but they don’t have many users and we have had <strong>many issues with people being able to install these libraries in the past</strong>.  If you wanted to base your project around one of these libraries <strong>you will be required to</strong> (1) get the library successfully installed on all your team members’ computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.</p>
+<p>There are some good libraries here but they don’t have many users and we have had <strong>issues with people being able to install these libraries in the past</strong>.  If you wanted to base your project around one of these libraries <strong>you will be required to</strong> (1) get the library successfully installed on all your team members’ computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.</p>
 <ul>
   <li><a href="https://ocaml.xyz/">Owl</a> is a very well-documented numerical processing library.</li>
   <li><a href="https://github.com/janestreet/torch">ocaml-torch</a> PyTorch bindings for OCaml.   (Note that the OCaml TensorFlow bindings are old and don’t seem to work.)</li>

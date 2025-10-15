@@ -35,8 +35,8 @@ let _ = !rl (* we have set '_weak1 to be int with this *)
 
 (* Sometimes types are weak due to weaknesses in the underlying type system: *)
 
-(* # let id = (fun x -> x)(fun x -> x) *) 
-(* val id : '_weak2 -> '_weak2 = <fun> *)
+let weak_id = (fun () -> Fn.id) () (* abstraction and application are a no-op but messes up type *)
+(* val weak_id : '_weak2 -> '_weak2 = <fun> *)
 
 (*
  * Type variables can be PARAMETERS on type - to - type functions *)
@@ -73,6 +73,7 @@ module type EQ = sig type t val equal : t -> t -> bool end
  - An existential type is a type variable alias where you don't know what it is aliased to.
  - Recall that the notion of something existing but not directly defined is a fundamental part of math:
     "for all x there EXISTS a y such that y > x" -- many math assertions have "exists" in them.
+    - generic/polymorphic types are "for all", hidden types are "exists" in logic terms.
  - if you want to see if something is an alias or an existential, ask to #show it; you will see aliased type.
 
 # #show String.t;;
@@ -131,12 +132,12 @@ module Example_pair_smartest = Make_pair_smartest(Int)(String)
 (* Treat modules as data values: let-define them, put in lists, etc etc *)
 (* We will see there are ways to push modules into expression-space, 
    and also to take modules in expression-space and turn them into real modules *)
-(* We often need an explicit module type to get this to work *)
+(* We often need an explicit module type added (`: MYMODULE`) to get this to work *)
 (* (in general, the more advanced the types get the weaker the inference is) *)
 
 (* The module type for Example_pair_smartest above, declared module type needed explicitly *)
 (* This is the type inferred for the resulting module the functor makes *)
-module type EPS_I = 
+module type EPS = 
 sig
   type t
   val create : int -> string -> t
@@ -149,13 +150,13 @@ end
 (* Let us put a module in a ref cell as a very stupid example of modules-as-data
     `(module M)` is the syntax for turning regular module into an expression
     But often the type checker needs some help so you need to also give a type:  
-    `(module M : M_i)`  *)
+    `(module M : MOD)`  *)
 
-let mcell  =  ref (module Example_pair_smartest : EPS_I)
+let mcell  =  ref (module Example_pair_smartest : EPS)
 
-(* Unpack it from the cell to make an official top-level module *)
+(* To use it, first need to unpack it from the cell to make an official top-level module *)
 (* "val" is the keyword to go back expression-land to module-land
-   - it is in some sense the inverse of (module ..) *)
+   - it is an inverse of (module ..) syntax *)
 
 module SP = (val !mcell)
 
@@ -207,26 +208,30 @@ module IntPair = struct
 end
 
 module PairMap = Map.Make(IntPair)
+let pair_map = PairMap.empty
+let add_a_pair = pair_map |> Map.add_exn ~key:(1,2) ~data:3
 
 (* Now the annoying thing about this is we need to make a new module for every different Map key type *)
 
-(* Let us now look in details the first-class modules method for making Maps *)
+(* Let us now look at the first-class modules method for making Maps *)
 
-(* Make an empty module with string key; type of m is funky more below on that *)
+(* Make an empty module with string key: use `Map.empty ()` not `PairMap.empty`
+   - it takes the module used for the key as a parameter
+   - type of a_map is funky, more below on that *)
 let a_map = Map.empty (module String) 
 
-(* Notice we didn't need to make a StringMap module since Map.empty takes a String module  - !
-   The Map.empty function itself encapsulates in its type that it is a string map: *)
+(* Notice that the `a_map` type is a string-keyed module, so Map.add will know the type of key *)
 let added = a_map |> Map.add_exn ~key:"hello" ~data:3
 
 (* Under the hood of how this is working *)
 
-(* There are some very subtle OCaml patterns used to make this work.  We will at least
-   aim for a vague idea of it here, just to show that there is some deep stuff! *)
+(* There are some very subtle OCaml patterns used to make this work.  We will just aim
+   for a fuzzy idea of it here, just to show that there is some deep stuff! *)
 
 (* 
-   What is Map.empty's type?  Informally it is taking a module as argument
-   So, type of argument must be a module type (but in expression-land)
+   What is Map.empty's type?  
+   It is taking a module as argument, so 
+   type of argument must be a module type (but in expression-land)
 
 # #show Map.empty;;
 val empty : ('a, 'cmp) Comparator.Module.t -> ('a, 'b, 'cmp) Map.t
@@ -248,7 +253,7 @@ module type S =
     val comparator : (t, comparator_witness) Comparator.t
   end
 
-One final level:
+One final level (we warned you it was complicated!!):
 #show Comparator.t;;
 type ('a, 'witness) t =
   ('a, 'witness) Comparator.t = private {
@@ -256,15 +261,22 @@ type ('a, 'witness) t =
   sexp_of_t : 'a -> Sexp.t;
 }
 
-Here we finally see the requirements on a module to make a map: a witness, compare, and sexp_of
+Here we finally see the requirements on a module to make a map: 
+compare, sexp_of, and a witness (comparator_witness)
 
 -- the parameters 'a and 'witness are the key type and a special "nonce" type 'witness
-    -- 'witness is a "phantom type", no values have that type and it only helps the typechecker
-    -- think of it as a "token" that confirms there is a compare function which will always be from 
+    -- 'witness is a "phantom type", observe its not used
+    -- type comparator_witness in S is what it is instantiated to, so its also a phantom
+    -- comparator_witness serves as a "token" that names "this" module uniquely
+    -- here confirms there is a compare function which will always be from 
        Core.Comparator.S, e.g. String's compare and not some other string compare.
 
 Example to show how Core.String has this all built-in :
 
+# module String2 : Core.Comparator.S = String;;
+module String2 : Core.Comparator.S
+
+(* here is the way the above code is viewing the same thing, as module-expressions *)
 # let m : ((string,String.comparator_witness) Comparator.Module.t) = (module String);;
 val m : (string, String.comparator_witness) Comparator.Module.t = <module>
 
@@ -290,7 +302,7 @@ module IntPairCompar = struct
   type t = int * int [@@deriving compare, sexp] 
   end
   include T
-  include Comparator.Make(T) (* This makes a ton of stuff. Replace Comparator with Comparable and get extras like <= etc *)
+  include Comparator.Make(T) (* This makes comparator_witness. Replace Comparator with Comparable and get extras like <= etc *)
 end
 
 (* The above "include" pattern is clever - call all "your" stuff T temporarily, include it, 
@@ -323,7 +335,8 @@ let m = Map.empty (module IntPairCompar) (* Works now; note no type on module is
 (* First, printf, sprintf, fprintf tend to "just work" so you don't necessarily need to know this
    But it can help if you are getting strange error messages to know it is complex under the hood *)
    
-let () = printf "%i is the number and %s is the string\n" 5 "hi";;
+let () = printf "%i is the number\n" 5;;
+let () = printf "%i is the number and %s is the string \n" 5 "hoo";;
 
 (* The compiler is doing special things with the argument here, it is converting it into
    a function which will do this particular output taking 5 as a parameter
@@ -331,7 +344,7 @@ let () = printf "%i is the number and %s is the string\n" 5 "hi";;
    Why?? Printing is fully type-safe in OCaml, if you pass the wrong type of value
     you will get a type error ! *)
 
-(* So, you can't just pass a format string just as a string to printf *)
+(* So, you can't just pass a format string as a string to printf *)
 let () = let s = "%i is the number \n" in printf s 5 (* type error *)
 
 (* The compiler is converting the string into a format type value for you *)
@@ -355,7 +368,7 @@ let () = print_int 5;;
 let () = printf fmt "k";; (* Compile-time error: printing with `fmt` needs an int. *)
 
 (* One more format example with multiple arguments *)
-let fmt3 : ('a, 'b, 'c) format =  "%i is the number %s is the string %s too \n";;
+let fmt3 : (int -> string -> string -> 'c, 'b, 'c) format =  "%i is the number %s is the string %s too \n";;
 
 let () = printf fmt3 4 "k" "l";; 
 

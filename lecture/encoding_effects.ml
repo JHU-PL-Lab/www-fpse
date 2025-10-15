@@ -38,14 +38,14 @@ let _ : bool = Map.empty(module String)
 
 (* 
   * Let's start with monads by using 'a option's Some/None to encode exception effects
-  * We have already seen many examples of this, e.g. Minesweeper functional example
+  * We have already seen many examples of this, e.g. Minesweeper functional example when array accesses were out of bounds
   * Here we want to regularize/generalize it to make an offical monad.
   * First recall how we had to "forward" a `None` if an e.g. List operation failed
 *)
 
 (* zip in fact doesn't return Some/None, let us convert it to that format here.
    We need a uniformity that None is always the exceptional case and Some is the OK-case. *)
-let better_zip l1 l2 = match List.zip l1 l2 with Unequal_lengths -> None | Ok l -> Some l
+let option_zip l1 l2 = match List.zip l1 l2 with Unequal_lengths -> None | Ok l -> Some l
 
 (* 
   Here is an artificial example of lots of hand-over fist passing of options.
@@ -56,7 +56,7 @@ let better_zip l1 l2 = match List.zip l1 l2 with Unequal_lengths -> None | Ok l 
 (* Lets zip two lists, sum pairwise, and return the 2nd element of the resulting list. 
    This is not intended to be useful code, just an example of forwarding exceptional conditions *)
 let ex l1 l2 = 
-  match better_zip l1 l2 with 
+  match option_zip l1 l2 with 
   | Some(l) -> 
     begin (* recall `begin .. end` is just like `( ... )` - big parentheses *)
       let m =  List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
@@ -83,7 +83,7 @@ let ex l1 l2 =
    .. Lets fix that! *)
 
 (* 
-  * Now let us regularize this with a monad
+  * Let us regularize this with a monad
   * Think of a monad as a wrapper on regular computations
   * "In Monad-land" here is an option-tagged computation
   * "Out of the monad" is when we are not option-tagged
@@ -103,12 +103,13 @@ let bind' (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) =
 (* bind does the match "for free" compared to above 
     - if the zip failed with `None` the function is ignored
     - if it succeeds the Some wrapper is automatically peeled off and the underlying data passed to f 
-    - the net result is the Some/None is largely hidden in the code: *)
+    - the net result is the Some/None is largely hidden in the code
+    - here is a stupid example to zip and get lhs of first pair: *)
 
-bind' (better_zip [1;2] [3;4]) ~f:(fun l -> match l with (l,_)::_ -> Some(l));;
+bind' (option_zip [1;2] [3;4]) ~f:(fun l -> match l with (n,_)::_ -> Some(n));;
 
 (* Yes there is still a `Some` at the end in the above
-   That is because the result needs to stay in monad-land (since the first part could have None'd)
+   That is because the bind result needs to stay in monad-land (since the first part could have None'd)
    We will in fact hide Some below so its still there but its not explicit. 
    In general once you get into monad-land you tend to stay there a long time .. *)
 
@@ -130,24 +131,24 @@ bind' (better_zip [1;2] [3;4]) ~f:(fun l -> match l with (l,_)::_ -> Some(l));;
 open Option (* don't do this at home (tm) - in actual code use Option.(..) or let open Option in .. *)
 open Option.Let_syntax;;
 
-let%bind (l,_)::_ = better_zip [1;2] [3;4] in Some(l);; (* compare with above version - a bit more readable *)
+let%bind (n,_)::_ = option_zip [1;2] [3;4] in Some(n);; (* compare with above version - a bit more readable *)
 
-(* this is very similar to the exn version which actually has a side effect: *)
+(* compare this to the exn version which actually has a side effect, its similar: *)
 
-let (l,_)::_ = List.zip_exn [1;2] [3;4] in l;;
+let (n,_)::_ = List.zip_exn [1;2] [3;4] in n;;
 
 (* 
- * OK now let us redo ex above using let%bind
- * This code looks more like the exn code above now..
+ * OK now let us redo the larger example above using let%bind
+ * This code looks more like the exn code above now:
  *)
 
 let ex_bind_macro l1 l2 =
-  let%bind l = better_zip l1 l2 in 
+  let%bind l = option_zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in (* never None's so no bind needed here *)
   let%bind tail = List.tl m in 
   let%bind hd_tail = List.hd tail in
   return hd_tail (* "return to the monad" - here that means wrap in Some(..) *)
-(* vs effectful: *)
+(* vs effectful (repeating effectful version above): *)
 let ex_real_effects l1 l2 =
   let l = List.zip_exn l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
@@ -158,20 +159,20 @@ let ex_real_effects l1 l2 =
 (* 
  * Here is how Option.return is defined - no rocket science here.
  * It is called return because it is injecting (returning) a "regular" value TO the monad 
- * The name is backwards perhaps since it sounds like it could be returning *from* monad-land
+ * The name is unintuitive since it sounds like it could be *returning from* monad-land, but its not!
  *)
 let return' (v : 'a) : 'a option = Some v
 
 (* Let us write out the bind calls (expand the macro) to show why the macro is more readable: *)
 let ex_bind l1 l2 =
-  bind (better_zip l1 l2) ~f:(fun l ->
+  bind (option_zip l1 l2) ~f:(fun l ->
       let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
       bind (List.tl m) ~f:(fun tail -> 
           bind (List.hd tail) ~f:(fun hd_tail -> 
               return(hd_tail))))
-(* (vs version above: *) 
+(* (vs version with let%bind above, repeated for easy eyeballing: *) 
 let ex_bind_macro' l1 l2 =
-  let%bind l = better_zip l1 l2 in 
+  let%bind l = option_zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
   let%bind tail = List.tl m in 
   let%bind hd_tail = List.hd tail in
@@ -194,7 +195,7 @@ let ex_bind_error l1 l2 =
 
 (* Note that this code is wordy, we can merge return with last let%bind: *)
 let ex_bind_fixed l1 l2 =
-  let%bind l = better_zip l1 l2 in 
+  let%bind l = option_zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
   let%bind tail = List.tl m in
   List.hd tail (* this is in monad-land, all good! *)
@@ -205,16 +206,16 @@ let ex_bind_fixed l1 l2 =
   - this is in fact a *Monad Law* we will discuss below, like let x = 5 in x === 5 in normal OCaml
 *)
 
-(* Now we love pipes but this is just let-like coding; how can we use pipe syntax??
+(* Now, we all love pipes but this is just let-like coding; how can we use pipe syntax??
 
-Answer: there is also pipe syntax
+Answer: there is also pipe syntax for bind
    * a >>= b is just an infix form of bind, it is nothing but 
      bind a b
    * a >>| b is used when b is just a "normal" function which is not returning an option.
    - the precise encodings in fact are:
      --  a >>| b is      bind a (fun x -> return (b x))
      --  a >>| b is also a >>= (fun x -> return (b x))
-   - the additional "return" "lifts" f's result back into monad-land
+   - the additional "return" "lifts" non-monadic f's result back into monad-land
    - the types make this difference clear:
      # (>>|);;
      - : 'a option -> ('a -> 'b) -> 'b option = <fun>
@@ -226,7 +227,7 @@ Answer: there is also pipe syntax
 *)
 
 let ex_piped l1 l2 =
-  better_zip l1 l2 
+  option_zip l1 l2 
   >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
   >>= List.tl
   >>= List.hd
@@ -250,7 +251,7 @@ left-associative:  *)
 let ex_piped' l1 l2 =
     (
       (
-        better_zip l1 l2 
+        option_zip l1 l2 
         >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)) 
       )
       >>= List.tl
@@ -284,7 +285,7 @@ let _ : bool =
 let ex_piped_expanded l1 l2 =
   let%bind tail = 
     let%bind m = 
-      let%map l = better_zip l1 l2 in List.fold l ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)) in
+      let%map l = option_zip l1 l2 in List.fold l ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc)) in
     List.tl m in
   List.hd tail
 
@@ -343,10 +344,10 @@ open Exception.Let_syntax
 
 (* Redoing the zipping example above using Exception now *)
 
-let zip l1 l2 = match List.zip l1 l2 with Unequal_lengths -> raise () | Ok l -> return l
+let zip_monad l1 l2 = match List.zip l1 l2 with Unequal_lengths -> raise () | Ok l -> return l
 
 let ex_exception l1 l2 =
-  let%bind l = zip l1 l2 in 
+  let%bind l = zip_monad l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
   let%bind tail = List.tl m in
   let%bind hd_tail = List.hd tail in
@@ -407,7 +408,7 @@ let f (x : int) =
      return(one + ifthen))
     (fun () -> return(101))
 
-(* The monad encoding starts to get crufty here.. a big downside of monads in general *)
+(* The monad encoding starts to get crufty here.. a downside of monads in general *)
 
 
 (* *********** *)

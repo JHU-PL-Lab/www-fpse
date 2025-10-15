@@ -10,12 +10,12 @@ Here are the high-level requirements for the projects.
 * You must use the standard course libraries -- `Core`, `Lwt`, `OUnit2` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 2-4 people.
 * OCaml excels for non-trivial algorithms, and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.
-* You are also **required** need to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
+* You are also **required** to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
 * A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.
 
 ### Project Topic Thrusts
 
-You will need to make a standalone application as in assignments 4 and 6. Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects: a sudoku solver, chess AI, complex-number mathematics with a rasterizer, ASCII image generator, etc.
+You will need to make a standalone application as in assignment 6. Here are are three high-level approaches to perhaps get the juices flowing.  Also see the bottom of this page for some past projects: a sudoku solver, chess AI, complex-number mathematics with a rasterizer, ASCII image generator, etc.
 
 1. A command-line app with persistence.
     * The focus is on complex user interaction through the command line.
@@ -32,7 +32,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * All web-based applications may have delayed response or may fail, and so all of the web libraries below are built on an OCaml coroutine library, primarily `Lwt`.
   - See the [coroutines lecture notes](../coroutines.html) for more information on using `Lwt`.
 * We recommend the simple [`Cohttp_lwt_unix`](https://github.com/mirage/ocaml-cohttp) for web client (API reading / crawling) applications.
-* We recommend [`Dream`](https://aantron.github.io/dream) for web applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
+* We recommend [`Dream`](https://github.com/camlworks/dream) for web applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
 * [`Opium`](https://github.com/rgrinberg/opium) is a good alternative to `Dream` to consider as well.  Both are built on `Lwt`.
 * `Cohttp` also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation. 
 * For the client, it is possible to code your client in "OCaml" using [ReScript](https://rescript-lang.org) which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  Since ReScript is available we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!
@@ -43,7 +43,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * If you are familiar with databases, the [sqlite3-ocaml](https://github.com/mmottl/sqlite3-ocaml) and [postgresql-ocaml](https://mmottl.github.io/postgresql-ocaml/) bindings should work for accessing SQLite or Postgres databases from within OCaml.
 
 #### Data Processing
-There are some good libraries here but they don't have many users and we have had **many issues with people being able to install these libraries in the past**.  If you wanted to base your project around one of these libraries **you will be required to** (1) get the library successfully installed on all your team members' computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below. 
+There are some good libraries here but they don't have many users and we have had **issues with people being able to install these libraries in the past**.  If you wanted to base your project around one of these libraries **you will be required to** (1) get the library successfully installed on all your team members' computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below. 
 * [Owl](https://ocaml.xyz/) is a very well-documented numerical processing library.
 * [ocaml-torch](https://github.com/janestreet/torch) PyTorch bindings for OCaml.   (Note that the OCaml TensorFlow bindings are old and don't seem to work.)
 * [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.
