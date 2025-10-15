@@ -1,10 +1,12 @@
+open Core
+
 (* Exercise to replace 'a option with ('a,string) result in Exception 
    Change `raise` to have a string parameter which will be the Error string. 
    Chase all the type errors to port this code, zip_monad also needs porting. *)
 module Exception = struct
 
   module T = struct (* We are going to include this T below here, we just need to name this stuff *)
-    type 'a t = ('a,string) result (* this is the type of monad-land, 'a is the underlying value *)
+    type 'a t = ('a,string) result (* this type has been updated but nothing else *)
     (* return injects a normal-land computation into monad-land *)
     let return (x: 'a) : 'a t = Some x
     (* bind sequences two monad-land computations where the 2nd can use 1st's value result *)
