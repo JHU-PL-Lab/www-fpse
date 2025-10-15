@@ -322,8 +322,8 @@ module Exception = struct
         2) run a computation in monad-land;
         3) transfer the final result back to normal-land 
         Option.run doesn't exist, it is not the full monad package *)
-    type 'a result = 'a (* 'a result is the type transferred out of monad-land at end of run *)
-    let run (m : unit -> 'a t) : 'a result =
+    type 'a monad_result = 'a (* 'a monad_result is the type transferred out of monad-land at end of run *)
+    let run (m : unit -> 'a t) : 'a monad_result =
       match m () with 
       | Some x -> x 
       | None -> failwith "monad failed with None"
@@ -422,8 +422,8 @@ module type MONADIC = sig
   val return : 'a -> 'a t
   val bind : 'a t -> f:('a -> 'b t) -> 'b t
   val map : 'a t -> f:('a -> 'b) -> 'b t
-  type 'a result
-  val run : (unit -> 'a t) -> 'a result
+  type 'a monad_result
+  val run : (unit -> 'a t) -> 'a monad_result
 end
 
 (* ( Core.Monad's version also requires map but does not require run) *)
@@ -499,8 +499,8 @@ module Logger = struct
   end
   include T
   include Monad.Make(T)
-  type 'a result = 'a * log
-  let run (m: unit -> 'a t): 'a result = m ()
+  type 'a monad_result = 'a * log
+  let run (m: unit -> 'a t): 'a monad_result = m ()
   let log msg : unit t = ((), [msg])
 end
 
@@ -742,9 +742,9 @@ module State = struct
       fun (s : 's) -> let (x', s') = x s in (f x') s'
     let return (x : 'a) : ('a, 's) t = fun s -> (x, s) (* just pass on the state we got in *)
     let map = `Define_using_bind
-    type ('a, 's) result = 'a * 's
+    type ('a, 's) monad_result = 'a * 's
     (* Run needs to get passed in an init state *)
-    let run (e : ('a, 's) t) ~(init : 's): ('a, 's) result = e init
+    let run (e : ('a, 's) t) ~(init : 's): ('a, 's) monad_result = e init
     let set (s : 's) =
       fun (_ : 's) -> ((),s) (* return () as value, toss old state, make it s *)
     let get () =
@@ -793,7 +793,7 @@ let rec sumlist = function
     let%bind () = set (n + hd) in
     sumlist tl
 
-let _ : (int,int) State.result  = run (sumlist [1;2;3;4;5]) ~init:0
+let _ : (int,int) State.monad_result  = run (sumlist [1;2;3;4;5]) ~init:0
 
 (* 
  * A more general State monad
@@ -814,9 +814,9 @@ module State_map = struct
       fun (m : 'v m) -> let (x', m') = x m in f x' m'
     let return (x : 'a) : ('a, 'v) t = fun m -> (x, m)
     let map = `Define_using_bind
-    type 'a result = 'a 
+    type 'a monad_result = 'a 
     (* Run needs to pass in an empty state *)
-    let run (c : ('a, 'v) t) : 'a result = 
+    let run (c : ('a, 'v) t) : 'a monad_result = 
       let mt_map = Map.empty(module String) in fst (c mt_map)
     let set (k : string) (v : 'a) : (unit, 'v) t =
       fun (s : 'a m) -> ((),Map.set ~key:k ~data:v s)
@@ -907,8 +907,8 @@ module Nondet = struct
       List.join @@ List.map m ~f
     let map = `Define_using_bind
 
-    type 'a result = 'a list
-    let run (m : 'a t) : 'a result = m
+    type 'a monad_result = 'a list
+    let run (m : 'a t) : 'a monad_result = m
 
     let zero : 'a t = []
     let either (a : 'a t) (b : 'a t): 'a t = a @ b
@@ -962,9 +962,9 @@ let _ : int list list = run (permut [1;2;3])
 
 (* Continuations, super briefly *)
 
-type 'a t = ('a -> 'a result) -> 'a result
+type 'a t = ('a -> 'a monad_result) -> 'a monad_result
 (* 
-   - the ('a -> 'a result) is the continuation, the "rest of the computation"
+   - the ('a -> 'a monad_result) is the continuation, the "rest of the computation"
    - Notice the type, we are one level higher in the function type now
    - Coroutines are a variation on the continuation monad where "rest" is the other routines
  *)
