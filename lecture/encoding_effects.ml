@@ -106,7 +106,7 @@ let bind' (opt : 'a option) ~(f : 'a -> 'b option) : ('b option) =
     - the net result is the Some/None is largely hidden in the code
     - here is a stupid example to zip and get lhs of first pair: *)
 
-bind' (option_zip [1;2] [3;4]) ~f:(fun l -> match l with (n,_)::_ -> Some(n));;
+bind' (option_zip [1;2] [3;4;5]) ~f:(fun l -> match l with (n,_)::_ -> Some(n));;
 
 (* Yes there is still a `Some` at the end in the above
    That is because the bind result needs to stay in monad-land (since the first part could have None'd)
@@ -147,7 +147,7 @@ let ex_bind_macro l1 l2 =
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in (* never None's so no bind needed here *)
   let%bind tail = List.tl m in 
   let%bind hd_tail = List.hd tail in
-  return hd_tail (* "return to the monad" - here that means wrap in Some(..) *)
+  return hd_tail (* "return TO the monad" - here that means wrap in Some(..) *)
 (* vs effectful (repeating effectful version above): *)
 let ex_real_effects l1 l2 =
   let l = List.zip_exn l1 l2 in 
@@ -186,7 +186,7 @@ let ex_bind_macro' l1 l2 =
 (* Note you can't cheat and leave out the last return, you will get a type error *)
 (*
 let ex_bind_error l1 l2 =
-  let%bind l = zip l1 l2 in 
+  let%bind l = option_zip l1 l2 in 
   let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
   let%bind tail = List.tl m in
   let%bind hd_tail = List.hd tail in
@@ -272,7 +272,7 @@ let _ : bool =
 
 (* There is something subtle going on here with the operator ordering..
    - We all know that a;(b;c) "is the same order as" (a;b);c (e.g. in OCaml they give same results)
-   - for let and let-bind, there is an analogous principle which is a touch more complex:
+   - for let and let-bind, there is an analogous principle:
       let x = a in (let y = b in c)   ===   let y = (let x = a in b) in c
        (provided x is not in c - on the left the c won't know what x is)
    - Key point: the let%bind notation is doing the former and the pipes the latter - !!
@@ -422,12 +422,12 @@ module type MONADIC = sig
   val return : 'a -> 'a t
   val bind : 'a t -> f:('a -> 'b t) -> 'b t
   val map : 'a t -> f:('a -> 'b) -> 'b t
-  type 'a monad_result
+  type 'a monad_result (* this is what we want to return to the outside, often just 'a *)
   val run : (unit -> 'a t) -> 'a monad_result
 end
 
 (* ( Core.Monad's version also requires map but does not require run) *)
-(* Let us verify our version above is indeed a monad *)
+(* Let us verify our version above is indeed a monad by our definition *)
 
 module Exception_test : MONADIC = Exception
 
@@ -452,26 +452,16 @@ module Ident = struct
       let unwrap (Wrapped a) = a
       let bind (a : 'a t) ~(f : 'a -> 'b t) : 'b t = f (unwrap a)
       let return (a : 'a) : 'a t = Wrapped a
-      let map = `Custom (fun (a : 'a t)  ~(f : 'a -> 'b) -> Wrapped(f @@ unwrap a))
-      let run (a : unit -> 'a t) : 'a = unwrap @@ a ()
+      let map = `Define_using_bind
+      type 'a monad_result = 'a
+      let run (a : unit -> 'a t) : 'a monad_result = unwrap @@ a ()
   end
 
   include T
   include Monad.Make(T)
 end
 
-(* Lets replay our stupid 1+2 example in Ident *)
-open Ident
-open Ident.Let_syntax
-let oneplustwo = 
-  bind (return 1) 
-    ~f:(fun onev -> 
-        bind (return 2) 
-          ~f:(fun twov -> return (onev + twov)))
-let oneplustwo = 
-  let%bind onev = return 1 in 
-  let%bind twov = return 2 in 
-  return (onev + twov)
+module Ident_test : MONADIC = Ident
 
 
 (* ******************************** *)
@@ -483,10 +473,12 @@ let oneplustwo =
   i.e. the `'a t` type is `'a * ... more stuff ...`
 * Here is one such simple monad, a Logger which accumulates log messages
 * A common name for these are "writers" since they are writing things
+* Note that logging is a side-effect, its like state but is write-only.
 *)
+
 module Logger = struct
   module T = struct
-    type log = string list (* we will tack a string list on the side here *)
+    type log = string list (* we will tack a string list on the side which is the log messages *)
     type 'a t = 'a * log
     (* Beyond the type, the key to a monad is what bind/return are *)
     (* The key idea of the logger is to append the logs from the two sequenced computations *)
@@ -509,18 +501,8 @@ module Logger_test = (Logger : MONADIC) (* verify it is a monad *)
 open Logger
 open Logger.Let_syntax
 
-(* A simple example *)
+(* Here is the 1+2 example above but with some logging messages added using Logger: *)
 
-let log_abs n = 
-  if n >= 0 
-  then let%bind () = log "positive" in return n
-  else let%bind () = log "negative" in 
-       let%bind () = log "indeed" in 
-       let%bind () = log "yup" in return (-n)
-
-let _ = run (fun () -> log_abs (-1))   
- 
-(* another simple example, add log messages to 1+2 example above *)
 let oneplustwo_logged = 
   let%bind () = log "Starting!" in
   let%bind onev = return 1 in 
@@ -529,6 +511,16 @@ let oneplustwo_logged =
   let%bind () = log "Ending!" in
   return(r)
 
+(* 
+  The idea of the monad is rather than Some/None wrapping, we wrap in a list of log messages along with the result.  Here is what the above example is doing when the definitions are inlined: *)
+
+let oneplustwo_logged_nomonad = 
+  let (),log1 = (), ["Starting!"] in (* each let%bind is now a let defining a pair of value,log-to-date *)
+  let onev,log2 = 1, log1 @ [] in (* by the nature of bind we are always passing the previous log onward *)
+  let twov,log3 = 2, log2 @ [] in (* return adds [] since there is no log side effect *)
+  let r,log4 = (onev + twov) , log3 @ [] in
+  let (), log5 = (), log4@["Ending!"] in
+  (r,log5)
 
 
 (* **************** *)
@@ -536,13 +528,13 @@ let oneplustwo_logged =
 (* **************** *)
 
 (* 
- * All the monads up to now were "first order", the carrier type has no function types
+ * All the monads up to now were "first order", the "wrapping" type has no function types
  * Monads get *really* useful with higher-order monads, *functions* in the .t type
- * They also get much more subtle to decipher what is actually happening
- * The simplest example is probably "Reader"
- * Don't think of it as "input", it is more like "global constants"
+ * They also get more subtle to decipher what is actually happening
+ * The simplest example is "Reader", like state but this time READ-only
+ * Don't think of it as "input", it is more like a bunch of global constants
 
- * The intuition is we are going to pass the constants down so they are always accessible
+ * The intuition is we are going to pass the constants along so they are always accessible
  *)
 
 
@@ -557,7 +549,7 @@ module Reader = struct
        This means it gets in the envt e from its caller
        bind's job is then to pass on the envt to its two sequenced computations *)
     let bind (m : ('a, 'e) t) ~(f : 'a -> ('b,'e) t) : ('b, 'e) t = 
-      fun (e : 'e) -> ((f (m e)) e) (* Pass the envt e both to m, and to f *)
+      fun (e : 'e) -> ((f (m e)) e) (* Pass the envt e down into both m and f *)
     let map = `Define_using_bind
     (* return injects non-monadic code into monad: code not using the envt *)
     let return (x : 'a) : ('a, 'e) t = fun (_: 'e) -> x
@@ -591,12 +583,22 @@ let _ : bool = run is_retired {name = "Gobo"; age = 88}
 
 (* lets expand the let%bind to a bind: *)   
 let is_retired' = 
-  bind (get()) (fun r -> return (r.age > 65))
+  bind (get()) (fun {age;_} -> return (age > 65))
 
-(* Now lets inline the bind definition to help clarify: *)
+(* Now lets inline the bind definition to see whats actually happening: *)
 
 let is_retired'' = 
-  fun e -> (fun r -> return (r.age > 65)) ((get()) e ) e
+  fun e -> (fun {age;_} -> return (age > 65)) ((get()) e) e
+
+(* See how the e comes in and gets pushed on down; 
+in particular the `get` gets it and returns the record *)  
+
+(* lets finally inline get() and return to remove all the Reader references: *)
+
+let is_retired''' = 
+  fun e -> (fun {age;_} -> (fun _ -> (age > 65))) ((fun e -> e) e ) e
+
+let _ = is_retired''' {name = "Gobo"; age = 88}
 
 (* Monads, mathematically *)
 
@@ -629,7 +631,7 @@ open Let_syntax
 
 (* here is the version above we had that mostly used let%bind *)   
 let ex_initial l1 l2 =
-    let%bind l = zip l1 l2 in 
+    let%bind l = option_zip l1 l2 in 
     let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
     let%bind tail = List.tl m in 
     let%bind hd_tail = List.hd tail in
@@ -639,7 +641,7 @@ let ex_initial l1 l2 =
   the defined value in a return -- this is using monad law 1) right-to-left. 
   (the "a" in the law is the List.fold .. which we abbreviated m with the let) *)    
 let ex_first_law_applied l1 l2 =
-    let%bind l = zip l1 l2 in 
+    let%bind l = option_zip l1 l2 in 
     let%bind m = return(List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc)) in
     let%bind tail = List.tl m in 
     let%bind hd_tail = List.hd tail in
@@ -649,7 +651,7 @@ let ex_first_law_applied l1 l2 =
    just a no-op so we could have done the following which is 
    using monad law 2) right-to-left (letting a be `List.hd tail` )*)    
 let ex_second_law_applied l1 l2 =
-    let%bind l = zip l1 l2 in 
+    let%bind l = option_zip l1 l2 in 
     let%bind m = return(List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc)) in
     let%bind tail = List.tl m in 
     List.hd tail
@@ -661,7 +663,7 @@ let ex_second_law_applied l1 l2 =
  let ex_third_law_applied l1 l2 =
     let%bind tail = 
       let%bind m = 
-        let%bind l = zip l1 l2 in return(List.fold l ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))) in
+        let%bind l = option_zip l1 l2 in return(List.fold l ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))) in
       List.tl m in
     List.hd tail
 
@@ -669,7 +671,7 @@ let ex_second_law_applied l1 l2 =
    the above when the macros are expanded) *)
 
 let ex_piped_version_of_previous l1 l2 =
-  zip l1 l2 
+  option_zip l1 l2 
   >>= fun l -> return @@ List.fold l ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
   (* .. Better equivalent syntax for above:   
   >>| List.fold ~init:[] ~f:(fun acc (x,y) -> (x + y :: acc))
@@ -677,26 +679,28 @@ let ex_piped_version_of_previous l1 l2 =
   >>= List.tl
   >>= List.hd
 
-(* Here is a smaller example of the third law to make it a bit easier to see *)
-  let ex_before_third_law_simpler l1 l2 =
-    let%bind l = zip l1 l2 in 
+(* Here is a smaller example of the third law to make it easier to see *)
+  let ex_before_third_law l1 l2 =
+    let%bind l = option_zip l1 l2 in 
     let%bind tail = List.tl l in
      return(tail)
      
-  let ex_after_third_law_simpler l1 l2 =
+  let ex_after_third_law l1 l2 =
       let%bind tail = 
-        (let%bind l = zip l1 l2 in List.tl l) in 
+        (let%bind l = option_zip l1 l2 in List.tl l) in 
         return(tail)
 
-(* the following code is identical to ex_after_third_law_simpler, just different macros used *)
-  let ex_after_third_law_simpler_piped l1 l2 =
-      zip l1 l2
-      >>= List.tl
-      >>= return
+(* the following code is IDENTICAL to ex_after_third_law, just different macros used *)
+  let ex_after_third_law_piped l1 l2 =
+      ((option_zip l1 l2) >>= List.tl ) >>= return
+
+(* Moral: monad pipes work only because the third law works! *)      
 
 (* ***** *)
 (* State *)
 (* ***** *)
+
+(* State is basically reader plus writer: old state comes in, new state comes out *)
 
 (* Before doind the monad lets write some explicit threading code to show how its working.
    Key idea of state monad is you always get passed current state, return new state. *)
@@ -708,7 +712,7 @@ let _ : bool = Map.empty(module String)
                |> Map.for_all ~f:(fun i -> i > 10)
 
 (* Lets regularize it to be a bit more how the state monad works: each Map op 
-   gets old map state, returns PAIR of value if any and new state *)
+   gets old map state, AND returns PAIR of value if any and new state *)
 let map_set ~key ~data = fun m -> ((),Map.set m ~key ~data)
 let map_for_all ~f = fun m -> ((Map.for_all m ~f),m)
 
@@ -720,7 +724,7 @@ let _ : bool =
 in b
 
 (* Let us do a simple version of State, the whole state is just one value of type 's.
-   This models a program with only one ref cell
+   This models a program with only one ref cell (e.g. one int, one StringMap, etc)
 *)
 module State = struct
   module T = struct

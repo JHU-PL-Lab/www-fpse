@@ -3,22 +3,21 @@
 
 Concurrency is needed for two main reasons
  1. You want to run things in **parallel** for speed gain (multi-core, cluster, etc)
- 2. You are **waiting** for a result from an I/O action
-     - Disk read/write, network request, remote API call, etc
-     - (Sometimes also awaiting for internal actions such as time-outs)
-
+ 2. You are **waiting** for a result from an I/O action and want to do other work while waiting
+     - Disk read/write, network request, remote API call, internal timer, etc
 In OCaml
-  * Concurrency for speed gain is a recent addition to OCaml 5
-    - We will cover a bit of OCaml 5 parallelism later
-  * Concurrency to support asynchronous waiting: The `Lwt` and `Async` libraries
+  * Concurrency for speed gain is new, its in OCaml 5
+  * Concurrency to support asynchronous waiting via **coroutines**: The `Lwt` and `Async` libraries
 
-
- * Local concurrency for speed is usually done via *threads*
+#### Threads
+ * Concurrency for speed is usually done via *threads*
    - fork off another computation with its own runtime stack etc but share the heap
- * But, threads are notoriously difficult to debug due to the number of interleavings
+ * But, threads are notoriously difficult to debug due to the number of interleavings of control flows
    - Can't test all of the exponentially many ways parallel computations can interleave
-   - 100's of patches have been added to limit resource contention (channels, monitors, locks, ownership types, etc etc etc) but still hard
- * So, its often better to use a simpler system focused on waiting for I/O if that is all you really need
+   - Many tools today are used to limit resource contention (channels, monitors, locks, ownership types, etc etc etc) but it's still hard
+
+#### Coroutines
+ * So if all you need is to wait for some I/O, its often better to use coroutines
  * Key difference of a coroutine is **no preemption** - routine runs un-interrupted until it *chooses* to "yield"/"pause".
  * Means that computations are still *deterministic*, much easier to debug!
  * Such an approach is called *coroutines* due to that term being used in some early PLs.
@@ -37,32 +36,33 @@ In OCaml there are currently two competing libraries
 
 ### Principles of Coroutines
 
-* The key use of coroutines is in the presence of I/O operations which may block
-* *and*, there are multiple I/O operations which are not required to be run in a fixed sequence.
-  - For example if you need to read one file and write a tranform to another file and that is it, there is no concurrency, no need for coroutines.
-  - But if there are some independent actions or events they are very useful, it will allow the actions to proceed concurrently in the OS layer.
+* Coroutines are only useful if there is some action started that will complete in the future, and you want to get some work done meanwhile.
+* Scenario: You just need to read in a file and write a tranformed version to another file and that is it
+  - There isn't really anything else you need to do while waiting for I/O, no need for coroutines.
+* Scenario: You want you algorithm to do ten seconds of searching for a best answer, and return the best answer when the timer goes off
+  - The timer is an action that will complete in the future and you indeed want to get some work done meanwhile: use a coroutine!
 
-#### Motivating the Need: Photomontage App
+### A Larger Example of Coroutines: Photomontage App
 
 * Suppose you want to read a bunch of images from different URLs on the Internet and make a collage of them
-* You would like to process them in the order they show up, no need to wait for all the images to come in
+* You would like to resize them in the order they show up, no need to wait for all the images to come in
 * Also if one load is slow don't block all the subsequent loads
   - Kick them all off at the start, then process as they come in
   - Some loads could be from dead URLs so will need to time out on those
 * There are some sequencing requirements as well
-  - Process each image as it comes in (e.g. make 100x100)
-  - Once all images are in and processed or timed out, a collage is created.
+  - Resize each image as it comes in (e.g. make 100x100)
+  - Once all images are in and resized or timed out, a collage is created.
 
 #### Idea of the implementation
 
 Q: How do we allow these loads to happen concurrently without fork/threads/parallelism?
 
 A: Use coroutines to split I/O actions in two:
-  1. Issue each image request
-  2. Package up the processing code (the *continuation*) as a function which will run when each load completes
-  3. The coroutine system will run the continuation function when the load is done.
+  1. Issue each image GET request
+  2. Package up the resizing code (the *continuation*, the "rest of the work") as a function which will run when each load completes
+  3. The coroutine system will run the continuation function for each load when that load is done.
 
-It might seem awkward to package up the continuation as a function but we already did that!
+It might seem odd to package up the continuation as a function, but we already did that, with Monads!
 
 Monad-think on the above:
 
@@ -71,43 +71,50 @@ let img_load url =
 bind (* code to issue image request and pause *) 
      (fun img -> (* the continuation: processing code to run after this image loaded *) )
 ```
-which is, in `let%bind` notation,
+which is, in `Core`'s `let%bind` notation,
 ```ocaml
 let img_load url =
 let%bind img = (* code to issue image request and pause *) in
   (* processing code to run after this image loaded*)
 ```
 
-(Note, `Lwt` uses `let%lwt` or `let*` instead of `let%bind`)
+(Note, `Lwt` uses `let%lwt` or `let*` instead of `let%bind`; you can view them all as synonyms)
 
 * Observe how `bind` is naturally making the continuation a function
 * So we will be using `bind` a lot when writing coroutine code in OCaml
 * In general `Lwt` is a *monad*
 * We won't be looking at the underlying structure of the `Lwt` monad, but the type `Lwt.t` is keeping a list of active coroutines and swapping between them.
 
-### The full loading task here
+#### More details on phtomontage
  * Suppose for simplicity there are only two images.
  * We eventually need to wait for these loads to finish, here is how.
 
 ```ocaml
 let p1 = img_load url1 in
 let p2 = img_load url2 in
-(* We immediately get to this line, the above just kicks off the requests *)
-(* p1 and p2 are called "promises" for the actual values *)
-(* They are the underlying monadic values, we will see that below *)
+(* We immediately get to this line; the above just kicks off the requests *)
+(* p1 and p2 are called "promises" for the actual values: "I promise I'll eventually be the value" *)
+(* They are the underlying monadic ("wrapped") values, we will see that below *)
 (* .. we can do any other processing here .. *)
-(* When we finally need the results of the above we again use bind: *)
+(* When we finally need the results of the above we use bind *)
+(* The bind will block if value not there yet: *)
 let%lwt load1 = p1 in
 let%lwt load2 = p2 in ...
-(* ... we will get here once both loads are finished -- promises fulfulled 
-   Note we can also Lwt.choose to get the first one completed 
-   - process them as they come in.. more below on this *)
+(* ... we will get to this line once both loads are finished -- promises fulfulled 
+   If we had other coroutines they can wake up and run while waiting for these loads
+   Note we could have instead used Lwt.choose to get the *first* one completed:
+     let%lwt a_load = Lwt.choose [ p1; p2 ]
+   For this application Lwt.choose is important to get the advantage of coroutines: block minimally
+*)
 ```
 
-* The monad behind the scenes has a data structure holding all the continuations
-  (the two image processing actions in this case)
-* It will call those continuations when the low-level URL load has completed
+* When `let%lwt load1 = ...` is hit, recall this is a `bind` and all the rest of the code is in fact a function:
+  `fun load1 -> let%lwt load2 = p2 in ...`
+* The monad behind the scenes has a data structure holding this function (aka continuation)
+* Other coroutines if any can run while waiting, this code is just sitting
+* It will call the continuation when the low-level URL load has completed
   - in Lwt terminology, *when the promise is fulfilled*.
+  - this will then allow the second load to happen.
 
 ## Running Lwt
 * The above is some high level idea of the use of coroutines
@@ -220,7 +227,7 @@ Lwt_main.run (return "hello")
   - Apps such as servers will never terminate, they listen for requests until killed.
 * Note its type: `'a t -> 'a` which is what `run` should be in monad-land: get us out of the monad somehow
   - A common error is to try to call `Lwt_main.run` on your own to get out of monad-land but that won't work, it will destroy all the previous promises.
-  - Moral: once in monad-land, always in monad-land when using `Lwt` in an executable.  Or at least til all I/O done.
+  - Moral: once in monad-land, always in monad-land when using `Lwt_main.run` in an executable.
 
 ### More operations on Promises
 
@@ -247,56 +254,61 @@ let () =
 * If you use `join` instead of `choose` above it will block until all are resolved.
   - They don't return any value with `join`, unlike with `choose`
 * You can also create promises which can be cancelled; use `task` instead of `wait` to make those
-  - Anything waiting on that promise (e.g. any `let%lwt` on it etc) are recursively cancelled
+  - Any continuations waiting on that promise (e.g. any `let%lwt` on it) are recursively cancelled
   - See the manual for how you can cancel promises created with `task`.
 
 ### Launching a new Coroutine
 
-* `Lwt.async` can launch a new coroutine
+* The examples above had only one *user* routine running at a time, but multiple routines possible
+* `Lwt.async` launches a new coroutine
 * The engine will then round-robin between all the active coroutines
 * The coroutine will at some point need to do an Lwt operation so it can yield to others
-* In this case the sleep is an Lwt operation that will yield, so other actions can happen then.
-* Note this one is not good to run in the top loop as the nag runs forever
-  - it is commented out in the file `manual_examples.ml` if you want to try the executable.
-
+* Here is an example which asynchronously keeps nagging user for input:
 ```ocaml
 let () =
-   let rec show_nag () : _ Lwt.t =
+   let rec show_nag (n : int) : _ Lwt.t =
+     if n = 0 then Lwt.return ()
+     else
      let%lwt () = Lwt_io.printl "Please enter a line" in
      let%lwt () = Lwt_unix.sleep 1. in
-     show_nag ()
+     show_nag (n-1)
    in
-   Lwt.async (fun () -> show_nag ());
+   Lwt.async (fun () -> show_nag (5));
 
    Lwt_main.run begin
      let%lwt line = Lwt_io.(read_line stdin) in
      Lwt_io.printl line
    end
 ```
+* In this case the `Lwt.sleep` will yield, so the read line can happen if data appeared.
+* Note the `n` counter is used so this won't nag forever.
+
+#### Pausing
 
 * Here is an example that shows how `Lwt.pause` is used in a compute-intensive task to let other coroutines run.
-* Note this one is also not good to run in the top loop as `handle_io` runs forever
-  - it is in the file `manual_examples.ml` if you want to try it.
+
 
 ```ocaml
 let () =
-  let rec handle_io () =
-    let%lwt () = Lwt_io.printl "Handling I/O" in
+  let rec handle_io (n) () =
+    if n = 0 then Lwt.return ()
+    else
+    let%lwt () = Lwt_io.printl ".. Imagine we are handling I/O here .." in
     let%lwt () = Lwt_unix.sleep 0.1 in
-    handle_io ()
+    handle_io (n-1) ()
   in
 
   let rec compute n =
     if n = 0 then Lwt.return ()
     else
-      let%lwt () =
+      let%lwt () = (* pause in the below will cause this bind to block and put continuation on queue *)
         if n mod 1_000_000 = 0 then Lwt.pause () else Lwt.return ()
       in
       compute (n - 1)
   in
 
-  Lwt.async handle_io;
-  Lwt_main.run (compute 100_000_000)
+  Lwt.async @@ handle_io 50;
+  Lwt_main.run (compute 10_000_000)
 ```
 
 ### Using Libraries that are built on Lwt

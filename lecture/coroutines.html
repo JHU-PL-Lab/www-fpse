@@ -74,36 +74,34 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Concurrency is needed for two main reasons</p>
 <ol>
   <li>You want to run things in <strong>parallel</strong> for speed gain (multi-core, cluster, etc)</li>
-  <li>You are <strong>waiting</strong> for a result from an I/O action
+  <li>You are <strong>waiting</strong> for a result from an I/O action and want to do other work while waiting
     <ul>
-      <li>Disk read/write, network request, remote API call, etc</li>
-      <li>(Sometimes also awaiting for internal actions such as time-outs)</li>
+      <li>Disk read/write, network request, remote API call, internal timer, etc<br />
+In OCaml<br />
+       * Concurrency for speed gain is new, its in OCaml 5<br />
+       * Concurrency to support asynchronous waiting via <strong>coroutines</strong>: The <code>Lwt</code> and <code>Async</code> libraries</li>
     </ul>
   </li>
 </ol>
 
-<p>In OCaml</p>
+<h4 id="threads">Threads</h4>
 <ul>
-  <li>Concurrency for speed gain is a recent addition to OCaml 5
-    <ul>
-      <li>We will cover a bit of OCaml 5 parallelism later</li>
-    </ul>
-  </li>
-  <li>
-    <p>Concurrency to support asynchronous waiting: The <code>Lwt</code> and <code>Async</code> libraries</p>
-  </li>
-  <li>Local concurrency for speed is usually done via <em>threads</em>
+  <li>Concurrency for speed is usually done via <em>threads</em>
     <ul>
       <li>fork off another computation with its own runtime stack etc but share the heap</li>
     </ul>
   </li>
-  <li>But, threads are notoriously difficult to debug due to the number of interleavings
+  <li>But, threads are notoriously difficult to debug due to the number of interleavings of control flows
     <ul>
       <li>Can’t test all of the exponentially many ways parallel computations can interleave</li>
-      <li>100’s of patches have been added to limit resource contention (channels, monitors, locks, ownership types, etc etc etc) but still hard</li>
+      <li>Many tools today are used to limit resource contention (channels, monitors, locks, ownership types, etc etc etc) but it’s still hard</li>
     </ul>
   </li>
-  <li>So, its often better to use a simpler system focused on waiting for I/O if that is all you really need</li>
+</ul>
+
+<h4 id="coroutines">Coroutines</h4>
+<ul>
+  <li>So if all you need is to wait for some I/O, its often better to use coroutines</li>
   <li>Key difference of a coroutine is <strong>no preemption</strong> - routine runs un-interrupted until it <em>chooses</em> to “yield”/”pause”.</li>
   <li>Means that computations are still <em>deterministic</em>, much easier to debug!</li>
   <li>Such an approach is called <em>coroutines</em> due to that term being used in some early PLs.</li>
@@ -128,20 +126,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="principles-of-coroutines">Principles of Coroutines</h3>
 
 <ul>
-  <li>The key use of coroutines is in the presence of I/O operations which may block</li>
-  <li><em>and</em>, there are multiple I/O operations which are not required to be run in a fixed sequence.
+  <li>Coroutines are only useful if there is some action started that will complete in the future, and you want to get some work done meanwhile.</li>
+  <li>Scenario: You just need to read in a file and write a tranformed version to another file and that is it
     <ul>
-      <li>For example if you need to read one file and write a tranform to another file and that is it, there is no concurrency, no need for coroutines.</li>
-      <li>But if there are some independent actions or events they are very useful, it will allow the actions to proceed concurrently in the OS layer.</li>
+      <li>There isn’t really anything else you need to do while waiting for I/O, no need for coroutines.</li>
+    </ul>
+  </li>
+  <li>Scenario: You want you algorithm to do ten seconds of searching for a best answer, and return the best answer when the timer goes off
+    <ul>
+      <li>The timer is an action that will complete in the future and you indeed want to get some work done meanwhile: use a coroutine!</li>
     </ul>
   </li>
 </ul>
 
-<h4 id="motivating-the-need-photomontage-app">Motivating the Need: Photomontage App</h4>
+<h3 id="a-larger-example-of-coroutines-photomontage-app">A Larger Example of Coroutines: Photomontage App</h3>
 
 <ul>
   <li>Suppose you want to read a bunch of images from different URLs on the Internet and make a collage of them</li>
-  <li>You would like to process them in the order they show up, no need to wait for all the images to come in</li>
+  <li>You would like to resize them in the order they show up, no need to wait for all the images to come in</li>
   <li>Also if one load is slow don’t block all the subsequent loads
     <ul>
       <li>Kick them all off at the start, then process as they come in</li>
@@ -150,8 +152,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>There are some sequencing requirements as well
     <ul>
-      <li>Process each image as it comes in (e.g. make 100x100)</li>
-      <li>Once all images are in and processed or timed out, a collage is created.</li>
+      <li>Resize each image as it comes in (e.g. make 100x100)</li>
+      <li>Once all images are in and resized or timed out, a collage is created.</li>
     </ul>
   </li>
 </ul>
@@ -162,12 +164,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>A: Use coroutines to split I/O actions in two:</p>
 <ol>
-  <li>Issue each image request</li>
-  <li>Package up the processing code (the <em>continuation</em>) as a function which will run when each load completes</li>
-  <li>The coroutine system will run the continuation function when the load is done.</li>
+  <li>Issue each image GET request</li>
+  <li>Package up the resizing code (the <em>continuation</em>, the “rest of the work”) as a function which will run when each load completes</li>
+  <li>The coroutine system will run the continuation function for each load when that load is done.</li>
 </ol>
 
-<p>It might seem awkward to package up the continuation as a function but we already did that!</p>
+<p>It might seem odd to package up the continuation as a function, but we already did that, with Monads!</p>
 
 <p>Monad-think on the above:</p>
 
@@ -175,13 +177,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">bind</span> <span class="c">(* code to issue image request and pause *)</span> 
      <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* the continuation: processing code to run after this image loaded *)</span> <span class="p">)</span>
 </code></pre></div></div>
-<p>which is, in <code>let%bind</code> notation,</p>
+<p>which is, in <code>Core</code>’s <code>let%bind</code> notation,</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
 <span class="k">let</span><span class="o">%</span><span class="n">bind</span> <span class="n">img</span> <span class="o">=</span> <span class="c">(* code to issue image request and pause *)</span> <span class="k">in</span>
   <span class="c">(* processing code to run after this image loaded*)</span>
 </code></pre></div></div>
 
-<p>(Note, <code>Lwt</code> uses <code>let%lwt</code> or <code>let*</code> instead of <code>let%bind</code>)</p>
+<p>(Note, <code>Lwt</code> uses <code>let%lwt</code> or <code>let*</code> instead of <code>let%bind</code>; you can view them all as synonyms)</p>
 
 <ul>
   <li>Observe how <code>bind</code> is naturally making the continuation a function</li>
@@ -190,7 +192,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>We won’t be looking at the underlying structure of the <code>Lwt</code> monad, but the type <code>Lwt.t</code> is keeping a list of active coroutines and swapping between them.</li>
 </ul>
 
-<h3 id="the-full-loading-task-here">The full loading task here</h3>
+<h4 id="more-details-on-phtomontage">More details on phtomontage</h4>
 <ul>
   <li>Suppose for simplicity there are only two images.</li>
   <li>We eventually need to wait for these loads to finish, here is how.</li>
@@ -198,24 +200,31 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url1</span> <span class="k">in</span>
 <span class="k">let</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url2</span> <span class="k">in</span>
-<span class="c">(* We immediately get to this line, the above just kicks off the requests *)</span>
-<span class="c">(* p1 and p2 are called "promises" for the actual values *)</span>
-<span class="c">(* They are the underlying monadic values, we will see that below *)</span>
+<span class="c">(* We immediately get to this line; the above just kicks off the requests *)</span>
+<span class="c">(* p1 and p2 are called "promises" for the actual values: "I promise I'll eventually be the value" *)</span>
+<span class="c">(* They are the underlying monadic ("wrapped") values, we will see that below *)</span>
 <span class="c">(* .. we can do any other processing here .. *)</span>
-<span class="c">(* When we finally need the results of the above we again use bind: *)</span>
+<span class="c">(* When we finally need the results of the above we use bind *)</span>
+<span class="c">(* The bind will block if value not there yet: *)</span>
 <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="n">load1</span> <span class="o">=</span> <span class="n">p1</span> <span class="k">in</span>
 <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="n">load2</span> <span class="o">=</span> <span class="n">p2</span> <span class="k">in</span> <span class="o">...</span>
-<span class="c">(* ... we will get here once both loads are finished -- promises fulfulled 
-   Note we can also Lwt.choose to get the first one completed 
-   - process them as they come in.. more below on this *)</span>
+<span class="c">(* ... we will get to this line once both loads are finished -- promises fulfulled 
+   If we had other coroutines they can wake up and run while waiting for these loads
+   Note we could have instead used Lwt.choose to get the *first* one completed:
+     let%lwt a_load = Lwt.choose [ p1; p2 ]
+   For this application Lwt.choose is important to get the advantage of coroutines: block minimally
+*)</span>
 </code></pre></div></div>
 
 <ul>
-  <li>The monad behind the scenes has a data structure holding all the continuations<br />
-(the two image processing actions in this case)</li>
-  <li>It will call those continuations when the low-level URL load has completed
+  <li>When <code>let%lwt load1 = ...</code> is hit, recall this is a <code>bind</code> and all the rest of the code is in fact a function:<br />
+<code>fun load1 -&gt; let%lwt load2 = p2 in ...</code></li>
+  <li>The monad behind the scenes has a data structure holding this function (aka continuation)</li>
+  <li>Other coroutines if any can run while waiting, this code is just sitting</li>
+  <li>It will call the continuation when the low-level URL load has completed
     <ul>
       <li>in Lwt terminology, <em>when the promise is fulfilled</em>.</li>
+      <li>this will then allow the second load to happen.</li>
     </ul>
   </li>
 </ul>
@@ -346,7 +355,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Note its type: <code>'a t -&gt; 'a</code> which is what <code>run</code> should be in monad-land: get us out of the monad somehow
     <ul>
       <li>A common error is to try to call <code>Lwt_main.run</code> on your own to get out of monad-land but that won’t work, it will destroy all the previous promises.</li>
-      <li>Moral: once in monad-land, always in monad-land when using <code>Lwt</code> in an executable.  Or at least til all I/O done.</li>
+      <li>Moral: once in monad-land, always in monad-land when using <code>Lwt_main.run</code> in an executable.</li>
     </ul>
   </li>
 </ul>
@@ -382,7 +391,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>You can also create promises which can be cancelled; use <code>task</code> instead of <code>wait</code> to make those
     <ul>
-      <li>Anything waiting on that promise (e.g. any <code>let%lwt</code> on it etc) are recursively cancelled</li>
+      <li>Any continuations waiting on that promise (e.g. any <code>let%lwt</code> on it) are recursively cancelled</li>
       <li>See the manual for how you can cancel promises created with <code>task</code>.</li>
     </ul>
   </li>
@@ -391,58 +400,57 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="launching-a-new-coroutine">Launching a new Coroutine</h3>
 
 <ul>
-  <li><code>Lwt.async</code> can launch a new coroutine</li>
+  <li>The examples above had only one <em>user</em> routine running at a time, but multiple routines possible</li>
+  <li><code>Lwt.async</code> launches a new coroutine</li>
   <li>The engine will then round-robin between all the active coroutines</li>
   <li>The coroutine will at some point need to do an Lwt operation so it can yield to others</li>
-  <li>In this case the sleep is an Lwt operation that will yield, so other actions can happen then.</li>
-  <li>Note this one is not good to run in the top loop as the nag runs forever
-    <ul>
-      <li>it is commented out in the file <code>manual_examples.ml</code> if you want to try the executable.</li>
-    </ul>
+  <li>Here is an example which asynchronously keeps nagging user for input:
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="bp">()</span> <span class="o">=</span>
+ <span class="k">let</span> <span class="k">rec</span> <span class="n">show_nag</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="n">_</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
+   <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
+   <span class="k">else</span>
+   <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Please enter a line"</span> <span class="k">in</span>
+   <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">1</span><span class="o">.</span> <span class="k">in</span>
+   <span class="n">show_nag</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+ <span class="k">in</span>
+ <span class="nn">Lwt</span><span class="p">.</span><span class="n">async</span> <span class="p">(</span><span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="n">show_nag</span> <span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+
+ <span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span> <span class="k">begin</span>
+   <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="n">line</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.(</span><span class="n">read_line</span> <span class="n">stdin</span><span class="p">)</span> <span class="k">in</span>
+   <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="n">line</span>
+ <span class="k">end</span>
+</code></pre></div>    </div>
   </li>
+  <li>In this case the <code>Lwt.sleep</code> will yield, so the read line can happen if data appeared.</li>
+  <li>Note the <code>n</code> counter is used so this won’t nag forever.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="bp">()</span> <span class="o">=</span>
-   <span class="k">let</span> <span class="k">rec</span> <span class="n">show_nag</span> <span class="bp">()</span> <span class="o">:</span> <span class="n">_</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
-     <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Please enter a line"</span> <span class="k">in</span>
-     <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">1</span><span class="o">.</span> <span class="k">in</span>
-     <span class="n">show_nag</span> <span class="bp">()</span>
-   <span class="k">in</span>
-   <span class="nn">Lwt</span><span class="p">.</span><span class="n">async</span> <span class="p">(</span><span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="n">show_nag</span> <span class="bp">()</span><span class="p">);</span>
-
-   <span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span> <span class="k">begin</span>
-     <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="n">line</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.(</span><span class="n">read_line</span> <span class="n">stdin</span><span class="p">)</span> <span class="k">in</span>
-     <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="n">line</span>
-   <span class="k">end</span>
-</code></pre></div></div>
+<h4 id="pausing">Pausing</h4>
 
 <ul>
   <li>Here is an example that shows how <code>Lwt.pause</code> is used in a compute-intensive task to let other coroutines run.</li>
-  <li>Note this one is also not good to run in the top loop as <code>handle_io</code> runs forever
-    <ul>
-      <li>it is in the file <code>manual_examples.ml</code> if you want to try it.</li>
-    </ul>
-  </li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="bp">()</span> <span class="o">=</span>
-  <span class="k">let</span> <span class="k">rec</span> <span class="n">handle_io</span> <span class="bp">()</span> <span class="o">=</span>
-    <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Handling I/O"</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="k">rec</span> <span class="n">handle_io</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="bp">()</span> <span class="o">=</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
+    <span class="k">else</span>
+    <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">".. Imagine we are handling I/O here .."</span> <span class="k">in</span>
     <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span> <span class="k">in</span>
-    <span class="n">handle_io</span> <span class="bp">()</span>
+    <span class="n">handle_io</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="bp">()</span>
   <span class="k">in</span>
 
   <span class="k">let</span> <span class="k">rec</span> <span class="n">compute</span> <span class="n">n</span> <span class="o">=</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
     <span class="k">else</span>
-      <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span>
+      <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="c">(* pause in the below will cause this bind to block and put continuation on queue *)</span>
         <span class="k">if</span> <span class="n">n</span> <span class="ow">mod</span> <span class="mi">1_000_000</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">pause</span> <span class="bp">()</span> <span class="k">else</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
       <span class="k">in</span>
       <span class="n">compute</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
   <span class="k">in</span>
 
-  <span class="nn">Lwt</span><span class="p">.</span><span class="n">async</span> <span class="n">handle_io</span><span class="p">;</span>
-  <span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span> <span class="p">(</span><span class="n">compute</span> <span class="mi">100_000_000</span><span class="p">)</span>
+  <span class="nn">Lwt</span><span class="p">.</span><span class="n">async</span> <span class="o">@@</span> <span class="n">handle_io</span> <span class="mi">50</span><span class="p">;</span>
+  <span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span> <span class="p">(</span><span class="n">compute</span> <span class="mi">10_000_000</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h3 id="using-libraries-that-are-built-on-lwt">Using Libraries that are built on Lwt</h3>
