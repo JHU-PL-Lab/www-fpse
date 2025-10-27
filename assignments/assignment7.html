@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="/fpse/js/jquery.min.js"></script>
+ <script src="/fpse/js/jquery.dropotron.min.js"></script>
+ <script src="/fpse/js/skel.min.js"></script>
+ <script src="/fpse/js/skel-layers.min.js"></script>
+ <script src="/fpse/js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="/fpse/css/skel.css" />
+  <link rel="stylesheet" href="/fpse/css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="/fpse/css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="/fpse/logistics.html">Logistics</a></li>
+          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="/fpse/coding.html">Coding</a>
+            <li><a href="">Assignments</a>
+                <ul class="menu">
+                <li><a href="/fpse/assignments/assignment1.html">Assignment 1</a></li>
+                <li><a href="/fpse/assignments/assignment2.html">Assignment 2</a></li>
+                <li><a href="/fpse/assignments/assignment3.html">Assignment 3</a></li>
+                <li><a href="/fpse/assignments/assignment4.html">Assignment 4</a></li>
+                <li><a href="/fpse/assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
+                <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
+                <li><a href="/fpse/assignments/project.html">Project</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+          <li><a href="/fpse/contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="/fpse/css/friendly.css" />
+<meta charset="utf-8" />
+    
+<h2 id="assignment-7-monads-and-more-functors">Assignment 7: Monads and more functors</h2>
+
+<p>In this assignment you will write a functor and a monad module, and then you’ll use the module to refactor some stateful OCaml code to use a state monad.</p>
+
+<h3 id="the-file-structure">The file structure</h3>
+
+<ul>
+  <li><a href="http://pl.cs.jhu.edu/fpse/assignments/assignment7.zip">Use this zip file</a> for your assignment.</li>
+  <li>Provided are three <code>.mli</code> files <code>src/fpse_monad.mli</code>, <code>src/state_monad.mli</code>, and <code>src/stack_monad.mli</code>. Look at the files in this order, and implement an appropriately named <code>.ml</code> file for each of them.
+    <ul>
+      <li>Do not edit the <code>.mli</code> files. You will not submit them.</li>
+      <li>Note you may not use <code>Core</code> in <code>src/fpse_monad.ml</code>. You will not submit a <code>dune</code> file for <code>src/</code>, so you cannot add any libraries to what is in the given <code>dune</code> file.</li>
+    </ul>
+  </li>
+  <li>A library using your <code>Stack_monad</code> module is in <code>src/main.ml</code>. See that file and follow the instructions to complete the implementation.</li>
+  <li>There is an empty <code>test/tests.ml</code> in which you will put your tests.
+    <ul>
+      <li>You won’t be graded on your tests.</li>
+      <li>You need to fill in the <code>test/dune</code> file to run your tests.</li>
+    </ul>
+  </li>
+  <li>Answer a quick discussion question in <code>discussion.txt</code>.</li>
+</ul>
+
+<h3 id="submission-and-grading">Submission and Grading</h3>
+<ul>
+  <li>As usual, run a final <code>dune clean; dune build</code> and then upload <code>_build/default/assignment7.zip</code> to Gradescope.</li>
+  <li>You will be graded with an autograder and on your discussion question.</li>
+  <li>We will check that you actually used the monad in your implementation instead of cheating with mutation.</li>
+</ul>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: TEMPLATED
+				</div>			
+
+
+   </body>
+</html>
