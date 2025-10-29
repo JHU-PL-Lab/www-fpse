@@ -43,10 +43,12 @@ let l3 = (-1) :: l1 in ..
  * If you want fast random access to a "list" that is not growing / shrinking / changing, use an `array`.
 
 `Map` vs `Hashtbl`
- * `Map` is implemented like the `dict` of the homework
+ * `Map` is implemented like the `dict` of the homework: a binary search tree
  * O(log n) worst case time for `Map` to look up, add, or change an entry
    - only the path to the changed node needs updating, all the sub-trees hanging off it are kept
  * "O(1) amortized" for `Hashtbl` - will only matter for really big data sets.
+ * *But*, like arrys hash tables can't be shared, need to manually copy instead
+   - If you have a map you want to keep many versions of around, `Map` will beat `Hashtbl`.x
 
 `Set` vs `Hash_set`
 * See previous, `Set` is like `Map` and `Hash_set` is like `Hashtbl`
@@ -67,23 +69,23 @@ Summary: functional data structures
 * Assume a grid of n elements (a square-root n by square-root n grid)
 
 
-Our initial implementation  [using a list of strings](https://pl.cs.jhu.edu/fpse/examples/random-examples/minesweeper.ml)
+Our initial implementation  [using a list of strings](../examples/minesweeper/src/minesweeper.ml)
 * Each call to `get x y` is O(sqrt n) since we need to march down the lists to find element (x,y)
 * So O(sqrt n) for each inc operation so O(n * sqrt n) overall.
 
-Our implementation  [using a functional 2D array](https://pl.cs.jhu.edu/fpse/examples/random-examples/mine_array.ml)
+Our implementation  [using a functional 2D array](../examples/minesweeper/src/mine_array.ml)
 * The array is in fact never mutated, only used for random access to fixed array
 * Otherwise this implementation is the same as the above
 * `get x y` is now O(1) since it is an array -- random access.
 * O(1) for each inc operation so O(n) in total.
 
-Stateful version [using an array](https://pl.cs.jhu.edu/fpse/examples/random-examples/mine_mutate.ml)
+Stateful version [using an array](../examples/minesweeper/src/mine_mutate.ml)
 * Instead of counting mines around each empty square once and for all, for each mine increment all its non-mine neighbors
 * It is a fundamentally mutating alternative algorithm.
 * O(n) as with the previous functional array version
 
 Monadic state version 
-* A  [state monad version of the original minesweeper](https://pl.cs.jhu.edu/fpse/examples/random-examples/mine_monadic.ml)
+* A  [state monad version of the original minesweeper](../examples/minesweeper/src/mine_monadic.ml)
 * We will follow the data structure of the original minesweeper, the list of strings
 * But do the imperative increment-the-mine-neighbors instead of the functional count-the-mines
 * Each grid square increment will take O(n) since the whole list of strings has to be rebuilt with one change

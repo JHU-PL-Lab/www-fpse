@@ -37,7 +37,7 @@ let string_nget_opt (s : string) (i : int) : char option =
 (* 
   * Board is a state/exceptions monad representing a mutable board 
   * The Board state is a list of strings like the functional version 
-    - Not optimal, should be replaced with a map from (x,y) to chars.
+    - Not efficient, should be replaced with a map from (x,y) to chars.
 *)
 
 module Board = struct
@@ -91,11 +91,12 @@ module Board = struct
   include Monad.Make(T)
 end
 
+(* open the monad and its corresponding let%bind syntax *)
 open Board
 open Board.Let_syntax
 
 (* Function in monad-land to increment nodes adjacent to x,y by one 
-   Needs to be in monad-land because it has side effects
+   Needs to be in monad-land because it "mutates" the board
 *)
 let inc_adjacents (x: int) (y: int) : unit t = 
   let s xo yo = let%bind () = inc (x + xo) (y + yo) in return () in
@@ -108,7 +109,7 @@ let inc_adjacents (x: int) (y: int) : unit t =
   let%bind () = s 0 1 in  s 1 1
 
 
-(* An "imperative" version of inc_all doing nested loops - standard imperative style *)  
+(* Lets now do a classic "imperative" double-nested loop to increment all mine neigbors *)  
 let inc_all () : 'a t =
   let%bind xmax = x_dim () in
   let%bind ymax = y_dim () in
@@ -125,11 +126,23 @@ let inc_all () : 'a t =
 
 let annotate (b : m) =
     let (_,b') = inc_all () b in b'
+
+
+(* Sample test board *)
+let b = [
+        "  *  ";
+        "  *  ";
+        "*****";
+        "  *  ";
+        "  *  ";
+      ]
+
+let _ = annotate b
     
-(* Now lets use folding to do the iteration.
+(* Alternative: use folding to do the iteration.
    * Need to define monadic versions of List.iteri/String.iteri to iterate an effectful function over the grid which will thread along the state.
    * You can't just map the function over the list, you need to make a chain of binds to propagate effects
-   * It ends up being pretty complicated, the above traditional imperative approach reads better  *)
+   * It ends up being complicated, the above traditional imperative approach arguably reads better  *)
 
 let list_iteri (l : string list) ~(f: int -> string -> unit t) : unit t =
   List.foldi l ~init:(return ()) ~f:(fun i acc a -> bind acc ~f:(fun () -> f i a))    
@@ -144,16 +157,12 @@ let iterji ~(f : int -> int -> char -> 'a t) =
 let inc_all' () : 'a t =
   iterji ~f:(fun y x c -> if is_mine c then inc_adjacents x y else return ())
 
+let _ = inc_all' () b
 
-(* One sample test board *)
-let b = [
-        "  *  ";
-        "  *  ";
-        "*****";
-        "  *  ";
-        "  *  ";
-      ]
+let annotate' (b : m) =
+    let (_,b') = inc_all' () b in b'
 
+let _ = annotate' b
 
 (* Complexity analysis of this for grid of n elements (a square-root n by square-root n grid)
    
