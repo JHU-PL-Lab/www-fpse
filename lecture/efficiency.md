@@ -59,7 +59,9 @@ Summary: functional data structures
   - Feel like they should be much more inefficient but its often "at worst a log factor"
   - In a few cases they are actually better because past states "persist for free"
     - e.g. sub-lists can be shared since copying never needed, etc
-    - See [Real World OCaml benchmarks (scroll down)](https://dev.realworldocaml.org/maps-and-hashtables.html) for example benchmarks of this
+    - See [Real World OCaml Hash table vs Map comparison (scroll down)](https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables) for example benchmarks of this
+        - For standard uses a mutable hashtable will be "O(1)" vs O(log n) for the corresponding `Map` operations
+        - But if there are many minor variations on the Map/Hashset being created the functional data structure will in fact be faster due to the sharing immutability can support.
   - In a few cases speed is critical and mutable structures are required
 
 
@@ -102,15 +104,8 @@ Imagine an alternative state monad implementation with `Board` state implemented
 Conclusion
 * For Minesweeper, O(n^2) is in fact fine as the grids are always "tiny" in a CPU sense
 * But if this grid was instead a large image (pixel grid) this would be intolerable
-* With correct functional data structure choices you can often just pay a log n "fee" which will often be fine
-  - or even less, witness the functional array solution above
-* And, sometimes you just need to get out the imperative `Array`, `Hashset` etc.
-* Also recall the Real World OCaml example comparing an [(immutable) Map vs a (mutable) Hashtable](https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables)
-  - For standard uses a mutable hashtable will be "O(1)" vs O(log n) for a `Map` version
-  - But if there are many minor variations on the Map/Hashset being created the functional data structure will in fact be faster due to all the sharing.
-  - Functional can be a big win for a few classes of algorithms (but admitedly not most)
 
-#### FP and paralellism
+#### FP and paralellism briefly
 
 * In pure FP with no side effects, any independent computation can be done in parallel
 * Example: `List.map` could apply `f` on the list elements in parallel

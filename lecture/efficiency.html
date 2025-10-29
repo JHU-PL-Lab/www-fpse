@@ -159,7 +159,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>In a few cases they are actually better because past states “persist for free”
     <ul>
       <li>e.g. sub-lists can be shared since copying never needed, etc</li>
-      <li>See <a href="https://dev.realworldocaml.org/maps-and-hashtables.html">Real World OCaml benchmarks (scroll down)</a> for example benchmarks of this</li>
+      <li>See <a href="https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables">Real World OCaml Hash table vs Map comparison (scroll down)</a> for example benchmarks of this
+        <ul>
+          <li>For standard uses a mutable hashtable will be “O(1)” vs O(log n) for the corresponding <code>Map</code> operations</li>
+          <li>But if there are many minor variations on the Map/Hashset being created the functional data structure will in fact be faster due to the sharing immutability can support.</li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li>In a few cases speed is critical and mutable structures are required</li>
@@ -222,22 +227,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>For Minesweeper, O(n^2) is in fact fine as the grids are always “tiny” in a CPU sense</li>
   <li>But if this grid was instead a large image (pixel grid) this would be intolerable</li>
-  <li>With correct functional data structure choices you can often just pay a log n “fee” which will often be fine
-    <ul>
-      <li>or even less, witness the functional array solution above</li>
-    </ul>
-  </li>
-  <li>And, sometimes you just need to get out the imperative <code>Array</code>, <code>Hashset</code> etc.</li>
-  <li>Also recall the Real World OCaml example comparing an <a href="https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables">(immutable) Map vs a (mutable) Hashtable</a>
-    <ul>
-      <li>For standard uses a mutable hashtable will be “O(1)” vs O(log n) for a <code>Map</code> version</li>
-      <li>But if there are many minor variations on the Map/Hashset being created the functional data structure will in fact be faster due to all the sharing.</li>
-      <li>Functional can be a big win for a few classes of algorithms (but admitedly not most)</li>
-    </ul>
-  </li>
 </ul>
 
-<h4 id="fp-and-paralellism">FP and paralellism</h4>
+<h4 id="fp-and-paralellism-briefly">FP and paralellism briefly</h4>
 
 <ul>
   <li>In pure FP with no side effects, any independent computation can be done in parallel</li>
