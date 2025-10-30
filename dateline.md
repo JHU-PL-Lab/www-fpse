@@ -458,7 +458,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">Quiz <a href ="assignments/quiz-2024.pdf">(last years)<a></div>
+            <div align="left" class="body">Quiz <a href ="assignments/quiz-2024.pdf">(last years)</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
