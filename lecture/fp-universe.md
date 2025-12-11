@@ -12,7 +12,9 @@ Along with the FP there are some other things we covered that you can re-use in 
   - Originated with Haskell but being ported to many languages now
 * Type-directed programming
   - You need a typed functional language subset for this (e.g. C++, TypeScript, etc)
-  - Note that it doesn't work as well with imperative code, not as many type interfaces declared.
+  - Note that it doesn't work nearly as well with imperative code, types have less info in them
+    - In functional programming, everything is in the function's type (e.g. any state is passed in/out)
+    - *effect types* are a form of type which includes side effect information, helps fix this
 
 
 ## Functional-focused languages
@@ -21,18 +23,18 @@ Along with the FP there are some other things we covered that you can re-use in 
 * Key features include
   - Immutable variables by default
   - Libraries have immutable aka persistent data structures (immutable lists, trees, maps, etc)
-  - Full higher-order functions (can pass and return functions to functions), currying, anonymous (`fun x -> ...` functions), etc.
-  - Often also includes pattern matching and type inference, but also may be dynamically-typed
+  - Full higher-order functions (can pass and return functions to functions), currying, anonymous (`fun x -> ...`) functions, etc.
+  - May include pattern matching, types, and type inference, but not always
 * There are two major "schools" of FP today
     - ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, Scala, etc)
-    - Lisp school, dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, etc)
-* All of these true functional languages should be very easy to learn now that you know OCaml.
+    - Lisp school, dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, Elixir, etc)
+* All of these true functional languages should be easy to learn now that you know OCaml.
 
 ## ML Dialects
 
 * OCaml .. perhaps you have heard of that? :-)
 * Standard ML is another variant of ML, but it has limited popularity these days
-* F#, ReScript, Elm, and Haskell are other ML-descended languages we cover briefly now
+* F#, ReScript, Elm, Elixir, Scala, and Haskell are other ML-descended languages we cover briefly now
 
 ### F#
 
@@ -66,7 +68,7 @@ let square = Square 2.0
 printfn "The area of the square is %f" (getArea square)
 ```
 
-### ReScript (was called Reason until ~2021)
+### ReScript (previously called Reason)
 
 * [ReScript](https://rescript-lang.org) is an interesting beast, it is a fork of OCaml in terms of features
   - It has different (improved!) syntax fixing the historical oddities and kludges of OCaml
@@ -110,7 +112,7 @@ printfn "The area of the square is %f" (getArea square)
 
 * Lisp was the very first functional programming language, from the late 50's
   - inspired by Church's Lambda Calculus, circa 1934 - functional programming on paper
-  - Lisp is dynamically typed, the ancestor of all modern dynamically-typed languages such as Python, JavaScript, etc.  No type-directed programming in any of these!!
+  - Lisp is dynamically typed, the ancestor of all modern dynamically-typed languages such as Python, JavaScript, etc.  No type-directed programming possible in any of these languages
   - Allows mutation everywhere (no immutable `let` or immutable lists), but "only mutate when really needed".
 * Scheme was a clean-up of Lisp in the 70's-80's, there were several errors in the Lisp design
   - e.g. dynamic scoping -- closures were not computed in Lisp. (see [closures tangent below](./fp-universe.html#closures))
@@ -140,14 +142,14 @@ You need the following elements:
 *   OCaml example:
 
 ```ocaml
-# let add4 = (fun x -> fun y -> x + y) 4;;
-val add4 : int -> int = <fun> (* add4 is at runtime the *closure* "< fun y code, {x |-> 4} >" *)
-# add4 3;;                    (* The closure lets us remember the 4 we passed to x *)
-- : int = 7
+# let bangit = (fun x -> fun y -> y ^ x) "!";;
+val bangit : string -> string = <fun> (* bangit is at runtime the *closure* "< fun y code, {x |-> "!"} >" *)
+# bangit "YES";;                    (* The closure lets us remember the "!" we passed to x *)
+- : string = "YES!"                 (* This output shows the "!" was remembered by bangit *)
 ```
 
 * Note how `x` is a function parameter and is remembered in spite of function returning, means `x` needs to be remembered, in the closure
-* Closures are the key thing missing from C: C has *function pointers* you can pass in and out of other functions, but no closures
+* Closures are the key thing missing from C and other similar lanuages: C has *function pointers* you can pass in and out of other functions, but no closures
 
 ## FP in YourFavoriteLang
 
@@ -189,18 +191,8 @@ Java 8+ has **Lambdas**
 * `map` and other standard functions are supported in the system libraries, and lists can be immutable and so can be shared.
 * The generic types of Swift also allow polymorphic functions to be defined like in OCaml
 * Here is a Curried add function
+
 ```swift
-func add(_ x: Int) -> ((Int) -> Int) {
-  return { y in x + y }
-
-let r1 = add(5)(4)
-let add5 = add(5)
-let r2 = add5(4)
-}
-```
-
-Or with more sugared syntax like OCaml's implicitly Curried functions:
-```ocaml
 func add(x: Int)(y: Int) -> Int {
   return x + y
 }
@@ -208,7 +200,7 @@ func add(x: Int)(y: Int) -> Int {
 let sum = add(2)(y: 3)
 ```
 
-Note however that application requires a named parameter on the 2nd parameter.
+Note that application requires a named parameter on the 2nd parameter due to some quirks of the representation used.
 
 ### FP In Python
 
@@ -226,7 +218,6 @@ r(18)
  - Note that lists are mutable unfortunately (no sharing) but you can make a list out of tuples which are immutable
 * In addition, the [`functools`](https://docs.python.org/3/library/functools.html) standard library supports other convenience higher-order function operations
 * Plus, if you want even more FP-ism, there are additional libraries such as [PyToolz](https://toolz.readthedocs.io/en/latest/index.html)
- - has immutable data structures as well
 
 ```python
 from toolz import curry
@@ -237,11 +228,12 @@ from toolz import curry
 plusfour = add(4)     
 ```
 
-* PyToolz is a port of the Clojure FP libraries to Python
+* PyToolz is a port of the Clojure FP libraries to Python; still the data structures are not immutable
+* Use [Pyrsistant](https://github.com/tobgu/pyrsistent?utm_source=chatgpt.com) to have immutable maps, lists, etc
 * Python is weak on immutable variables, there is no `const`/`final`
-    - but the tuples and `frozenset` are immutable data structures
+    - but Python tuples and `frozenset` are immutable data structures
     - and Python 3.8 finally has `final`
-* Python 3.10 (finally!) has pattern matching.
+* Python 3.10 has pattern matching.
   - [tutorial 1](https://www.python.org/dev/peps/pep-0636/) [tutorial 2](https://www.infoworld.com/article/3609208/how-to-use-structural-pattern-matching-in-python.html)
 
 

@@ -170,7 +170,7 @@ A few comments on testing:
 * 20% demonstration of functionality: during the demo, there is lack of errors/glitches, the UI is quality, the edge cases we ask you to try work well, etc.
 * 25% code quality: good FP practice, following style guidelines, proper dune and opam files, good module design, etc.
 * 15% tests: good coverage of code, runs with `dune test`.
-* 20% accomplishment: library usage, conceptual challenge, degree of completion, general remarks.
+* 20% accomplishment: library usage, conceptual challenge, degree of completion, use of regular git commits, general remarks.
 * 8% library: the project is written with abstraction and a general library.
 * 7% algorithmic complexity: there are significantly challenging underlying algorithms in the project.
 

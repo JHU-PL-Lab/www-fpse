@@ -87,7 +87,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Type-directed programming
     <ul>
       <li>You need a typed functional language subset for this (e.g. C++, TypeScript, etc)</li>
-      <li>Note that it doesn’t work as well with imperative code, not as many type interfaces declared.</li>
+      <li>Note that it doesn’t work nearly as well with imperative code, types have less info in them
+        <ul>
+          <li>In functional programming, everything is in the function’s type (e.g. any state is passed in/out)</li>
+          <li><em>effect types</em> are a form of type which includes side effect information, helps fix this</li>
+        </ul>
+      </li>
     </ul>
   </li>
 </ul>
@@ -100,17 +105,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>Immutable variables by default</li>
       <li>Libraries have immutable aka persistent data structures (immutable lists, trees, maps, etc)</li>
-      <li>Full higher-order functions (can pass and return functions to functions), currying, anonymous (<code>fun x -&gt; ...</code> functions), etc.</li>
-      <li>Often also includes pattern matching and type inference, but also may be dynamically-typed</li>
+      <li>Full higher-order functions (can pass and return functions to functions), currying, anonymous (<code>fun x -&gt; ...</code>) functions, etc.</li>
+      <li>May include pattern matching, types, and type inference, but not always</li>
     </ul>
   </li>
   <li>There are two major “schools” of FP today
     <ul>
       <li>ML school: static types, type-directed programming, type inference, polymorphism, pattern matching (OCaml, Standard ML, ReScript, Haskell, F#, Elm, Scala, etc)</li>
-      <li>Lisp school, dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, etc)</li>
+      <li>Lisp school, dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, Elixir, etc)</li>
     </ul>
   </li>
-  <li>All of these true functional languages should be very easy to learn now that you know OCaml.</li>
+  <li>All of these true functional languages should be easy to learn now that you know OCaml.</li>
 </ul>
 
 <h2 id="ml-dialects">ML Dialects</h2>
@@ -118,7 +123,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>OCaml .. perhaps you have heard of that? :-)</li>
   <li>Standard ML is another variant of ML, but it has limited popularity these days</li>
-  <li>F#, ReScript, Elm, and Haskell are other ML-descended languages we cover briefly now</li>
+  <li>F#, ReScript, Elm, Elixir, Scala, and Haskell are other ML-descended languages we cover briefly now</li>
 </ul>
 
 <h3 id="f">F#</h3>
@@ -154,7 +159,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">printfn</span> <span class="s2">"The area of the square is %f"</span> <span class="p">(</span><span class="n">getArea</span> <span class="n">square</span><span class="p">)</span>
 </code></pre></div></div>
 
-<h3 id="rescript-was-called-reason-until-2021">ReScript (was called Reason until ~2021)</h3>
+<h3 id="rescript-previously-called-reason">ReScript (previously called Reason)</h3>
 
 <ul>
   <li><a href="https://rescript-lang.org">ReScript</a> is an interesting beast, it is a fork of OCaml in terms of features
@@ -227,7 +232,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Lisp was the very first functional programming language, from the late 50’s
     <ul>
       <li>inspired by Church’s Lambda Calculus, circa 1934 - functional programming on paper</li>
-      <li>Lisp is dynamically typed, the ancestor of all modern dynamically-typed languages such as Python, JavaScript, etc.  No type-directed programming in any of these!!</li>
+      <li>Lisp is dynamically typed, the ancestor of all modern dynamically-typed languages such as Python, JavaScript, etc.  No type-directed programming possible in any of these languages</li>
       <li>Allows mutation everywhere (no immutable <code>let</code> or immutable lists), but “only mutate when really needed”.</li>
     </ul>
   </li>
@@ -272,15 +277,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>OCaml example:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">add4</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span> <span class="mi">4</span><span class="p">;;</span>
-<span class="k">val</span> <span class="n">add4</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span> <span class="c">(* add4 is at runtime the *closure* "&lt; fun y code, {x |-&gt; 4} &gt;" *)</span>
-<span class="o">#</span> <span class="n">add4</span> <span class="mi">3</span><span class="p">;;</span>                    <span class="c">(* The closure lets us remember the 4 we passed to x *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">7</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">bangit</span> <span class="o">=</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">y</span> <span class="o">^</span> <span class="n">x</span><span class="p">)</span> <span class="s2">"!"</span><span class="p">;;</span>
+<span class="k">val</span> <span class="n">bangit</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span> <span class="c">(* bangit is at runtime the *closure* "&lt; fun y code, {x |-&gt; "!"} &gt;" *)</span>
+<span class="o">#</span> <span class="n">bangit</span> <span class="s2">"YES"</span><span class="p">;;</span>                    <span class="c">(* The closure lets us remember the "!" we passed to x *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s2">"YES!"</span>                 <span class="c">(* This output shows the "!" was remembered by bangit *)</span>
 </code></pre></div></div>
 
 <ul>
   <li>Note how <code>x</code> is a function parameter and is remembered in spite of function returning, means <code>x</code> needs to be remembered, in the closure</li>
-  <li>Closures are the key thing missing from C: C has <em>function pointers</em> you can pass in and out of other functions, but no closures</li>
+  <li>Closures are the key thing missing from C and other similar lanuages: C has <em>function pointers</em> you can pass in and out of other functions, but no closures</li>
 </ul>
 
 <h2 id="fp-in-yourfavoritelang">FP in YourFavoriteLang</h2>
@@ -341,27 +346,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><code>let</code> is also built-in for defining immutable values (use <code>var</code> to mutate)</li>
   <li><code>map</code> and other standard functions are supported in the system libraries, and lists can be immutable and so can be shared.</li>
   <li>The generic types of Swift also allow polymorphic functions to be defined like in OCaml</li>
-  <li>Here is a Curried add function<br />
-```swift<br />
-func add(_ x: Int) -&gt; ((Int) -&gt; Int) {<br />
-return { y in x + y }</li>
+  <li>Here is a Curried add function</li>
 </ul>
 
-<p>let r1 = add(5)(4)<br />
-let add5 = add(5)<br />
-let r2 = add5(4)<br />
-}</p>
-<pre><code>
-Or with more sugared syntax like OCaml's implicitly Curried functions:
-```ocaml
-func add(x: Int)(y: Int) -&gt; Int {
-  return x + y
-}
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">func</span> <span class="nf">add</span><span class="p">(</span><span class="nv">x</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)(</span><span class="nv">y</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Int</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<span class="p">}</span>
 
-let sum = add(2)(y: 3)
-</code></pre>
+<span class="k">let</span> <span class="nv">sum</span> <span class="o">=</span> <span class="nf">add</span><span class="p">(</span><span class="mi">2</span><span class="p">)(</span><span class="nv">y</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
+</code></pre></div></div>
 
-<p>Note however that application requires a named parameter on the 2nd parameter.</p>
+<p>Note that application requires a named parameter on the 2nd parameter due to some quirks of the representation used.</p>
 
 <h3 id="fp-in-python">FP In Python</h3>
 
@@ -381,7 +376,6 @@ let sum = add(2)(y: 3)
   <li>Note that lists are mutable unfortunately (no sharing) but you can make a list out of tuples which are immutable</li>
   <li>In addition, the <a href="https://docs.python.org/3/library/functools.html"><code>functools</code></a> standard library supports other convenience higher-order function operations</li>
   <li>Plus, if you want even more FP-ism, there are additional libraries such as <a href="https://toolz.readthedocs.io/en/latest/index.html">PyToolz</a></li>
-  <li>has immutable data structures as well</li>
 </ul>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">toolz</span> <span class="kn">import</span> <span class="n">curry</span>
@@ -393,14 +387,15 @@ let sum = add(2)(y: 3)
 </code></pre></div></div>
 
 <ul>
-  <li>PyToolz is a port of the Clojure FP libraries to Python</li>
+  <li>PyToolz is a port of the Clojure FP libraries to Python; still the data structures are not immutable</li>
+  <li>Use <a href="https://github.com/tobgu/pyrsistent?utm_source=chatgpt.com">Pyrsistant</a> to have immutable maps, lists, etc</li>
   <li>Python is weak on immutable variables, there is no <code>const</code>/<code>final</code>
     <ul>
-      <li>but the tuples and <code>frozenset</code> are immutable data structures</li>
+      <li>but Python tuples and <code>frozenset</code> are immutable data structures</li>
       <li>and Python 3.8 finally has <code>final</code></li>
     </ul>
   </li>
-  <li>Python 3.10 (finally!) has pattern matching.
+  <li>Python 3.10 has pattern matching.
     <ul>
       <li><a href="https://www.python.org/dev/peps/pep-0636/">tutorial 1</a> <a href="https://www.infoworld.com/article/3609208/how-to-use-structural-pattern-matching-in-python.html">tutorial 2</a></li>
     </ul>
