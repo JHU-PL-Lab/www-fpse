@@ -5,7 +5,7 @@ In this assignment, you are to write several small programs in OCaml.
 
 ### The file structure
 
-* [Use this zip file](https://pl.cs.jhu.edu/fpse/assignments/assignment1.zip) as the starting point for your assignment. Download and unzip it.  
+* [Use this zip file](/fpse/assignments/assignment1.zip) as the starting point for your assignment. Download and unzip it.  
 * We are starting right off with the standard file structure recommended for projects built with the `dune` build tool, and you will be using `dune` to test your program.  Please keep this file structure in your coding and submission.
 * The file `assignment1/src/submission.ml` is where you will put your answer code.  Currently it has `unimplemented ()` for all the functions, replace that with your code.
     * You may add `rec` to any function you'd like.
