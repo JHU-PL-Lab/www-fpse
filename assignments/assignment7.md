@@ -6,7 +6,7 @@ In this assignment you will write a functor and a monad module, and then you'll 
 
 ### The file structure
 
-* [Use this zip file](http://pl.cs.jhu.edu/fpse/assignments/assignment7.zip) for your assignment. 
+* [Use this zip file](assignment7.zip) for your assignment. 
 * Provided are three `.mli` files `src/fpse_monad.mli`, `src/state_monad.mli`, and `src/stack_monad.mli`. Look at the files in this order, and implement an appropriately named `.ml` file for each of them.
   * Do not edit the `.mli` files. You will not submit them.
   * Note you may not use `Core` in `src/fpse_monad.ml`. You will not submit a `dune` file for `src/`, so you cannot add any libraries to what is in the given `dune` file.

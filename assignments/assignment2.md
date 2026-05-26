@@ -8,7 +8,7 @@ This assignment is split into three separate files, each unrelated to the other.
 
 ### File structure and requirements
 
-* [Use this zip file](https://pl.cs.jhu.edu/fpse/assignments/assignment2.zip) as the starting point for your assignment. Download and unzip it.  
+* [Use this zip file](assignment2.zip) as the starting point for your assignment. Download and unzip it.  
 * Your code will go in three files, each of which contains a full description of the requirements for that file:
     * `src/reimplementation.ml`
     * `src/divisors.ml`

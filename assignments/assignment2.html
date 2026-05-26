@@ -11,14 +11,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <meta name="description" content="" />
  <meta name="keywords" content="" />
  <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
- <script src="js/jquery.min.js"></script>
- <script src="js/jquery.dropotron.min.js"></script>
- <script src="js/skel.min.js"></script>
- <script src="js/skel-layers.min.js"></script>
- <script src="js/init.js"></script>
+ <script src="../js/jquery.min.js"></script>
+ <script src="../js/jquery.dropotron.min.js"></script>
+ <script src="../js/skel.min.js"></script>
+ <script src="../js/skel-layers.min.js"></script>
+ <script src="../js/init.js"></script>
  <noscript>
-  <link rel="stylesheet" href="css/skel.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="../css/skel.css" />
+  <link rel="stylesheet" href="../css/style.css" />
  </noscript>
  <!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
 </head>
@@ -32,26 +32,26 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <div class="container">
       
      <!-- Logo -->
-      <h1><a href="/fpse/index.html" id="logo">FPSE</a></h1>
+      <h1><a href="../index.html" id="logo">FPSE</a></h1>
      
      <!-- Nav -->
       <nav id="nav">
        <ul>
-          <li><a href="/fpse/logistics.html">Logistics</a></li>
-          <li><a href="/fpse/dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
-          <li><a href="/fpse/coding.html">Coding</a>
+          <li><a href="../logistics.html">Logistics</a></li>
+          <li><a href="../dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="../coding.html">Coding</a>
             <li><a href="">Assignments</a>
                 <ul class="menu">
-                <li><a href="/fpse/assignments/assignment1.html">Assignment 1</a></li>
-                <li><a href="/fpse/assignments/assignment2.html">Assignment 2</a></li>
-                <li><a href="/fpse/assignments/assignment3.html">Assignment 3</a></li>
-                <li><a href="/fpse/assignments/assignment4.html">Assignment 4</a></li>
-                <li><a href="/fpse/assignments/assignment5.html">Assignment 5</a></li>
-                <li><a href="/fpse/assignments/assignment6.html">Assignment 6</a></li>
-                <li><a href="/fpse/assignments/assignment7.html">Assignment 7</a></li>
-                <li><a href="/fpse/assignments/project.html">Project</a></li>
+                <li><a href="../assignments/assignment1.html">Assignment 1</a></li>
+                <li><a href="../assignments/assignment2.html">Assignment 2</a></li>
+                <li><a href="../assignments/assignment3.html">Assignment 3</a></li>
+                <li><a href="../assignments/assignment4.html">Assignment 4</a></li>
+                <li><a href="../assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="../assignments/assignment6.html">Assignment 6</a></li>
+                <li><a href="../assignments/assignment7.html">Assignment 7</a></li>
+                <li><a href="../assignments/project.html">Project</a></li>
               </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
-          <li><a href="/fpse/contact.html">Contact Us</a></li>
+          <li><a href="../contact.html">Contact Us</a></li>
       </ul>
 </nav>
 </div>
@@ -66,7 +66,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div id="content" class="container">
 <section>
 
-<link rel="stylesheet" href="css/friendly.css" />
+<link rel="stylesheet" href="../css/friendly.css" />
 <meta charset="utf-8" />
     <h2 id="assignment-2-list-module-special-integers-and-the-towers-game">Assignment 2: List module, special integers, and the Towers game.</h2>
 
@@ -80,7 +80,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="file-structure-and-requirements">File structure and requirements</h3>
 
 <ul>
-  <li><a href="https://pl.cs.jhu.edu/fpse/assignments/assignment2.zip">Use this zip file</a> as the starting point for your assignment. Download and unzip it.</li>
+  <li><a href="assignment2.zip">Use this zip file</a> as the starting point for your assignment. Download and unzip it.</li>
   <li>Your code will go in three files, each of which contains a full description of the requirements for that file:
     <ul>
       <li><code>src/reimplementation.ml</code></li>
@@ -110,12 +110,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Here is a reminder of some resources at your disposal.</p>
 
 <ul>
-  <li>Consult the <a href="https://pl.cs.jhu.edu/fpse/basic-ocaml.html">Basic OCaml lecture notes</a>, and if you want to re-watch any lecture they are on Panopto as per the link pinned on Courselore.</li>
+  <li>Consult the <a href="https://pl.cs.jhu.edu../basic-ocaml.html">Basic OCaml lecture notes</a>, and if you want to re-watch any lecture they are on Panopto as per the link pinned on Courselore.</li>
   <li><a href="https://dev.realworldocaml.org/guided-tour.html">Real World OCaml Chapter 1</a> is another tutorial introdution in a somewhat different order than we are doing.</li>
   <li>If you are looking for how some standard library function is expressed in OCaml, like not equal, etc, consult the <a href="https://v2.ocaml.org/manual/stdlib.html">Caml Stdlib</a> which are the predefined functions available in OCaml.</li>
   <li>Note that <code>Core</code> overrides some of these including the comparison operations which only work on <code>int</code>s.  To perform <code>=</code>, <code>&lt;</code> or the like on e.g. floats you need to write <code>Float.(=) 3.2 4.7</code> for example to check for equality on <code>3.2</code> and <code>4.7</code>, and similarly for <code>&lt;</code> etc.  To see what is actually loaded look at the <a href="https://ocaml.org/p/core/latest/doc/index.html">Core documentation</a>.</li>
   <li>Use <code>Core</code>’s <code>List</code> module functions where possible; those functions are generally described under the <a href="https://ocaml.org/p/core/latest/doc/Core/List/index.html"><code>Core</code> list docs</a>.</li>
-  <li>You are allowed to work with other people on the assignment; you just need to list the names of people you worked with. However, remember that you should submit your own write up of the answers. <strong>Copying of solutions is not allowed</strong>. For the full collaboration policy see <a href="https://pl.cs.jhu.edu/fpse/integrity.html">here</a>.</li>
+  <li>You are allowed to work with other people on the assignment; you just need to list the names of people you worked with. However, remember that you should submit your own write up of the answers. <strong>Copying of solutions is not allowed</strong>. For the full collaboration policy see <a href="https://pl.cs.jhu.edu../integrity.html">here</a>.</li>
   <li>Come to office hours to get help from Prof and CAs.  Office hours are posted on Courselore.</li>
   <li>Use Courselore for online help and question clarification.</li>
 </ul>

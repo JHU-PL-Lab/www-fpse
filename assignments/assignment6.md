@@ -5,7 +5,7 @@ You will write an executable for an n-gram model generator. This is a large assi
 
 ### The file structure
 
-* [Use this zip file](http://pl.cs.jhu.edu/fpse/assignments/assignment6.zip) for your assignment. 
+* [Use this zip file](assignment6.zip) for your assignment. 
 * There is `src/bin/ngrams.ml` that compiles to an executable. Your code with side-effects will go here.
 * There is `src/lib/`, which is where you will put your library code.
   * For each new file you create, you need to add it to the `dune` rule in the top-level directory to submit them in your zip file.
