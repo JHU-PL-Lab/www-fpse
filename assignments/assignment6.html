@@ -298,7 +298,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>We expect good code coverage.
     <ul>
       <li>Anything testable should be in your library instead of your executable. You must use <code>Bisect</code> to show at least 94% code coverage.</li>
-      <li>In addition, write at least one <code>Base_quickcheck</code> random test for one of your OUnit2 tests following the <a href="https://pl.cs.jhu.edu../lecture/specification-test.html#quickcheck">Quickcheck lecture</a>. Since the input data is random, you may not necessarily know the correct answer, but it suffices to perform sanity checks. For example, for any n-gram used to create the distribution, it’s possible to sample <em>something</em> from the distribution using the n-gram’s context.
+      <li>In addition, write at least one <code>Base_quickcheck</code> random test for one of your OUnit2 tests following the <a href="https://pl.cs.jhu.edu/fpse/lecture/specification-test.html#quickcheck">Quickcheck lecture</a>. Since the input data is random, you may not necessarily know the correct answer, but it suffices to perform sanity checks. For example, for any n-gram used to create the distribution, it’s possible to sample <em>something</em> from the distribution using the n-gram’s context.
         <ul>
           <li>Indicate with a very clear comment containing the capitalized word “INVARIANT” somewhere inside of it to help the graders find your invariant test.</li>
         </ul>

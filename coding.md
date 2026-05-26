@@ -120,7 +120,7 @@ VSCode has very good OCaml support and is the "officially recommended editor".
 
 ### Coding Style
 
-* The [FPSE Style Guide](http://pl.cs.jhu.edu/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 2 on.
+* The [FPSE Style Guide](/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 2 on.
 
 ### Example Worked Exercises
 One of the best ways to learn to write elegant OCaml is to study well-written OCaml code.
