@@ -50,7 +50,7 @@ a[href^="https://"]::after {
     position: absolute;
     right: 0;
     bottom: 0;
-    font-size: 12px; /* Adjust this to match your text size */
+    font-size: 6px; /* Adjust this to match your text size */
 }
 	
 
