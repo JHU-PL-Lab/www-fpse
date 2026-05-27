@@ -40,7 +40,7 @@
 	}
 
 a[href^="https://"] {
-    padding-right: 18px; 
+    padding-right: 5px; 
     position: relative;
 }
 
@@ -50,7 +50,7 @@ a[href^="https://"]::after {
     position: absolute;
     right: 0;
     bottom: 0;
-    font-size: 6px; /* Adjust this to match your text size */
+    font-size: 10px; /* Adjust this to match your text size */
 }
 	
 
