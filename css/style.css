@@ -39,16 +39,17 @@
 		text-decoration: underline;
 	}
 
-	a[href^="http://"] {
-	    background: url(/fpse/images/external.png) center right no-repeat;
-	    padding-right: 13px;
-	}
-	
 	a[href^="https://"] {
-	    background: url(/fpse/images/external.png) center right no-repeat;
+	    background: "\1F517" center right no-repeat;
 	    padding-right: 13px;
 	}
 	
+
+	/* a[href^="https://"] {
+	    background: url(/fpse/images/external.png) center right no-repeat;
+	    padding-right: 13px;
+	}
+	 */
 	strong, b {
 		font-weight: 700;
 	}
