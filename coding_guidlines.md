@@ -45,7 +45,7 @@ That said...
 
 **New types, not aliases.** New types force structure and separation, while aliases may accidentally cross data because they do not create distinct types. New types also document themselves in interfaces.
 
-**Use the appropriate data structure.** Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think. Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution. When an advanced data structure is required, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.
+**Use the appropriate data structure.** Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are. Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution. When an advanced data structure is required, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.
 
 **Libraries, not frameworks.** Frameworks are opinionated and invite conflicts. Good luck using more than one of them at a time. Adopt these sparingly, and only when they are fundamental to your project. A good library is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you. In general, though, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. Dependencies can be heavy, and they should be worth their weight.
 
