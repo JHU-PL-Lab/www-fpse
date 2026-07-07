@@ -60,3 +60,49 @@ match x with
   end
 | _ -> ...
 ```
+
+## Design patterns
+
+**`module T = ... include T`**. When defining a type that will be used later in a functor, it is common practice to wrap the type and its operations in a module called `T`. Suppose you intend to implement this interface:
+
+```ocaml
+(* my_module.mli *)
+type t = A of int
+val compare : t -> t -> int
+module Set : Set.S with type elt = t
+```
+
+A good design to avoid redefinitions and aliasing is:
+
+```ocaml
+(* my_module.ml *)
+module T = struct
+  type t = A of int
+  let compare (A x) (A y) = Int.compare x y
+end
+include T
+module Set = Set.Make (T)
+```
+
+**`module type S`**. When a module type is implemented by a functor, it is typical to call that module type `S`. While not descriptive by itself, the enclosing module provides the context. For example, `Set.S` is the module type of sets, and `Set.Make` is a functor that produces modules with type `Set.S`.
+
+**Contain syntax in submodules**. Sugar does have its place in your code, and that place is in submodules. If you define custom operators or `let`-syntax, then put them in submodules such as `Infix` and `Syntax` respectively, rather than in the top level. This keeps the default interface uncluttered and requires users to explicitly opt into the additional syntax. For example, with a monad,
+
+```ocaml
+(* monad.ml *)
+module type S = sig
+  type 'a m
+  val return : 'a -> 'a m
+  val bind : 'a m -> ('a -> 'b m) -> 'b m
+  module Infix : sig
+    val (>>=) : 'a m -> ('a -> 'b m) -> 'b m
+    val (>>|) : 'a m -> ('a -> 'b) -> 'b m
+  end
+  module Syntax : sig
+    val ( let* ) : 'a m -> ('a -> 'b m) -> 'b m
+    val ( let+ ) : 'a m -> ('a -> 'b) -> 'b m
+  end
+end
+```
+
+The user must make it clear they are using sugar for a monad `M` by writing `open M.Syntax` or `let open M.Syntax in ...`. This tells the reader both what the sugar means and where it comes from.
