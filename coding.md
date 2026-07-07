@@ -84,7 +84,7 @@ If you already have an earlier version of OCaml installed via `opam`, then start
 
 ### Required `opam` packages
 
-Once you have `opam` and `ocaml` 5.5.1 installed, run the following `opam` command to install additional necessary packages for the class (just copy/paste these two lines into your shell):
+Once you have `opam` and `ocaml` 5.5.1 installed, run the following `opam` command to install additional necessary packages for the class (just copy/paste this line into your shell and answer yes to all questions):
 
 ```sh
 opam install ocaml-lsp-server ocamlformat utop dune ounit2 ppx_deriving cmdliner sexplib
