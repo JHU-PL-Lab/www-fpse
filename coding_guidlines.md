@@ -63,7 +63,9 @@ match x with
 
 ## Design patterns
 
-**`module T = ... include T`**. When defining a type that will be used later in a functor, it is common practice to wrap the type and its operations in a module called `T`. Suppose you intend to implement this interface:
+**Name your types `t`.** Most types should be named `t`. This naturally encourages each type to live in its own module, where the module name describes that type `t`. This keeps modules focused and small, it and separates responsibilities by type. For example, `List.t` is the type of lists, and the `List` module is limited to only operations on lists.
+
+**`module T`/`include T`**. When defining a type that will be passed to a functor, it is common practice to wrap the type and its operations in a module called `T`. Suppose you intend to implement this interface:
 
 ```ocaml
 (* my_module.mli *)
@@ -84,7 +86,7 @@ include T
 module Set = Set.Make (T)
 ```
 
-**`module type S`**. When a module type is implemented by a functor, it is typical to call that module type `S`. While not descriptive by itself, the enclosing module provides the context. For example, `Set.S` is the module type of sets, and `Set.Make` is a functor that produces modules with type `Set.S`.
+**`module type S`**. When a module type is implemented by a functor, it is typical to call that module type `S`. While not descriptive by itself, the enclosing module provides the context. For example, `Set.S` is the module type of sets, and `Set.Make` is a functor that produces modules with type `Set.S`. Like naming your types `t`, this keeps modules focused--the `Set` module contains little more than `S` and `Make`.
 
 **Contain syntax in submodules**. Sugar does have its place in your code, and that place is in submodules. If you define custom operators or `let`-syntax, then put them in submodules such as `Infix` and `Syntax` respectively, rather than in the top level. This keeps the default interface uncluttered and requires users to explicitly opt into the additional syntax. For example, with a monad,
 
