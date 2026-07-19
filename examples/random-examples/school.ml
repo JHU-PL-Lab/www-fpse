@@ -1,13 +1,11 @@
 (*
-  An example use of Core.Map; somewhat solves 
+  An example use of Map; somewhat solves 
   https://github.com/exercism/ocaml/tree/master/exercises/grade-school
 *)
 
-open Core
-
 (* 
   The Make functor in the Map module specializes maps to Ints in this case 
-  See https://ocaml.janestreet.com/ocaml-core/latest/doc/core_kernel/Core_kernel/Map/index.html for the Map module API.
+  See https://ocaml.org/manual/5.5/api/Map.S.html for the Map module API.
 *)
 
 module IntMap = Map.Make (Int)
@@ -15,21 +13,14 @@ module IntMap = Map.Make (Int)
 (*
   The Int here is the **keys** of the map (the grade here); we need to use
   a functor because we need an underling compare function for maps to work.
-  Built-in Core.Int has such. 
+  Built-in Int has such. 
    
-  Here is the module type of Make's argument, the Key module type:
+  Here is the module type of Make's argument, the OrderedType module type:
 
-    # #show Core.Map_intf.Key;;
-    module type Key =
-      sig
-        type t
-        val compare : t -> t -> int
-        val t_of_sexp : Sexp.t -> t
-        val sexp_of_t : t -> Sexp.t
-      end
-      
-  So Int needs to have the underlying type t (= int here), compare, plus to-from
-  s-expression functions. Fortunately, it does.
+      #show Map.OrderedType;;
+      module type OrderedType = sig type t val compare : t -> t -> int end
+            
+  So Int needs to have the underlying type t (= int here), and compare. Fortunately, it does.
 *)
 
 (*
@@ -64,7 +55,7 @@ let empty : t = IntMap.empty
   new key and singleton list.
 *)
 let add (grade : int) (stud : string) (school : t) : t =
-  Map.add_multi school ~key:grade ~data:stud
+  IntMap.add_to_list grade stud school
 
 (** 
   Sorting using a fold over the map.
@@ -73,25 +64,26 @@ let add (grade : int) (stud : string) (school : t) : t =
   function uses both key and value.
 *)
 let sort (school : t) : t = 
-  Map.fold school
-    ~init:empty
-    ~f:(fun ~key ~data scl ->
-      Map.add_exn scl ~key ~data:(List.sort data ~compare:String.compare)
-    )
+  IntMap.fold (fun key data scl ->
+      IntMap.add key (List.sort compare data) scl
+    ) school
+    empty
+
 
 (**
-  Note that [Map.map] is a better way; it maps over the values only,
+  Note that [IntMap.map] is a better way; it maps over the values only,
   keeping the key structure intact.
 *)
 let sort_better_with_map (school : t) : t = 
-  Map.map school ~f:(fun data ->
-    List.sort data ~compare:String.compare
-  )
+  IntMap.map (fun data ->
+    List.sort compare data
+  ) school
 
-let roster (school : t) = school |> sort |> Map.data |> List.concat
 
 (** Auxiliary function to dump data structure *)
-let dump (school : t) = school |> Map.to_alist 
+let dump (school : t) = school |> IntMap.to_list 
 
-(*** Simple test *)
+let roster (school : t) = school |> sort |> dump
+
+(** Simple test *)
 let test_school = empty |> add 2 "Ku" |> add 3 "Lu" |> add 9 "Mu" |> add 9 "Pupu"  |> add 9 "Apu"

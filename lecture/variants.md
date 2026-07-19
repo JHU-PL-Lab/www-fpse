@@ -73,30 +73,31 @@ let ocaml_annoyance = Fn.id @@ Nonzero(3.2,11.2);; (* so use @@ instead of " " *
 ```ocaml
 (* Example derived from 
    https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
-   This code needs a #require "ppx_jane";; in top loop to load ppx extension for @@deriving equal 
-   Or, in a dune file it will need   (preprocess (pps ppx_deriving.eq)) added to the library decl *)
+ *)
 
-type nucleotide = A | C | G | T [@@deriving equal]
+type nucleotide = A | C | G | T
+
+let combine_opt l r = try Some(List.combine l r) with _ -> None
 
 let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
-  match List.zip left right with (* recall this returns Ok(list) or Unequal_lengths, another variant *)
-  | List.Or_unequal_lengths.Unequal_lengths -> Error "left and right strands must be of equal length"
-  | List.Or_unequal_lengths.Ok l ->
+  match combine_opt left right with (* this returns Some list or None *)
+  | None -> Error "left and right strands must be of equal length"
+  | Some l ->
     l
-    |> List.filter ~f:(fun (a,b) -> not (equal_nucleotide a b))
+    |> List.filter (fun (a,b) -> not (equal_nucleotide a b))
     |> List.length 
     |> fun x -> Ok(x) (* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)
 
 let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
 ```
-Now let's use `fold` instead of `filter`/`length`
+Now let's use `fold_left` instead of `filter`/`length`
 ```ocaml
 let hamming_distance (left : nucleotide list) (right : nucleotide list) : ((int, string) result)=
-  match List.zip left right with
-  | List.Or_unequal_lengths.Unequal_lengths -> Error "left and right strands must be of equal length"
-  | List.Or_unequal_lengths.Ok (l) ->
+  match combine_opt left right with
+  | None -> Error "left and right strands must be of equal length"
+  | Some l ->
     l
-    |> List.fold ~init:0 ~f:(fun accum (a,b) -> accum + if (equal_nucleotide a b) then 0  else 1) 
+    |> List.fold_left (fun accum (a,b) -> accum + if (equal_nucleotide a b) then 0  else 1) 0 
     |> fun x -> Ok(x)
 ```
 #### Parametric variant types
@@ -122,12 +123,6 @@ type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
  * Same idea but *a pair* of type parameters; `'b` is the type of the `Error`.
  * Observe `Ok(4) : (int, 'a) result` and `Error("bad") : ('a, string) result`
 
-Lastly, `List.zip` has a special type for its return value which is very similar to `option`:
-```ocaml
-# #show_type List.Or_unequal_lengths.t;;
-type 'a t = 'a List.Or_unequal_lengths.t = Ok of 'a | Unequal_lengths
-```
-
 #### Recursive data structures 
   - A common use of variant types is to build recursive data structures (trees)
   - Functional programming is fantastic for computing over tree-structured data
@@ -145,12 +140,12 @@ let lizt_eg = Cons(3,Cons(5,Cons(7,Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [
 Coding over lizts is nearly identical to built-in lists; here is mapping:
 
 ```ocaml
-let rec lizt_map (ml : 'a lizt) ~(f : 'a -> 'b) : ('b lizt) =
+let rec lizt_map (f : 'a -> 'b) (ml : 'a lizt) : ('b lizt) =
   match ml with
     | Mt -> Mt
-    | Cons(hd,tl) -> Cons(f hd,lizt_map tl ~f)
+    | Cons(hd,tl) -> Cons(f hd,lizt_map f tl)
 
-let map_eg = lizt_map (Cons(3,Cons(5,Cons(7,Mt)))) ~f:(fun x -> x - 1)
+let map_eg = lizt_map (fun x -> x - 1) (Cons(3,Cons(5,Cons(7,Mt)))) 
 ```
 
 Lets look at the built-in `list` type:
@@ -215,46 +210,46 @@ let rec add_gobble binstringtree =
  * i.e. it is a **map** operation over a tree.  Let us code `map` and use it to add gobbles.
 
 ```ocaml
-let rec map (tree : 'a bin_tree) ~(f : 'a -> 'b) : ('b bin_tree) =
+let rec map (f : 'a -> 'b) (tree : 'a bin_tree) : ('b bin_tree) =
    match tree with
    | Leaf -> Leaf
    | Node(y, left, right) ->
-       Node(f y,map ~f left,map ~f right)
+       Node(f y,map f left,map f right)
 
 (* using tree map to make a non-recursive add_gobble *)
-let add_gobble tree = map ~f:(fun s -> s ^ "gobble") tree
+let add_gobble tree = map (fun s -> s ^ "gobble") tree
 ```
 * Fold is also natural on binary trees, apply operation f to node value and each subtree result.
   - This is a fold right (post-processed), folding left on a tree isn't sensible because there are two subtrees to go down in to.
 
 ```ocaml
-let rec fold (tree : 'a bin_tree) ~(f : 'a -> 'acc -> 'acc -> 'acc) ~(leaf : 'acc) : 'acc =
+let rec fold (f : 'a -> 'acc -> 'acc -> 'acc) (tree : 'a bin_tree)  (leaf : 'acc) : 'acc =
    match tree with
    | Leaf -> leaf
    | Node(y, left, right) ->
-       f y (fold ~f ~leaf left) (fold ~f ~leaf right)
+       f y (fold f left leaf) (fold f right leaf)
 
 (* using tree fold *)
-let int_summate tree = fold ~f:(fun elt laccum raccum -> elt + laccum + raccum) ~leaf:0 tree;;
+let int_summate tree = fold (fun elt laccum raccum -> elt + laccum + raccum) tree 0;;
 int_summate @@ Node(3,Node(1,Leaf,Node(2,Leaf,Leaf)),Leaf);;
 (* fold can also do map-like operations - the folder can return a tree *)
-let inc_nodes tree = fold ~f:(fun elt la ra -> Node(elt+1,la,ra)) ~leaf:Leaf tree;;
+let inc_nodes tree = fold (fun elt la ra -> Node(elt+1,la,ra)) Leaf tree;;
 ```
 
 * Many of the other `List` functions have analogues on binary trees and recursive variants in general
    - `length` (`size` or `depth` for a tree), `forall`, `exists`, `filter` (filter out a subtree), etc etc.
 
 * For some operations we need to know how to compare the tree elements 
-   - e.g. if it is a binary (sorted) tree an insertion requires comparison
-   - here for example we compare node elements for integer node values
+   - we will use the built-in `<=` which is fine on simple types but not on Maps etc.
+   - Beware!
 
 ```ocaml
-let rec insert_int (x : int) (bt : int bin_tree) : (int bin_tree) =
+let rec insert (x : 'a) (bt : 'a bin_tree) : ('a bin_tree) =
    match bt with
    | Leaf -> Node(x, Leaf, Leaf)
    | Node(y, left, right) ->
-       if x <= y then Node(y, insert_int x left, right)
-       else Node(y, left, insert_int x right)
+       if x <= y then Node(y, insert x left, right)
+       else Node(y, left, insert x right)
 ;;
 ```
 
@@ -263,17 +258,21 @@ let rec insert_int (x : int) (bt : int bin_tree) : (int bin_tree) =
 * So, for here, only one path through tree is not shared: on average only log n new nodes need to be made.  [More later in lecture on efficiency](efficiency.html).
 
 ```ocaml
-let bt' = insert_int 4 bt;;
-let bt'' = insert_int 0 bt';; (* thread in the most recent tree into subsequent insert *)
+let bt' = insert 4 bt;;
+let bt'' = insert 0 bt';; (* thread in the most recent tree into subsequent insert *)
 ```
 
-* For non-integers, we need to explicitly supply any equal or comparison function.
-* Library functions needing to compare will in fact take a comparision operation as argument
-* For example in the `List` library, the [`List.sort` function](https://ocaml.janestreet.com/ocaml-core/latest/doc/base/Base/List/index.html#val-sort)
+#### Comparisons
+
+* Always be careful about what the meaning of `=`, `<`, `<=` etc are
+* For lists, variants, integers, strings, floats, chars the built-in meaning is fine
+* But for types list `Map`s, hashtables, etc the default equality can be not what you mean
+* So, library functions needing to compare reliably will in fact take a comparision operation as argument
+* For example in the `List` library, the [`List.sort` function](https://ocaml.org/manual/5.5/api/List.html#VALsort)
 * Here is an example of how to sort a string list with `List.sort`:
 
 ```ocaml
-List.sort ["Zoo";"Hey";"Abba"] ~compare:(String.compare);; (* pass string's comparison function as argument *)
+List.sort (String.compare) ["Zoo";"Hey";"Abba"];; (* pass string's comparison function as argument *)
 (* insight into OCaml expected behavior for compare: *)
 # String.compare "Ahh" "Ahh";; (* =  returns 0 : equal *)
 - : int = 0
@@ -286,23 +285,62 @@ List.sort ["Zoo";"Hey";"Abba"] ~compare:(String.compare);; (* pass string's comp
 So, our more general tree insert should follow the lead of `List.sort`:
 
 ```ocaml
-let rec insert x bt ~compare =
+let rec insert compare x bt  =
    match bt with
    | Leaf -> Node(x, Leaf, Leaf)
    | Node(y, left, right) ->
-       if (compare x y) <= 0 then Node(y, insert x left compare, right)
-       else Node(y, left, insert x right compare)
+       if (compare x y) <= 0 then Node(y, insert compare x left, right)
+       else Node(y, left, insert compare x right)
 ;;
-let bt' = insert 4 bt ~compare:(Int.compare);;
+let bt' = insert (Int.compare) 4 bt ;;
 ```
 
-* In general all the built-in types have both `compare` and `equal` (which is same as `(=)`) defined
-* Define your own compare/equal for your own types if you need it
- - Appending `[@@ppx_deriving equal]` to  type decl as we saw above in Hamming DNA example will automatically define function `equal_mytype` for your type `mytype`
- - Appending `[@@ppx_deriving compare]` is similar but will define function `compare_mytype`.
- - Appending `[@@ppx_deriving equal compare]` will get both
+* The built-in equality `(=)` and built-in compare, `compare` in fact work fine on all standard types and their compositions. 
+* All of the data types we have used thus far, e.g. our `bin_tree` they compare well on.
+* But they don't accurately compare `Map`, `Set`, `Hashtbl`, `Queue`, `Stack` and others.  
+* Its dangerous because they don't give an exception they give a perhaps incorrect answer.
+* Also it raises an exception when trying to compare functions.
 
-### Polymorphic Variants Briefly
+Here is an example of how `Set` comparison is not what you want:
+```ocaml
+module S = Set.Make(Int) (* This is how you set up an int set; covered later *)
+
+let s1 =  S.empty |> S.add 1 |> S.add 2 (* the set {1, 2} *)
+let s2 =  S.empty |> S.add 2 |> S.add 1 (* the set {1, 2} again *)
+let _ = s1 = s2 (* returns false but they are the same set - ! *)
+let _ = compare m1 m2;; (* the second one is considered "greater" due to internal rep'n *)
+```
+The reason is sets are implemented as binary search trees and the order of addition affects the tree structure which is what `=` compares.
+
+
+#### Solution if you want to properly compare Set etc
+* For sets in particular there is a better one built-in: `S.equal s1 s2` returns `true`.
+  - (why doesn't `=` invoke that?  Good question, its an historical oddity)
+* Making your own definition of compare/equal is also possible
+* To define equality more easily you can also use a ppx extension, a form of macro for OCaml
+ - Use library `ppx_deriving.eq` and append `[@@deriving eq]` to automatically define function `equal_mytype` for your type `mytype`
+ - Use library `ppx_deriving.ord` and append `[@@deriving ord]` will define function `compare_mytype`.
+ - Appending `[@@deriving eq, ord]` will get you both
+
+Here is an example of using these in the top loop to define equality on trees:
+```ocaml
+#require "ppx_deriving.eq";; (* loads the extension into utop *)
+#require "ppx_deriving.ord";; (* ditto *)
+type 'a tree = Leaf | Node of 'a * 'a tree * 'a tree [@@deriving ord, eq];;
+```
+produces output
+```ocaml
+type 'a tree = Leaf | Node of 'a * 'a tree * 'a tree
+val compare_tree : ('a -> 'a -> int) -> 'a tree -> 'a tree -> int = <fun>
+val equal_tree : ('a -> 'a -> bool) -> 'a tree -> 'a tree -> bool = <fun>
+```
+* This defines these functions for you that will compare trees.  
+* For example, `compare_tree compare (Node (4,Leaf,Leaf)) (Leaf)` returns 1, it considers the left tree smaller since `Leaf` was listed first in the variant.
+* Notice that we need to pass in a comparison function for the underlying data in the tree (integers); here we just pass in the default comparison.
+* Note that `compare (Node (4,Leaf,Leaf)) (Leaf)` also returns 1 since this is a simple type.
+* To use these macros in a dune project add `(preprocess (pps ppx_deriving.eq))` or `(preprocess (pps ppx_deriving.ord))` to your dune file.
+
+### Polymorphic Variants Very Briefly
 
 * OCaml has an additional form of variant which has different syntax and is overlapping in uses: *polymorphic variants*
 * A better term would be "inferred variants" - you don't need to declare them via `type`.

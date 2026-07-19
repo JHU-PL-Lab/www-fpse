@@ -1,8 +1,7 @@
 (library
  (name minesweeper)
  (modules minesweeper mine_monadic mine_array mine_mutate mine_abstract)
- (libraries core)
- (preprocess (pps ppx_let))
+ ; (preprocess (pps ppx_let))
 )
 ; To load libraries in a fresh utop top loop use command line
 ; `dune utop`

@@ -9,7 +9,6 @@
 
 ```ocaml
 # module String_set = struct
-  open Core
 
   type t = string list
 
@@ -21,7 +20,7 @@
     match s with
     | [] -> failwith "item is not in set"
     | hd :: tl ->
-      if String.equal hd x
+      if hd = x
       then tl
       else hd :: remove x tl
 
@@ -29,7 +28,7 @@
     match s with
     | [] -> false
     | hd :: tl ->
-      if String.equal x hd 
+      if hd = x 
       then true 
       else contains x tl
 end
@@ -203,9 +202,9 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
 Here is how we could apply the `Make_set` functor with our own data type. We'll do it on nucleotides in the top loop.
 
 ```ocaml
-# #require "ppx_jane";;
+# #require "ppx_deriving.eq";;
 
-# module Nucleotide = struct type t = A | C | G | T [@@deriving equal] end;;
+# module Nucleotide = struct type t = A | C | G | T [@@deriving eq] end;;
 module Nucleotide : sig type t = A | C | G | T val equal : t -> t -> bool end
 
 # module Nuc_set = Make_set (Nucleotide);;
@@ -220,7 +219,7 @@ module Nuc_set :
 ```
 
 * Note this requires us to make a module out of our type.
-* also note that we used `[@@deriving equal]` to make the `equal` for free
+* also note that we used `[@@deriving eq]` to make the `equal` for free
   - and note it is given the name `Nucleotide.equal` and not `Nucleotide.equal_nucleotide`, since it is in a module and is the type `t` there
 
 ### Types of functors
@@ -290,9 +289,9 @@ module Int_set_hidden = Make_set_hidden (Int)
   - There is a specific naming convention on how to do this which is subtle.
   - We will review [set-example-functor.zip](../examples/set-example-functor.zip) which is our old set example redone as a functor.
 
-### `Core`'s Set, Map, Hash table, etc
+### The Standard Library's Set, Map, Hash table, etc
 
-* The `Core` advanced data structures support something similar to what we did above
+* The standard library advanced data structures support something similar to what we did above
   - "plug in the comparison in an initialization phase and then forget about it"
 * Here for example is how you make a (functional) map where the key is a built-in type
 * `Map.Make` is a functor just like our `Simple_set.Make` above
@@ -305,49 +304,47 @@ module FloatMap = Map.Make (Float) (* Or Char/Int/String/Bool/etc. Anything that
 let mm : 'a FloatMap.t = FloatMap.empty
 
 (* Use the Map module to work with all maps. *)
-let mm' : int FloatMap.t = Map.add_exn mm ~key:0.4 ~data:5
-(* int FloatMap.t is equivalent to 
-
-    val mm' : (float, int, FloatMap.Key.comparator_witness) Map.t
-
-  It has three type parameters: key, value, and witness to the way the keys are compared
-*)
+let mm' : int FloatMap.t = FloatMap.add 0.4 5 mm
 
 (* evaluates to 5 *)
-let data_5 = Map.find_exn mm' 0.4
+let data_5 = FloatMap.find 0.4 mm'
 
 (* Use FloatMap.of_X functions to convert to a float map: *)
-let mm2 = FloatMap.of_alist_exn [2.3,"hi"; 3.3,"low"; 2.6,"medium"; 22.2,"wavy"]
+let mm2 = FloatMap.of_list [2.3,"hi"; 3.3,"low"; 2.6,"medium"; 22.2,"wavy"]
 ```
 
-* We will ignore the above `FloatMap.Key.comparator_witness` type for now. We will learn about that later.
-* Note it requires a bit more than just the type and `compare` to be in `Float` for this to work with `Core`
- - `#show Map.Make;;` will show the functor type and we can look at what `Map.Make`s argument expects
- - In particular to/from S-expression conversions are also needed; use `[@@deriving compare, sexp]` on your own type in the top loop:
+Note that we can't make maps with keys that are lists: 
+TODO: this topic is repeated below, merge the two
+```ocaml
+module ListMap = Map.Make(List);;
+```
+produces an error.  That is because in order to compare keys we need a particular type of lists.  So we need to make a specialized module for e.g. integer lists, and have `compare` defined on it; lets use the `ppx` to do that for us.
 
 ```ocaml
-# #require "ppx_jane";; (* this is in the ~/.ocamlinit so you should not need this *)
+module IntList = struct type t = int list [@@deriving ord] end
+module ListMap = Map.Make(IntList);;
+```
 
+
+```ocaml
 # module IntPair = struct
-  type t = int * int [@@deriving compare, sexp]
+  type t = int * int [@@deriving ord]
 end;;
 module IntPair :
   sig
     type t = int * int
     val compare : t -> t -> int
-    val t_of_sexp : Sexp.t -> t
-    val sexp_of_t : t -> Sexp.t
   end
 
 # module IPMap = Map.Make (IntPair);;
 module IPMap :
   sig ... end (* big long omitted type *)
 
-# module IPSet = Set.Make (IntPair);;  (* Sets in Core also use compare (it sorts internally) *)
+# module IPSet = Set.Make (IntPair);;  (* Sets also use compare (it sorts internally) *)
 ...
 
-# IPSet.empty |> Fn.flip Set.add (1,2) |> Fn.flip Set.add (3,2) |> Fn.flip Set.add (3,2) |> Set.to_list;;
-- : IntPair.t list = [(1, 2); (3, 2)]
+# IPSet.empty |> IPSet.add (1,2) |> IPSet.add (3,2) |> IPSet.add (3,2) |> IPSet.to_list;;
+- : IPSet.elt list list = [(1, 2); (3, 2)]
 ```
 
 Observe that only non-parametric types can be keys for maps:
@@ -361,9 +358,7 @@ Error: Signature mismatch:
          type 'a t = 'a list
        is not included in
          type t
-       They have different arities.
-       File "src/map_intf.ml", line 29, characters 2-35: Expected declaration
-       File "src/list.mli", line 12, characters 0-48: Actual declaration
+       ...
 ```
 
 * The "different arities" means one has a type parameter (`list`) and the other doesn't (`t`).
@@ -371,13 +366,11 @@ Error: Signature mismatch:
   * Say we want to make maps where keys are string lists.
 
 ```ocaml
-# module SList = struct type t = string list [@@deriving compare, sexp] end;;
+# module SList = struct type t = string list [@@deriving ord] end;;
 module SList :
   sig
     type t = string list
     val compare : t -> t -> int
-    val t_of_sexp : Sexp.t -> t
-    val sexp_of_t : t -> Sexp.t
   end
 
 # module SListMap = Map.Make (SList);;
@@ -388,7 +381,7 @@ module SListMap :
 And remember that we can inline module definitions, so the following will work as well.
 
 ```ocaml
-# module SListMap = Map.Make (struct type t = string list [@@deriving compare,sexp] end);;
+# module SListMap = Map.Make (struct type t = string list [@@deriving ord] end);;
 module SListMap :
   sig .. end
 ```
@@ -415,12 +408,8 @@ type 'a intpairmaptree =
     | Node of ('a List.t) * 'a listtree * 'a listtree;; 
   ```
 
-### A Small Example Using Core.Map
-* We will go over the code of [school.ml](../examples/random-examples/school.ml), simple code that uses a `Core.Map`.
-* Note that there is an alternative to `Map.Make` using advanced features we will cover in detail later: *first-class modules*.
-  - We will briefly look at [cool_school.ml](../examples/random-examples/cool_school.ml) which re-writes the `school.ml` example to use first-class modules
-  - The advantage of this code is you don't need to make a new module for every type you use it at
-  - Also avoids the `Map.add` vs `IntMap.empty` issue of two different interfaces to use same map.
+### A Small Example Using Map
+* We will go over the code of [school.ml](../examples/random-examples/school.ml), simple code that uses a `Map`.
 
 ### The `with` type refinement operation
 
@@ -570,14 +559,14 @@ module type INTLIST = sig
 end
 ```
 
-### Other Data Structures in `Core`
+### Other Data Structures in the standard library
 
-* `Core` has complete implementations of many classic data structures, many of which are built similarly with functor like `Map.Make`
+* The standard library has complete implementations of many classic data structures, many of which are built similarly with a functor like `Map.Make`
 * Be careful on imperative vs functional, look carefully to see which it is
-* Functional data structures in `Core`:
-  - `Set`, `Map`, `Doubly_linked` (list), `Fqueue`, `Fdeque` (functional (double-ended) queue)
+* Functional data structures:
+  - `Set`, `Map`, `IArray` (immutable arrays)
 * Imperative data structures:
-  - `Stack` and `Queue` (which don't need `Make`/`compare`), plus `Hash_queue`, `Hash_set`, `Hashtbl` (mutable hashed queue/set/map),  `Linked_queue`,  `Bag` (a multi-set)
+  - `Stack`, `Queue` (which don't need `Make`/`compare`), `Hashtbl`, `Pqueue` (priority queue)
 
 ### Tangent:  Summary of Important Directives for `utop`
 * `#show_val` - shows the type of a value

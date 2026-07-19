@@ -2,8 +2,7 @@
 (library
  (name string_set)
  (modules string_set) 
- (libraries core)
- (preprocess (pps bisect_ppx))
+; (preprocess (pps bisect_ppx))
 )
 
 ; To load libraries in a fresh utop top loop use command line
@@ -14,7 +13,7 @@
 (executable
   (name set_main)
   (modules set_main)
-  (libraries string_set core)
+  (libraries string_set)
 )
 ; to run executable type dune exec ./src/set_main.exe <search_string> <filename>
 ; OR could directly do `_build/default/src/set_main.exe <search_string> <filename>`

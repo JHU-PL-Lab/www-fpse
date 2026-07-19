@@ -8,7 +8,7 @@
 Side effects of OCaml include
 * Mutatable state - *changing* the contents of a memory location intead of making a new one
     - Three built-in sorts in OCaml: references, mutable record fields, and arrays.
-    - Plus many libraries: `Stack`, `Queue`, `Hashtbl`, `Hash_set`, etc
+    - Plus many libraries: `Stack`, `Queue`, `Hashtbl`, etc
     - Faster because rebuilding avoided, but slower due to impossibility of sharing sub-components
 * Exceptions (we saw a bit of this already, `failwith "ill-formed"` etc)
 * Input/output (in basic modules lecture we looked at file input and results printing for example)
@@ -79,18 +79,18 @@ Since `()` is useless, any function that returns it is either useless **or** per
 - : string -> unit = <fun>
 # (:=);; (* returns unit; has the side effect of assignment to LHS *)
 - : 'a ref -> 'a -> unit = <fun>
-# Hashtbl.set;; (* returns unit, so it has the side effect of assignment *)
-- : ('a, 'b) Core.Hashtbl.t -> key:'a -> data:'b -> unit = <fun>
-```
+# Hashtbl.add;; (* returns unit, so it has the side effect of assignment *)
+ : ('a, 'b) Hashtbl.t -> 'a -> 'b -> unit = <fun>
+ ```
 
-* `Hashtbl.set` returns `unit` so it must be a mutable data structure.
+* `Hashtbl.add` returns `unit` so it must be a mutable data structure.
 * On the flip side, functions taking `unit` as argument are often also only performing side effects.
 
 ```ocaml
 # Stack.create;; (* takes unit, so it is making a new mutable data structure *)
-- : unit -> 'a Core.Stack.t = <fun>
+- : unit -> 'a Stack.t = <fun>
 # Stack.create ();; (* Note the convention of putting a space here *)
-- : '_weak1 Core.Stack.t = <abstr> (* Its abstract, we can't see internals.. more on weak types soon *)
+- : '_weak1  Stack.t = <abstr> (* Its abstract, we can't see internals.. more on weak types soon *)
 ```
 
 ### Variables are still themselves immutable
@@ -234,10 +234,9 @@ MNode
 * Occasionally in imperative programs you need to check for "same pointer".
   * It's also useful in functional programming for fast comparison when data is shared.
   * There's no need to compare entire structures if their memory addresses are identical.
-* `phys_equal` is `Core`'s notion for for "same pointer" (use `==` in non-Core).
 
 ```ocaml
-# phys_equal 2 2;; (* memory layout of 2 is always the same *)
+# 2 == 2;; (* memory layout of 2 is always the same *)
 - : bool = true
 
 # let x = ref 4;;
@@ -246,29 +245,29 @@ val x : int ref = {contents = 4}
 # let y = x;; (* make y an alias for x *)
 val y : int ref = {contents = 4}
 
-# phys_equal x y;;
+# x == y;;
 - : bool = true (* same pointer *)
 
 # let z = ref 4;; (* new cell. totally different from x and y *)
 val z : int ref = {contents = 4}
 
-# phys_equal x z;;
+# x == z;;
 - : bool = false (* different pointers *)
 ```
 
-We can use `phys_equal` to see that data is shared in functional data structures.
+We can use `==` to see that data is shared in functional data structures.
 
 ```ocaml
-# let big_list = List.init 10000 ~f:Fn.id ;;
+# let big_list = List.init 10000 Fun.id ;;
 
 # let x = 10 :: big_list ;;
 
 # let y = 11 :: big_list ;;
 
-# phys_equal x y ;;
+# x == y ;;
 - : bool = false 
 
-# phys_equal (List.tl_exn x) (List.tl_exn y) ;;
+# (List.tl_exn x) == (List.tl_exn y) ;;
 - : bool = true (* the tails are physically identical, they are big_list *)
 ```
 
@@ -324,7 +323,7 @@ done;;
 
 
 ```ocaml
-let arrhi = Array.create ~len:10 "hi";; (* length and initial value *)
+let arrhi = Array.init 10 (fun _ -> "hi");; (* length and initial value maker *)
 
 let arr = [| 4; 3; 2 |];; (* make a literal array *)
 
@@ -335,9 +334,9 @@ arr.(0) <- 55;; (* update like with mutable record fields *)
 arr;; (* see that arr has changed *)
 
 (* Don't use for loops for arrays, use your favorite iterators: *)
-Array.map ~f:(fun x -> x + 1) arr;; (* standard map - produces a new array *)
+Array.map (fun x -> x + 1) arr;; (* standard map - produces a new array *)
 
-Array.map_inplace ~f:(fun x -> x + 1) arr;; (* This *changes* the array using the map function *)
+Array.map_inplace (fun x -> x + 1) arr;; (* This *changes* the array using the map function *)
 
 (* Here are some conversions *)
 let a = Array.of_list [1;2;3];;
@@ -363,8 +362,8 @@ invalid_arg "This function works on non-empty lists only";; (* Invalid_argument 
 Also there are library functions we covered that raise exceptions
 
 ```ocaml
-# List.zip_exn [1;2] [2;3;4];;
-Exception: (Invalid_argument "length mismatch in zip_exn: 2 <> 3")
+# List.combine [1;2] [2;3;4];;
+Exception: Invalid_argument "List.combine".
 ```
 
 ### OCaml syntax for defining raising and handling exceptions
@@ -405,34 +404,28 @@ g ();;
 
 ```ocaml
 # let s = Stack.create();;
-val s : '_weak1 Core.Stack.t = <abstr> (* Stack.t is the underlying implementation and is hidden *)
+val s : '_weak1 Stack.t = <abstr> (* Stack.t is the underlying implementation and is hidden *)
 
-# Stack.push s "hello";;
+# Stack.push "hello" s;;
 - : unit = () (* returns unit because s is mutated *)
 
-# Stack.push s "hello again";;
+# Stack.push "hello again" s;;
 - : unit = ()
 
-# Stack.push s "hello one more time";;
+# Stack.push "hello one more time" s;;
 - : unit = ()
 
-# Stack.to_list s;; (* a handy function to see what is there; top on left *)
-- : string list = ["hello one more time"; "hello again"; "hello"]
-
-# Stack.pop s;;
-- : string option = Some "hello one more time"
-
-# Stack.pop_exn s;; (* exception raised if empty here *)
+# Stack.pop s;; (* exception raised if empty here *)
 - : string = "hello again" (* s changed from the last pop, so this pop is different! *)
 
-# Stack.pop_exn s;;
+# Stack.pop s;;
 - : string = "hello"
 
 # Stack.pop s;;
-- : string option = None
+Exception: Stdlib.Stack.Empty.
 
-# Stack.exists s ~f:(fun s -> String.is_substring s "time");; (* Stack has folds, maps, etc too *)
-- : bool = false
+# Stack.pop_opt s;; (* altenative interface to return an option and avoid exceptions *)
+- : string option = None
 ```
 
 ### Summing Up Effects With an Example: A Parentheses Matching Function
@@ -442,3 +435,4 @@ val s : '_weak1 Core.Stack.t = <abstr> (* Stack.t is the underlying implementati
 * It shows uses of `Stack`, and some trade-offs of using exceptions vs option type.
 * Lastly there is a pure functional version which is arguably simpler
  - Yes, you **don't** need that mutation!
+ 

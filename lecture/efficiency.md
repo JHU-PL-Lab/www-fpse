@@ -50,10 +50,8 @@ let l3 = (-1) :: l1 in ..
  * *But*, like arrys hash tables can't be shared, need to manually copy instead
    - If you have a map you want to keep many versions of around, `Map` will beat `Hashtbl`.x
 
-`Set` vs `Hash_set`
-* See previous, `Set` is like `Map` and `Hash_set` is like `Hashtbl`
 
-* [Here is a summary of OCaml data structure complexity](https://ocaml.org/learn/tutorials/comparison_of_standard_containers.html) (for the standard OCaml library but same results as `Core` version)
+* [Here is a summary of OCaml data structure complexity](https://ocaml.org/learn/tutorials/comparison_of_standard_containers.html)
 
 Summary: functional data structures
   - Feel like they should be much more inefficient but its often "at worst a log factor"
@@ -95,8 +93,8 @@ Monadic state version
 * O(n) inc's are performed total so it will be O(n^2).
 * So a bit of a backfire
 
-Imagine an alternative state monad implementation with `Board` state implemented as a `Core.Map` from keys `(i,j)` to characters:
-* Lookup and increment will be O(log n) on average since `Core.Map` is implemented as a balanced binary search tree
+Imagine an alternative state monad implementation with `Board` state implemented as a `Map` from keys `(i,j)` to characters:
+* Lookup and increment will be O(log n) on average since `Map` is implemented as a balanced binary search tree
     - one change to a Map's tree is only log n because only one path in tree is changed, rest can be re-used
     - (yes, one path down a binary tree is only 1/(log n)-th of the tree nodes, and the sub-trees can be reused)
 * So total time is O(n log n)

@@ -98,6 +98,8 @@ Functional code is not always more concise than stateful code, but it is surpris
 <a name = "examples"></a>
 Here are example codebases we will spend time inspecting and critiqueing.
 
+TODO: minesweeper needs to be de-Cored
+
 #### Minesweeper
   * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io 
   * Its not the full game, just calculating the number of mines adjacent to each non-mine square

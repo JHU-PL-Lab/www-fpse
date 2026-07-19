@@ -1,6 +1,6 @@
 # Modules Basics
 
-We've been using modules without thinking too much about them: `List.map`, `Float.(2 = 3)`, `Fn.id` -- these are uses of modules `List`, `Float`, and `Fn` that are in the `Core` library.
+We've been using modules without thinking too much about them: `List.map`, etc is the `map` function in the `List` library module.
 
 Now we will look at how to define our own modules to make our own libraries and code components.
 
@@ -25,8 +25,6 @@ In this lecture, we'll work with a running example. See [set-example.zip](../exa
 Here is `string_set.ml` from that example:
 
 ```ocaml
-open Core
-
 type t = string list (* This is a *type abreviation*: a string set is a list of strings *)
 
 let empty : t = [] (* the one canonical empty set *)
@@ -37,7 +35,7 @@ let rec remove (x : string) (s : t) : t =
   match s with
   | [] -> failwith "item is not in set"
   | hd :: tl ->
-    if String.equal hd x
+    if hd = x
     then tl (* we don't remove from the tail: this is actually a multiset *)
     else hd :: remove x tl
 
@@ -45,7 +43,7 @@ let rec contains (x : string) (s : t) : bool =
   match s with
   | [] -> false
   | hd :: tl ->
-    if String.equal x hd 
+    if hd = x
     then true 
     else contains x tl
 ```
@@ -137,7 +135,6 @@ To make a library module from the `string_set.ml` file, we include this in the `
 (library
  (name string_set)
  (modules string_set) 
- (libraries core)
 )
 ```
 
@@ -154,9 +151,9 @@ Let's make an actual executable program to do something, not just a library.
 (* Just a helper function. Does not run until it's given arguments in `let () = ...` *)
 let do_search search_string filename =
   let my_set =
-    filename
-    |> In_channel.read_lines
-    |> List.fold ~f:(fun set elt -> String_set.add elt set) ~init:String_set.empty
+    (In_channel.open_text filename)
+    |> In_channel.input_lines
+    |> List.fold_left (fun set elt -> String_set.add elt set) String_set.empty
   in
   if String_set.contains search_string my_set
   then print_string @@ "\"" ^ search_string ^ "\" found\n"
@@ -164,7 +161,7 @@ let do_search search_string filename =
 
 (* This statement has some printing side effects that we observe when running the executable *)
 let () =
-  match Array.to_list (Sys.get_argv ()) with
+  match Array.to_list Sys.argv with
   | _ :: search_string :: filename :: _ -> do_search search_string filename
   | _ -> failwith "Invalid arguments: requires two parameters, search string and file name"
 ```
@@ -178,7 +175,7 @@ To build our executable, the `dune` file has a stanza for an `executable`:
 (executable
   (name set_main)
   (modules set_main)
-  (libraries string_set core) ; uses Core and the String_set module we made
+  (libraries string_set) ; uses the String_set module we made
 )
 ```
 
@@ -190,12 +187,11 @@ This makes an executable out of the `set_main.ml` file.
 * To run it, you can do `dune exec -- ./src/set_main.exe "open Core" src/string_set.ml`
 * Which is really just `_build/default/src/set_main.exe "open Core" src/string_set.ml` after building
 
-### Aside: the `Stdio.In_channel` library used in this executable
+### Aside: the `In_channel` library used in this executable
 
 * `set_main.ml` uses the `In_channel` module to read in file contents
   - (Note that I/O is a **side effect**, I/O functions do things besides the value returned)
-* It is part of the `Stdio` module (which is itself included in `Core` so `Core.In_channel` is the same as `Stdio.In_channel`)
-* The Documentation is [here](https://ocaml.org/p/stdio/latest/doc/Stdio/index.html); we will go through it to observe a few points
+* The Documentation is [here](https://ocaml.org/manual/5.5/api/In_channel.html); we will go through it to observe a few points
   - First, now that we covered abstract types we can see there is an abstract type `t` here
   - As with our own set, it is "the underlying data" for the module, in this case file handles
   - It is hidden though so we don't get access to the details of how "files are handled"
@@ -203,6 +199,7 @@ This makes an executable out of the `set_main.ml` file.
 
 ### Aside: Optional arguments
 
+TODO: library no longer has this.
 * One topic we skipped over which is in many of these libraries is **optional arguments**
 * They are named arguments but you don't need to give them, indicated by a `?` before the name.
 * If you *do* give them, they are like named aguments, use `~name:` syntax

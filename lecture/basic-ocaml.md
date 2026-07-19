@@ -4,7 +4,7 @@
 ### Installing
 
  * See [the Coding page](https://pl.cs.jhu.edu/fpse/coding.html) for install instructions and lots of other information.  
- * Make sure to use the required version of OCaml, 5.3.0, install all the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
+ * Make sure to use the required version of OCaml, 5.5.1, install all the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
     - This will let us all "play in the same sandbox" and avoid confusion
 
 ### The Ecosystem via Hello World in OCaml
@@ -33,9 +33,8 @@ utop # 3+4;;
 * In OCaml it is useful to live in **both worlds**: both play with code in a top loop, *and* use a compiler to compile it to a binary.
 * Let's cover how we will compile in OCaml.  Suppose the following is in a file `helloworld.ml`:
 ```ocaml
-open Core;; (* Make the Core libraries directly available *)
 let hw = "hello" ^ "world";;
-printf "the string is %s\n" hw
+Printf.printf "the string is %s\n" hw
 ```
 
 * (The actual compiler is `ocamlc` or `ocamlopt`, but we will never be directly invoking it)
@@ -46,7 +45,6 @@ printf "the string is %s\n" hw
 (executable             ; create an executable
   (name helloworld)     ; need to give it a name
   (modules helloworld)  ; it consists of just one module, helloworld.ml
-  (libraries core)      ; indicates that the core libraries are used
 )
 ```
 * This is the **build file**, specifying how to compile/test/run the program.  The notation is S-expressions.
@@ -55,7 +53,7 @@ printf "the string is %s\n" hw
 * All of the results are placed in a new `_build/` sub-directory
 * Then, run with `dune exec ./helloworld.exe` - same as typing `_build/default/helloworld.exe`
 * We will be using `dune` to build libraries and binaries, and `utop` to play with them.
-* If you want to try these commands yourself the above `helloworld.ml` and dune files are in [this zip](helloworld.zip), just unzip and the `dune` commands above should work from within the `helloworld` directory.
+* If you want to try these commands yourself the above `helloworld.ml` and dune files are in [this zip](../examples/helloworld.zip), just unzip and the `dune` commands above should work from within the `helloworld` directory.
 
 ### OCaml Language Basics in `utop`
 
@@ -77,7 +75,7 @@ let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
 let b = true;;
 b && false;;
 true || false;;
-1 = 2;; (* = not == for equality comparison; note = works on ints only in our OCaml setup *)
+1 = 2;; (* = not == for equality comparison - ! Can compare at any type with = *)
 1 <> 2;;  (* <>, not !=, for not equal *)
 ```
 
@@ -165,12 +163,6 @@ add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - applicatio
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like " " for application BUT binds LOOSER than all other ops *)
 ```
 
-* `=` is also a 2-argument function; it is somewhat strange in our `Core` OCaml on non-ints:
-```ocaml
-3.4 = 4.2;; (* errors, = only works on ints with the Core library in use *)
-Float.(3.3 = 4.4);; (* Solution: use the Float module's = function for floats, "Float.(...)" opens it in the ... *)
-```
-* Why this apparent ugliness?  Pay a price here but reap rewards later of never having the wrong notion of `=`.
 
 ### Simple Structured Data Types: Option and Result
 
@@ -312,30 +304,30 @@ Here is a picture of the trees used to internally represent `l1` and `l0` above:
 * Key to analyzing lists is pattern matching via `match`, breaking list into head and tail portions
 
 ```ocaml
-let tl_exn l =
+let tl l =
   match l with
   |  [] -> invalid_arg "empty lists have no tail"
-  |  hd :: tl -> tl  (* the pattern ht :: tl  binds hd to the first elt (left subtree), tl to ALL the others (right subtree) *)
+  |  h :: t -> t  (* the pattern h :: t  binds h to the first elt (left subtree), t to ALL the others (right subtree) *)
 ;;
 let l = [1;2;3];; 
-let l' = tl_exn l;;
+let l' = tl l;;
 l;; (* Note: lists are immutable, so l didn't change *)
-let l'' =  tl_exn l' (* To get tail of tail, take tail of l' ..  THREAD the state! *)
-tl_exn [];; (* Raises an `invalid_arg` exception if the list had no tail *)
+let l'' =  tl l' (* To get tail of tail, take tail of l' ..  THREAD the state! *)
+tl [];; (* Raises an `invalid_arg` exception if the list had no tail *)
 ```
 
 * Note that an alternative to avoid the exception effect is to return `Ok/Error`:
 
 ```ocaml
-let tl l =
+let tl' l =
   match l with
   |  [] -> Error "empty list has no tail"
-  |  hd :: tl -> Ok tl
+  |  h :: t -> Ok t
 ;;
 let l = [1;2;3];; 
-let l' = tl l;;
-tl [];;
-let l'' = tl l' (* Oops this fails!  As in the div example above need to case on `Ok/Error` *)
+let l' = tl' l;;
+tl' [];;
+let l'' = tl' l' (* Oops this fails!  As in the div example above need to case on `Ok/Error` *)
 ```
 
 ### Recursive Functions on Lists
@@ -345,13 +337,13 @@ let l'' = tl l' (* Oops this fails!  As in the div example above need to case on
 * Here is an example of how to get the nth element of a list, by walking along the list with recursion:
 
 ```ocaml
-let rec nth_exn l n =
+let rec nth l n =
   match l with
   |  [] -> invalid_arg "there is no nth element in this list"
   |  hd :: tl -> if n = 0 then hd else nth_exn tl (n-1) (* "the nth element of l is the (n-1)-th element of tl" *)
 ;;
-nth_exn [33;22;11] 1;;
-nth_exn [33;22;11] 3;;
+nth [33;22;11] 1;;
+nth [33;22;11] 3;;
 ```
 
 Key points
@@ -359,18 +351,29 @@ Key points
 1. Pattern match on the list input: its either empty or is a head/tail pair
 2. Recursively call the function on the tail of the list (plus other arguments): it **should work for shorter lists by induction**
 
-Fortunately many common operations are already in the `List` module in the `Core` library:
+Fortunately many common operations are already in the `List` module:
 
 ```ocaml
 # List.nth [1;2;3] 2;;
-- : int option = Some 3
+- : int = 3
 ```
-* This library uses the `option` type instead of raising an exception
-* `List.nth_exn` raises an exception like ours does.  Both versions are useful.
-   - (Note this function is also `Core.List.nth_exn` but we always `open Core;;` to make `Core` module functions implicitly available)
 * On Assignment 1 you **cannot** use `List.` libraries, you first need to practice using `let rec`
    - On Assignment 2 you will start using the `List.` libraries.
 
+
+Note that like our implementation `List.nth` will not be happy if there is no nth element:
+```ocaml
+# List.nth [1;2;3] 5;;
+Exception: Failure "nth".
+```
+But there is a version which returns an `option` type for this:
+
+```ocaml
+# List.nth_opt [1;2;3] 5;;
+- : int option = None
+# List.nth_opt [1;2;3]1;;
+- : int option = Some 2
+```
 
 ### An Example of a function both taking and returning a list
 
@@ -382,7 +385,7 @@ Fortunately many common operations are already in the `List` module in the `Core
 let rec zero_negs l =
   match l with
   |  [] -> []
-  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl(* can assume by induction that zero_negs tl will properly zero tl *)
+  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl (* can assume by induction that zero_negs tl will properly zero tl *)
 ;;
 
 zero_negs [1;-2;3];;

@@ -25,10 +25,6 @@
 
 **Abstract appropriately.** Use abstraction to avoid duplication and to avoid hardcoding. Abstraction should enhance readability by allowing the reader to focus on the fundamental problem the code at hand is solving. It should not hinder readability by being too implicit or clever, so choose the smallest abstraction that captures the common idea. A piece of code lacks abstraction when the same idea is repeated in several places or buried under irrelevant detail.
 
-**Name your data.** Avoid long pipelines (`|>`) of nameless functions. Instead, give a helpful name to each result, and do not go out of your way to create such pipelines. Use pipelines if you have excellently named each step so that each function in the pipeline speaks for itself.
-
-**Too much syntactic sugar is bad for your teeth.** Stick to the core language and write a few extra characters where it helps readability. Sugar should only be helpful; if it does anything too implicit, then your code cannot be read at a glance. Sugar can include ppx-generated behavior (!), custom infix operators, excessive use of `@@` and `|>`, and opened modules. Use these features when they clarify and avoid them when they don't.
-
 **Parse, don’t validate.** Use new types to parse your data into always-valid forms where illegal states are unrepresentable. Avoid implicit invariants or frequent re-validation. Effective use of types can often uphold those invariants by themselves and will aid in readability.
 
 ## Specific suggestions

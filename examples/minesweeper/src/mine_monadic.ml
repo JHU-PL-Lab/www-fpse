@@ -13,7 +13,7 @@
 
 *)
 
-open Core
+(* NOT CONVERTED - seems not worth it. *)
 
 let is_mine = Char.equal '*'
 (* "increment" a character a la Minesweeper *)

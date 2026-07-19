@@ -87,7 +87,7 @@ If you already have an earlier version of OCaml installed via `opam`, then start
 Once you have `opam` and `ocaml` 5.5.1 installed, run the following `opam` command to install additional necessary packages for the class (just copy/paste this line into your shell and answer yes to all questions):
 
 ```sh
-opam install ocaml-lsp-server ocamlformat utop dune ounit2 ppx_deriving cmdliner sexplib
+opam install ocaml-lsp-server ocamlformat utop dune ounit2 ppx_deriving cmdliner sexplib ppx_deriving_yojson qcheck
 ```
 
 <!--
@@ -169,7 +169,7 @@ VSCode has very good OCaml support and is the "officially recommended editor".
 
 * You can easily run a `utop` shell from within VSCode, just open up a shell from the `Terminal` menu and type `utop`.
 
-* If you are on Windows and using WSL2, then we still suggest VSCode, and you can even use your Windows installation of it. Just install the [WSL VSCode extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl) from the marketplace (the "extensions" tab in VSCOde). Now from inside any directory in WSL, you can run `code .` to open up VSCode in that remote directory. You are now developing in a Linux environment but are connected to the Windows editor. Then install VSCode extensions like **OCaml Platform** from the extensions tab but as a remote extension.
+* If you are on Windows and using WSL2, then we still suggest VSCode, and you can even use your Windows installation of it. Just install the [WSL VSCode extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl) from the marketplace (the "extensions" tab in VSCode). Now from inside any directory in WSL, you can run `code .` to open up VSCode in that remote directory. You are now developing in a Linux environment but are connected to the Windows editor. Then install VSCode extensions like **OCaml Platform** from the extensions tab but as a remote extension.
 
 **vim**: If you use `vim`, my condolances as it is woefully behind the times in spite of many band-aids added over the years.  Still, if you have been brainwashed to believe it is good, type shell commands `opam install merlin user-setup` and `opam user-setup install` after doing the above default `opam` install to set up syntax highlighting, tab completion, displaying types, etc. See [here](https://github.com/ocaml/merlin/blob/master/vim/merlin/doc/merlin.txt) for some dense documentation.
 

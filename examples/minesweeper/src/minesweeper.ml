@@ -10,8 +10,6 @@
 
 *)
 
-open Core
-
 let to_char = function
   | 0 -> ' '
   | 1 -> '1'
@@ -29,8 +27,8 @@ let to_char = function
 let to_char' i = 
   i 
   |> Int.to_string 
-  |> (Fn.flip String.get) 0 
-  |> fun c -> if Char.(c = '0') then ' ' else c
+  |> (Fun.flip String.get) 0 
+  |> fun c -> if c = '0' then ' ' else c
 
 module Board = struct
   type t = string list (* board data; see test/test.ml for examples. *)
@@ -46,70 +44,37 @@ module Board = struct
  *)
 
   let get (b : t) (x : int) (y : int) : char option =
-    match List.nth b y with (* If y is off the grid List.nth will return None *)
-    | None -> None 
-    | Some(row) -> try Some(String.get row x) with Invalid_argument _ -> None  
-
-(* String.get is an old library function, it raises an exception not an option
-   Option.try_with is a handy adaptor function to convert that exception to a None
-   Let us rewrite the above using some Option library functions  *)    
-  let get' (b : t) (x : int) (y : int) : char option =
-    List.nth b y
-    |> Option.value_map ~default:None ~f:(fun row ->
-           Option.try_with (fun () -> String.get row x))
-
-  (* Option.bind is like value_map but implicitly propagates None (bubbles it up) 
-     Option.bind is just Option.value_map ~default: None
-     This implicit bubbling is part of monadic programming, lots more later on that! *)
-  let get'' (b : t) (x : int) (y : int) : char option =
-    List.nth b y
-    |> Option.bind ~f:(fun row -> Option.try_with (fun () -> String.get row x))
-
-  (* Shorthand pipe notation >>=, it is just infix Option.bind;
-     - its like |> but implicitly cases on Some/None 
-     - unwraps Some's and and propagates None's implicitly
-     - Need to open Option to enable 
-     - This notation is part of monadic programming, much more later on that! *)
-
-  let get''' (b : t) (x : int) (y : int) : char option =
-    Option.(List.nth b y >>= fun row -> try_with (fun () -> String.get row x))
-
-  (* Another equivalent notation for Option.bind where you don't need to make the fun row -> ... ;
-     instead use let%bind to bind the `row` here.  Need #require "ppx_jane";; for let%bind
-     let%bind allows the None case to be implicit in the background: it reads like regular code
-     Compare with the get''' version, it is very similar
- *)
-  let get'''' (b : t) (x : int) (y : int) : char option =
-    let open Option in (* let open Option in .. is like Option.(...) *)
-    let open Let_syntax in (* need to open this module to get let%bind to work *)
-    let%bind row = List.nth b y in
-    try_with (fun () -> String.get row x)
+    if y >= 0 then 
+      match List.nth_opt b y with (* If y is beyond the grid List.nth_opt will return None *)
+      | None -> None 
+      | Some(row) -> (try Some(String.get row x) with _ -> None)
+    else None
 
 (* Get a list of chars for all the squares adjacent to (x,y) *)    
-(* Note List.filter_map ~f:Fn.id [Some 4; None; Some 7; None; Some (-1)] is [4; 7; -1]: 
+(* Note List.filter_map Fun.id [Some 4; None; Some 7; None; Some (-1)] is [4; 7; -1]: 
      map the Somes, toss the Nones *)
 
   let adjacents (b : t) (x : int) (y : int) : char list =
     let g xo yo = get b (x + xo) (y + yo) in
-    List.filter_map ~f:Fn.id
+    List.filter_map Fun.id
       [
         g (-1) (-1); g 0 (-1); g 1 (-1); g (-1) 0; g 1 0; g (-1) 1; g 0 1; g 1 1;
       ]
 
   let is_mine = Char.equal '*'
-  let is_field = Fn.non is_mine
-  let is_field' c = not @@ is_mine c (* this version without Fn.non shows why non is handy *)
+  let is_field = Fun.negate is_mine
+  let is_field' c = not @@ is_mine c (* this version without Fun.negate shows why it is handy *)
 
   (* Apply a function to every non-mine element of the grid to produce a new grid 
      Mapping function f gets the x, y coordinate as well as args 
      Its a 2D extension of idea of the List.mapi function which lets f also see list position #:
-        List.mapi [1;2;3] ~f:(fun index i -> index + i) is  [1; 3; 5] *)
-  let mapxy (b : t) ~(f : int -> int -> char -> char) : t =
-    List.mapi b ~f:(fun y r ->
-        String.mapi r ~f:(fun x c -> if is_field c then f x y c else c))
+        List.mapi (fun index i -> index + i) [1;2;3] is  [1; 3; 5] *)
+  let mapxy (b : t) (f : int -> int -> char -> char) : t =
+    List.mapi (fun y r ->
+        String.mapi (fun x c -> if is_field c then f x y c else c) r) b
 end
 
 let annotate (board : Board.t) : Board.t =
-  let count x y = Board.adjacents board x y |> List.count ~f:Board.is_mine in
-  Board.mapxy board ~f:(fun x y _ -> count x y |> to_char)
+  let count x y = Board.adjacents board x y |> fun l -> List.length (List.filter Board.is_mine l) in
+  Board.mapxy board (fun x y _ -> count x y |> to_char)
 

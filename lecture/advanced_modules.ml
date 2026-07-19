@@ -2,9 +2,10 @@
 (* More on types, modules, functors and hiding *)
 (* ******************************************* *)
 
-open Core
-(* Will need #require "ppx_jane" in top loop (which is in our course default .ocamlinit)
-   and (preprocess (pps ppx_jane)) line in dune for this file to work *)
+(* TODO: de-Core this file, I just did the very top so far. *)
+
+(* Will need #require "ppx_deriving.std" in top loop (which is in our course default .ocamlinit)
+   and (preprocess (pps ppx_deriving.std) line in dune for this file to work *)
 
 (* Review: the Big Picture of what is unique in OCaml types
 
@@ -35,7 +36,7 @@ let _ = !rl (* we have set '_weak1 to be int with this *)
 
 (* Sometimes types are weak due to weaknesses in the underlying type system: *)
 
-let weak_id = (fun () -> Fn.id) () (* abstraction and application are a no-op but messes up type *)
+let weak_id = (fun () -> Fun.id) () (* abstraction and application are a no-op but messes up type *)
 (* val weak_id : '_weak2 -> '_weak2 = <fun> *)
 
 (*
@@ -204,139 +205,27 @@ let _ : int =
 *)
 
 module IntPair = struct
-  type t = int * int [@@deriving compare, sexp]
+  type t = int * int [@@deriving ord]
 end
 
 module PairMap = Map.Make(IntPair)
 let pair_map = PairMap.empty
-let add_a_pair = pair_map |> Map.add_exn ~key:(1,2) ~data:3
+let add_a_pair = pair_map |> PairMap.add (1,2) 3
 
-(* Now the annoying thing about this is we need to make a new module for every different Map key type *)
-
-(* Let us now look at the first-class modules method for making Maps *)
-
-(* Make an empty module with string key: use `Map.empty ()` not `PairMap.empty`
-   - it takes the module used for the key as a parameter
-   - type of a_map is funky, more below on that *)
-let a_map = Map.empty (module String) 
-
-(* Notice that the `a_map` type is a string-keyed module, so Map.add will know the type of key *)
-let added = a_map |> Map.add_exn ~key:"hello" ~data:3
-
-(* Under the hood of how this is working *)
-
-(* There are some very subtle OCaml patterns used to make this work.  We will just aim
-   for a fuzzy idea of it here, just to show that there is some deep stuff! *)
-
-(* 
-   What is Map.empty's type?  
-   It is taking a module as argument, so 
-   type of argument must be a module type (but in expression-land)
-
-# #show Map.empty;;
-val empty : ('a, 'cmp) Comparator.Module.t -> ('a, 'b, 'cmp) Map.t
-
-# #show Comparator.Module.t;;
-type ('a, 'b) t =
-    (module Core.Comparator.S with type comparator_witness = 'b and type t = 'a)
-
-- Observe here that putting "(module ..)" on a module type makes it an expression type
-
-So this module must match the Core.Comparator.S signature.
-Digging one more level:
-
-# #show Core.Comparator.S;;
-module type S =
-  sig
-    type t
-    type comparator_witness
-    val comparator : (t, comparator_witness) Comparator.t
-  end
-
-One final level (we warned you it was complicated!!):
-#show Comparator.t;;
-type ('a, 'witness) t =
-  ('a, 'witness) Comparator.t = private {
-  compare : 'a -> 'a -> int;
-  sexp_of_t : 'a -> Sexp.t;
-}
-
-Here we finally see the requirements on a module to make a map: 
-compare, sexp_of, and a witness (comparator_witness)
-
--- the parameters 'a and 'witness are the key type and a special "nonce" type 'witness
-    -- 'witness is a "phantom type", observe its not used
-    -- type comparator_witness in S is what it is instantiated to, so its also a phantom
-    -- comparator_witness serves as a "token" that names "this" module uniquely
-    -- here confirms there is a compare function which will always be from 
-       Core.Comparator.S, e.g. String's compare and not some other string compare.
-
-Example to show how Core.String has this all built-in :
-
-# module String2 : Core.Comparator.S = String;;
-module String2 : Core.Comparator.S
-
-(* here is the way the above code is viewing the same thing, as module-expressions *)
-# let m : ((string,String.comparator_witness) Comparator.Module.t) = (module String);;
-val m : (string, String.comparator_witness) Comparator.Module.t = <module>
-
- The String.comparator_witness will help the typechecker type string compare uses 
- Yes its subtle.. here is an example to understand better: 
-   https://blog.janestreet.com/howto-static-access-control-using-phantom-types/
-   
-*)
-
-(* 
-   Why did we dive into all these details?  Suppose we wanted to make a custom
-   key for a Map.
-
-   Let us try the first-class module Map creation on our own module IntPair: *)
-
-let m = Map.empty (module IntPair)
-
-(* Gives an error, module needs a comparator and a comparator_witness type *)
-(* Solution: here is the somewhat-magical way to add those to IntPair (or any other) module *)
-
-module IntPairCompar = struct
-  module T = struct 
-  type t = int * int [@@deriving compare, sexp] 
-  end
-  include T
-  include Comparator.Make(T) (* This makes comparator_witness. Replace Comparator with Comparable and get extras like <= etc *)
-end
-
-(* The above "include" pattern is clever - call all "your" stuff T temporarily, include it, 
-   and since it has a name you can now pass it to a functor which will build and
-   include the comparators over type t.
-*)
-
-let m = Map.empty (module IntPairCompar) (* Works now; note no type on module is needed *)
-
-(* Observe the type of Maps are `('a, 'b, 'cmp) Map_intf.Map.t`  
-  'a is the key type, always <KeyModule>.t for <KeyModule> being the module for keys, e.g. IntPairCompar above
-  'b is the value type
-  'cmp is the phantom type to uniquely "name" the key module; it is always <KeyModule>.comparator_witness
-
-  Notice the Map.Make version lacked the phantom type
-  The ultimate purpose of the phantom is to allow Maps themselves to be correctly compared
-    - only will make sense to compare maps if both the key and value are same type PLUS `compare` function is same
-    - the phantom uniquely tags the `compare` since it had to be defined in the same module
-    - without the phantom it would be possible incorrectly to compare two maps
-*)
+(* Now the somewhat annoying thing about this is we need to make a new module for every different Map key type *)
 
 (* **************** *)
 (* **** I/O ******* *)
 (* **************** *)
 
-(* We will briefly look at the I/O libraries in Core (i.e., Stdio)
-   See e.g. https://dev.realworldocaml.org/imperative-programming.html#file-io for description
+(* We will briefly look at the I/O libraries
    They are mostly straightforward, but print format strings are "very special". *)
 
 (* First, printf, sprintf, fprintf tend to "just work" so you don't necessarily need to know this
    But it can help if you are getting strange error messages to know it is complex under the hood *)
    
-let () = printf "%i is the number\n" 5;;
-let () = printf "%i is the number and %s is the string \n" 5 "hoo";;
+let () = Printf.printf "%i is the number\n" 5;;
+let () = Printf.printf "%i is the number and %s is the string \n" 5 "hoo";;
 
 (* The compiler is doing special things with the argument here, it is converting it into
    a function which will do this particular output taking 5 as a parameter
@@ -345,7 +234,7 @@ let () = printf "%i is the number and %s is the string \n" 5 "hoo";;
     you will get a type error ! *)
 
 (* So, you can't just pass a format string as a string to printf *)
-let () = let s = "%i is the number \n" in printf s 5 (* type error *)
+(* let () = let s = "%i is the number \n" in Printf.printf s 5 *) (* type error *)
 
 (* The compiler is converting the string into a format type value for you *)
 open CamlinternalFormatBasics (* shorten what is printed *)
@@ -359,18 +248,18 @@ let fmt : (int -> 'a, 'b, 'c) format =  "%i is the number \n"
 let fmt2 : ('a, 'b, 'c) format =  "%i is the number \n"
 
 
-let () = printf fmt 5;; (* Finally we can pass the format string as a parameter *)
+let () = Printf.printf fmt 5;; (* Finally we can pass the format string as a parameter *)
 
-let print_int : int -> unit = printf fmt (* once printf has fmt it expects the parameters *)
+let print_int : int -> unit = Printf.printf fmt (* once printf has fmt it expects the parameters *)
 
 let () = print_int 5;;
 
-let () = printf fmt "k";; (* Compile-time error: printing with `fmt` needs an int. *)
+(* let () = Printf.printf fmt "k";; *) (* Compile-time error: printing with `fmt` needs an int. *)
 
 (* One more format example with multiple arguments *)
 let fmt3 : (int -> string -> string -> 'c, 'b, 'c) format =  "%i is the number %s is the string %s too \n";;
 
-let () = printf fmt3 4 "k" "l";; 
+let () = Printf.printf fmt3 4 "k" "l";; 
 
 (* Note printf is Out_channel.printf and there is also 
   - fprintf (print to any out_channel including network file etc; printf is (fprintf stdout)) 
@@ -423,9 +312,9 @@ let item_list = [make_string_item "hi"; make_int_item 5]
 
 
 let to_string_items (il : (module ITEM_I) list)  = 
-  il |> List.map ~f:(fun it -> let (module M) = it in M.to_string())
+  il |> List.map (fun it -> let (module M) : (module ITEM_I) = it in M.to_string())
 
-  let _ = to_string_items item_list;;   
+let _ = to_string_items item_list;;   
   
   (* This example is not practically useful, but there are many useful examples
    See e.g. https://dev.realworldocaml.org/first-class-modules.html 's query handling example *)

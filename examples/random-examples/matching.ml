@@ -1,4 +1,3 @@
-open Core
 
 (* Matching brackets exercise, see
    https://github.com/exercism/ocaml/tree/master/exercises/matching-brackets *)
@@ -12,17 +11,17 @@ open Core
 let are_balanced_stack (s : string) : bool =
   let stack_of_lefts = Stack.create () in
   let match_with (c : char) : bool =
-    Option.value_map (Stack.pop stack_of_lefts)
-      ~f:(fun c' -> Char.(c = c'))
-      ~default:false
-    (* Option.value_map is a combinator you feed Some/None match cases to -- same as:
-       `match Stack.pop stack_of_lefts with Some c' -> Char.(c = c') | None -> false` *)
+    Option.fold (Stack.pop_opt stack_of_lefts)
+      ~some:(fun c' -> c = c')
+      ~none:false
+    (* Option.fold is a combinator you feed Some/None match cases to -- same as:
+       `match Stack.pop_opt stack_of_lefts with Some c' -> c = c' | None -> false` *)
   in
   (* parse parses one character, returns true if succuss, false if fail *)
   let parse = function
     (* can pattern match in anonymous function directly using `function` *)
     | ('(' | '{' | '[') as c ->
-        Stack.push stack_of_lefts c;
+        Stack.push c stack_of_lefts;
         true
     | ')' -> match_with '('
     | '}' -> match_with '{'
@@ -30,7 +29,7 @@ let are_balanced_stack (s : string) : bool =
     | _ -> true
   in
   (* Loop over the characters in the string with `String.for_all` (avoid for/while in OCaml!) : *)
-  let r = String.for_all ~f:(fun c -> parse c) s in
+  let r = String.for_all (fun c -> parse c) s in
   (* alt to above using fold: `String.fold ~init:true ~f:(fun b c -> b && parse c) s` *)
   r && Stack.is_empty stack_of_lefts (* at the end the stack needs to be empty! *)
 
@@ -39,40 +38,34 @@ let are_balanced_stack (s : string) : bool =
 
 let are_balanced_exn (s : string) : bool =
   let stack_of_lefts = Stack.create () in
-  let match_with (c : char) : bool = Char.(c = Stack.pop_exn stack_of_lefts) in
+  let match_with (c : char) : bool = c = Stack.pop stack_of_lefts in
   let parse = function
-    | ('(' | '{' | '[') as c -> Fn.const true @@ Stack.push stack_of_lefts c
+    | ('(' | '{' | '[') as c -> Fun.const true @@ Stack.push c stack_of_lefts
     | ')' -> match_with '('
     | '}' -> match_with '{'
     | ']' -> match_with '['
     | _ -> true
   in
   try
-    let r = String.fold ~init:true ~f:(fun b c -> b && parse c) s in
+    let r = String.fold_left (fun b c -> b && parse c) true s in
     r && Stack.is_empty stack_of_lefts
   with _ -> false
 (* return false if any exception is raised (a sledgehammer which could catch the wrong raise) *)
 
-(* Yes, you can solve this (more) concisely without any mutation.
+(* Yes, you can solve this concisely without any mutation.
    There is no functional stack data structure in OCaml as List is 98% there already.
-
-   Solution derived from
-   https://exercism.io/tracks/ocaml/exercises/matching-brackets/solutions/ac5921390cb14120b44f049ef1a09186
+   Here we use a fold over the string, and we need an option type for the case that
+   we find an error.  Once we get a `None` it bubbles to the top as the result.
 *)
 
 let are_balanced_functional (s : string) : bool =
-  String.fold_until s ~init:[]
-    ~f:(fun stk ch ->
-      match ch, stk with
-      | '(', _ | '[', _ | '{', _ -> Continue (ch :: stk)
-      | ')', '(' :: tl | ']', '[' :: tl | '}', '{' :: tl -> Continue tl
-      | ')', _ | ']', _ | '}', _ -> Stop false
-      | _ -> Continue stk)
-    ~finish:List.is_empty
-
-(* Here is a simple example of fold_until we covered earlier, to better understand the above *)
-
-let summate_til_zero l =
-  List.fold_until l ~init:0
-    ~f:(fun acc i -> match i with 0 -> Stop acc | _ -> Continue (i + acc))
-    ~finish:Fn.id
+  String.fold_left
+    (fun state ch ->
+      match state, ch with
+      | None, _ -> None (* bubble the error up *)
+      | Some stk, ('(' | '[' | '{') ->  Some (ch :: stk)
+      | Some ('(' :: tl), ')' | Some ('[' :: tl), ']' | Some ('{' :: tl), '}' -> Some tl
+      | Some _, (')' | ']' | '}') ->  None (* this is the error case *)
+      | Some stk, _ -> Some stk)
+    (Some [])
+    s = Some [] (* should be Some [] at the end if everything matched *)

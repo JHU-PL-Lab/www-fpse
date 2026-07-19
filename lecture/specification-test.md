@@ -69,6 +69,7 @@ What is Type-Directed Programming??
 
 Not bubbling up `option` or other wrapped results properly
 
+TODO: replace this Core-ish example
 ```ocaml
 # let zadd (l1 : int list) (l2 : int list) : (int list) = let l = List.zip l1 l2 in List.map ~f:(fun (x,y) -> x+y) l;;
 Line 1, characters 74-75:
@@ -88,7 +89,7 @@ Variation on type-directed programming: with only some parameters applied, the r
 
 The type in an `.mli` file can direct your implementation, e.g. `map` on `simpledict` example from Assn3 (recall that `t` here is the `simpledict`)
 ```ocaml
-val map : 'a t -> f:(string -> 'a -> 'b) -> 'b t
+val map : (string -> 'a -> 'b) -> 'a t -> 'b t
 ```
  - Q: "How can I get a dict of `'b`'s built from a dict of `'a`'s here?"
  - A: "Use the function from `'a` to `'b` to make elements of `'b simpledict`.
@@ -100,11 +101,11 @@ Variant extension: add a new variant case, chase the type errors to patch the co
 type party = Dem | Rep
 type voter = { name : string; party: party }
 let count_parties (l : voter list) =
-  List.fold l ~init: (0,0) 
-    ~f:(fun (cd,cr) -> fun {party; _} -> 
+  List.fold_left
+    (fun (cd,cr) -> fun {party; _} -> 
      match party with 
      | Dem -> (cd+1, cr)
-     | Rep -> (cd, cr+1) );;
+     | Rep -> (cd, cr+1) ) (0,0) l ;;
 ```
 
 Adding a `Gre` for green party: first **just** change the type, and chase/fix errors
@@ -113,11 +114,11 @@ Adding a `Gre` for green party: first **just** change the type, and chase/fix er
 # type party = Dem | Rep | Gre
   type voter = { name : string; party: party }
   let count_parties (l : voter list) =
-    List.fold l ~init: (0,0) 
-      ~f:(fun (cd,cr) -> fun {party; _} -> 
+     List.fold_left
+      (fun (cd,cr) -> fun {party; _} -> 
       match party with 
       | Dem -> (cd+1, cr)
-      | Rep -> (cd, cr+1) );;
+      | Rep -> (cd, cr+1) ) (0,0) l ;;
 Lines 6-8, characters 5-24:
 Warning 8: this pattern-matching is not exhaustive.
 Here is an example of a case that is not matched:
@@ -210,39 +211,38 @@ let add (x : M.t) (s : t) =
 let rec rev l = 
   match l with 
   | [] -> []
-  | x::xs -> let rxs = rev xs in assert(Poly.(List.rev xs = rxs)); rxs @ [x]
+  | x::xs -> let rxs = rev xs in assert(List.rev xs = rxs); rxs @ [x]
 ```
- * Note that we have to use the built-in `List.rev` to test our version - somewhat circular (note `Poly` quick-open lets `=` work on any type, its also what `assert_equal` in `OUnit` is doing)
+ * Note that we have to use the built-in `List.rev` to test our version - somewhat circular
  * In general a major issue with specification is it is often very difficult to give a code-based definition of the full spec.
  * So, the main focus should be on *partial* specs, give sanity conditions
 
 ### Examples of Invariants Over Folds
 
 * In re-implementing some of the common `List` functions with `fold`s it helps to think of the invariant
-* Folding left (`List.fold`):
+* Folding left (`List.fold_left`):
    - Suppose we are at some arbitrary point processing the fold;
    - assume accumulation `accum` has "the result of the task" for all elements to the *left* in the list
-   - require `~f` to then "do the task" to incorporate the current element `elt`
+   - require `f` to then "do the task" to incorporate the current element `elt`
    - also assume `accum` is initially `init`
 * Folding right: very similar, but `accum` is result for all elements to the *right* in the list
 
 ```ocaml
 (* invariant for length fold: accum is number of elements to the left of the current `elt` we are at *)
-let length l = List.fold ~init:0 ~f:(fun accum _ -> accum + 1) l 
+let length l = List.fold_left (fun accum _ -> accum + 1) 0 l
 (* invariant for rev fold: accum is reverse of list up to here *)
-let rev l = List.fold ~init:[] ~f:(fun accum elt -> elt :: accum) l 
+let rev l = List.fold (fun accum elt -> elt :: accum) [] l 
 (* invariant for map fold: accum is f applied to each element of list up to here *)
-let map ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> (f elt) :: accum) l
+let map f l = List.fold_right (fun elt accum -> (f elt) :: accum) [] l
 (* etc *)
-let filter ~f l = List.fold_right ~init:[] ~f:(fun elt accum -> if f elt then elt :: accum else accum) l
+let filter f l = List.fold_right (fun elt accum -> if f elt then elt :: accum else accum) [] l
 ```
 
 ### Specification and Abstraction
 
 * The more completely a module is specified the less the users need to know about the underlying implementation
-* `Core.Map` is an example where the users need to know limited information about the implementation
+* `Map` is an example where the users need to know limited information about the implementation
   - they still *do* need to know it is O(log n) for add/remove/find, that should be in the docs (`.mli`/odoc)
-  - (Unfortunately Core is not always so good about that; for `Map` they give big-O of more advanced ops but assume users know complexity of these basic ones.  Bad Core!)
 * On your own libraries you will want to document them well
   - It will make it a lot easier for your users, they can just think about the spec. view.
   - `odoc` formatting for `.mli` files is in the FPSE Style Guide
@@ -453,6 +453,7 @@ OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
   ```
 
 ### Bisect for OCaml code coverage
+TODO: not in 5.5.1 now
 
 * The `bisect_ppx` preprocessor can decorate your code with one hit-bit per line 
   - it can then show which lines are "hit" upon running your test suite
@@ -470,6 +471,8 @@ We will check how well my tests of the [simple set example](../examples/set-exam
 
 
 <a name = "quickcheck"></a>
+TODO: replace with qcheck
+
 ## Random Testing aka Property-Based Testing aka Quickcheck
 
 * Recall that Quickchecking is making up some random data to test our code

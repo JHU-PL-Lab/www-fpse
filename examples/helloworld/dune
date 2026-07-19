@@ -1,0 +1,4 @@
+(executable             ; create an executable
+  (name helloworld)     ; need to give it a name
+  (modules helloworld)  ; it consists of just one module, helloworld.ml
+)
