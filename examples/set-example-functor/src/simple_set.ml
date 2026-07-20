@@ -1,8 +1,6 @@
 (* simple_set.ml with functors
    Defines the functor Make which allows us to build sets with comparison built-in
 *)
-open Core
-
 module type EQ = sig
   type t
   val equal : t -> t -> bool

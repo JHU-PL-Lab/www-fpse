@@ -2,7 +2,6 @@
 (library
  (name simple_set)
  (modules simple_set) 
- (libraries core)
 )
 
 ; To load libraries in a fresh utop top loop use command line
@@ -12,7 +11,7 @@
 ; The below builds a main program executable
 (executable
   (name set_main)
-  (libraries simple_set core)
+  (libraries simple_set)
   (modules set_main)
 )
 ; to run executable type dune exec ./src/set_main.exe <search_string> <filename>

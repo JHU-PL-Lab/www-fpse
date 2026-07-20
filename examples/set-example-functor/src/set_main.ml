@@ -2,8 +2,6 @@
    Uses Core libaries to parse command line arguments.
    Uses Simple_set for a set data structure (normally would use Core.Set) *)
 
-open Core
-
 (** [do_search search_string filename] searches for a string line in file.
   Only matches on the whole line, a very simple search. **)
 
@@ -11,9 +9,9 @@ module String_set = Simple_set.Make (String) (* Apply Make functor to make a Str
 
 let do_search search_string filename =
   let my_set =
-    filename
-    |> In_channel.read_lines
-    |> List.fold ~f:(fun set elt -> String_set.add elt set) ~init:String_set.empty
+    (In_channel.open_text filename)
+    |> In_channel.input_lines
+    |> List.fold_left (fun set elt -> String_set.add elt set) String_set.empty
   in
   if String_set.contains search_string my_set
   then print_string @@ "\"" ^ search_string ^ "\" found\n"
@@ -28,7 +26,7 @@ let do_search search_string filename =
 *)
 
 let () =
-  match Array.to_list (Sys.get_argv ()) with
+  match Array.to_list Sys.argv with
   | _ :: search_string :: filename :: _ -> do_search search_string filename
   | _ -> failwith "Invalid arguments: requires two parameters, search string and file name"
 

@@ -1,5 +1,3 @@
-open Core
-
 [@@@ocaml.warning "-32"]
 [@@@ocaml.warning "-27"]
 
