@@ -6,6 +6,7 @@ Let's warm up by writing a few more recursive functions on lists.
 
 * Since lists are immutable, reverse will create a completely new list.
 * This style of programming is called "Data structure corresponds to control flow" - the program needs to touch and reconstruct the whole data structure as it runs.
+* (If you have not heard of the term "control flow" its how the program counter is moving through memory -- the flow of the focus of execution)
 
 ```ocaml
 let rec rev l =
@@ -182,7 +183,7 @@ Note that the built-in `Pair.fold` is the same as `uncurry` (there is oddly no `
 We can now use our uncurrying combinator to build `combine_pair` directly:
 
 ```ocaml
-let combine_pair  = Pair.fold List.zip_exn;; (* Pair.fold is uncurry *)
+let combine_pair  = Pair.fold List.combine;; (* Pair.fold is uncurry *)
 ```
 
 #### One last higher-order function: compose
@@ -369,7 +370,7 @@ Here is the general `fold_left`, pulling out the `f` in the above as a parameter
 Note that the `accum` we call `init` here since that is the exterior interface.
 
 ```ocaml 
-let rec fold_left f init l = (* Note: e.g. f is **declaring** a named argument f; f is shorthand for f *)
+let rec fold_left f init l =
   match l with
   | [] -> init
   | elt::elts -> fold_left f (f init elt) elts (*observe f is invoked **before** the call -- accumulating left-first *)
@@ -447,5 +448,22 @@ let rec fold_left f init l =
  - Important when lists get really long that you don't use stack unless required.
  - Observe that `fold_right` is not tail recursive, so it needs the stack and will be slower
 
+### Named arguments
 
-TODO: cover `ListLabels` and named arguments
+* OCaml has been switching over to using *named arguments* in some libraries.
+* Named arguments allow you to switch around the order of arguments
+* They also make the code easier to follow when there are multiple args (e.g. folds)
+* For lists there is a parallel library `ListLabels` which has the same functions but with named arguments.
+
+```ocaml
+ListLabels.map ~f:(fun x -> x * x) [1;5;3;45]
+ListLabels.fold_left ~f:(fun accum _ -> accum + 1) ~init:0 [1;2;2345;43]
+ListLabels.fold_left [1;2;2345;43] ~init:0 ~f:(fun accum _ -> accum + 1) (* can swap order *)
+ListLabels.fold_left (fun accum _ -> accum + 1) 0 [1;2;2345;43] (* can leave off names *)
+(* writing your own functions with named arguments: *)
+let rec fold_left ~f ~init l =
+  match l with
+  | [] -> init
+  | hd::tl -> fold_left ~f ~init:(f init hd) tl
+let swap ~(x : int) ~(y : int) : int * int = (y,x) in swap ~x:5 ~y:4
+```

@@ -95,7 +95,7 @@ opam install ocaml-lsp-server ocamlformat utop dune ounit2 ppx_deriving cmdliner
       We may want some of these:
          qcheck                   instead of   base_quickcheck
          some community bisect    instead of   bisect_ppx
-         ppx_deriving_yojson
+         ppx_deriving_yojson (added - SS)
          async?
          ppx_sexp_conv            instead of   hand-coding serializers
 

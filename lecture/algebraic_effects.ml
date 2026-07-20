@@ -49,7 +49,7 @@ let _ = (3/0) + (8/0) + 1 (* same as 1 + 1 + 1 *)
 (* Function to turn [n;m;p] to n/(m/(p/1)) etc 
    But, use above division to allow for recovery *)      
 let rec div_list (l : int list) : int =
-  Core.List.fold_right ~f:(fun n d -> n / d) l ~init:1 
+  List.fold_right (fun n d -> n / d) l 1 
 
 let _ = div_list [1000;100;2];; (* 1000/(100/(2/1)), no failures *)
 let _ = div_list [1000;100;2;4];;  (* 1000/(100/(2/4)) is 1000/1 *)

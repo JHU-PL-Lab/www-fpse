@@ -199,7 +199,7 @@ This makes an executable out of the `set_main.ml` file.
 
 ### Aside: Optional arguments
 
-TODO: library no longer has this.
+TODO: this library no longer has this but other libraries do.
 * One topic we skipped over which is in many of these libraries is **optional arguments**
 * They are named arguments but you don't need to give them, indicated by a `?` before the name.
 * If you *do* give them, they are like named aguments, use `~name:` syntax
