@@ -377,10 +377,10 @@ let () = run_test_tt_main s;; (* recall this crashes the top loop when finished 
 
 ```ocaml
 let s' = "id tests" >::: 
-  [ "one" >:: (fun _ -> assert_equal (Fn.id 4) 4)
-  ; "two" >:: (fun _ -> assert_equal (Fn.id "hello") "hello") ];;
+  [ "one" >:: (fun _ -> assert_equal (Fun.id 4) 4)
+  ; "two" >:: (fun _ -> assert_equal (Fun.id "hello") "hello") ];;
 let suites = test_list [s;s'];; (* make suite of suites *)
-let named_suites = "revrev and Fn.id" >: suites (* any tree of tests can be named with >: *)
+let named_suites = "revrev and Fun.id" >: suites (* any tree of tests can be named with >: *)
 ```
 
 Here is the type of `test` under the hood (from the docs) which should make clear why the above works:
@@ -473,7 +473,7 @@ We will check how well my tests of the [simple set example](../examples/set-exam
 <a name = "quickcheck"></a>
 TODO: replace with qcheck
 
-## Random Testing aka Property-Based Testing aka Quickcheck
+## Random Testing aka Property-Based Testing aka Quickchecking
 
 * Recall that Quickchecking is making up some random data to test our code
 * To use random testing we need to know when the code is working on that random data
@@ -487,21 +487,22 @@ Here is the methodology
   2. Run `f` on that random data many times (say 1000 times)
   3. Verify whether the test worked on that random data
 
-### Using `Base_quickcheck`
+### Using `QCheck`
 
 * For step 1. above we want to not have to "roll our own" every time
-* `Base_quickcheck` is a library that will do it for us
-* `Base_quickcheck` contains three key algorithms:
-  1. Generators, `Quickcheck.Generator` - make random data of desired distribution in given type
-  2. Shrinkers, `Quickcheck.Shrinker` - if a failing case is discovered, try to make random data smaller, e.g. a shorter list (we will not cover these in detail)
-  3. Runner, `Quickcheck.test` etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.
+* `QCheck` is a library that will do it for us
+* `QCheck` contains three key algorithms:
+  1. Gen, `QCheck.Gen` - make random data of desired distribution in given type
+  2. Shrinkers, `QCheck.Shrink` - if a failing case is discovered, try to make random data smaller, e.g. a shorter list (we will not cover these in detail)
+  3. Maker, `QCheck.Test.make` which makes a test over the random data
+  4. Runner, `QCheck.Test.check_exn`, which runs some fixed number of random tests and shrinks failures.
 
-* We will look at several examples of the `Base_quickcheck` library in action in [quickcheck_examples.ml](../examples/random-examples/quickcheck_examples.ml)
+* We will look at several examples of the `QCheck` library in action in [quickcheck_examples.ml](../examples/random-examples/quickcheck_examples.ml)
 
-* We will look at quickchecking on a `Map` in [school_quickcheck.ml](../examples/quickcheck/school_quickcheck.ml)
+* We will look at quickchecking on a `Map` in [school_quickcheck.ml](../examples/quickcheck/school_quickcheck.ml) TODO
 
-* [Base_quickcheck docs](https://ocaml.org/p/base_quickcheck/v0.15.0/doc/Base_quickcheck/index.html)
-* The [Real World OCaml](https://dev.realworldocaml.org/testing.html#property-testing-with-quickcheck) book has a short tutorial (note it uses `ppx_inline_tests` and not `OUnit2`)
+* [QCheck docs](https://ocaml.org/p/qcheck-core/0.91)
+
 
 
 ### Fuzz testing vs Quickcheck

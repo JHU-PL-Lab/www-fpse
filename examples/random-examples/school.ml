@@ -50,7 +50,7 @@ let empty : t = IntMap.empty
 
 (** 
   Add a student [stud] in grade [grade] to [school] database.
-  [Map.add_multi] assumes values are lists and conses to key's
+  [Map.add_to_list] assumes values are lists and conses to key's
   associated list or, if the key is not present, it creates a
   new key and singleton list.
 *)
