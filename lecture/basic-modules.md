@@ -197,34 +197,10 @@ This makes an executable out of the `set_main.ml` file.
   - It is hidden though so we don't get access to the details of how "files are handled"
   - In Visual Studio hover over a function definition to get the docs
 
-### Aside: Optional arguments
-
-TODO: this library no longer has this but other libraries do.
-* One topic we skipped over which is in many of these libraries is **optional arguments**
-* They are named arguments but you don't need to give them, indicated by a `?` before the name.
-* If you *do* give them, they are like named aguments, use `~name:` syntax
-* e.g. in `In_channel.read_lines`, `?fix_win_eol` is an optional boolean argument
-  - To use it just add `~fix_win_eol: true` (since its optional and we want the default false we left it off)
-  - If you write a function with an optional argument it will show up to you as an `option`-typed object: `Some` (given) or `None` (not given).
-* Many languages now support optional arguments
-
-Example of writing a function with an optional argument:
-
-```ocaml
-# let f ?x y = match x with Some z -> z + y | None -> y;;
-val f : ?x:int -> int -> int = <fun>
-# f ~x:1 2;;
-- : int = 3
-# f 2;;
-- : int = 2
-```
-
-* Use them when they are the right thing: will reduce clutter of passing often un-needed items.
-
 ### Aside: The `Sys` library in the `set_main.ml` code
 
-* We are using this library to read in the command line args, via `Sys.get_argv`.
-* The documentation is [here](https://ocaml.org/p/core/latest/doc/Core/Sys/index.html)
+* We are using this library to read in the command line args, via `Sys.argv`.
+* The documentation is [here](https://ocaml.org/manual/5.5/api/Sys.html)
   - Notice how this particular module has no carrier type `t`, it is just a collection of utility functions.
 
 

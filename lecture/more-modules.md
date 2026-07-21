@@ -313,18 +313,6 @@ let data_5 = FloatMap.find 0.4 mm'
 let mm2 = FloatMap.of_list [2.3,"hi"; 3.3,"low"; 2.6,"medium"; 22.2,"wavy"]
 ```
 
-Note that we can't make maps with keys that are lists: 
-TODO: this topic is repeated below, merge the two
-```ocaml
-module ListMap = Map.Make(List);;
-```
-produces an error.  That is because in order to compare keys we need a particular type of lists.  So we need to make a specialized module for e.g. integer lists, and have `compare` defined on it; lets use the `ppx` to do that for us.
-
-```ocaml
-module IntList = struct type t = int list [@@deriving ord] end
-module ListMap = Map.Make(IntList);;
-```
-
 
 ```ocaml
 # module IntPair = struct
@@ -346,7 +334,6 @@ module IPMap :
 # IPSet.empty |> IPSet.add (1,2) |> IPSet.add (3,2) |> IPSet.add (3,2) |> IPSet.to_list;;
 - : IPSet.elt list list = [(1, 2); (3, 2)]
 ```
-
 Observe that only non-parametric types can be keys for maps:
 
 ```ocaml
@@ -355,7 +342,7 @@ Line 1, characters 27-31:
 Error: Signature mismatch:
        ...
        Type declarations do not match:
-         type 'a t = 'a list
+         type 'a t = 'a list ..
        is not included in
          type t
        ...

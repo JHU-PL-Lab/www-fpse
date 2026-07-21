@@ -69,23 +69,24 @@ What is Type-Directed Programming??
 
 Not bubbling up `option` or other wrapped results properly
 
-TODO: replace this Core-ish example
 ```ocaml
-# let zadd (l1 : int list) (l2 : int list) : (int list) = let l = List.zip l1 l2 in List.map ~f:(fun (x,y) -> x+y) l;;
-Line 1, characters 74-75:
-Error: This expression has type (int * int) list List.Or_unequal_lengths.t
-       but an expression was expected of type 'c list
+# let sum_first_n (l : int list) (n : int) : int = 
+  List.nth_opt l n |> List.fold_left (fun acc elt -> acc + elt) 0;;
+Error: This expression has type int option
+       but an expression was expected of type int list
 ```
- - Recall that `List.zip` doesn't just return a list, the programmer missed that here
+ - Recall that `List.nth_opt` doesn't just return a list, the programmer missed that here
+ - Instead it returns an option list since the n could have been beyond the end of the list
  - To solve this type error you will need to `match` on the result, which should fix both type error *and* code behavior
 
 Variation on type-directed programming: with only some parameters applied, the remaining types hint at what is still needed.
 
 ```ocaml
-# let l = [[3;3]; [4;4]; [22;17]] in List.map l;;
-- : f:(int list -> '_weak1) -> '_weak1 list = <fun>
+# List.fold_left (fun acc elt -> acc - elt );;
+- : int -> int list -> int = <fun>
 ```
- - The type shows that `f` needs to be a function taking an `int list` as argument.
+ - The type shows that we first need the integer initial value and then the list
+ - In VSCode you can better see this
 
 The type in an `.mli` file can direct your implementation, e.g. `map` on `simpledict` example from Assn3 (recall that `t` here is the `simpledict`)
 ```ocaml
@@ -471,7 +472,6 @@ We will check how well my tests of the [simple set example](../examples/set-exam
 
 
 <a name = "quickcheck"></a>
-TODO: replace with qcheck
 
 ## Random Testing aka Property-Based Testing aka Quickchecking
 

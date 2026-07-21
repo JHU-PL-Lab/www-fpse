@@ -2,8 +2,6 @@
 (* More on types, modules, functors and hiding *)
 (* ******************************************* *)
 
-(* TODO: de-Core this file, I just did the very top so far. *)
-
 (* Will need #require "ppx_deriving.std" in top loop (which is in our course default .ocamlinit)
    and (preprocess (pps ppx_deriving.std) line in dune for this file to work *)
 

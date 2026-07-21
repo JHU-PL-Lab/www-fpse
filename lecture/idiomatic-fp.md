@@ -79,7 +79,7 @@ Many particular low-level points were already covered in the [FPSE Style Guide](
     - Conversely, make more `let` definitions if the code is too convoluted
 
 Functional code is not always more concise than stateful code, but it is surprisingly good
-- Let us revisit the [parenthesis matching](https://pl.cs.jhu.edu/fpse/examples/match/match.ml) example from the previous lecture on side effects.
+- Let us revisit the [parenthesis matching](../examples/match/match.ml)/[(zipfile)](../examples/zips/match.zip)example from the previous lecture on side effects.
 - At the end of this file is a purely functional version of paren matching; the code is much more concise.
 
 #### Speed
@@ -97,8 +97,6 @@ Functional code is not always more concise than stateful code, but it is surpris
 ### Examples of Idiomatic FP
 <a name = "examples"></a>
 Here are example codebases we will spend time inspecting and critiqueing.
-
-TODO: minesweeper needs to be de-Cored
 
 #### Minesweeper
   * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io 
@@ -127,6 +125,7 @@ TODO: minesweeper needs to be de-Cored
     - We will review [this functional solution](../examples/minesweeper/src/minesweeper.ml)
     - We made another [variation on the functional version](../examples/minesweeper/src/mine_array.ml) to be cleaner and more efficient
     - Will look at an [imperative approach](../examples/minesweeper/src/mine_mutate.ml) which has some  poor abstractions and fails to use combinators.
+    - All of these minesweeper versions are in this [zip file](../examples/zips/minesweeper.zip)
 
 #### Other Examples
   * [ocaml-cuid](https://github.com/marcoonroad/ocaml-cuid) is a utility to generate highly random string IDs for webpages etc.

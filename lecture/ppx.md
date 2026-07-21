@@ -71,7 +71,6 @@ show_n_list [A;C;C];; (* returns the string  "[A; C; C]" *)
 * Enable use in top loop with directive `#require "ppx_deriving.show"` and add to a library as `(preprocess (pps (ppx_deriving.show))`
 
 * An easy short-cut is to use `std`: `#require "ppx_deriving.std"` and `(preprocess (pps ppx_deriving.std))`, which gives you `show`,`eq`,`ord`, and some others all in one go.
-TODO: add this to .ocamlinit?
 
 ### JSON format
 

@@ -448,22 +448,44 @@ let rec fold_left f init l =
  - Important when lists get really long that you don't use stack unless required.
  - Observe that `fold_right` is not tail recursive, so it needs the stack and will be slower
 
-### Named arguments
+### Aside: Named arguments
 
-* OCaml has been switching over to using *named arguments* in some libraries.
+* OCaml sometimes uses *named arguments* in libraries.
 * Named arguments allow you to switch around the order of arguments
 * They also make the code easier to follow when there are multiple args (e.g. folds)
 * For lists there is a parallel library `ListLabels` which has the same functions but with named arguments.
 
-```ocaml
-ListLabels.map ~f:(fun x -> x * x) [1;5;3;45]
-ListLabels.fold_left ~f:(fun accum _ -> accum + 1) ~init:0 [1;2;2345;43]
-ListLabels.fold_left [1;2;2345;43] ~init:0 ~f:(fun accum _ -> accum + 1) (* can swap order *)
-ListLabels.fold_left (fun accum _ -> accum + 1) 0 [1;2;2345;43] (* can leave off names *)
-(* writing your own functions with named arguments: *)
-let rec fold_left ~f ~init l =
-  match l with
-  | [] -> init
-  | hd::tl -> fold_left ~f ~init:(f init hd) tl
-let swap ~(x : int) ~(y : int) : int * int = (y,x) in swap ~x:5 ~y:4
-```
+  ```ocaml
+  ListLabels.map ~f:(fun x -> x * x) [1;5;3;45]
+  ListLabels.fold_left ~f:(fun accum _ -> accum + 1) ~init:0 [1;2;2345;43]
+  ListLabels.fold_left [1;2;2345;43] ~init:0 ~f:(fun accum _ -> accum + 1) (* can swap order *)
+  ListLabels.fold_left (fun accum _ -> accum + 1) 0 [1;2;2345;43] (* can leave off names *)
+  (* writing your own functions with named arguments: *)
+  let rec fold_left ~f ~init l =
+    match l with
+    | [] -> init
+    | hd::tl -> fold_left ~f ~init:(f init hd) tl
+  let swap ~(x : int) ~(y : int) : int * int = (y,x) in swap ~x:5 ~y:4
+  ```
+  * Other parallel libraries are StringLabels, UnixLabels, MoreLabels, etc.
+
+
+### Aside: Optional arguments
+
+* Along with naming arguments you can make them optional
+* They are like named arguments but you don't need to give them, indicated by a `?` before the name in the type.
+* If you *do* give them, they are like named aguments, use `~name:` syntax
+* e.g. in `UnixLabels.symlink : ?to_dir:bool -> src:string -> dst:string -> unit`, `?to_dir` is an optional boolean argument
+  - To use it just add `~to_dir: true` (since its optional and we want the default false we left it off)
+  - If you write a function with an optional argument it will show up to you as an `option`-typed object: `Some` (given) or `None` (not given).
+* Many languages now support optional arguments
+* Example of writing a function with an optional argument:
+  ```ocaml
+  # let f ?x y = match x with Some z -> z + y | None -> y;;
+  val f : ?x:int -> int -> int = <fun>
+  # f ~x:1 2;; (* give the named argument here *)
+  - : int = 3
+  # f 2;; (* implicitly not giving it here so x is None in the body. *)
+  - : int = 2
+  ```
+* They can help reduce clutter for an argument that is usually not needed.
