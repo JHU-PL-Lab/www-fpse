@@ -13,25 +13,34 @@
 
 *)
 
-(* NOT CONVERTED - seems not worth it. *)
-
 let is_mine = Char.equal '*'
 (* "increment" a character a la Minesweeper *)
 let char_inc c = 
   if Char.equal c ' ' then '1' 
   else if Char.equal c '*' then c 
-  else Option.value_exn (Char.of_int (Char.to_int c + 1)) 
+  else (Char.chr @@ (Char.code c + 1)) 
 
+let list_split_n n xs =
+  if n < 0 then invalid_arg "list_split_n";
+  let rec aux acc n = function
+    | xs when n = 0 ->
+        (List.rev acc, xs)
+    | [] ->
+        failwith "list_split_n: index out of bounds"
+    | x :: xs ->
+        aux (x :: acc) (n - 1) xs
+  in
+  aux [] n xs
 
 let list_set (l : 'a list) (i : int) (v : 'a) : 'a list option =
-  let (b4,after) = List.split_n l i in 
+  let (b4,after) = list_split_n i l in 
   match after with 
   | [] -> None
   | _ :: tl -> Some(b4 @ [v] @ tl)
 let string_set (s : string) (i : int) (c : char) : string =
-  String.mapi s ~f:(fun i' c' -> if i = i' then c else c')
+  String.mapi (fun i' c' -> if i = i' then c else c') s
 let string_nget_opt (s : string) (i : int) : char option =
-  try Some(String.nget s i) with
+  try Some(s.[i]) with
     _ -> None
 
 (* 
@@ -41,81 +50,80 @@ let string_nget_opt (s : string) (i : int) : char option =
 *)
 
 module Board = struct
-  module T = struct
-    (* m is the underlying store/heap data structure for the board *)
-    type m = string list
-    (* The type t of the monad
-       This is an option monad inside a state monad
-       The option is needed for operations outside of the grid coordinates *)
-    type 'a t = m -> ('a option) * m
-    (* Bind here is a direct combination of option and state bind *)
-    let bind (x : 'a t) ~(f: 'a -> 'b t) : 'b t =
-      fun (b : m) -> 
-      match x b with 
-      | (Some(x'),b') -> f x' b' 
-      | (None,b') -> (None,b')
-    let return (x : 'a) : 'a t = fun (b : m) -> (Some(x), b)
-    let map = `Define_using_bind
-    (* inc increments the character at the x,y grid location 
-       This code is not pretty due to list-of-strings grid representation *)
-    let inc  (x: int) (y: int) : unit t =
-      fun (b : m) ->
-      let sopt = 
-        match List.nth b y with
+  (* m is the underlying store/heap data structure for the board *)
+  type m = string list
+  (* The type t of the monad
+      This is an option monad inside a state monad
+      The option is needed for operations outside of the grid coordinates *)
+  type 'a t = m -> ('a option) * m
+  (* Bind here is a direct combination of option and state bind *)
+  let bind (x : 'a t) (f: 'a -> 'b t) : 'b t =
+    fun (b : m) -> 
+    match x b with 
+    | (Some(x'),b') -> f x' b' 
+    | (None,b') -> (None,b')
+  let return (x : 'a) : 'a t = fun (b : m) -> (Some(x), b)
+  let map = `Define_using_bind
+  (* inc increments the character at the x,y grid location 
+      This code is not pretty due to list-of-strings grid representation *)
+  let inc  (x: int) (y: int) : unit t =
+    fun (b : m) ->
+    let sopt = 
+      match List.nth_opt b y with
+      | None -> None
+      | Some(s) -> match string_nget_opt s x with
         | None -> None
-        | Some(s) -> match string_nget_opt s x with
-          | None -> None
-          | Some(c') -> Some(string_set s x (char_inc c'))
-      in
-      match sopt with
-      | None ->  (Some(), b)
-      | Some(s') ->
-        match (list_set b y s') with 
-        | None -> (Some(),b)
-        | Some(b') -> (Some(),b')
+        | Some(c') -> Some(string_set s x (char_inc c'))
+    in
+    match sopt with
+    | None ->  (Some(), b)
+    | Some(s') ->
+      match (list_set b y s') with 
+      | None -> (Some(),b)
+      | Some(b') -> (Some(),b')
 
-    let get (x: int) (y: int): char t = 
-      fun (b : m) -> 
-      let vo = List.nth b y |> 
-               Option.value_map ~default:None ~f:(fun row -> Option.try_with (fun _ -> String.get row x))
-      in (vo,b)
-    let x_dim () : ('a t) = 
-      fun (b : m) -> (Some(List.hd_exn b |> String.length),b)
-    let y_dim () : ('a t) = 
-      fun (b : m) -> (Some(List.length b), b)
-    (* Monad users may need the whole grid to iterate over it *)   
-    let dump () : ('a t) = 
-      fun (b : m) -> (Some(b), b)
-  end
-  include T
-  include Monad.Make(T)
+  let get (x: int) (y: int): char t = 
+    let (let*) = Option.bind in
+    fun (b : m) -> 
+    let vo = (let* row = List.nth_opt b y in
+      try Some(String.get row x) with _ -> None)
+    in (vo,b)
+  let x_dim () : ('a t) = 
+    fun (b : m) -> (Some(List.hd b |> String.length),b)
+  let y_dim () : ('a t) = 
+    fun (b : m) -> (Some(List.length b), b)
+  (* Monad users may need the whole grid to iterate over it *)   
+  let dump () : ('a t) = 
+    fun (b : m) -> (Some(b), b)
 end
 
-(* open the monad and its corresponding let%bind syntax *)
+(* open the monad and define its syntax *)
 open Board
-open Board.Let_syntax
+let ( let* ) = bind
+let ( >>= ) = bind
+let ( >>| ) m f = bind m (fun x -> return (f x))
 
 (* Function in monad-land to increment nodes adjacent to x,y by one 
    Needs to be in monad-land because it "mutates" the board
 *)
 let inc_adjacents (x: int) (y: int) : unit t = 
-  let s xo yo = let%bind () = inc (x + xo) (y + yo) in return () in
-  let%bind () = s (-1) (-1) in 
-  let%bind () = s 0 (-1) in
-  let%bind () = s 1 (-1) in
-  let%bind () = s (-1) 0 in
-  let%bind () = s 1 0 in
-  let%bind () = s (-1) 1 in
-  let%bind () = s 0 1 in  s 1 1
+  let s xo yo = let* () = inc (x + xo) (y + yo) in return () in
+  let* () = s (-1) (-1) in 
+  let* () = s 0 (-1) in
+  let* () = s 1 (-1) in
+  let* () = s (-1) 0 in
+  let* () = s 1 0 in
+  let* () = s (-1) 1 in
+  let* () = s 0 1 in  s 1 1
 
 
 (* Lets now do a classic "imperative" double-nested loop to increment all mine neigbors *)  
 let inc_all () : 'a t =
-  let%bind xmax = x_dim () in
-  let%bind ymax = y_dim () in
+  let* xmax = x_dim () in
+  let* ymax = y_dim () in
   let rec do_inc (x : int) (y : int) : ('a t) = 
-    let%bind c = get x y in
-    let%bind () = if is_mine c then inc_adjacents x y else return () in
+    let* c = get x y in
+    let* () = if is_mine c then inc_adjacents x y else return () in
     if x + 1 = xmax then
       if y + 1 = ymax then return ()
       else do_inc 0 (y + 1)
@@ -140,22 +148,29 @@ let b = [
 let _ = annotate b
     
 (* Alternative: use folding to do the iteration.
-   * Need to define monadic versions of List.iteri/String.iteri to iterate an effectful function over the grid which will thread along the state.
+   * Need to define monadic versions of list_iter_i to iterate an effectful function over the grid which will thread along the state.
    * You can't just map the function over the list, you need to make a chain of binds to propagate effects
    * It ends up being complicated, the above traditional imperative approach arguably reads better  *)
 
-let list_iteri (l : string list) ~(f: int -> string -> unit t) : unit t =
-  List.foldi l ~init:(return ()) ~f:(fun i acc a -> bind acc ~f:(fun () -> f i a))    
-let string_iteri (s : string) ~(f: int -> char -> unit t) : unit t =
-  String.foldi s ~init:(return ()) ~f:(fun i acc a -> bind acc ~f:(fun () -> f i a))
+let list_fold_i f init l =
+  snd
+    (List.fold_left
+       (fun (i, acc) x ->
+         (i + 1, f i acc x))
+       (0, init)
+       l)   
+let list_iteri (l : string list) (f: int -> string -> unit t) : unit t =
+  list_fold_i (fun i acc a -> bind acc (fun () -> f i a)) (return ()) l    
+let string_iteri (s : string) (f: int -> char -> unit t) : unit t =
+  list_fold_i (fun i acc a -> bind acc (fun () -> f i a)) (return ()) (List.of_seq @@ String.to_seq s) 
 (* iterji iterates over the whole grid applying effectful function f *)
-let iterji ~(f : int -> int -> char -> 'a t) =
-  let%bind b = dump () in
-  list_iteri b ~f:(fun y -> fun s -> string_iteri s ~f:(f y))
+let iterji (f : int -> int -> char -> 'a t) =
+  let* b = dump () in
+  list_iteri b (fun y -> fun s -> string_iteri s (f y))
 
 (* With the above setup the main function is easy: call inc_adjacents on all mines *)
 let inc_all' () : 'a t =
-  iterji ~f:(fun y x c -> if is_mine c then inc_adjacents x y else return ())
+  iterji (fun y x c -> if is_mine c then inc_adjacents x y else return ())
 
 let _ = inc_all' () b
 

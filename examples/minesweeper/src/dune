@@ -1,6 +1,6 @@
 (library
  (name minesweeper)
- (modules minesweeper mine_array mine_mutate mine_abstract)
+ (modules minesweeper mine_monadic mine_array mine_mutate mine_abstract)
  ; (preprocess (pps ppx_let))
 )
 ; To load libraries in a fresh utop top loop use command line
