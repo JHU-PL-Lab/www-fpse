@@ -409,7 +409,7 @@ type 'a intpairmaptree =
   ```
 
 ### A Small Example Using Map
-* We will go over the code of [school.ml](../examples/school/school.ml), simple code that uses a `Map`.
+* We will go over the code of [school.ml](../examples/school/school.ml)/[zipfile](../examples/zips/school.zip), simple code that uses a `Map`.
 
 ### The `with` type refinement operation
 

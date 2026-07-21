@@ -99,6 +99,9 @@ Imagine an alternative state monad implementation with `Board` state implemented
     - (yes, one path down a binary tree is only 1/(log n)-th of the tree nodes, and the sub-trees can be reused)
 * So total time is O(n log n)
 
+If you want to build these examples yourself here is a [zip](../examples/zips/minesweeper.zip) with all of them.
+
+
 Conclusion
 * For Minesweeper, O(n^2) is in fact fine as the grids are always "tiny" in a CPU sense
 * But if this grid was instead a large image (pixel grid) this would be intolerable

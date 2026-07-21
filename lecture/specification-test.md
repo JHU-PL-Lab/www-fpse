@@ -497,9 +497,9 @@ Here is the methodology
   3. Maker, `QCheck.Test.make` which makes a test over the random data
   4. Runner, `QCheck.Test.check_exn`, which runs some fixed number of random tests and shrinks failures.
 
-* We will look at several examples of the `QCheck` library in action in [quickcheck_examples.ml](../examples/quickcheck-examples/quickcheck_examples.ml)
+* We will look at several examples of the `QCheck` library in action in [quickcheck_examples.ml](../examples/quickcheck-examples/quickcheck_examples.ml)/[quickcheck_examples.zip](../examples/zips/quickcheck_examples.zip)
 
-* We will look at quickchecking on a `Map` in [school_quickcheck.ml](../examples/school-quickcheck/school_quickcheck.ml)
+* We will look at quickchecking on a `Map` in [school_quickcheck.ml](../examples/school-quickcheck/school_quickcheck.ml)/[school_quickcheck.zip](../examples/zips/school-quickcheck.zip)
 
 * [QCheck docs](https://ocaml.org/p/qcheck-core/0.91)
 
