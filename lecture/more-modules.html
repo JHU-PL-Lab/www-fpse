@@ -602,10 +602,9 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
 
 <h3 id="a-small-example-using-coremap">A Small Example Using Core.Map</h3>
 <ul>
-  <li>We will go over the code of <a href="../examples/random-examples/school.ml">school.ml</a>, simple code that uses a <code>Core.Map</code>.</li>
+  <li>We will go over the code of <a href="../examples/school/school.ml">school.ml</a>, simple code that uses a <code>Core.Map</code>.</li>
   <li>Note that there is an alternative to <code>Map.Make</code> using advanced features we will cover in detail later: <em>first-class modules</em>.
     <ul>
-      <li>We will briefly look at <a href="../examples/random-examples/cool_school.ml">cool_school.ml</a> which re-writes the <code>school.ml</code> example to use first-class modules</li>
       <li>The advantage of this code is you don’t need to make a new module for every type you use it at</li>
       <li>Also avoids the <code>Map.add</code> vs <code>IntMap.empty</code> issue of two different interfaces to use same map.</li>
     </ul>

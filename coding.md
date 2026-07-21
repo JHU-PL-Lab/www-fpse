@@ -152,8 +152,8 @@ All of the above packages have documentation, but you may also want to try [sher
 The above tools will be our "bread and butter", and we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.
 
 <!-- * [Bisect](https://github.com/aantron/bisect_ppx) will be used for code coverage.
-* [base_quickcheck](https://opensource.janestreet.com/base_quickcheck/) is a fuzz tester / automated test generator for OCaml.
 * [Lwt](https://ocsigen.org/lwt/latest/api/Lwt) is a non-preempting asychronous threads library. -->
+* [QCheck](https://ocaml.org/p/qcheck-core/0.91) is a fuzz tester / automated test generator for OCaml.
 * [`sexplib`](https://github.com/janestreet/sexplib) is a library for s-expression conversions, which we will use to serialize and deserialize data.
 * [`cmdliner`](https://erratique.ch/software/cmdliner) is a useful tool for reading command line arguments from your OCaml programs.
 

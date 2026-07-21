@@ -1,0 +1,6 @@
+(library
+  (name quickchecking)
+  (modules quickcheck_examples)
+  (libraries ounit2 qcheck)
+  (preprocess (pps ppx_deriving_qcheck)))
+

@@ -18,7 +18,7 @@ module Array_2d = struct
   let get (b : 'a t) (x : int) (y : int) : 'a option =
     try Some(b.(x).(y)) with _ -> None
 
-  let mapxy (b : 'a t) ~(f : int -> int -> 'a -> 'b) : 'b t =
+  let mapxy (b : 'a t) (f : int -> int -> 'a -> 'b) : 'b t =
     Array.mapi (fun y r -> Array.mapi (f y) r) b
 
   let adjacents (b : 'a t) (x : int) (y : int) : 'a list =
@@ -61,7 +61,7 @@ let array_annotate (board : char Array_2d.t) : char Array_2d.t =
   let count_nearby_mines x y =
     Array_2d.adjacents board x y |> fun l -> List.length (List.filter is_mine l)
   in
-  Array_2d.mapxy board ~f:(fun y x c ->
+  Array_2d.mapxy board (fun y x c ->
       if is_field c then count_nearby_mines x y |> to_char else c)
 
 (* Overall function requires conversion functions in pipeline, no big deal. *)      

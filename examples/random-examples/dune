@@ -1,6 +1,0 @@
-(library
-  (name justforbuild)
-  (modules matching school toy_stack quickcheck_examples)
-  (libraries ounit2 qcheck)
-  (preprocess (pps ppx_deriving.std ppx_deriving_qcheck)))
-

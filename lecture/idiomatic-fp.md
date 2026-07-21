@@ -79,7 +79,7 @@ Many particular low-level points were already covered in the [FPSE Style Guide](
     - Conversely, make more `let` definitions if the code is too convoluted
 
 Functional code is not always more concise than stateful code, but it is surprisingly good
-- Let us revisit the [parenthesis matching](https://pl.cs.jhu.edu/fpse/examples/random-examples/matching.ml) example from the previous lecture on side effects.
+- Let us revisit the [parenthesis matching](https://pl.cs.jhu.edu/fpse/examples/match/match.ml) example from the previous lecture on side effects.
 - At the end of this file is a purely functional version of paren matching; the code is much more concise.
 
 #### Speed
