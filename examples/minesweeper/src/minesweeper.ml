@@ -43,12 +43,14 @@ module Board = struct
      We will write several different equivalent versions to compare. 
  *)
 
-  let get (b : t) (x : int) (y : int) : char option =
-    if y >= 0 then 
-      match List.nth_opt b y with (* If y is beyond the grid List.nth_opt will return None *)
-      | None -> None 
-      | Some(row) -> (try Some(String.get row x) with _ -> None)
-    else None
+(* First lets make a clean list-nth function which returns None for any out of bounds access *) 
+let list_nth_opt l n = 
+  try List.nth_opt l n with _ -> None
+
+let get (b : t) (x : int) (y : int) : char option =
+    match list_nth_opt b y with
+    | None -> None 
+    | Some(row) -> (try Some(String.get row x) with _ -> None)
 
 (* Get a list of chars for all the squares adjacent to (x,y) *)    
 (* Note List.filter_map Fun.id [Some 4; None; Some 7; None; Some (-1)] is [4; 7; -1]: 
