@@ -1,102 +1,243 @@
-(* 
-  Algebraic Effects aka resumable exceptions
-   aka (more precisely) *one-shot* resumable exceptions 
-   aka The mother of all side effects
- -- another way to encode state, coroutines, etc but instead of with pure functions have only one side-effect
-   
+(*
+  Algebraic Effects
+    aka resumable exceptions
+    aka (more precisely) *one-shot* resumable exceptions
+    aka The mother of all side effects
+    -- they are another way to encode state, coroutines, etc. but instead of
+      using pure functions, just have one side-effect
 *)
 
-(* First let us just play with a "resumable exception"
-   
-   Think of it as the "Pause" button on the movie you are watching.
-     - You can go off and do anything else and that movie stays on pause
-     - But, you can resume the movie any time in the future from the exact same spot!
-     - Also, when you resume the old "pause point is gone", no re-resuming.
-       (of course could "pause" again in the future from another point.)
+(* First let us warm up with exceptions *)
+type exn += FPSE of string
+
+let except () =
+  print_endline "About to raise";
+  raise (FPSE "Raised an exception");
+  print_endline "Unreachable"
+  [@@warning "-21"] (* supress warning about unreachable line *)
+
+(*
+  This will print:
+    About to raise
+    Raised an exception
+*)
+let () =
+  try except () with
+  | FPSE s ->
+    print_endline s
+
+(*
+  But what if we wanted to run that unreachable line? That is, we resume the
+  code after the exception is raised.
+
+  We can do this with effects, i.e. "resumable exceptions".
+
+  Think of it as the "Pause" button on the movie you are watching.
+    - You can go off and do anything else and that movie stays on pause
+    - But, you can resume the movie any time in the future from the exact same spot!
+    - Also, when you resume the old "pause point" is gone, no re-resuming from
+    the same spot twice. (Of course you can "pause" again in the future from
+    another point.)
 *)
 
 (* Uses the Effect system of OCaml 5 *)
 open Effect
-open Effect.Deep
+open Effect.Deep (* Effect has Deep and Shallow. Prefer Deep most of the time *)
 
-(* Let's redefine integer division so we can keep things going if we
-   divide by zero. *)
+(* Let's start with a simple effectful example that just demos the control flow *)
 
-(* First we make a new effect named Divz; like an exception but resumable *)
-type _ Effect.t += Divz: int t
+(** Extend the effect type with a new effect constructor called [Yield], like an
+  exception but resumable. *)
+type _ Effect.t += Yield : unit t
 
-(* Now we make an adaptor on existing "/" to perform this effect instead of default one *)
-let newdiv x y = match y with 
-| 0 -> perform (Divz)     (* perform is "resumable_raise" *)
-| _ -> Stdlib.(x / y)
+(** [demo] will print, then perform the [Yield] effect, and when resumed, will
+  print again. *)
+let demo () =
+  print_endline "Here";
+  (* perform is "resumable raise", i.e. "press pause". *)
+  perform Yield;
+  print_endline "Back again"
 
-let _ = newdiv 33 0 (* See how this just changes the exception raised *)
+(* This will print:
+    Here
+    There
+    Back again
+*)
+let () =
+  try demo () with
+  | effect Yield, k ->
+    (* The effect has been caught. So do something here, and then resume from
+      where the effect was performed! i.e. "press play" *)
+    print_endline "There";
+    continue k () (* continue comes from Effect.Deep *)
 
-(* Now we can make a new division to turn division by 0 into a 1 result 
-   by resuming with 1 as the result when the exception is raised
-   Note the syntax for this is currently horrible, they are going to improve it *)
+(**
+  But this effect provides nothing ([Yield] has no payload) and receives nothing
+  ([Yield] has type [unit t], where the [unit] is what the performer gets back
+  when the continuation is resumed).
+
+  What if when we yield, we want to give a value to the catcher?
+*)
+
+(** [Printme s] gives the string [s] to whoever catches the effect. Any value
+  [Printme s] still has type [unit t], so the performer only gets the value
+  [() : unit] back when the continuation is resumed. *)
+type _ Effect.t += Printme : string -> unit t
+
+let printme () =
+  print_endline "Here";
+  perform (Printme "There, but where?");
+  print_endline "Back again"
+
+(* This will print:
+    Here
+    There, but where?
+    Back again
+*)
+let () =
+  try printme () with
+  | effect Printme s, k ->
+    print_endline s; (* Print the string contained in the effect *)
+    continue k ()
+
+(**
+  Since [Effect.t] is just a extensible variant, we can pass them around like
+  first class values. The above examples can be deduplicated.
+*)
+
+let deduped eff =
+  print_endline "Here";
+  perform eff; (* perform the effect that was passed in *)
+  print_endline "Back again"
+
+
+(* This will print:
+    Here
+    Yielded
+    Back again
+    Here
+    Printing me
+    Back again
+*)
+let () =
+  try deduped Yield; deduped (Printme "Printing me") with
+  | effect Yield, k ->
+    print_endline "Yielded";
+    continue k ()
+  | effect Printme s, k ->
+    print_endline s;
+    continue k ()
+
+(*
+  So far, when the continuation is resumed, the performer gets nothing back
+  (notice the semicolon after performing the effect). What if, when the
+  continuation is resumed, we want a value with which to continue?
+
+  To demo this we will keep using our printing example, but instead of
+  "Back again", we will print some provided string. *)
+
+(** The [Printyou] effect has type [string t], so the performer will get back
+  a value with type [string] when resumed. Above, it was always unit. *)
+type _ Effect.t += Printyou : string t
+
+let printyou () =
+  print_endline "Here";
+  (* Assign the name to_print to the value that we get back when resuming. *)
+  let to_print = perform Printyou in
+  print_endline to_print (* print that string *)
+
+(* This will print:
+    Here
+    Caught
+    Resumed
+*)
+let () =
+  try printyou () with
+  | effect Printyou, k ->
+    print_endline "Caught";
+    (* We pass the string "Resumed" back to where the effect was performed. *)
+    continue k "Resumed"
+
+(* Let's step it up a bit. We will redefine integer division so we can keep
+  things going if we divide by zero. *)
+
+(** [Divz n] is performed when [n] is divided by [0], and the performer gets
+  back the integer to use in place of the failed division *)
+type _ Effect.t += Divz : int -> int t
+
+let newdiv x y =
+  if y = 0 then
+    perform (Divz x)
+  else
+    x / y
+
+(** Instead of the exception [Division_by_zero] like [33 / 0] raises, this
+  performs the [Divz 33] effect. We do not catch it, so this program fails. *)
+let _ : int = newdiv 33 0
+
+(*
+  Now let's overwrite the division operator. To use our new division.
+*)
 let (/) n m =
-  try_with (fun () -> newdiv n m) ()
-  { effc = fun (type a) (eff: a t) -> match eff with
-    | Divz ->     (* if we "continue" later the perform result will be the new value *)
-         Printf.printf  "Div by 0, forcing return of 1\n"; Out_channel.flush stdout;
-         Some (fun (k: (a, _) continuation) ->
-         continue k 1 (* continue lets us RESUME at the perform point -- return 1 for n/0 value *)) 
-    | _ -> None }
+  try newdiv n m with
+  | effect Divz n, k ->
+    Printf.printf  "Div %d by 0, forcing return of 1\n%!" n;
+    continue k 1
 
-let _ = (3/0) + (8/0) + 1 (* same as 1 + 1 + 1 *)
+let _ : int = (3 / 0) + (8 / 0) + 1 (* same as 1 + 1 + 1 *)
 
-(* Function to turn [n;m;p] to n/(m/(p/1)) etc 
-   But, use above division to allow for recovery *)      
+(* Function to turn [n;m;p] to n/m/p etc.
+   but use the above division to allow for recovery *)
 let rec div_list (l : int list) : int =
-  List.fold_right (fun n d -> n / d) l 1 
+  match l with
+  | [] -> 1
+  | hd :: tl -> List.fold_left (fun acc n -> acc / n) hd tl
 
-let _ = div_list [1000;100;2];; (* 1000/(100/(2/1)), no failures *)
-let _ = div_list [1000;100;2;4];;  (* 1000/(100/(2/4)) is 1000/1 *)
-let _ = div_list [20;4;2;1000;100;2;4];; (* multipl`e failures here *)
+let _ = div_list [1000;100;2];; (* 1000/100/2, no failures *)
+
+let _ = div_list [1000;100;2;5];;  (* 1000/100/2/5 is 1 *)
+
+let _ = div_list [20;4;2;1000;100;2;4];; (* multiple failures here *)
 
 (* The above exception can only be resumed (continued) once;
    thus it is a **one-shot** resumable exception *)
 
 let dont_do_this_div n m =
-  try_with (fun () -> newdiv n m) ()
-  { effc = fun (type a) (eff: a t) -> match eff with
-    | Divz ->     (* if we "continue" later the perform result will be the new value *)
-         Printf.printf  "Div by 0, forcing return of 1\n"; Out_channel.flush stdout;
-         Some (fun (k: (a, _) continuation) ->
-         (continue k 1) + (continue k 2) (* try to resume twice *)) 
-    | _ -> None }
+  try newdiv n m with
+  | effect Divz n, k ->
+    Printf.printf  "Div %d by 0, trying to resume twice\n%!" n;
+    (continue k 1) + (continue k 2) (* try to resume twice *)
 
-let _ = dont_do_this_div  4 0 (* No go -- throws Continuation_already_resumed *)
+let _ = dont_do_this_div 4 0 (* No go -- throws Continuation_already_resumed *)
 
 (* Note it is also possible to add to the top-level computation when you pop out *)
 
 let adding_div n m =
-  try_with (fun () -> newdiv n m) ()
-  { effc = fun (type a) (eff: a t) -> match eff with
-    | Divz ->     (* if we "continue" later the perform result will be the new value *)
-         Printf.printf  "Div by 0, forcing return of 1\n"; Out_channel.flush stdout;
-         Some (fun (k: (a, _) continuation) ->
-         (continue k 1) + 77 (* add 77 to was-final result *)) 
-    | _ -> None }
+  try newdiv n m with
+  | effect Divz n, k ->
+    Printf.printf  "Div %d by 0, resuming\n%!" n;
+    (continue k 1) + 77 (* add 77 to final result *)
 
-let _ = (adding_div 3 0) + (adding_div 8 0) + 1
+(* This is 1 + 77 + 4 + 1 *)
+let _ = (adding_div 3 0) + (adding_div 8 2) + 1
 
-(* How is this implemented?  It is fairly intuitive. 
+(*
+  How is this implemented?  It is fairly intuitive.
   1) For each try/with which might raise an effect, run the try on its own stack
   2) If an effect is performed, *freeze* that runtime stack and program counter
-  3) Run the effect handler code
+  3) Run the effect handler code on a forked stack
   4) If there is a continue, thaw the frozen stack/pc and re-start
 
-  Note there is also a `discontinue` which is for the case you want to
-  keep raising the failure as an actual exception.
-
+  Note there is also a `discontinue` which is for the case you want to keep
+  raising the failure as an actual exception instead of resiming the
+  continuation.
 *)
 
 (* OK hopefully one-shot resumable exceptions make some sense now.
 
-   But this is only the beginning: it turns out just about any side effect can be encoded with only resumable exceptions - !
-   Its fairly complex though so we will skip in lecture.   See below if interested.
+   But this is only the beginning: it turns out just about any side effect can
+   be encoded with only resumable exceptions - !  Its fairly complex though so
+   we will skip in lecture.   See below if interested.
 *)
 
 
@@ -107,8 +248,8 @@ The high level idea of the encoding is as follows:
 1) at the very top level we have a try block as with the previous example
 2) for any state operation we throw a resumable exception
 3) .. this gets us back to the top level try
-4) where we can (functionally) make any state operations and 
-5) resume possibly returning the get result if needed.
+4) where we can (functionally) make any state operations and
+5) resume by possibly returning the get result if needed.
 
 It ends up being more complex because the state has to get threaded along
 
@@ -117,44 +258,42 @@ general that `int` could be any OCaml type.
 
 *)
 
-type _ Effect.t += Get: int t | Set: int -> unit t (* Get gets int back, Set passes int up *)
+type _ Effect.t +=
+  | Get: int t (* get the int state *)
+  | Set: int -> unit t (* set the int state *)
 
 let run (type a) ~init (main : unit -> a) : int * a =
-    (match_with main ()
-      {
-        retc = (fun res x -> (x, res)); (* processes final value *)
-        exnc = raise;
-        effc =
-          (fun (type b) (e : b Effect.t) ->
-            match e with
-            | Get   -> Some (fun (k : (b, int -> int * a) continuation) 
-                                 (x : int) -> (continue k x) x)
-            | Set y -> Some (fun (k : (b, int -> int * a) continuation) 
-                                 (_ : int) -> continue k () y)
-            | _ -> None);
-      })
-      init
+  let handle =
+    match main () with
+    | effect Get, k ->
+      fun (state : int) -> (* propagates (and continues with) the old state *)
+        continue k state state
+    | effect Set new_state, k ->
+      fun _ -> (* ignores the old state *)
+        continue k () new_state
+    | v ->
+      fun state -> (* returns the final state *)
+        state, v
+  in
+  handle init
 
-(* The above run function is quite subtle
-   - `main` is the effectful code to be run, it is a thunk (frozen)
-   - the `match_with` thaws main to runs it handles effects as per the record
-   - the `main` code should be able to perform `Set` and `Get` operations on this integer
-   - a is the type returned by `main` program
-   - `run` returns an int * a, the heap final value plus the `main` computation final value.
-   - The record expression argument to match_with defines all the handlers for effects in running `main`
-      retc for the final value which it makes into a pair
-      exnc in case an exception is thrown by main (it just re-raies it)
-      effc is the perform handler as in previous examples
-   - The final `init` in the `run` code seeds this chain of state-expecting functions with the initial state
-   - Every time we "come up for air" in a perform handled by `effc` we will have the state value passed 
-    (init initially and after that the x or y from the previous Get or Set)
-     - and, we will then build a new function expecting the state value as the result
-   - With all of the above there is a cascade of state passing
-   - And, the resulting code "works just like" the ref/:=/! code of OCaml, no let%bind needed.
+(** The above run function is quite subtle
+  - [main] is the effectful code to be run. It is a thunk (i.e. is frozen).
+  - The [match with] thaws [main] and handles it effects.
+  - Every time we "come up for air" in a perform handled by the effect handlers,
+    we will have the state value passed in, which is initially [init], and
+    after that it is [state] or [new_state] in the [Get] and [Set] handlers,
+    respectively.
+  - The final [handle init] "seeds" this state.
+  - There is then a cascade of state passing.
+  - When [main ()] finally finishes, the state is passed in one more time and is
+    returned as a tuple along with the final result [v].
+  - The resulting code works just like the [ref]/[:=]/[!] of imperative OCaml,
+    but it threads state like a state monad, but there is no [let*]/[bind].
 *)
 
 let simple () : unit =
-  assert (0 = perform Get); 
+  assert (0 = perform Get);
   perform @@ Set 42;
   assert (42 = perform Get)
 
@@ -170,22 +309,20 @@ done;;
 
 but without any actual state - !
 We use `get` and `put` functions to make it look a bit more like !/:=
-
 *)
 
 let get () = perform Get
 let put v = perform (Set v)
-let counter () = 
-  while get() < 10 do
-  Format.printf "count is %i ...\n" (get ());
-  put(get() + 1);
+
+let counter () =
+  while get () < 10 do
+    Format.printf "count is %i ...\n" (get ());
+    put (get () + 1);
   done
 
-let test_counter = run ~init: 0 counter
+let test_counter = run ~init:0 counter
 
-
-
-(* Lastly is it even possible to do coroutines in this setting 
+(* Lastly is it even possible to do coroutines in this setting
 
 See https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/cooperative.ml for simple independent runs
 
@@ -198,12 +335,15 @@ See https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/solv
 
 *)
 
-(* Appendix: another version of run for state that uses try_with *)
+(* Appendix: another version of run for state that uses try/with *)
 let run' ~(init: int) (main : unit -> unit) : unit =
-  let comp  : int -> unit =
-    try_with (fun () -> (main (); fun (_ : int) -> ())) () 
-    { effc = fun (type a)(eff: a Effect.t) -> match eff with
-      | (Get) -> Some (fun (k: (a, _) continuation) -> (fun (s : int) -> (continue k s) s)) 
-      | (Set s) -> Some (fun (k: (a, _) continuation) -> (fun (_ : int) -> (continue k ()) s))
-      | _ -> None} 
-  in ignore(comp init)
+  let comp : int -> unit =
+    try main (); fun (_ : int) -> () with
+    | effect Get, k ->
+      fun (s : int) ->
+        continue k s s
+    | effect Set s, k ->
+      fun (_ : int) ->
+        continue k () s
+  in
+  ignore (comp init)
