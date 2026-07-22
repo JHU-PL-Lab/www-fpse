@@ -68,11 +68,7 @@ Many particular low-level points were already covered in the [FPSE Style Guide](
   - **Combinize**: replace `let rec` with `map`s, `fold`s and the like
     - and, for your own data structures write your own combinators and then use in place of `rec`
   - Use advanced pattern matching (`as`, `with`, deep patterns, partial record patterns, `_`, etc)
-  - Use `|>` in place of call sequences, and make your functions amenable to piping
-    - To have pipes be effective, the best way is to follow `Core` and name the parameters that are not the underlying data you will often want to pipe on. For example `List.filter : 'a list -> f:('a -> bool) -> 'a list` and since `f` named can apply it first to make an `'a list -> 'a list` function ripe for piping:
-    ```ocaml
-     [2;5;-6;22] |> List.filter ~f:(fun x -> x < 0) |> List.is_empty |> not;;
-     ```
+  - Use `|>` in place of call sequences when it is elegant, and make your functions amenable to piping (for example that is why `List.map` has the list parameter last, you can then pipe it in)
   - Use `@@` in place of parentheses
   - Inline simple `let` definitions to make code read as a concise sentence
     - Also a small function called only once or twice may read better inlined

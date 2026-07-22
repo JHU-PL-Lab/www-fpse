@@ -155,7 +155,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>We defined our type <strong>and</strong> got the <code>equal_nucleotide</code> function for free.</li>
 </ul>
 
-<h3 id="composing-deriving-equal">Composing <code>deriving equal</code></h3>
+<h3 id="composing-deriving-eq">Composing <code>deriving eq</code></h3>
 
 <ul>
   <li>If we have an <code>xyy_equal</code> function on component types, <code>deriving</code> can derive <code>equal</code> for a type built from those components. For example equality on <em>lists</em> of nucleotides:</li>
@@ -168,8 +168,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">#</span> <span class="n">equal_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">]</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">A</span><span class="p">];;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span>
 
-<span class="o">#</span> <span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Queue</span><span class="p">.</span><span class="n">t</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Core</span><span class="p">.</span><span class="nn">Queue</span><span class="p">.</span><span class="n">t</span>
+<span class="o">#</span> <span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Queue</span><span class="p">.</span><span class="n">t</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">eq</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Queue</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">equal_n_queue</span> <span class="o">:</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
@@ -180,10 +180,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="some-other-useful-deriving-macros">Some other useful <code>@@deriving</code> macros</h3>
 
 <ul>
-  <li><code>[@@deriving compare]</code> is like <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code></li>
+  <li><code>[@@deriving ord]</code> is like <code>eq</code> except it makes a <code>compare</code> function instead of <code>equal</code></li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="p">];;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">ord</span><span class="p">];;</span>
 <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
 <span class="k">val</span> <span class="n">compare_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="k">fun</span>
 

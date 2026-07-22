@@ -349,8 +349,6 @@ let l = Array.to_list a;;
   - They are OK if they are always handled close to when they are raised
   - If the handler is far away it can lead to buggy code
   - We will aim for idiomatic use of OCaml exceptions in FPSE: local necessary ones only.
-* `Core` discourages over-use of exceptions in its library function signatures
-  - Avoid the `blah_exn` library functions unless the handler is close by
 
 There are a few simple built-in exceptions which we used some already:
 
@@ -395,10 +393,10 @@ let g () =
 g ();;
 ```
 
-### Mutating data structures in `Core`
+### Mutating data structures in the standard libraries
 
-* The `Stack` and `Queue` modules in `Core` are *mutable* data structures.
-* (There are no immutable stack/queue libraries in `Core` - just use `list`s)
+* The `Stack` and `Queue` modules are *mutable* data structures.
+* (There are no immutable stack/queue libraries - just use `list`s)
 * (There is also `Hash_set` which is a (hashed) mutable set and `Hashtbl` which is a mutable hashtable; more on those later)
 * Here is a simple example of playing around with a `Stack`.
 

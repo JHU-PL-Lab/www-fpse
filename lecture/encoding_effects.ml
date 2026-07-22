@@ -126,10 +126,7 @@ bind' (option_combine [1;2] [3;4;5]) (fun l -> match l with (n,_)::_ -> Some(n))
   * We have pushed monad-land into hiding a bit more..
 *)
 
-(* let* exists in Core for Option.bind, lets use it
-  Note we need to open a module to enable macro for Option.bind 
-  And, need #require "ppx_jane" in top loop (or (preprocess (pps ppx_jane)) in dune) 
-  for the macro to expand *)
+(* The conventional syntax for bind is let*, lets make an abbreviation for it: *)
 
 let ( let* ) = Option.bind;;
 
@@ -303,7 +300,6 @@ let ex_piped_expanded l1 l2 =
 
 (* 
   OK it is finally time for an actual monad -- Option extended to a more general Exception monad
-  This example also shows how we can define our own monads with Core.Monad.Make
 
   Invariant: all values in monad-land for this monad are Some/None's.
 
@@ -334,7 +330,7 @@ module Exception = struct
     match m () with 
     | Some x -> x 
     | None -> failwith "monad failed with None"
-  (* Lets get more exception-looking syntax than what is in Core.Option *)
+  (* Lets get more exception-looking syntax than what is in Option *)
   let raise () : 'a t = None (* we can't pass any additional payload to a raise since None has no payload; Ok/Error would though *)
   let try_with (m : 'a t) (f : unit -> 'a t): 'a t =
     match m with 

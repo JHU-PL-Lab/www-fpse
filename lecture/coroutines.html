@@ -163,13 +163,10 @@ In OCaml<br />
 <ul>
   <li>Python has the built-in <a href="https://docs.python.org/3/library/asyncio-task.html">asyncio library</a></li>
   <li>JavaScript has built-in <code>async/await</code> syntax</li>
-  <li>All other commonly-used languages have some third-party library</li>
-</ul>
-
-<p>In OCaml there are currently two competing libraries</p>
-<ul>
-  <li><code>Async</code> - a Jane Street library, very compatible with <code>Core</code> but not widely used so fewer other libraries use it.</li>
-  <li><code>Lwt</code> - the standard library for coroutines in OCaml.</li>
+  <li>
+    <p>All other commonly-used languages have some third-party library</p>
+  </li>
+  <li>In OCaml, <code>Lwt</code> is the standard library for coroutines in OCaml.</li>
   <li>We will cover <code>Lwt</code> since most useful libraries are built over <code>Lwt</code>: <code>Cohttp</code>, <code>Dream</code>, and <code>Opium</code> for example.</li>
 </ul>
 
@@ -227,13 +224,11 @@ In OCaml<br />
 <span class="n">bind</span> <span class="c">(* code to issue image request and pause *)</span> 
      <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* the continuation: processing code to run after this image loaded *)</span> <span class="p">)</span>
 </code></pre></div></div>
-<p>which is, in <code>Core</code>’s <code>let%bind</code> notation,</p>
+<p>which is, in <code>let*</code> notation,</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
-<span class="k">let</span><span class="o">%</span><span class="n">bind</span> <span class="n">img</span> <span class="o">=</span> <span class="c">(* code to issue image request and pause *)</span> <span class="k">in</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">img</span> <span class="o">=</span> <span class="c">(* code to issue image request and pause *)</span> <span class="k">in</span>
   <span class="c">(* processing code to run after this image loaded*)</span>
 </code></pre></div></div>
-
-<p>(Note, <code>Lwt</code> uses <code>let%lwt</code> or <code>let*</code> instead of <code>let%bind</code>; you can view them all as synonyms)</p>
 
 <ul>
   <li>Observe how <code>bind</code> is naturally making the continuation a function</li>
@@ -256,19 +251,19 @@ In OCaml<br />
 <span class="c">(* .. we can do any other processing here .. *)</span>
 <span class="c">(* When we finally need the results of the above we use bind *)</span>
 <span class="c">(* The bind will block if value not there yet: *)</span>
-<span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="n">load1</span> <span class="o">=</span> <span class="n">p1</span> <span class="k">in</span>
-<span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="n">load2</span> <span class="o">=</span> <span class="n">p2</span> <span class="k">in</span> <span class="o">...</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">load1</span> <span class="o">=</span> <span class="n">p1</span> <span class="k">in</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">load2</span> <span class="o">=</span> <span class="n">p2</span> <span class="k">in</span> <span class="o">...</span>
 <span class="c">(* ... we will get to this line once both loads are finished -- promises fulfulled 
    If we had other coroutines they can wake up and run while waiting for these loads
    Note we could have instead used Lwt.choose to get the *first* one completed:
-     let%lwt a_load = Lwt.choose [ p1; p2 ]
+     let* a_load = Lwt.choose [ p1; p2 ]
    For this application Lwt.choose is important to get the advantage of coroutines: block minimally
 *)</span>
 </code></pre></div></div>
 
 <ul>
-  <li>When <code>let%lwt load1 = ...</code> is hit, recall this is a <code>bind</code> and all the rest of the code is in fact a function:<br />
-<code>fun load1 -&gt; let%lwt load2 = p2 in ...</code></li>
+  <li>When <code>let* load1 = ...</code> is hit, recall this is a <code>bind</code> and all the rest of the code is in fact a function:<br />
+<code>fun load1 -&gt; let* load2 = p2 in ...</code></li>
   <li>The monad behind the scenes has a data structure holding this function (aka continuation)</li>
   <li>Other coroutines if any can run while waiting, this code is just sitting</li>
   <li>It will call the continuation when the low-level URL load has completed
@@ -291,7 +286,7 @@ In OCaml<br />
 <p>To run <code>Lwt</code> from <code>utop</code> do</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">require</span> <span class="s2">"lwt"</span><span class="p">;;</span>
 <span class="o">#</span><span class="n">require</span> <span class="s2">"lwt.unix"</span><span class="p">;;</span> <span class="c">(* if you also want Lwt-ized I/O functions like file read/write etc *)</span>
-<span class="o">#</span><span class="n">require</span> <span class="s2">"lwt_ppx"</span><span class="p">;;</span> <span class="c">(* for the let%lwt syntax; need to `opam install lwt_ppx` first *)</span>
+<span class="o">#</span><span class="n">require</span> <span class="s2">"lwt_ppx"</span><span class="p">;;</span> <span class="c">(* for the let* syntax; need to `opam install lwt_ppx` first *)</span>
 </code></pre></div></div>
 
 <p>And you might also want to do this to put the functions at the top level.</p>
@@ -301,19 +296,19 @@ In OCaml<br />
 <h3 id="promise-basics">Promise basics</h3>
 
 <p>This example shows the Lwt version of <code>read_line</code> in action.</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="n">str</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="o">*</span> <span class="n">str</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <ul>
-  <li>This example looks just like the built-in <code>read_line</code> except for the <code>%lwt</code>; here is why <code>Lwt</code> version is better:</li>
+  <li>This example looks just like the built-in <code>read_line</code> except for the <code>*</code>; here is why <code>Lwt</code> version is better:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span>
 <span class="n">printf</span> <span class="s2">"See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Stdio</span><span class="p">.</span><span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span>
-<span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="n">str</span> <span class="o">=</span> <span class="n">p</span> <span class="k">in</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">;;</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">str</span> <span class="o">=</span> <span class="n">p</span> <span class="k">in</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">;;</span>
 </code></pre></div></div>
 
-<p>Lets expand the <code>let%lwt</code> to <code>bind</code> to make this more clear:</p>
+<p>Lets expand the <code>let*</code> to <code>bind</code> to make this more clear:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span>
 <span class="n">printf</span> <span class="s2">"See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Stdio</span><span class="p">.</span><span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span>
 <span class="nn">Lwt</span><span class="p">.</span><span class="n">bind</span> <span class="n">p</span> <span class="p">(</span><span class="k">fun</span> <span class="n">str</span> <span class="o">-&gt;</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">);;</span>
@@ -334,11 +329,11 @@ In OCaml<br />
       </li>
     </ul>
   </li>
-  <li>The <code>let%lwt</code> above is <code>let%bind</code> but for <code>Lwt</code> - syntactic sugar for <code>bind</code>
+  <li>The <code>let*</code> above is <code>let*</code> but for <code>Lwt</code> - syntactic sugar for <code>bind</code>
     <ul>
       <li><code>Lwt</code> is a monad where <code>'a Lwt.t</code> is a promise for a <code>'a</code> value.</li>
-      <li>As in any monad, <code>let%lwt x = &lt;a promise&gt; in .. x normal here .. </code> will take a promise back to normal-land</li>
-      <li>To do this, the <code>in</code> of the <code>let%lwt</code> will need to block until that resolution.</li>
+      <li>As in any monad, <code>let* x = &lt;a promise&gt; in .. x normal here .. </code> will take a promise back to normal-land</li>
+      <li>To do this, the <code>in</code> of the <code>let*</code> will need to block until that resolution.</li>
     </ul>
   </li>
 </ul>
@@ -386,9 +381,9 @@ In OCaml<br />
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span>
     <span class="p">(</span><span class="k">let</span> <span class="n">three_seconds</span> <span class="o">:</span> <span class="kt">unit</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">3</span><span class="o">.</span> <span class="k">in</span>
      <span class="k">let</span> <span class="n">five_seconds</span> <span class="o">:</span> <span class="kt">unit</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">5</span><span class="o">.</span> <span class="k">in</span>
-     <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">three_seconds</span> <span class="k">in</span>
-     <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"3 seconds passed"</span> <span class="k">in</span>
-     <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">five_seconds</span> <span class="k">in</span>
+     <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">three_seconds</span> <span class="k">in</span>
+     <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"3 seconds passed"</span> <span class="k">in</span>
+     <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">five_seconds</span> <span class="k">in</span>
      <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Only 2 more seconds passed"</span><span class="p">)</span>
 </code></pre></div></div>
 
@@ -420,12 +415,12 @@ In OCaml<br />
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="bp">()</span> <span class="o">=</span>
    <span class="k">let</span> <span class="n">p_1</span> <span class="o">=</span>
-     <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">3</span><span class="o">.</span> <span class="k">in</span>
+     <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">3</span><span class="o">.</span> <span class="k">in</span>
      <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Three seconds elapsed"</span>
    <span class="k">in</span>
 
    <span class="k">let</span> <span class="n">p_2</span> <span class="o">=</span>
-     <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">5</span><span class="o">.</span> <span class="k">in</span>
+     <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">5</span><span class="o">.</span> <span class="k">in</span>
      <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Five seconds elapsed"</span>
    <span class="k">in</span>
 
@@ -441,7 +436,7 @@ In OCaml<br />
   </li>
   <li>You can also create promises which can be cancelled; use <code>task</code> instead of <code>wait</code> to make those
     <ul>
-      <li>Any continuations waiting on that promise (e.g. any <code>let%lwt</code> on it) are recursively cancelled</li>
+      <li>Any continuations waiting on that promise (e.g. any <code>let*</code> on it) are recursively cancelled</li>
       <li>See the manual for how you can cancel promises created with <code>task</code>.</li>
     </ul>
   </li>
@@ -459,14 +454,14 @@ In OCaml<br />
  <span class="k">let</span> <span class="k">rec</span> <span class="n">show_nag</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="n">_</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
    <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
    <span class="k">else</span>
-   <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Please enter a line"</span> <span class="k">in</span>
-   <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">1</span><span class="o">.</span> <span class="k">in</span>
+   <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Please enter a line"</span> <span class="k">in</span>
+   <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">1</span><span class="o">.</span> <span class="k">in</span>
    <span class="n">show_nag</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
  <span class="k">in</span>
  <span class="nn">Lwt</span><span class="p">.</span><span class="n">async</span> <span class="p">(</span><span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="n">show_nag</span> <span class="p">(</span><span class="mi">5</span><span class="p">));</span>
 
  <span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span> <span class="k">begin</span>
-   <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="n">line</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.(</span><span class="n">read_line</span> <span class="n">stdin</span><span class="p">)</span> <span class="k">in</span>
+   <span class="k">let</span><span class="o">*</span> <span class="n">line</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.(</span><span class="n">read_line</span> <span class="n">stdin</span><span class="p">)</span> <span class="k">in</span>
    <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="n">line</span>
  <span class="k">end</span>
 </code></pre></div>    </div>
@@ -485,15 +480,15 @@ In OCaml<br />
   <span class="k">let</span> <span class="k">rec</span> <span class="n">handle_io</span> <span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="bp">()</span> <span class="o">=</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
     <span class="k">else</span>
-    <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">".. Imagine we are handling I/O here .."</span> <span class="k">in</span>
-    <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span> <span class="k">in</span>
+    <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">".. Imagine we are handling I/O here .."</span> <span class="k">in</span>
+    <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span> <span class="k">in</span>
     <span class="n">handle_io</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="bp">()</span>
   <span class="k">in</span>
 
   <span class="k">let</span> <span class="k">rec</span> <span class="n">compute</span> <span class="n">n</span> <span class="o">=</span>
     <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
     <span class="k">else</span>
-      <span class="k">let</span><span class="o">%</span><span class="n">lwt</span> <span class="bp">()</span> <span class="o">=</span> <span class="c">(* pause in the below will cause this bind to block and put continuation on queue *)</span>
+      <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="c">(* pause in the below will cause this bind to block and put continuation on queue *)</span>
         <span class="k">if</span> <span class="n">n</span> <span class="ow">mod</span> <span class="mi">1_000_000</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">pause</span> <span class="bp">()</span> <span class="k">else</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
       <span class="k">in</span>
       <span class="n">compute</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>

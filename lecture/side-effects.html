@@ -529,11 +529,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>We will aim for idiomatic use of OCaml exceptions in FPSE: local necessary ones only.</li>
     </ul>
   </li>
-  <li><code>Core</code> discourages over-use of exceptions in its library function signatures
-    <ul>
-      <li>Avoid the <code>blah_exn</code> library functions unless the handler is close by</li>
-    </ul>
-  </li>
 </ul>
 
 <p>There are a few simple built-in exceptions which we used some already:</p>
@@ -585,11 +580,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">g</span> <span class="bp">()</span><span class="p">;;</span>
 </code></pre></div></div>
 
-<h3 id="mutating-data-structures-in-core">Mutating data structures in <code>Core</code></h3>
+<h3 id="mutating-data-structures-in-the-standard-libraries">Mutating data structures in the standard libraries</h3>
 
 <ul>
-  <li>The <code>Stack</code> and <code>Queue</code> modules in <code>Core</code> are <em>mutable</em> data structures.</li>
-  <li>(There are no immutable stack/queue libraries in <code>Core</code> - just use <code>list</code>s)</li>
+  <li>The <code>Stack</code> and <code>Queue</code> modules are <em>mutable</em> data structures.</li>
+  <li>(There are no immutable stack/queue libraries - just use <code>list</code>s)</li>
   <li>(There is also <code>Hash_set</code> which is a (hashed) mutable set and <code>Hashtbl</code> which is a mutable hashtable; more on those later)</li>
   <li>Here is a simple example of playing around with a <code>Stack</code>.</li>
 </ul>

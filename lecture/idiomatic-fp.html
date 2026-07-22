@@ -221,14 +221,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>Use advanced pattern matching (<code>as</code>, <code>with</code>, deep patterns, partial record patterns, <code>_</code>, etc)</li>
-  <li>Use <code>|&gt;</code> in place of call sequences, and make your functions amenable to piping
-    <ul>
-      <li>To have pipes be effective, the best way is to follow <code>Core</code> and name the parameters that are not the underlying data you will often want to pipe on. For example <code>List.filter : 'a list -&gt; f:('a -&gt; bool) -&gt; 'a list</code> and since <code>f</code> named can apply it first to make an <code>'a list -&gt; 'a list</code> function ripe for piping:
-        <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">[</span><span class="mi">2</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="o">-</span><span class="mi">6</span><span class="p">;</span><span class="mi">22</span><span class="p">]</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">is_empty</span> <span class="o">|&gt;</span> <span class="n">not</span><span class="p">;;</span>
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
+  <li>Use <code>|&gt;</code> in place of call sequences when it is elegant, and make your functions amenable to piping (for example that is why <code>List.map</code> has the list parameter last, you can then pipe it in)</li>
   <li>Use <code>@@</code> in place of parentheses</li>
   <li>Inline simple <code>let</code> definitions to make code read as a concise sentence
     <ul>

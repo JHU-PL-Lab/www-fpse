@@ -246,7 +246,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* M is the argument to the Make_set functor *)</span>
 <span class="k">module</span> <span class="nc">Make_set</span> <span class="p">(</span><span class="nc">M</span> <span class="o">:</span> <span class="nc">EQ</span><span class="p">)</span> <span class="o">=</span> <span class="k">struct</span>
   <span class="c">(* In here, we can use M, both it's type t and the equal function. *)</span>
-  <span class="k">open</span> <span class="nc">Core</span>
 
   <span class="c">(* Use M.t to grab the underlying type from module M *)</span>
   <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="c">(* Sets are lists of M.t *)</span>

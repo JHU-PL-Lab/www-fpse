@@ -117,9 +117,6 @@ Here is a shell command that you can run to make the above file for you:
 (echo '#use "topfind";;') >~/.ocamlinit
 ```
 
-<!-- This next instruction is out of date -->
-<!-- To test that your install works, type the shell command `utop`, which will start up an interactive OCaml session (more later on that).  Type `Fn.id;;` into the `utop` prompt followed by return, this is just a test to make sure the `Core` libraries were properly loaded.  If you didn't get an error message you are all good!  Type control-D to quit `utop`. -->
-
 ## OCaml Documentation
 [ocaml.org](https://ocaml.org) is the central repository of OCaml information.
 ### The OCaml Manual

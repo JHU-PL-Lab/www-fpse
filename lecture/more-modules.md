@@ -110,7 +110,6 @@ Now we can write a module for sets, where the type of elements is passed in an a
 (* M is the argument to the Make_set functor *)
 module Make_set (M : EQ) = struct
   (* In here, we can use M, both it's type t and the equal function. *)
-  open Core
 
   (* Use M.t to grab the underlying type from module M *)
   type t = M.t list (* Sets are lists of M.t *)

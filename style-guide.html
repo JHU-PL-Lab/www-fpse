@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="js/jquery.dropotron.min.js"></script>
  <script src="js/skel.min.js"></script>
  <script src="js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
           <li><a href="contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -167,7 +175,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div>    </div>
   </li>
   <li>
-    <p>Use <code>Core</code> modules whenever possible instead of “rolling your own.”  At the end of the day, it’s not worth it to re-invent the wheel when there’s correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.</p>
+    <p>Use library modules whenever possible instead of “rolling your own.”  At the end of the day, it’s not worth it to re-invent the wheel when there’s correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.</p>
   </li>
   <li>Generally you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are important.  Use them judiciously; don’t shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  In order to get used to functional programming you will be required to avoid mutation on all homeworks (but, you can use mutation in your projects if it has a clear advantage).</li>
 </ol>
@@ -181,15 +189,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>
     <p>You should always write an <code>.mli</code> file corresponding to each <code>.ml</code> file that you make.  This enforces separation between interface and implementation (a concept shared by other languages like C++ and Java) and provides the best place to put documentation (see “Documentation” below).  If your <code>.ml</code> file contains a lot of helper functions, <code>.mli</code> functions ensure that they are not exposed to other parts of the codebase, let alone external programs that may use your code as a library.</p>
   </li>
-  <li>Use the <code>open</code> keyword judiciously.  Many style guides will tell you to avoid using <code>open</code> for any module (except for standard libraries like <code>Core</code>); they have a point since opening modules without care can result in unwanted name shadowing, as well as confusion over which function belongs to which module.  However, never opening modules can result in <code>Long.Module_paths.Polluting.Your.codebase</code>.  In general, it is a good idea to use <code>open</code> in a module when:
+  <li>Use the <code>open</code> keyword judiciously.  Many style guides will tell you to avoid using <code>open</code> for any module; they have a point since opening modules without care can result in unwanted name shadowing, as well as confusion over which function belongs to which module.  However, never opening modules can result in <code>Long.Module_paths.Polluting.Your.codebase</code>.  In general, it is a good idea to use <code>open</code> in a module when:
     <ul>
-      <li>The module is a standard library that you want to use throughout your entire environment (e.g. <code>Core</code>).</li>
+      <li>The module is a standard library that you want to use throughout your entire environment</li>
       <li>The module is closely related to the module it’s being opened in (e.g. if you’re opening <code>My_module</code> in <code>my_module_utils.ml</code>).</li>
     </ul>
 
     <p>You should also take advantage of the <code>let open My_Module in ...</code> and <code>My_module.( ... )</code> syntax.  Both features restrict opening the module to the <code>...</code> code, allowing you to have the best of both worlds. For example, <code>String.("hi" = ho")</code> is easier to read than <code>String.(=) "hi" "ho"</code>.</p>
   </li>
-  <li>When making a new data structure, always encapsulate it in its own module.  The type of the underlying data of the module should then be written as <code>t</code> (for “type”), e.g. <code>String_set.t</code> would the type of a set of strings module, not e.g. <code>String_set.string_set_underlying_type</code>.  This may seem to contradict the guideline to give descriptive names, but the descriptiveness is already in the module name.  <code>Core</code> uses this convention: for example <code>Core.Result.t</code> is the <code>Ok/Error</code> variant type, etc.</li>
+  <li>When making a new data structure, always encapsulate it in its own module.  The type of the underlying data of the module should then be written as <code>t</code> (for “type”), e.g. <code>String_set.t</code> would the type of a set of strings module, not e.g. <code>String_set.string_set_underlying_type</code>.  This may seem to contradict the guideline to give descriptive names, but the descriptiveness is already in the module name.  All the standard libraries also use this convention.</li>
 </ol>
 
 <h2 id="naming-conventions">Naming Conventions</h2>

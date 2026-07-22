@@ -29,9 +29,7 @@ Coroutines are found in most modern PLs
  * JavaScript has built-in `async/await` syntax
  * All other commonly-used languages have some third-party library
 
-In OCaml there are currently two competing libraries
- * `Async` - a Jane Street library, very compatible with `Core` but not widely used so fewer other libraries use it.
- * `Lwt` - the standard library for coroutines in OCaml.
+ * In OCaml, `Lwt` is the standard library for coroutines in OCaml.
  * We will cover `Lwt` since most useful libraries are built over `Lwt`: `Cohttp`, `Dream`, and `Opium` for example.
 
 ### Principles of Coroutines
@@ -71,14 +69,12 @@ let img_load url =
 bind (* code to issue image request and pause *) 
      (fun img -> (* the continuation: processing code to run after this image loaded *) )
 ```
-which is, in `Core`'s `let%bind` notation,
+which is, in `let*` notation,
 ```ocaml
 let img_load url =
-let%bind img = (* code to issue image request and pause *) in
+let* img = (* code to issue image request and pause *) in
   (* processing code to run after this image loaded*)
 ```
-
-(Note, `Lwt` uses `let%lwt` or `let*` instead of `let%bind`; you can view them all as synonyms)
 
 * Observe how `bind` is naturally making the continuation a function
 * So we will be using `bind` a lot when writing coroutine code in OCaml
@@ -98,18 +94,18 @@ let p2 = img_load url2 in
 (* .. we can do any other processing here .. *)
 (* When we finally need the results of the above we use bind *)
 (* The bind will block if value not there yet: *)
-let%lwt load1 = p1 in
-let%lwt load2 = p2 in ...
+let* load1 = p1 in
+let* load2 = p2 in ...
 (* ... we will get to this line once both loads are finished -- promises fulfulled 
    If we had other coroutines they can wake up and run while waiting for these loads
    Note we could have instead used Lwt.choose to get the *first* one completed:
-     let%lwt a_load = Lwt.choose [ p1; p2 ]
+     let* a_load = Lwt.choose [ p1; p2 ]
    For this application Lwt.choose is important to get the advantage of coroutines: block minimally
 *)
 ```
 
-* When `let%lwt load1 = ...` is hit, recall this is a `bind` and all the rest of the code is in fact a function:
-  `fun load1 -> let%lwt load2 = p2 in ...`
+* When `let* load1 = ...` is hit, recall this is a `bind` and all the rest of the code is in fact a function:
+  `fun load1 -> let* load2 = p2 in ...`
 * The monad behind the scenes has a data structure holding this function (aka continuation)
 * Other coroutines if any can run while waiting, this code is just sitting
 * It will call the continuation when the low-level URL load has completed
@@ -127,7 +123,7 @@ To run `Lwt` from `utop` do
 ```ocaml
 #require "lwt";;
 #require "lwt.unix";; (* if you also want Lwt-ized I/O functions like file read/write etc *)
-#require "lwt_ppx";; (* for the let%lwt syntax; need to `opam install lwt_ppx` first *)
+#require "lwt_ppx";; (* for the let* syntax; need to `opam install lwt_ppx` first *)
 ```
 
 And you might also want to do this to put the functions at the top level.
@@ -139,18 +135,18 @@ open Lwt;;
 
 This example shows the Lwt version of `read_line` in action.
 ```ocaml
-let%lwt str = Lwt_io.read_line Lwt_io.stdin in Lwt_io.printf "You typed %S\n" str;;
+let* str = Lwt_io.read_line Lwt_io.stdin in Lwt_io.printf "You typed %S\n" str;;
 ```
 
-- This example looks just like the built-in `read_line` except for the `%lwt`; here is why `Lwt` version is better:
+- This example looks just like the built-in `read_line` except for the `*`; here is why `Lwt` version is better:
 
 ```ocaml
 let p = Lwt_io.read_line Lwt_io.stdin in
 printf "See how read not blocking now\n"; Stdio.Out_channel.flush stdout;
-let%lwt str = p in Lwt_io.printf "You typed %S\n" str;;
+let* str = p in Lwt_io.printf "You typed %S\n" str;;
 ```
 
-Lets expand the `let%lwt` to `bind` to make this more clear:
+Lets expand the `let*` to `bind` to make this more clear:
 ```ocaml
 let p = Lwt_io.read_line Lwt_io.stdin in
 printf "See how read not blocking now\n"; Stdio.Out_channel.flush stdout;
@@ -165,10 +161,10 @@ What is going on here?
     - `Return v` means it has been fulfilled with `v` as the value (the input string in above case)
     - `Fail exn` means it failed with exception condition `exn`.
     - Both `Return` and `Fail` are *resolved* (finished) promises
-* The `let%lwt` above is `let%bind` but for `Lwt` - syntactic sugar for `bind`
+* The `let*` above is `let*` but for `Lwt` - syntactic sugar for `bind`
     - `Lwt` is a monad where `'a Lwt.t` is a promise for a `'a` value.
-    - As in any monad, `let%lwt x = <a promise> in .. x normal here .. ` will take a promise back to normal-land
-    - To do this, the `in` of the `let%lwt` will need to block until that resolution.
+    - As in any monad, `let* x = <a promise> in .. x normal here .. ` will take a promise back to normal-land
+    - To do this, the `in` of the `let*` will need to block until that resolution.
 
 Here is a top-loop example showing some of these promise states; code is a bit convoluted to be able to see results.
 
@@ -212,9 +208,9 @@ state p;; (* now a Return "hello" *)
   Lwt_main.run
     (let three_seconds : unit Lwt.t = Lwt_unix.sleep 3. in
      let five_seconds : unit Lwt.t = Lwt_unix.sleep 5. in
-     let%lwt () = three_seconds in
-     let%lwt () = Lwt_io.printl "3 seconds passed" in
-     let%lwt () = five_seconds in
+     let* () = three_seconds in
+     let* () = Lwt_io.printl "3 seconds passed" in
+     let* () = five_seconds in
      Lwt_io.printl "Only 2 more seconds passed")
 ```
 
@@ -238,12 +234,12 @@ Lwt_main.run (return "hello")
 ```ocaml
 let () =
    let p_1 =
-     let%lwt () = Lwt_unix.sleep 3. in
+     let* () = Lwt_unix.sleep 3. in
      Lwt_io.printl "Three seconds elapsed"
    in
 
    let p_2 =
-     let%lwt () = Lwt_unix.sleep 5. in
+     let* () = Lwt_unix.sleep 5. in
      Lwt_io.printl "Five seconds elapsed"
    in
 
@@ -254,7 +250,7 @@ let () =
 * If you use `join` instead of `choose` above it will block until all are resolved.
   - They don't return any value with `join`, unlike with `choose`
 * You can also create promises which can be cancelled; use `task` instead of `wait` to make those
-  - Any continuations waiting on that promise (e.g. any `let%lwt` on it) are recursively cancelled
+  - Any continuations waiting on that promise (e.g. any `let*` on it) are recursively cancelled
   - See the manual for how you can cancel promises created with `task`.
 
 ### Launching a new Coroutine
@@ -269,14 +265,14 @@ let () =
    let rec show_nag (n : int) : _ Lwt.t =
      if n = 0 then Lwt.return ()
      else
-     let%lwt () = Lwt_io.printl "Please enter a line" in
-     let%lwt () = Lwt_unix.sleep 1. in
+     let* () = Lwt_io.printl "Please enter a line" in
+     let* () = Lwt_unix.sleep 1. in
      show_nag (n-1)
    in
    Lwt.async (fun () -> show_nag (5));
 
    Lwt_main.run begin
-     let%lwt line = Lwt_io.(read_line stdin) in
+     let* line = Lwt_io.(read_line stdin) in
      Lwt_io.printl line
    end
 ```
@@ -293,15 +289,15 @@ let () =
   let rec handle_io (n) () =
     if n = 0 then Lwt.return ()
     else
-    let%lwt () = Lwt_io.printl ".. Imagine we are handling I/O here .." in
-    let%lwt () = Lwt_unix.sleep 0.1 in
+    let* () = Lwt_io.printl ".. Imagine we are handling I/O here .." in
+    let* () = Lwt_unix.sleep 0.1 in
     handle_io (n-1) ()
   in
 
   let rec compute n =
     if n = 0 then Lwt.return ()
     else
-      let%lwt () = (* pause in the below will cause this bind to block and put continuation on queue *)
+      let* () = (* pause in the below will cause this bind to block and put continuation on queue *)
         if n mod 1_000_000 = 0 then Lwt.pause () else Lwt.return ()
       in
       compute (n - 1)

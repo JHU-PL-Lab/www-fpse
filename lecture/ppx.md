@@ -25,7 +25,7 @@ val equal_nucleotide : nucleotide -> nucleotide -> bool = <fun>
 
 * We defined our type **and** got the `equal_nucleotide` function for free.
 
-### Composing `deriving equal`
+### Composing `deriving eq`
 
 * If we have an `xyy_equal` function on component types, `deriving` can derive `equal` for a type built from those components. For example equality on *lists* of nucleotides:
 
@@ -37,8 +37,8 @@ val equal_n_list : n_list -> n_list -> bool = <fun>
 # equal_n_list [A;A;A] [A;G;A];;
 - : bool = false
 
-# type n_queue = nucleotide Queue.t [@@deriving equal];;
-type n_queue = nucleotide Core.Queue.t
+# type n_queue = nucleotide Queue.t [@@deriving eq];;
+type n_queue = nucleotide Queue.t
 val equal_n_queue : n_queue -> n_queue -> bool = <fun>
 ```
 
@@ -46,10 +46,10 @@ val equal_n_queue : n_queue -> n_queue -> bool = <fun>
 
 ### Some other useful `@@deriving` macros
 
-* `[@@deriving compare]` is like `equal` except it makes a `compare` function instead of `equal`
+* `[@@deriving ord]` is like `eq` except it makes a `compare` function instead of `equal`
 
 ```ocaml
-# type nucleotide = A | C | G | T [@@deriving compare];;
+# type nucleotide = A | C | G | T [@@deriving ord];;
 type nucleotide = A | C | G | T
 val compare_nucleotide : nucleotide -> nucleotide -> int = fun
 

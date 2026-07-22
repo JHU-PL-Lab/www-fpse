@@ -335,8 +335,8 @@ To make a library module from the <code>string_set.ml</code> file, we include th
 
 <ul>
   <li>If you declared an executable in <code>dune</code> as above, it will make a file <code>set_main.exe</code></li>
-  <li>To run it, you can do <code>dune exec -- ./src/set_main.exe "open Core" src/string_set.ml</code></li>
-  <li>Which is really just <code>_build/default/src/set_main.exe "open Core" src/string_set.ml</code> after building</li>
+  <li>To run it, you can do <code>dune exec -- ./src/set_main.exe "type t = string list" src/string_set.ml</code></li>
+  <li>Which is really just <code>_build/default/src/set_main.exe "type t = string list" src/string_set.ml</code> after building</li>
 </ul>
 
 <h3 id="aside-the-in_channel-library-used-in-this-executable">Aside: the <code>In_channel</code> library used in this executable</h3>

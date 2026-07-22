@@ -66,9 +66,6 @@ let ocaml_annoyance = Fn.id @@ Nonzero(3.2,11.2);; (* so use @@ instead of " " *
 
 * Lets write Hamming distance calculator for DNA
 * Goal beyond using variants is to cover some useful OCaml programming patterns.
-* `[@@deriving equal]` in the below is a *macro* (called a "ppx extension" in OCaml) 
-* It automatically generates a function `equal_nucleotide` (`equal_the-types-name-here` in general)
-* You will need to use this with `Core` since regular `=` will not work on `nucleotide`s.
 
 ```ocaml
 (* Example derived from 
@@ -381,6 +378,6 @@ Error: This expression has type [> `Zuber of float ]
 
 * Generally you should use the non-polymorphic form by default
 * The main advantage of the polymorphic form is sharing tags amongst different types
-   - regular variants like `Ok(4)` *must* be in only one type, `result` for `Ok` in `Core`
+   - regular variants like `Ok(4)` *must* be in only one type, `result` for `Ok` for example.
    - variants like `` `Zanger "f"`` can be in ``[> `Zanger of string ]``, ``[> `Zanger of string | `Zinger of int ]``, etc
    - really OCaml should just have one form; the two forms are historical baggage.

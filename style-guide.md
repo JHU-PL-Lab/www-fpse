@@ -47,7 +47,7 @@ This document would not have been made possible without input of the original FP
     | Error msg -> (* ... *)
     ```
 
-9. Use `Core` modules whenever possible instead of "rolling your own."  At the end of the day, it's not worth it to re-invent the wheel when there's correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.
+9. Use library modules whenever possible instead of "rolling your own."  At the end of the day, it's not worth it to re-invent the wheel when there's correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.
 
 10. Generally you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are important.  Use them judiciously; don't shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  In order to get used to functional programming you will be required to avoid mutation on all homeworks (but, you can use mutation in your projects if it has a clear advantage).
 
@@ -57,13 +57,13 @@ This document would not have been made possible without input of the original FP
 
 1. You should always write an `.mli` file corresponding to each `.ml` file that you make.  This enforces separation between interface and implementation (a concept shared by other languages like C++ and Java) and provides the best place to put documentation (see "Documentation" below).  If your `.ml` file contains a lot of helper functions, `.mli` functions ensure that they are not exposed to other parts of the codebase, let alone external programs that may use your code as a library.
 
-2. Use the `open` keyword judiciously.  Many style guides will tell you to avoid using `open` for any module (except for standard libraries like `Core`); they have a point since opening modules without care can result in unwanted name shadowing, as well as confusion over which function belongs to which module.  However, never opening modules can result in `Long.Module_paths.Polluting.Your.codebase`.  In general, it is a good idea to use `open` in a module when:
-  - The module is a standard library that you want to use throughout your entire environment (e.g. `Core`).
+2. Use the `open` keyword judiciously.  Many style guides will tell you to avoid using `open` for any module; they have a point since opening modules without care can result in unwanted name shadowing, as well as confusion over which function belongs to which module.  However, never opening modules can result in `Long.Module_paths.Polluting.Your.codebase`.  In general, it is a good idea to use `open` in a module when:
+  - The module is a standard library that you want to use throughout your entire environment
   - The module is closely related to the module it's being opened in (e.g. if you're opening `My_module` in `my_module_utils.ml`).
     
     You should also take advantage of the `let open My_Module in ...` and `My_module.( ... )` syntax.  Both features restrict opening the module to the `...` code, allowing you to have the best of both worlds. For example, `String.("hi" = ho")` is easier to read than `String.(=) "hi" "ho"`. 
 
-3. When making a new data structure, always encapsulate it in its own module.  The type of the underlying data of the module should then be written as `t` (for "type"), e.g. `String_set.t` would the type of a set of strings module, not e.g. `String_set.string_set_underlying_type`.  This may seem to contradict the guideline to give descriptive names, but the descriptiveness is already in the module name.  `Core` uses this convention: for example `Core.Result.t` is the `Ok/Error` variant type, etc.
+3. When making a new data structure, always encapsulate it in its own module.  The type of the underlying data of the module should then be written as `t` (for "type"), e.g. `String_set.t` would the type of a set of strings module, not e.g. `String_set.string_set_underlying_type`.  This may seem to contradict the guideline to give descriptive names, but the descriptiveness is already in the module name.  All the standard libraries also use this convention.
 
 
 ## Naming Conventions

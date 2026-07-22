@@ -671,14 +671,12 @@ Note that the <code>accum</code> we call <code>init</code> here since that is th
     <h1 id="let-f-x-y--match-x-with-some-z---z--y--none---y">let f ?x y = match x with Some z -&gt; z + y | None -&gt; y;;</h1>
     <p>val f : ?x:int -&gt; int -&gt; int = <fun></fun></p>
     <h1 id="f-x1-2--give-the-named-argument-here-">f ~x:1 2;; (* give the named argument here *)</h1>
-    <ul>
-      <li>: int = 3
-        <h1 id="f-2--implicitly-not-giving-it-here-so-x-is-none-in-the-body-">f 2;; (* implicitly not giving it here so x is None in the body. *)</h1>
-      </li>
-      <li>: int = 2<br />
-```</li>
-    </ul>
   </li>
+  <li>: int = 3
+    <h1 id="f-2--implicitly-not-giving-it-here-so-x-is-none-in-the-body-">f 2;; (* implicitly not giving it here so x is None in the body. *)</h1>
+  </li>
+  <li>: int = 2<br />
+```</li>
   <li>They can help reduce clutter for an argument that is usually not needed.</li>
 </ul>
       

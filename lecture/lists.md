@@ -480,12 +480,12 @@ let rec fold_left f init l =
   - If you write a function with an optional argument it will show up to you as an `option`-typed object: `Some` (given) or `None` (not given).
 * Many languages now support optional arguments
 * Example of writing a function with an optional argument:
-  ```ocaml
-  # let f ?x y = match x with Some z -> z + y | None -> y;;
-  val f : ?x:int -> int -> int = <fun>
-  # f ~x:1 2;; (* give the named argument here *)
-  - : int = 3
-  # f 2;; (* implicitly not giving it here so x is None in the body. *)
-  - : int = 2
-  ```
+```ocaml
+# let f ?x y = match x with Some z -> z + y | None -> y;;
+val f : ?x:int -> int -> int = <fun>
+# f ~x:1 2;; (* give the named argument here *)
+- : int = 3
+# f 2;; (* implicitly not giving it here so x is None in the body. *)
+- : int = 2
+```
 * They can help reduce clutter for an argument that is usually not needed.

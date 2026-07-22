@@ -184,8 +184,8 @@ This makes an executable out of the `set_main.ml` file.
 ### Running executables
 
 * If you declared an executable in `dune` as above, it will make a file `set_main.exe`
-* To run it, you can do `dune exec -- ./src/set_main.exe "open Core" src/string_set.ml`
-* Which is really just `_build/default/src/set_main.exe "open Core" src/string_set.ml` after building
+* To run it, you can do `dune exec -- ./src/set_main.exe "type t = string list" src/string_set.ml`
+* Which is really just `_build/default/src/set_main.exe "type t = string list" src/string_set.ml` after building
 
 ### Aside: the `In_channel` library used in this executable
 

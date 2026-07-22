@@ -7,7 +7,7 @@ For the projects you are to conceive, design, and implement your own standalone 
 Here are the high-level requirements for the projects.
 
 * All the code must be in OCaml (excepting small bits of glue code, or explicit exceptions if you petition).
-* You must use the standard course libraries -- `Core`, `Lwt`, `OUnit2` etc -- as your basis, plus any other libraries you find useful.
+* You must use the standard course libraries -- ``, `Lwt`, `OUnit2` etc -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 2-4 people.
 * OCaml excels for non-trivial algorithms, and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.
 * You are also **required** to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
@@ -82,7 +82,7 @@ E.g.
 >
 >We are going to make a Rubik's Cube solver for the 4x4x4 Rubik's Cube where the user inputs their cube through a web frontend, and they get back a sequence of moves to solve the cube.
 >
->To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use Core because the Rubik's Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.
+>To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use the standard libraries because the Rubik's Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.
 
 This submission will count for very little; its purpose is just to get your group off the ground, and to give us some direction on who to assign as your group advisor.
 

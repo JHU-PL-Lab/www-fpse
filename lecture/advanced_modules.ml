@@ -169,37 +169,27 @@ let _ : int =
 
 (* ************************************************************************** *)
 
-(* ******************************************************** *)
-(* First-class modules in the Core data structure libraries *)
-(* ******************************************************** *)
+(* ************************************************************ *)
+(* First-class modules in the standard data structure libraries *)
+(* ************************************************************ *)
 
 (* Warm-up with review of Map.Make
 
-   When we previously discussed Core.Map etc we suggested to use Map.Make to 
-   make a Map over a particular type of key 
+   When we previously discussed Map etc we showed how to use Map.Make to make
+   maps over a certain type of data.
 
    Here is the module type of Map.Make:
 
    #show Map.Make;;
    module Make :
-   functor (Key : Core.Map.Key) -> sig (* .. tons of stuff *) end
+   functor (Ord : Map.OrderedType) -> sig (* .. tons of stuff *) end
 
-   So let us look at what the module type Core.Map.Key is, i.e. what we need to provide
-   e.g. see https://ocaml.org/p/core/latest/doc/Core/Map_intf/module-type-Key/index.html 
+   So let us look at what the module type Map.OrderedType is:
 
-   #show Map.Key;;
-    module type Key = Core__.Map_intf.Key
-    module type Key = Core.Map_intf.Key
-    module type Key =
-  sig
-    type t
-    val compare : t Base.Exported_for_specific_uses.Ppx_compare_lib.compare
-    val t_of_sexp : Sexp.t -> t
-    val sexp_of_t : t -> Sexp.t
-  end
+   #show Map.OrderedType;;
+   module type OrderedType = sig type t val compare : t -> t -> int end
 
-   - it needs `compare` and to/from s-expression stuff.  So let us use `[@@deriving]` to make those.
-      (as we had done earlier, still reviewing here):
+   - it needs `compare`.  One easy way to get that is with @@deriving ord:
 *)
 
 module IntPair = struct
