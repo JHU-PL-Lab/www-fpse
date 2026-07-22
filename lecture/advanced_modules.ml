@@ -2,7 +2,7 @@
 (* More on types, modules, functors and hiding *)
 (* ******************************************* *)
 
-(* Will need #require "ppx_deriving.std" in top loop (which is in our course default .ocamlinit)
+(* Will need #require "ppx_deriving.std" in top loop
    and (preprocess (pps ppx_deriving.std) line in dune for this file to work *)
 
 (* Review: the Big Picture of what is unique in OCaml types
@@ -194,6 +194,12 @@ let _ : int =
 
 module IntPair = struct
   type t = int * int [@@deriving ord]
+end
+
+(* Note that defining compare yourself is also not very hard in such a simple case.. *)
+module IntPair = struct
+  type t = int * int
+  let compare (x:t) (y:t) = compare x y
 end
 
 module PairMap = Map.Make(IntPair)
