@@ -256,7 +256,7 @@ Suppose we made a module out of our previous nucleotide example, either by putti
 
 ```ocaml
 module Nucleotide = struct
-  type t = A | C | G | T [@@deriving equal]
+  type t = A | C | G | T [@@deriving eq]
 
   let hamming_distance l = failwith "dummy"
 end

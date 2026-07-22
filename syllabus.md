@@ -24,7 +24,7 @@ This is the preliminary list of proposed lecture topics and readings. See the [d
 * Review of testing principles
 * Unit testing with `OUnit2`
 * Code coverage with `Bisect`
-* Random testing with `Base_quickcheck`
+* Random testing with `QCheck`
 
 ### Idiomatic Functional Programming
 * Functional programming principles: concision, modularity, avoiding effects

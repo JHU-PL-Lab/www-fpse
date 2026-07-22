@@ -967,7 +967,7 @@ let _ : int list list = run (permut [1;2;3])
 
 (* Continuations, super briefly *)
 
-type 'a t = ('a -> 'a monad_result) -> 'a monad_result
+type 'a cont = ('a -> 'a monad_result) -> 'a monad_result
 (* 
    - the ('a -> 'a monad_result) is the continuation, the "rest of the computation"
    - Notice the type, we are one level higher in the function type now

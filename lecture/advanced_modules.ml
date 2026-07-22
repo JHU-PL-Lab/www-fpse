@@ -197,7 +197,7 @@ module IntPair = struct
 end
 
 (* Note that defining compare yourself is also not very hard in such a simple case.. *)
-module IntPair = struct
+module IntPairAlt = struct
   type t = int * int
   let compare (x:t) (y:t) = compare x y
 end
