@@ -20,19 +20,19 @@ See [the OPAM install page](https://opam.ocaml.org/doc/Install.html) for further
 
 ### Mac
 
-You may follow the Linux instructions above or use [Homebrew](https://brew.sh) (a package manager for Linux-ish libraries).
-
-If you do not have Homebrew yet, then install it with this line (taken from the Homebrew website):
+For Mac users it requires [Homebrew](https://brew.sh), a package manager for Linux-ish libraries.  If you don't have homebrew installed yet type the shell command
 
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-Now run
+to install it.  Once you have it installed, type
 
 ```
 brew update; brew install gpatch; brew install opam
 ```
+
+to install opam using homebrew.
 
 ### Windows
 

@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="js/jquery.dropotron.min.js"></script>
  <script src="js/skel.min.js"></script>
  <script src="js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
           <li><a href="contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -118,7 +126,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>For the homeworks, you are welcome to work on assignments with other students in the class; however, you must not simply copy/paste (or, copy/paste/minor edit) from another person’s answer. In other words, while you can work closely together on a problem you each must produce your <em>own</em> answers with your <em>own</em> hands/fingers. A good place to draw the line here is to never email or otherwise electronically share any files, or a photo of any screen/printout, with other students. Eyeball sharing on the other hand is fine.</li>
   <li>For the homeworks, you <em>must</em> list any other student that you worked closely with on the homework. This is equivalent to how a good researcher gives citatations for any articles they used in writing their own paper.</li>
   <li>Some of the programming assignments may be auto-graded. There are ways to subvert the auto-grader but any such action is unethical. Please do not attempt to circumvent or otherwise hack it.</li>
-  <li>For some of the questions there are online tools (ChatGPT, Google, etc) that might be able to give you an answer.  However you must solve them yourself as that is how you are going to learn the material.  Pasting a homework question (or something substantially similar to the homework question) into ChatGPT or similar tool constitutes cheating, as does pasting/tweaking answers from a search in one of these tools into your solution.  See <a href="https://arxiv.org/abs/2506.08872">this article</a> for a study with brain scans showing how significant ChatGPT use radically decreases the formation of new neural connections (i.e., learning).  It is fine to use search tools for reference of course, just not problem-solving.</li>
+  <li>For many of the questions there are online tools (ChatGPT, Google, etc) that can easily give you an answer.  However you must solve them yourself: that is how you are going to learn the material.  Pasting a homework question (or something substantially similar to the homework question) into ChatGPT or similar tool constitutes cheating, as does pasting/tweaking answers from a search in one of these tools into your solution.  See <a href="https://arxiv.org/abs/2506.08872">this article</a> for a study with brain scans showing how significant ChatGPT use radically decreases the formation of new neural connections (i.e., learning).  It is fine to use AI tools for reference and debugging, just don’t use them for the meat of the problem or you will not make those neural connections.</li>
+  <li>The course projects have their own distinct policy on AI use, see the project description for more information.</li>
   <li>Cheating is immoral. Cheaters that are caught will be punished as is required under University policy. Please report all instances of cheating you see to the professor.</li>
   <li>Clear-cut cases of cheating will be reported to the Undergraduate Academic Ethics Board, or to the WSE Dean if the student is a graduate student. If a student is found guilty, this information is    placed on their permanent academic record and suspension or expulsion may result.</li>
   <li>If some action seems a grey area to you, <em>please ask first</em> before proceeding!</li>
