@@ -1,9 +1,8 @@
 utop # 3+4;;
 - : int = 7
 
-open Core;; (* Make the Core libraries directly available *)
 let hw = "hello" ^ "world";;
-printf "the string is %s\n" hw
+Printf.printf "the string is %s\n" hw
 
 3 + 4;; (* outputs `- : int = 7` -- the value is 7, int is the type, "-" means no name given *)
 let x = 3 + 4;; (* outputs `val x : int = 7` - give the result value a name, via let. *)
@@ -14,7 +13,7 @@ let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
 let b = true;;
 b && false;;
 true || false;;
-1 = 2;; (* = not == for equality comparison; note = works on ints only in our OCaml setup *)
+1 = 2;; (* = not == for equality comparison - ! Can compare at any type with = *)
 1 <> 2;;  (* <>, not !=, for not equal *)
 
 4.5;; (* floats *)
@@ -59,9 +58,6 @@ add3 (3 * 2);;
 add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - application binds TIGHTER than `*` *)
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like " " for application BUT binds LOOSER than all other ops *)
 
-3.4 = 4.2;; (* errors, = only works on ints with the Core library in use *)
-Float.(3.3 = 4.4);; (* Solution: use the Float module's = function for floats, "Float.(...)" opens it in the ... *)
-
 Some 5;;
 - : int option = Some 5
 
@@ -91,42 +87,50 @@ let z = [2; 4; 6];;
 let y = 0 :: z;; (* in y, 0 is the *head* (first elt) of the list and z is the *tail* (rest of list) *)
 z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
 
-let tl_exn l =
-  match l with
-  |  [] -> invalid_arg "empty lists have no tail"
-  |  hd :: tl -> tl  (* the pattern ht :: tl  binds hd to the first elt (left subtree), tl to ALL the others (right subtree) *)
-;;
-let l = [1;2;3];; 
-let l' = tl_exn l;;
-l;; (* Note: lists are immutable, so l didn't change *)
-let l'' =  tl_exn l' (* To get tail of tail, take tail of l' ..  THREAD the state! *)
-tl_exn [];; (* Raises an `invalid_arg` exception if the list had no tail *)
-
 let tl l =
   match l with
-  |  [] -> Error "empty list has no tail"
-  |  hd :: tl -> Ok tl
+  |  [] -> invalid_arg "empty lists have no tail"
+  |  h :: t -> t  (* the pattern h :: t  binds h to the first elt (left subtree), t to ALL the others (right subtree) *)
 ;;
 let l = [1;2;3];; 
 let l' = tl l;;
-tl [];;
-let l'' = tl l' (* Oops this fails!  As in the div example above need to case on `Ok/Error` *)
+l;; (* Note: lists are immutable, so l didn't change *)
+let l'' =  tl l' (* To get tail of tail, take tail of l' ..  THREAD the state! *)
+tl [];; (* Raises an `invalid_arg` exception if the list had no tail *)
 
-let rec nth_exn l n =
+let tl' l =
+  match l with
+  |  [] -> Error "empty list has no tail"
+  |  h :: t -> Ok t
+;;
+let l = [1;2;3];; 
+let l' = tl' l;;
+tl' [];;
+let l'' = tl' l' (* Oops this fails!  As in the div example above need to case on `Ok/Error` *)
+
+let rec nth l n =
   match l with
   |  [] -> invalid_arg "there is no nth element in this list"
   |  hd :: tl -> if n = 0 then hd else nth_exn tl (n-1) (* "the nth element of l is the (n-1)-th element of tl" *)
 ;;
-nth_exn [33;22;11] 1;;
-nth_exn [33;22;11] 3;;
+nth [33;22;11] 1;;
+nth [33;22;11] 3;;
 
 # List.nth [1;2;3] 2;;
-- : int option = Some 3
+- : int = 3
+
+# List.nth [1;2;3] 5;;
+Exception: Failure "nth".
+
+# List.nth_opt [1;2;3] 5;;
+- : int option = None
+# List.nth_opt [1;2;3]1;;
+- : int option = Some 2
 
 let rec zero_negs l =
   match l with
   |  [] -> []
-  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl(* can assume by induction that zero_negs tl will properly zero tl *)
+  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl (* can assume by induction that zero_negs tl will properly zero tl *)
 ;;
 
 zero_negs [1;-2;3];;
