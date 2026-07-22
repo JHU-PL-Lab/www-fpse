@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="../js/jquery.dropotron.min.js"></script>
  <script src="../js/skel.min.js"></script>
  <script src="../js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(../images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="../assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="../assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="../assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
           <li><a href="../contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -124,7 +132,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Mutatable state - <em>changing</em> the contents of a memory location intead of making a new one
     <ul>
       <li>Three built-in sorts in OCaml: references, mutable record fields, and arrays.</li>
-      <li>Plus many libraries: <code>Stack</code>, <code>Queue</code>, <code>Hashtbl</code>, <code>Hash_set</code>, etc</li>
+      <li>Plus many libraries: <code>Stack</code>, <code>Queue</code>, <code>Hashtbl</code>, etc</li>
       <li>Faster because rebuilding avoided, but slower due to impossibility of sharing sub-components</li>
     </ul>
   </li>
@@ -204,19 +212,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 <span class="o">#</span> <span class="p">(</span><span class="o">:=</span><span class="p">);;</span> <span class="c">(* returns unit; has the side effect of assignment to LHS *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">ref</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
-<span class="o">#</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">set</span><span class="p">;;</span> <span class="c">(* returns unit, so it has the side effect of assignment *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span><span class="o">,</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="nn">Core</span><span class="p">.</span><span class="nn">Hashtbl</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">key</span><span class="o">:</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">data</span><span class="o">:</span><span class="k">'</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">add</span><span class="p">;;</span> <span class="c">(* returns unit, so it has the side effect of assignment *)</span>
+ <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span><span class="o">,</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
 <ul>
-  <li><code>Hashtbl.set</code> returns <code>unit</code> so it must be a mutable data structure.</li>
+  <li><code>Hashtbl.add</code> returns <code>unit</code> so it must be a mutable data structure.</li>
   <li>On the flip side, functions taking <code>unit</code> as argument are often also only performing side effects.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">create</span><span class="p">;;</span> <span class="c">(* takes unit, so it is making a new mutable data structure *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="nn">Core</span><span class="p">.</span><span class="nn">Stack</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 <span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">create</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* Note the convention of putting a space here *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak1</span> <span class="nn">Core</span><span class="p">.</span><span class="nn">Stack</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span> <span class="c">(* Its abstract, we can't see internals.. more on weak types soon *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak1</span>  <span class="nn">Stack</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span> <span class="c">(* Its abstract, we can't see internals.. more on weak types soon *)</span>
 </code></pre></div></div>
 
 <h3 id="variables-are-still-themselves-immutable">Variables are still themselves immutable</h3>
@@ -395,10 +403,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>There’s no need to compare entire structures if their memory addresses are identical.</li>
     </ul>
   </li>
-  <li><code>phys_equal</code> is <code>Core</code>’s notion for for “same pointer” (use <code>==</code> in non-Core).</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="n">phys_equal</span> <span class="mi">2</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* memory layout of 2 is always the same *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* memory layout of 2 is always the same *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">true</span>
 
 <span class="o">#</span> <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">4</span><span class="p">;;</span>
@@ -407,28 +414,28 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">#</span> <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">;;</span> <span class="c">(* make y an alias for x *)</span>
 <span class="k">val</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">contents</span> <span class="o">=</span> <span class="mi">4</span><span class="p">}</span>
 
-<span class="o">#</span> <span class="n">phys_equal</span> <span class="n">x</span> <span class="n">y</span><span class="p">;;</span>
+<span class="o">#</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">true</span> <span class="c">(* same pointer *)</span>
 
 <span class="o">#</span> <span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* new cell. totally different from x and y *)</span>
 <span class="k">val</span> <span class="n">z</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">contents</span> <span class="o">=</span> <span class="mi">4</span><span class="p">}</span>
 
-<span class="o">#</span> <span class="n">phys_equal</span> <span class="n">x</span> <span class="n">z</span><span class="p">;;</span>
+<span class="o">#</span> <span class="n">x</span> <span class="o">==</span> <span class="n">z</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span> <span class="c">(* different pointers *)</span>
 </code></pre></div></div>
 
-<p>We can use <code>phys_equal</code> to see that data is shared in functional data structures.</p>
+<p>We can use <code>==</code> to see that data is shared in functional data structures.</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">big_list</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">init</span> <span class="mi">10000</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">big_list</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">init</span> <span class="mi">10000</span> <span class="nn">Fun</span><span class="p">.</span><span class="n">id</span> <span class="p">;;</span>
 
 <span class="o">#</span> <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">::</span> <span class="n">big_list</span> <span class="p">;;</span>
 
 <span class="o">#</span> <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">11</span> <span class="o">::</span> <span class="n">big_list</span> <span class="p">;;</span>
 
-<span class="o">#</span> <span class="n">phys_equal</span> <span class="n">x</span> <span class="n">y</span> <span class="p">;;</span>
+<span class="o">#</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span> <span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span> 
 
-<span class="o">#</span> <span class="n">phys_equal</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">tl_exn</span> <span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">tl_exn</span> <span class="n">y</span><span class="p">)</span> <span class="p">;;</span>
+<span class="o">#</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">tl_exn</span> <span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">tl_exn</span> <span class="n">y</span><span class="p">)</span> <span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">true</span> <span class="c">(* the tails are physically identical, they are big_list *)</span>
 </code></pre></div></div>
 
@@ -492,7 +499,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">arrhi</span> <span class="o">=</span> <span class="nn">Array</span><span class="p">.</span><span class="n">create</span> <span class="o">~</span><span class="n">len</span><span class="o">:</span><span class="mi">10</span> <span class="s2">"hi"</span><span class="p">;;</span> <span class="c">(* length and initial value *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">arrhi</span> <span class="o">=</span> <span class="nn">Array</span><span class="p">.</span><span class="n">init</span> <span class="mi">10</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="s2">"hi"</span><span class="p">);;</span> <span class="c">(* length and initial value maker *)</span>
 
 <span class="k">let</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="o">|</span> <span class="mi">4</span><span class="p">;</span> <span class="mi">3</span><span class="p">;</span> <span class="mi">2</span> <span class="o">|</span><span class="p">];;</span> <span class="c">(* make a literal array *)</span>
 
@@ -503,9 +510,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">arr</span><span class="p">;;</span> <span class="c">(* see that arr has changed *)</span>
 
 <span class="c">(* Don't use for loops for arrays, use your favorite iterators: *)</span>
-<span class="nn">Array</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">arr</span><span class="p">;;</span> <span class="c">(* standard map - produces a new array *)</span>
+<span class="nn">Array</span><span class="p">.</span><span class="n">map</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">arr</span><span class="p">;;</span> <span class="c">(* standard map - produces a new array *)</span>
 
-<span class="nn">Array</span><span class="p">.</span><span class="n">map_inplace</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">arr</span><span class="p">;;</span> <span class="c">(* This *changes* the array using the map function *)</span>
+<span class="nn">Array</span><span class="p">.</span><span class="n">map_inplace</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">arr</span><span class="p">;;</span> <span class="c">(* This *changes* the array using the map function *)</span>
 
 <span class="c">(* Here are some conversions *)</span>
 <span class="k">let</span> <span class="n">a</span> <span class="o">=</span> <span class="nn">Array</span><span class="p">.</span><span class="n">of_list</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span>
@@ -537,8 +544,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Also there are library functions we covered that raise exceptions</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip_exn</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">]</span> <span class="p">[</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">];;</span>
-<span class="nc">Exception</span><span class="o">:</span> <span class="p">(</span><span class="nc">Invalid_argument</span> <span class="s2">"length mismatch in zip_exn: 2 &lt;&gt; 3"</span><span class="p">)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">combine</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">]</span> <span class="p">[</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">4</span><span class="p">];;</span>
+<span class="nc">Exception</span><span class="o">:</span> <span class="nc">Invalid_argument</span> <span class="s2">"List.combine"</span><span class="o">.</span>
 </code></pre></div></div>
 
 <h3 id="ocaml-syntax-for-defining-raising-and-handling-exceptions">OCaml syntax for defining raising and handling exceptions</h3>
@@ -588,45 +595,40 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">create</span><span class="bp">()</span><span class="p">;;</span>
-<span class="k">val</span> <span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak1</span> <span class="nn">Core</span><span class="p">.</span><span class="nn">Stack</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span> <span class="c">(* Stack.t is the underlying implementation and is hidden *)</span>
+<span class="k">val</span> <span class="n">s</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak1</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span> <span class="c">(* Stack.t is the underlying implementation and is hidden *)</span>
 
-<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">push</span> <span class="n">s</span> <span class="s2">"hello"</span><span class="p">;;</span>
+<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">push</span> <span class="s2">"hello"</span> <span class="n">s</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span> <span class="c">(* returns unit because s is mutated *)</span>
 
-<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">push</span> <span class="n">s</span> <span class="s2">"hello again"</span><span class="p">;;</span>
+<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">push</span> <span class="s2">"hello again"</span> <span class="n">s</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
 
-<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">push</span> <span class="n">s</span> <span class="s2">"hello one more time"</span><span class="p">;;</span>
+<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">push</span> <span class="s2">"hello one more time"</span> <span class="n">s</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
 
-<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">to_list</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* a handy function to see what is there; top on left *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"hello one more time"</span><span class="p">;</span> <span class="s2">"hello again"</span><span class="p">;</span> <span class="s2">"hello"</span><span class="p">]</span>
-
-<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop</span> <span class="n">s</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="s2">"hello one more time"</span>
-
-<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop_exn</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* exception raised if empty here *)</span>
+<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* exception raised if empty here *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s2">"hello again"</span> <span class="c">(* s changed from the last pop, so this pop is different! *)</span>
 
-<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop_exn</span> <span class="n">s</span><span class="p">;;</span>
+<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop</span> <span class="n">s</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s2">"hello"</span>
 
 <span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop</span> <span class="n">s</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span>
+<span class="nc">Exception</span><span class="o">:</span> <span class="nn">Stdlib</span><span class="p">.</span><span class="nn">Stack</span><span class="p">.</span><span class="nn">Empty</span><span class="p">.</span>
 
-<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">exists</span> <span class="n">s</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="nn">String</span><span class="p">.</span><span class="n">is_substring</span> <span class="n">s</span> <span class="s2">"time"</span><span class="p">);;</span> <span class="c">(* Stack has folds, maps, etc too *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span>
+<span class="err">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop_opt</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* altenative interface to return an option and avoid exceptions *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span>
 </code></pre></div></div>
 
 <h3 id="summing-up-effects-with-an-example-a-parentheses-matching-function">Summing Up Effects With an Example: A Parentheses Matching Function</h3>
 
 <ul>
   <li>To show how to use effects and some of the trade-offs, we look at a small example</li>
-  <li>See file <a href="../examples/random-examples/matching.ml">matching.ml</a> which has several versions of a simple parenthesis matching function</li>
+  <li>See file <a href="../examples/match/match.ml">match.ml</a>/<a href="../examples/zips/match.zip">match.zip</a> which has several versions of a simple parenthesis matching function</li>
   <li>It shows uses of <code>Stack</code>, and some trade-offs of using exceptions vs option type.</li>
   <li>Lastly there is a pure functional version which is arguably simpler</li>
   <li>Yes, you <strong>don’t</strong> need that mutation!</li>
 </ul>
+
       
           </section>
         </div>

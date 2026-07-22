@@ -3,22 +3,24 @@
 ### Lecture Schedule
 
 Lectures will be 1:30-2:45 on Mondays and Wednesdays in Krieger 170.
+
 ### Syllabus
 
 See the [Dateline](dateline.html) for the schedule and the topics that will be covered.
+
+### Courselore Q&A board
+
+We will be using the [Courselore Q&A board](https://courselore.org/courses/TBA) for online discussions. A registration link will be emailed if you are either registered or on the wait list, and the link will also be posted as an announcement on Canvas if you signed up late and missed the email.  All information not on this website, such as locations of Panopto recordings, office hours, etc will be posted on Courselore.
+
+Note we are not using Canvas for anything so don't look there for anything other than the initial Courselore sign-up link.
 
 ### Gradescope
 
 [Gradescope](https://gradescope.com) will be used for assignment submission and grade posting. See Courselore for the entry code.
 
-### Courselore Q&A board
-
-We will be using the [Courselore Q&A board](https://courselore.org/courses/1192943254) for online discussions. A registration link will be emailed if you are either registered or on the wait list, and the link will also be posted as an announcement on Canvas if you signed up late and missed the email.  All information not on this website, such as locations of Panopto recordings, office hours, etc will be posted on Courselore.
-
-Note we are not using Canvas for anything so don't try accessing things like Gradescope or Panopto from within there as it probably won't work.
-
 ### Lecture Videos
-Lectures will be recorded and the Panopto page for those recordings will be posted on Courselore.
+
+Lectures will be recorded and posted on Panopto [here](https://jh.hosted.panopto.com/Panopto/Pages/Sessions/List.aspx?folderID=8ce933ef-6e94-415c-88db-b48f00d2ef53).  Anyone at JHU can access them.
 
 ### Assignments
 
@@ -31,7 +33,7 @@ There will be around half a dozen graded in-class exercises to test your OCaml a
 
 ### Exams
 
-There will be no exam.  There will be a quiz around 2/3rds of the way through the course.
+There will be an in-class Exam around 2/3rds of the way through the course.
 
 ### Project
 
@@ -39,7 +41,7 @@ There will be an independent team project at the end of the course worth around 
 
 ### Grades
 
-Grades will be computed approximately as follows: 50% for projects, 20% for homeworks, 10% for the in-class exercises, and 20% for the quiz.  There is no curve but the cutoffs can shift based on assignment difficulty; you can assume they will probably be at or close to the standard 90-80-70 for A/B/C based on previous years.
+Grades will be computed approximately as follows: 50% for projects, 20% for homeworks, 10% for the in-class exercises, and 20% for the Exam.  There is no curve but the cutoffs can shift based on assignment difficulty; you can assume they will probably be at or close to the standard 90-80-70 for A/B/C based on previous years.
 
 ### Collaboration
 

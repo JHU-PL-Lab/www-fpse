@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="../js/jquery.dropotron.min.js"></script>
  <script src="../js/skel.min.js"></script>
  <script src="../js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(../images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="../assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="../assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="../assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
           <li><a href="../contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -117,7 +125,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>See <a href="https://pl.cs.jhu.edu/fpse/coding.html">the Coding page</a> for install instructions and lots of other information.</li>
-  <li>Make sure to use the required version of OCaml, 5.3.0, install all the libraries listed via <code>opam</code>, and change your <code>.ocamlinit</code> file as mentioned on that page.
+  <li>Make sure to use the required version of OCaml, 5.5.1, install all the libraries listed via <code>opam</code>, and change your <code>.ocamlinit</code> file as mentioned on that page.
     <ul>
       <li>This will let us all “play in the same sandbox” and avoid confusion</li>
     </ul>
@@ -160,9 +168,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>In OCaml it is useful to live in <strong>both worlds</strong>: both play with code in a top loop, <em>and</em> use a compiler to compile it to a binary.</li>
   <li>Let’s cover how we will compile in OCaml.  Suppose the following is in a file <code>helloworld.ml</code>:
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span> <span class="c">(* Make the Core libraries directly available *)</span>
-<span class="k">let</span> <span class="n">hw</span> <span class="o">=</span> <span class="s2">"hello"</span> <span class="o">^</span> <span class="s2">"world"</span><span class="p">;;</span>
-<span class="n">printf</span> <span class="s2">"the string is %s</span><span class="se">\n</span><span class="s2">"</span> <span class="n">hw</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">hw</span> <span class="o">=</span> <span class="s2">"hello"</span> <span class="o">^</span> <span class="s2">"world"</span><span class="p">;;</span>
+<span class="nn">Printf</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"the string is %s</span><span class="se">\n</span><span class="s2">"</span> <span class="n">hw</span>
 </code></pre></div>    </div>
   </li>
   <li>(The actual compiler is <code>ocamlc</code> or <code>ocamlopt</code>, but we will never be directly invoking it)</li>
@@ -172,7 +179,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>             <span class="c1">; create an executable</span>
 <span class="p">(</span><span class="nf">name</span> <span class="nv">helloworld</span><span class="p">)</span>     <span class="c1">; need to give it a name</span>
 <span class="p">(</span><span class="nf">modules</span> <span class="nv">helloworld</span><span class="p">)</span>  <span class="c1">; it consists of just one module, helloworld.ml</span>
-<span class="p">(</span><span class="nf">libraries</span> <span class="nv">core</span><span class="p">)</span>      <span class="c1">; indicates that the core libraries are used</span>
 <span class="p">)</span>
 </code></pre></div>    </div>
   </li>
@@ -182,7 +188,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>All of the results are placed in a new <code>_build/</code> sub-directory</li>
   <li>Then, run with <code>dune exec ./helloworld.exe</code> - same as typing <code>_build/default/helloworld.exe</code></li>
   <li>We will be using <code>dune</code> to build libraries and binaries, and <code>utop</code> to play with them.</li>
-  <li>If you want to try these commands yourself the above <code>helloworld.ml</code> and dune files are in <a href="helloworld.zip">this zip</a>, just unzip and the <code>dune</code> commands above should work from within the <code>helloworld</code> directory.</li>
+  <li>If you want to try these commands yourself the above <code>helloworld.ml</code> and dune files are in <a href="../examples/helloworld.zip">this zip</a>, just unzip and the <code>dune</code> commands above should work from within the <code>helloworld</code> directory.</li>
 </ul>
 
 <h3 id="ocaml-language-basics-in-utop">OCaml Language Basics in <code>utop</code></h3>
@@ -205,7 +211,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">b</span> <span class="o">=</span> <span class="bp">true</span><span class="p">;;</span>
 <span class="n">b</span> <span class="o">&amp;&amp;</span> <span class="bp">false</span><span class="p">;;</span>
 <span class="bp">true</span> <span class="o">||</span> <span class="bp">false</span><span class="p">;;</span>
-<span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* = not == for equality comparison; note = works on ints only in our OCaml setup *)</span>
+<span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* = not == for equality comparison - ! Can compare at any type with = *)</span>
 <span class="mi">1</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">;;</span>  <span class="c">(* &lt;&gt;, not !=, for not equal *)</span>
 </code></pre></div></div>
 
@@ -295,15 +301,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">add3</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* NOT the previous - this is the same as (add3 3) * 2 - application binds TIGHTER than `*` *)</span>
 <span class="n">add3</span> <span class="o">@@</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* LIKE the original - @@ is like " " for application BUT binds LOOSER than all other ops *)</span>
 </code></pre></div></div>
-
-<ul>
-  <li><code>=</code> is also a 2-argument function; it is somewhat strange in our <code>Core</code> OCaml on non-ints:
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">3</span><span class="o">.</span><span class="mi">4</span> <span class="o">=</span> <span class="mi">4</span><span class="o">.</span><span class="mi">2</span><span class="p">;;</span> <span class="c">(* errors, = only works on ints with the Core library in use *)</span>
-<span class="nn">Float</span><span class="p">.(</span><span class="mi">3</span><span class="o">.</span><span class="mi">3</span> <span class="o">=</span> <span class="mi">4</span><span class="o">.</span><span class="mi">4</span><span class="p">);;</span> <span class="c">(* Solution: use the Float module's = function for floats, "Float.(...)" opens it in the ... *)</span>
-</code></pre></div>    </div>
-  </li>
-  <li>Why this apparent ugliness?  Pay a price here but reap rewards later of never having the wrong notion of <code>=</code>.</li>
-</ul>
 
 <h3 id="simple-structured-data-types-option-and-result">Simple Structured Data Types: Option and Result</h3>
 
@@ -463,31 +460,31 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Key to analyzing lists is pattern matching via <code>match</code>, breaking list into head and tail portions</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl_exn</span> <span class="n">l</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">invalid_arg</span> <span class="s2">"empty lists have no tail"</span>
-  <span class="o">|</span>  <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">tl</span>  <span class="c">(* the pattern ht :: tl  binds hd to the first elt (left subtree), tl to ALL the others (right subtree) *)</span>
+  <span class="o">|</span>  <span class="n">h</span> <span class="o">::</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>  <span class="c">(* the pattern h :: t  binds h to the first elt (left subtree), t to ALL the others (right subtree) *)</span>
 <span class="p">;;</span>
 <span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> 
-<span class="k">let</span> <span class="n">l'</span> <span class="o">=</span> <span class="n">tl_exn</span> <span class="n">l</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">l'</span> <span class="o">=</span> <span class="n">tl</span> <span class="n">l</span><span class="p">;;</span>
 <span class="n">l</span><span class="p">;;</span> <span class="c">(* Note: lists are immutable, so l didn't change *)</span>
-<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span>  <span class="n">tl_exn</span> <span class="n">l'</span> <span class="c">(* To get tail of tail, take tail of l' ..  THREAD the state! *)</span>
-<span class="n">tl_exn</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* Raises an `invalid_arg` exception if the list had no tail *)</span>
+<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span>  <span class="n">tl</span> <span class="n">l'</span> <span class="c">(* To get tail of tail, take tail of l' ..  THREAD the state! *)</span>
+<span class="n">tl</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* Raises an `invalid_arg` exception if the list had no tail *)</span>
 </code></pre></div></div>
 
 <ul>
   <li>Note that an alternative to avoid the exception effect is to return <code>Ok/Error</code>:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl</span> <span class="n">l</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl'</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"empty list has no tail"</span>
-  <span class="o">|</span>  <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="n">tl</span>
+  <span class="o">|</span>  <span class="n">h</span> <span class="o">::</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nc">Ok</span> <span class="n">t</span>
 <span class="p">;;</span>
 <span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span> 
-<span class="k">let</span> <span class="n">l'</span> <span class="o">=</span> <span class="n">tl</span> <span class="n">l</span><span class="p">;;</span>
-<span class="n">tl</span> <span class="bp">[]</span><span class="p">;;</span>
-<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span> <span class="n">tl</span> <span class="n">l'</span> <span class="c">(* Oops this fails!  As in the div example above need to case on `Ok/Error` *)</span>
+<span class="k">let</span> <span class="n">l'</span> <span class="o">=</span> <span class="n">tl'</span> <span class="n">l</span><span class="p">;;</span>
+<span class="n">tl'</span> <span class="bp">[]</span><span class="p">;;</span>
+<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span> <span class="n">tl'</span> <span class="n">l'</span> <span class="c">(* Oops this fails!  As in the div example above need to case on `Ok/Error` *)</span>
 </code></pre></div></div>
 
 <h3 id="recursive-functions-on-lists">Recursive Functions on Lists</h3>
@@ -498,13 +495,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Here is an example of how to get the nth element of a list, by walking along the list with recursion:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">nth_exn</span> <span class="n">l</span> <span class="n">n</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">nth</span> <span class="n">l</span> <span class="n">n</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">invalid_arg</span> <span class="s2">"there is no nth element in this list"</span>
   <span class="o">|</span>  <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="n">hd</span> <span class="k">else</span> <span class="n">nth_exn</span> <span class="n">tl</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c">(* "the nth element of l is the (n-1)-th element of tl" *)</span>
 <span class="p">;;</span>
-<span class="n">nth_exn</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">1</span><span class="p">;;</span>
-<span class="n">nth_exn</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">3</span><span class="p">;;</span>
+<span class="n">nth</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">1</span><span class="p">;;</span>
+<span class="n">nth</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">3</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <p>Key points</p>
@@ -514,24 +511,30 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Recursively call the function on the tail of the list (plus other arguments): it <strong>should work for shorter lists by induction</strong></li>
 </ol>
 
-<p>Fortunately many common operations are already in the <code>List</code> module in the <code>Core</code> library:</p>
+<p>Fortunately many common operations are already in the <code>List</code> module:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="mi">2</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">3</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">3</span>
 </code></pre></div></div>
 <ul>
-  <li>This library uses the <code>option</code> type instead of raising an exception</li>
-  <li><code>List.nth_exn</code> raises an exception like ours does.  Both versions are useful.
-    <ul>
-      <li>(Note this function is also <code>Core.List.nth_exn</code> but we always <code>open Core;;</code> to make <code>Core</code> module functions implicitly available)</li>
-    </ul>
-  </li>
   <li>On Assignment 1 you <strong>cannot</strong> use <code>List.</code> libraries, you first need to practice using <code>let rec</code>
     <ul>
       <li>On Assignment 2 you will start using the <code>List.</code> libraries.</li>
     </ul>
   </li>
 </ul>
+
+<p>Note that like our implementation <code>List.nth</code> will not be happy if there is no nth element:</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="mi">5</span><span class="p">;;</span>
+<span class="nc">Exception</span><span class="o">:</span> <span class="nc">Failure</span> <span class="s2">"nth"</span><span class="o">.</span>
+</code></pre></div></div>
+<p>But there is a version which returns an <code>option</code> type for this:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth_opt</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="mi">5</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth_opt</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span><span class="mi">1</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">2</span>
+</code></pre></div></div>
 
 <h3 id="an-example-of-a-function-both-taking-and-returning-a-list">An Example of a function both taking and returning a list</h3>
 
@@ -544,7 +547,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">zero_negs</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
-  <span class="o">|</span>  <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">if</span> <span class="n">hd</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">hd</span><span class="p">)</span> <span class="o">::</span> <span class="n">zero_negs</span> <span class="n">tl</span><span class="c">(* can assume by induction that zero_negs tl will properly zero tl *)</span>
+  <span class="o">|</span>  <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">if</span> <span class="n">hd</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">hd</span><span class="p">)</span> <span class="o">::</span> <span class="n">zero_negs</span> <span class="n">tl</span> <span class="c">(* can assume by induction that zero_negs tl will properly zero tl *)</span>
 <span class="p">;;</span>
 
 <span class="n">zero_negs</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span>

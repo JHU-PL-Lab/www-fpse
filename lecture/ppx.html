@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="../js/jquery.dropotron.min.js"></script>
  <script src="../js/skel.min.js"></script>
  <script src="../js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(../images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="../assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="../assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="../assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
           <li><a href="../contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -113,35 +121,38 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     
 <h1 id="pre-processor-extensions">Pre-processor extensions</h1>
 
-<p>Pre-Processor eXtensions (PPXs) are macros, they write code for us. They save us from writing boilerplate code, so our code is shorter and (probably) more correct.</p>
+<ul>
+  <li>Pre-Processor eXtensions (PPXs) are macros, they write code for us.</li>
+  <li>They save us from writing boilerplate code, so our code is shorter and (probably) more correct.</li>
+  <li>We got a peek at some <code>ppx</code> extensions when looking at how to properly define equality in the variants lecture.</li>
+</ul>
 
 <p>Some examples of boilerplate code ppx extensions can produce include</p>
 <ul>
   <li>Print functions (<code>show</code>)</li>
-  <li>Serialization (<code>sexp</code>, <code>yojson</code>) (turning arbitrary OCaml data into strings)</li>
-  <li>Comparison (<code>compare</code>, <code>equal</code>)</li>
+  <li>Serialization (<code>yojson</code>) (turning arbitrary OCaml data into strings)</li>
+  <li>Comparison (<code>compare</code>, <code>eq</code>)</li>
 </ul>
 
-<h2 id="ppx_jane-and-deriving"><code>ppx_jane</code> and <code>deriving</code></h2>
+<h2 id="ppx_deriving"><code>ppx_deriving</code></h2>
 
 <ul>
-  <li>In the variants lecture, we wrote a <code>nucleotide</code> type and derived an equality function for it.</li>
-  <li>We put <code>[@@deriving equal]</code> in the nucleotide example to get an <code>=</code> on that type “for free”:
+  <li>In the variants lecture, we showed how <code>[@@deriving eq]</code> added to a tree type would automatically write the code for an equality on elements of that type.
     <ul>
-      <li>In the top loop, type <code>#require "ppx_jane"</code> to load it (but its in the course <code>.ocamlinit</code> so can skip)</li>
-      <li>In dune, put <code>(preprocess (pps (ppx_jane)))</code> as part of the library declaration (needed!).</li>
+      <li>In the top loop, type <code>#require "ppx_deriving.eq"</code> to load it</li>
+      <li>In dune, put <code>(preprocess (pps (ppx_deriving.eq))</code> as part of the library declaration</li>
     </ul>
   </li>
+  <li>For the nucleotide example we could just use the built-in <code>=</code> but we could have also used a <code>ppx</code> to make it:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">eq</span><span class="p">];;</span>
 <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
 <span class="k">val</span> <span class="n">equal_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
 <ul>
   <li>We defined our type <strong>and</strong> got the <code>equal_nucleotide</code> function for free.</li>
-  <li>Without this macro we would have had to use pattern matching to write our own equality.</li>
 </ul>
 
 <h3 id="composing-deriving-equal">Composing <code>deriving equal</code></h3>
@@ -150,7 +161,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>If we have an <code>xyy_equal</code> function on component types, <code>deriving</code> can derive <code>equal</code> for a type built from those components. For example equality on <em>lists</em> of nucleotides:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">];;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">eq</span><span class="p">];;</span>
 <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
 <span class="k">val</span> <span class="n">equal_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 
@@ -161,42 +172,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">type</span> <span class="n">n_queue</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="nn">Core</span><span class="p">.</span><span class="nn">Queue</span><span class="p">.</span><span class="n">t</span>
 <span class="k">val</span> <span class="n">equal_n_queue</span> <span class="o">:</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="n">n_queue</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
-<ul>
-  <li>Notice that the <code>Core</code> libraries are designed to play well as they have <code>List.equal</code>, <code>Queue.equal</code> built in
-    <ul>
-      <li>But, <code>List.equal : ('a -&gt; 'a -&gt; bool) -&gt; 'a list -&gt; 'a list -&gt; bool</code> – it needs <code>=</code> on the underlying list data.</li>
-      <li>This is a bit annoying as you keep having to pass <code>=</code> for members to check <code>'</code> for lists</li>
-      <li>.. we will eventually see an alternative to this when we learn about functors in the modules lecture.</li>
-    </ul>
-  </li>
-  <li>Note that in general for a component type that is the <code>t</code> of a module, the name looked for is <code>My_module.equal</code> instead of <code>equal_t</code></li>
-</ul>
-
-<h3 id="some-other-useful-deriving-type-accessor-extensions-in-ppx_jane">Some other useful <code>@@deriving</code> type accessor extensions in ppx_jane</h3>
 
 <ul>
-  <li><code>sexp</code> generates S-expression printable representations of types which is handy for displaying data internals</li>
-  <li>S-expressions are a general data format like JSON or XML, in fact they are the oldest such format</li>
+  <li>Note that in general for a component type that is the <code>t</code> of a module, the name is <code>My_module.equal</code> instead of <code>equal_t</code> (we will see this later)</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
-<span class="k">val</span> <span class="n">equal_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="k">val</span> <span class="n">nucleotide_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="k">val</span> <span class="n">sexp_of_nucleotide</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
-
-<span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="o">,</span> <span class="n">sexp</span><span class="p">];;</span>
-<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
-<span class="k">val</span> <span class="n">equal_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="k">val</span> <span class="n">n_list_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">n_list</span> <span class="o">=</span> <span class="k">fun</span>
-<span class="k">val</span> <span class="n">sexp_of_n_list</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="k">fun</span>
-
-<span class="o">#</span> <span class="n">sexp_of_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">G</span><span class="p">];;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="nc">A</span> <span class="nc">G</span> <span class="nc">G</span><span class="p">)</span> <span class="c">(* this is the "S-Expression" version of a list.. parens and spaces *)</span>
-
-<span class="o">#</span> <span class="n">n_list_of_sexp</span> <span class="p">(</span><span class="nn">Sexp</span><span class="p">.</span><span class="n">of_string</span> <span class="s2">"(A G G)"</span><span class="p">);;</span> <span class="c">(* how to convert in the other direction *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">=</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span> <span class="nc">G</span><span class="p">;</span> <span class="nc">G</span><span class="p">]</span>
-</code></pre></div></div>
+<h3 id="some-other-useful-deriving-macros">Some other useful <code>@@deriving</code> macros</h3>
 
 <ul>
   <li><code>[@@deriving compare]</code> is like <code>equal</code> except it makes a <code>compare</code> function instead of <code>equal</code></li>
@@ -214,19 +195,43 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 <p>Note that existing types such as <code>int</code>, <code>string</code>, etc come with <code>Int.compare</code>, <code>String.compare</code>, etc, along with the <code>Int.equal</code>, <code>String.equal</code>.</p>
 
+<ul>
+  <li><code>[@@deriving show]</code> produces a pretty-printing function for your type</li>
+  <li>Super helpful for debugging
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">eq</span><span class="o">,</span> <span class="n">show</span><span class="p">];;</span> <span class="c">(* example of multiple ppxs together *)</span>
+<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">eq</span><span class="o">,</span> <span class="n">show</span><span class="p">];;</span>
+<span class="n">show_n_list</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">C</span><span class="p">;</span><span class="nc">C</span><span class="p">];;</span> <span class="c">(* returns the string  "[A; C; C]" *)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Enable use in top loop with directive <code>#require "ppx_deriving.show"</code> and add to a library as <code>(preprocess (pps (ppx_deriving.show))</code></p>
+  </li>
+  <li>An easy short-cut is to use <code>std</code>: <code>#require "ppx_deriving.std"</code> and <code>(preprocess (pps ppx_deriving.std))</code>, which gives you <code>show</code>,<code>eq</code>,<code>ord</code>, and some others all in one go.</li>
+</ul>
+
 <h3 id="json-format">JSON format</h3>
 
 <ul>
   <li>JSON is a common standard for data-as-text and may be useful in your project</li>
-  <li><code>Core</code> does not have libraries for dealing with JSON unfortunately.
-    <ul>
-      <li><code>sexp</code> is the “JSON for Core”</li>
-      <li>Anywhere you want to use JSON, just settle for S-expressions if you want to also use Core.</li>
-    </ul>
-  </li>
-  <li>If you need JSON conversion, use <code>ppx_deriving_yojson</code> which works with the <code>yojson</code> library to do something like what <code>deriving sexp</code> above did.</li>
-  <li><strong>Aside</strong>: <code>ppx_deriving_yojson</code> is not compatible with <code>ppx_jane</code> so if you want to derive equality and comparisons along with <code>yojson</code> you need to use <code>#require "ppx_deriving.eq";; / [@@deriving eq]</code> and <code>#require "ppx_deriving.ord";; / [@@deriving ord]</code> in place of the <code>equal/compare</code> deriving in <code>ppx_jane</code>. <code>ppx_deriving show</code>, which prints variant type data, is also not compatible with <code>ppx_jane</code>.</li>
+  <li>If you need JSON conversion, use <code>ppx_deriving_yojson</code> which works with the <code>yojson</code> library (notice its <code>_yojson</code> not <code>.yojson</code> - its someone elses library)</li>
 </ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_deriving_yojson"</span><span class="p">;;</span>
+<span class="o">#</span> <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">yojson</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
+<span class="k">val</span> <span class="n">nucleotide_to_yojson</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="o">-&gt;</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="k">val</span> <span class="n">nucleotide_of_yojson</span> <span class="o">:</span>
+  <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">nucleotide</span> <span class="nn">Ppx_deriving_yojson_runtime</span><span class="p">.</span><span class="n">error_or</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">#</span> <span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">yojson</span><span class="p">];;</span>
+<span class="k">type</span> <span class="n">n_list</span> <span class="o">=</span> <span class="n">nucleotide</span> <span class="kt">list</span>
+<span class="k">val</span> <span class="n">n_list_to_yojson</span> <span class="o">:</span> <span class="n">n_list</span> <span class="o">-&gt;</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="k">val</span> <span class="n">n_list_of_yojson</span> <span class="o">:</span>
+<span class="o">#</span> <span class="k">let</span> <span class="n">j</span> <span class="o">=</span> <span class="n">n_list_to_yojson</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">G</span><span class="p">];;</span>
+<span class="n">j</span> <span class="o">:</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
+<span class="nt">`List</span> <span class="p">[</span><span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"A"</span><span class="p">];</span> <span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"G"</span><span class="p">];</span> <span class="nt">`List</span> <span class="p">[</span><span class="nt">`String</span> <span class="s2">"G"</span><span class="p">]]</span>
+<span class="o">#</span> <span class="k">let</span> <span class="n">s</span> <span class="o">=</span> <span class="nn">Yojson</span><span class="p">.</span><span class="nn">Safe</span><span class="p">.</span><span class="n">to_string</span> <span class="n">j</span><span class="p">;;</span> <span class="c">(* function to get you the actual JSON *)</span>
+<span class="k">val</span> <span class="n">s</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s2">"[[</span><span class="se">\"</span><span class="s2">A</span><span class="se">\"</span><span class="s2">],[</span><span class="se">\"</span><span class="s2">G</span><span class="se">\"</span><span class="s2">],[</span><span class="se">\"</span><span class="s2">G</span><span class="se">\"</span><span class="s2">]]"</span> <span class="c">(* this is a json rep'n of a list *)</span>
+</code></pre></div></div>
       
           </section>
         </div>

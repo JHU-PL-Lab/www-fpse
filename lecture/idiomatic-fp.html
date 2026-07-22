@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="../js/jquery.dropotron.min.js"></script>
  <script src="../js/skel.min.js"></script>
  <script src="../js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(../images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="../assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="../assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="../assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
           <li><a href="../contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -232,7 +240,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Functional code is not always more concise than stateful code, but it is surprisingly good</p>
 <ul>
-  <li>Let us revisit the <a href="https://pl.cs.jhu.edu/fpse/examples/random-examples/matching.ml">parenthesis matching</a> example from the previous lecture on side effects.</li>
+  <li>Let us revisit the <a href="../examples/match/match.ml">parenthesis matching</a>/<a href="../examples/zips/match.zip">(zipfile)</a>example from the previous lecture on side effects.</li>
   <li>At the end of this file is a purely functional version of paren matching; the code is much more concise.</li>
 </ul>
 
@@ -296,6 +304,7 @@ Here are example codebases we will spend time inspecting and critiqueing.</p>
       <li>We will review <a href="../examples/minesweeper/src/minesweeper.ml">this functional solution</a></li>
       <li>We made another <a href="../examples/minesweeper/src/mine_array.ml">variation on the functional version</a> to be cleaner and more efficient</li>
       <li>Will look at an <a href="../examples/minesweeper/src/mine_mutate.ml">imperative approach</a> which has some  poor abstractions and fails to use combinators.</li>
+      <li>All of these minesweeper versions are in this <a href="../examples/zips/minesweeper.zip">zip file</a></li>
     </ul>
   </li>
 </ul>

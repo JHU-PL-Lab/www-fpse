@@ -24,7 +24,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Aug 25</div>
+            <div align="center" class="body">Aug 31</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -43,7 +43,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Aug 27</div>
+            <div align="center" class="body">Sep 2</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -61,7 +61,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 1</div>
+            <div align="center" class="body">Sep 7</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -78,7 +78,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 3</div>
+            <div align="center" class="body">Sep 9</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -95,7 +95,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 8</div>
+            <div align="center" class="body">Sep 14</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -112,7 +112,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 10</div>
+            <div align="center" class="body">Sep 16</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -129,7 +129,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 15</div>
+            <div align="center" class="body">Sep 21</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -146,7 +146,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 17</div>
+            <div align="center" class="body">Sep 23</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -163,7 +163,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 22</div>
+            <div align="center" class="body">Sep 28</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -180,7 +180,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 24</div>
+            <div align="center" class="body">Sep 30</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -197,7 +197,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Sep 29</div>
+            <div align="center" class="body">Oct 5</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -214,7 +214,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 1</div>
+            <div align="center" class="body">Oct 7</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -231,7 +231,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
        <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 6</div>
+            <div align="center" class="body">Oct 12</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -248,7 +248,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
        <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 8</div>
+            <div align="center" class="body">Oct 14</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -265,7 +265,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 13</div>
+            <div align="center" class="body">Oct 19</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -282,7 +282,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 15</div>
+            <div align="center" class="body">Oct 21</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -299,7 +299,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 20</div>
+            <div align="center" class="body">Oct 26</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -316,7 +316,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 22</div>
+            <div align="center" class="body">Oct 28</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -333,7 +333,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 27</div>
+            <div align="center" class="body">Nov 2</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -350,7 +350,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Oct 29</div>
+            <div align="center" class="body">Nov 4</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -367,7 +367,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 3</div>
+            <div align="center" class="body">Nov 9</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -384,7 +384,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 5</div>
+            <div align="center" class="body">Nov 11</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -401,7 +401,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 10</div>
+            <div align="center" class="body">Nov 16</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -418,7 +418,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 12</div>
+            <div align="center" class="body">Nov 18</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -435,41 +435,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 17</div>
-          </td> 
-          <td width="8%"> 
-            <div align="center" class="body">Mon</div>
-          </td>
-          <td width="30%"> 
-            <div align="left" class="body">Project Lab Day</div>
-          </td>
-          <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-          <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-        </tr>
-        <tr> 
-          <td width="8%"> 
-            <div align="center" class="body">Nov 19</div>
-          </td>
-          <td width="8%"> 
-            <div align="center" class="body">Wed</div>
-          </td>
-          <td width="30%"> 
-            <div align="left" class="body">Quiz <a href ="assignments/quiz-2024.pdf">(last years)</a></div>
-          </td>
-          <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-          <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-        </tr>
-        <tr> 
-          <td width="8%"> 
-            <div align="center" class="body">Nov 24</div>
+            <div align="center" class="body">Nov 23</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Mon</div>
@@ -486,7 +452,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr> 
           <td width="8%"> 
-            <div align="center" class="body">Nov 26</div>
+            <div align="center" class="body">Nov 25</div>
           </td>
           <td width="8%"> 
             <div align="center" class="body">Wed</div>
@@ -500,7 +466,41 @@ Note that lecture material will be updated as topics are covered so consider the
           <td width="15%"> 
             <div align="center" class="body">&nbsp;</div>
           </td>
-        </tr>        
+        </tr>  
+        <tr> 
+          <td width="8%"> 
+            <div align="center" class="body">Nov 30</div>
+          </td> 
+          <td width="8%"> 
+            <div align="center" class="body">Mon</div>
+          </td>
+          <td width="30%"> 
+            <div align="left" class="body">Project Lab Day</div>
+          </td>
+          <td width="30%"> 
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+          <td width="15%"> 
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+        </tr>
+        <tr> 
+          <td width="8%"> 
+            <div align="center" class="body">Dec 2</div>
+          </td>
+          <td width="8%"> 
+            <div align="center" class="body">Wed</div>
+          </td>
+          <td width="30%"> 
+            <div align="left" class="body">Exam (<a href ="assignments/quiz-2024.pdf">2024</a>/<a href ="assignments/quiz-2025.pdf">2025</a>)</div>
+          </td>
+          <td width="30%"> 
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+          <td width="15%"> 
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+        </tr>      
         <tr> 
           <td width="8%"> 
             <div align="center" class="body">Dec 1</div>
@@ -537,13 +537,13 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
 	<tr> 
           <td width="8%"> 
-            <div align="center" class="body">Dec 12th</div>
+            <div align="center" class="body">TBA</div>
           </td>
           <td width="8%"> 
-            <div align="center" class="body">Fri</div>
+            <div align="center" class="body">TBA</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body">&nbsp;<strong>Project Demos</strong></div>
+            <div align="left" class="body">&nbsp;<strong>Project Demos (exact date is the course final exam date)</strong></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>

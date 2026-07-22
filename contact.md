@@ -12,14 +12,7 @@ For Course Assistants we are fortunate to have several course alums as well as s
 
 **Head Teaching Assistant** Brandon Stride
 
-**Course Assistant** Suizhi Ma
-
-**Course Assistant** Shiwei Weng
-
-**Course Assistant** Earl Wu
-
-**Course Assistant** Farnaz Yousefi
-
+**Course Assistant** TBA
 
 ### Office Hours
 

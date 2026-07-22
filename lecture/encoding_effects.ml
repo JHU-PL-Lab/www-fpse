@@ -1,3 +1,5 @@
+[@@@ocaml.warning "-8-32-27"]
+
 (* ***************************** *)
 (* Encoding effects functionally *)
 (* ***************************** *)
@@ -208,7 +210,7 @@ let ex_bind_fixed l1 l2 =
 
 (* Now, we all love pipes but this is just let-like coding; how can we use pipe syntax??
 
-Answer: there is also pipe syntax for bind
+Answer: there is also stadard pipe syntax for bind
    * a >>= b is just an infix form of bind, it is nothing but 
      bind a b
    * a >>| b is used when b is just a "normal" function which is not returning an option.
@@ -223,12 +225,15 @@ Answer: there is also pipe syntax for bind
      - : 'a option -> ('a -> 'b option) -> 'b option = <fun>
    * If you are just sequencing a bunch of function calls as above it reads better with these two pipes
 
-   * Lets redo the example above with monad-pipes:
 *)
 
+(* Here are those definitions *)
 let ( >>= ) = Option.bind
 let ( >>| ) m f =
   Option.bind m (fun x -> return (f x))
+
+(* Lets now redo the example above with monad-pipes: *)
+
 let ex_piped l1 l2 =
   option_combine l1 l2 
   >>| List.fold_left (fun acc (x,y) -> (x + y :: acc)) []
@@ -342,7 +347,7 @@ end
 open Exception
 (* Redoing the combine example above using Exception now *)
 
-(* Here is the suite of sugar for the monad *)
+(* Here is the suite of sugar for the Exception monad *)
 
 let ( let* ) = bind
 let ( let+ ) f m = map m f

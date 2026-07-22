@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="../js/jquery.dropotron.min.js"></script>
  <script src="../js/skel.min.js"></script>
  <script src="../js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(../images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="../assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="../assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="../assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
           <li><a href="../contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -231,27 +239,29 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Not bubbling up <code>option</code> or other wrapped results properly</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">zadd</span> <span class="p">(</span><span class="n">l1</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">l2</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span> <span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">zip</span> <span class="n">l1</span> <span class="n">l2</span> <span class="k">in</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">)</span> <span class="n">l</span><span class="p">;;</span>
-<span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">74</span><span class="o">-</span><span class="mi">75</span><span class="o">:</span>
-<span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="p">(</span><span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">list</span> <span class="nn">List</span><span class="p">.</span><span class="nn">Or_unequal_lengths</span><span class="p">.</span><span class="n">t</span>
-       <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span> <span class="k">'</span><span class="n">c</span> <span class="kt">list</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">sum_first_n</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> 
+  <span class="nn">List</span><span class="p">.</span><span class="n">nth_opt</span> <span class="n">l</span> <span class="n">n</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">elt</span><span class="p">)</span> <span class="mi">0</span><span class="p">;;</span>
+<span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="kt">int</span> <span class="n">option</span>
+       <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span> <span class="kt">int</span> <span class="kt">list</span>
 </code></pre></div></div>
 <ul>
-  <li>Recall that <code>List.zip</code> doesn’t just return a list, the programmer missed that here</li>
+  <li>Recall that <code>List.nth_opt</code> doesn’t just return a list, the programmer missed that here</li>
+  <li>Instead it returns an option list since the n could have been beyond the end of the list</li>
   <li>To solve this type error you will need to <code>match</code> on the result, which should fix both type error <em>and</em> code behavior</li>
 </ul>
 
 <p>Variation on type-directed programming: with only some parameters applied, the remaining types hint at what is still needed.</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">3</span><span class="p">;</span><span class="mi">3</span><span class="p">];</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span><span class="mi">4</span><span class="p">];</span> <span class="p">[</span><span class="mi">22</span><span class="p">;</span><span class="mi">17</span><span class="p">]]</span> <span class="k">in</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">l</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="kt">int</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">_weak1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">_weak1</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">-</span> <span class="n">elt</span> <span class="p">);;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 <ul>
-  <li>The type shows that <code>f</code> needs to be a function taking an <code>int list</code> as argument.</li>
+  <li>The type shows that we first need the integer initial value and then the list</li>
+  <li>In VSCode you can better see this</li>
 </ul>
 
 <p>The type in an <code>.mli</code> file can direct your implementation, e.g. <code>map</code> on <code>simpledict</code> example from Assn3 (recall that <code>t</code> here is the <code>simpledict</code>)</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">map</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">map</span> <span class="o">:</span> <span class="p">(</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span>
 </code></pre></div></div>
 <ul>
   <li>Q: “How can I get a dict of <code>'b</code>’s built from a dict of <code>'a</code>’s here?”</li>
@@ -263,11 +273,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">party</span> <span class="o">=</span> <span class="nc">Dem</span> <span class="o">|</span> <span class="nc">Rep</span>
 <span class="k">type</span> <span class="n">voter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span> <span class="o">:</span> <span class="kt">string</span><span class="p">;</span> <span class="n">party</span><span class="o">:</span> <span class="n">party</span> <span class="p">}</span>
 <span class="k">let</span> <span class="n">count_parties</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="n">voter</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span>
-  <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="n">l</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">0</span><span class="p">)</span> 
-    <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span><span class="n">cr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="p">{</span><span class="n">party</span><span class="p">;</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> 
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span>
+    <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span><span class="n">cr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="p">{</span><span class="n">party</span><span class="p">;</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> 
      <span class="k">match</span> <span class="n">party</span> <span class="k">with</span> 
      <span class="o">|</span> <span class="nc">Dem</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">cr</span><span class="p">)</span>
-     <span class="o">|</span> <span class="nc">Rep</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">);;</span>
+     <span class="o">|</span> <span class="nc">Rep</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">)</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">0</span><span class="p">)</span> <span class="n">l</span> <span class="p">;;</span>
 </code></pre></div></div>
 
 <p>Adding a <code>Gre</code> for green party: first <strong>just</strong> change the type, and chase/fix errors</p>
@@ -275,11 +285,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">party</span> <span class="o">=</span> <span class="nc">Dem</span> <span class="o">|</span> <span class="nc">Rep</span> <span class="o">|</span> <span class="nc">Gre</span>
   <span class="k">type</span> <span class="n">voter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span> <span class="o">:</span> <span class="kt">string</span><span class="p">;</span> <span class="n">party</span><span class="o">:</span> <span class="n">party</span> <span class="p">}</span>
   <span class="k">let</span> <span class="n">count_parties</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="n">voter</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span>
-    <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="n">l</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">0</span><span class="p">)</span> 
-      <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span><span class="n">cr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="p">{</span><span class="n">party</span><span class="p">;</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> 
+     <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span>
+      <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span><span class="n">cr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="p">{</span><span class="n">party</span><span class="p">;</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> 
       <span class="k">match</span> <span class="n">party</span> <span class="k">with</span> 
       <span class="o">|</span> <span class="nc">Dem</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">cr</span><span class="p">)</span>
-      <span class="o">|</span> <span class="nc">Rep</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">);;</span>
+      <span class="o">|</span> <span class="nc">Rep</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">)</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">0</span><span class="p">)</span> <span class="n">l</span> <span class="p">;;</span>
 <span class="nc">Lines</span> <span class="mi">6</span><span class="o">-</span><span class="mi">8</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">5</span><span class="o">-</span><span class="mi">24</span><span class="o">:</span>
 <span class="nc">Warning</span> <span class="mi">8</span><span class="o">:</span> <span class="n">this</span> <span class="n">pattern</span><span class="o">-</span><span class="n">matching</span> <span class="n">is</span> <span class="n">not</span> <span class="n">exhaustive</span><span class="o">.</span>
 <span class="nc">Here</span> <span class="n">is</span> <span class="n">an</span> <span class="n">example</span> <span class="k">of</span> <span class="n">a</span> <span class="n">case</span> <span class="n">that</span> <span class="n">is</span> <span class="n">not</span> <span class="n">matched</span><span class="o">:</span>
@@ -398,10 +408,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span> 
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span> 
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
-  <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span> <span class="o">-&gt;</span> <span class="k">let</span> <span class="n">rxs</span> <span class="o">=</span> <span class="n">rev</span> <span class="n">xs</span> <span class="k">in</span> <span class="k">assert</span><span class="p">(</span><span class="nn">Poly</span><span class="p">.(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">rxs</span><span class="p">));</span> <span class="n">rxs</span> <span class="o">@</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+  <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span> <span class="o">-&gt;</span> <span class="k">let</span> <span class="n">rxs</span> <span class="o">=</span> <span class="n">rev</span> <span class="n">xs</span> <span class="k">in</span> <span class="k">assert</span><span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">rxs</span><span class="p">);</span> <span class="n">rxs</span> <span class="o">@</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
 </code></pre></div></div>
 <ul>
-  <li>Note that we have to use the built-in <code>List.rev</code> to test our version - somewhat circular (note <code>Poly</code> quick-open lets <code>=</code> work on any type, its also what <code>assert_equal</code> in <code>OUnit</code> is doing)</li>
+  <li>Note that we have to use the built-in <code>List.rev</code> to test our version - somewhat circular</li>
   <li>In general a major issue with specification is it is often very difficult to give a code-based definition of the full spec.</li>
   <li>So, the main focus should be on <em>partial</em> specs, give sanity conditions</li>
 </ul>
@@ -410,11 +420,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>In re-implementing some of the common <code>List</code> functions with <code>fold</code>s it helps to think of the invariant</li>
-  <li>Folding left (<code>List.fold</code>):
+  <li>Folding left (<code>List.fold_left</code>):
     <ul>
       <li>Suppose we are at some arbitrary point processing the fold;</li>
       <li>assume accumulation <code>accum</code> has “the result of the task” for all elements to the <em>left</em> in the list</li>
-      <li>require <code>~f</code> to then “do the task” to incorporate the current element <code>elt</code></li>
+      <li>require <code>f</code> to then “do the task” to incorporate the current element <code>elt</code></li>
       <li>also assume <code>accum</code> is initially <code>init</code></li>
     </ul>
   </li>
@@ -422,23 +432,22 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* invariant for length fold: accum is number of elements to the left of the current `elt` we are at *)</span>
-<span class="k">let</span> <span class="n">length</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">l</span> 
+<span class="k">let</span> <span class="n">length</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">0</span> <span class="n">l</span>
 <span class="c">(* invariant for rev fold: accum is reverse of list up to here *)</span>
-<span class="k">let</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="n">l</span> 
+<span class="k">let</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span> 
 <span class="c">(* invariant for map fold: accum is f applied to each element of list up to here *)</span>
-<span class="k">let</span> <span class="n">map</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="n">l</span>
+<span class="k">let</span> <span class="n">map</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
 <span class="c">(* etc *)</span>
-<span class="k">let</span> <span class="n">filter</span> <span class="o">~</span><span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="bp">[]</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">f</span> <span class="n">elt</span> <span class="k">then</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span> <span class="k">else</span> <span class="n">accum</span><span class="p">)</span> <span class="n">l</span>
+<span class="k">let</span> <span class="n">filter</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">f</span> <span class="n">elt</span> <span class="k">then</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span> <span class="k">else</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
 </code></pre></div></div>
 
 <h3 id="specification-and-abstraction">Specification and Abstraction</h3>
 
 <ul>
   <li>The more completely a module is specified the less the users need to know about the underlying implementation</li>
-  <li><code>Core.Map</code> is an example where the users need to know limited information about the implementation
+  <li><code>Map</code> is an example where the users need to know limited information about the implementation
     <ul>
       <li>they still <em>do</em> need to know it is O(log n) for add/remove/find, that should be in the docs (<code>.mli</code>/odoc)</li>
-      <li>(Unfortunately Core is not always so good about that; for <code>Map</code> they give big-O of more advanced ops but assume users know complexity of these basic ones.  Bad Core!)</li>
     </ul>
   </li>
   <li>On your own libraries you will want to document them well
@@ -615,10 +624,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">s'</span> <span class="o">=</span> <span class="s2">"id tests"</span> <span class="o">&gt;:::</span> 
-  <span class="p">[</span> <span class="s2">"one"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="mi">4</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span>
-  <span class="p">;</span> <span class="s2">"two"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="s2">"hello"</span><span class="p">)</span> <span class="s2">"hello"</span><span class="p">)</span> <span class="p">];;</span>
+  <span class="p">[</span> <span class="s2">"one"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fun</span><span class="p">.</span><span class="n">id</span> <span class="mi">4</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span>
+  <span class="p">;</span> <span class="s2">"two"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fun</span><span class="p">.</span><span class="n">id</span> <span class="s2">"hello"</span><span class="p">)</span> <span class="s2">"hello"</span><span class="p">)</span> <span class="p">];;</span>
 <span class="k">let</span> <span class="n">suites</span> <span class="o">=</span> <span class="n">test_list</span> <span class="p">[</span><span class="n">s</span><span class="p">;</span><span class="n">s'</span><span class="p">];;</span> <span class="c">(* make suite of suites *)</span>
-<span class="k">let</span> <span class="n">named_suites</span> <span class="o">=</span> <span class="s2">"revrev and Fn.id"</span> <span class="o">&gt;:</span> <span class="n">suites</span> <span class="c">(* any tree of tests can be named with &gt;: *)</span>
+<span class="k">let</span> <span class="n">named_suites</span> <span class="o">=</span> <span class="s2">"revrev and Fun.id"</span> <span class="o">&gt;:</span> <span class="n">suites</span> <span class="c">(* any tree of tests can be named with &gt;: *)</span>
 </code></pre></div></div>
 
 <p>Here is the type of <code>test</code> under the hood (from the docs) which should make clear why the above works:</p>
@@ -701,6 +710,7 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
 </ul>
 
 <h3 id="bisect-for-ocaml-code-coverage">Bisect for OCaml code coverage</h3>
+<p>TODO: not in 5.5.1 now</p>
 
 <ul>
   <li>The <code>bisect_ppx</code> preprocessor can decorate your code with one hit-bit per line
@@ -731,7 +741,8 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
 <p>We will check how well my tests of the <a href="../examples/set-example.zip">simple set example</a> covered the code using Bisect.  The only addition to code is the <code>(preprocess (pps bisect_ppx))</code> added to <code>src/dune</code> for the library.</p>
 
 <p><a name="quickcheck"></a></p>
-<h2 id="random-testing-aka-property-based-testing-aka-quickcheck">Random Testing aka Property-Based Testing aka Quickcheck</h2>
+
+<h2 id="random-testing-aka-property-based-testing-aka-quickchecking">Random Testing aka Property-Based Testing aka Quickchecking</h2>
 
 <ul>
   <li>Recall that Quickchecking is making up some random data to test our code</li>
@@ -752,26 +763,26 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
   <li>Verify whether the test worked on that random data</li>
 </ol>
 
-<h3 id="using-base_quickcheck">Using <code>Base_quickcheck</code></h3>
+<h3 id="using-qcheck">Using <code>QCheck</code></h3>
 
 <ul>
   <li>For step 1. above we want to not have to “roll our own” every time</li>
-  <li><code>Base_quickcheck</code> is a library that will do it for us</li>
-  <li><code>Base_quickcheck</code> contains three key algorithms:
+  <li><code>QCheck</code> is a library that will do it for us</li>
+  <li><code>QCheck</code> contains three key algorithms:
     <ol>
-      <li>Generators, <code>Quickcheck.Generator</code> - make random data of desired distribution in given type</li>
-      <li>Shrinkers, <code>Quickcheck.Shrinker</code> - if a failing case is discovered, try to make random data smaller, e.g. a shorter list (we will not cover these in detail)</li>
-      <li>Runner, <code>Quickcheck.test</code> etc, which runs some fixed number (10,000 by default) of random tests and shrinks failures.</li>
+      <li>Gen, <code>QCheck.Gen</code> - make random data of desired distribution in given type</li>
+      <li>Shrinkers, <code>QCheck.Shrink</code> - if a failing case is discovered, try to make random data smaller, e.g. a shorter list (we will not cover these in detail)</li>
+      <li>Maker, <code>QCheck.Test.make</code> which makes a test over the random data</li>
+      <li>Runner, <code>QCheck.Test.check_exn</code>, which runs some fixed number of random tests and shrinks failures.</li>
     </ol>
   </li>
   <li>
-    <p>We will look at several examples of the <code>Base_quickcheck</code> library in action in <a href="../examples/random-examples/quickcheck_examples.ml">quickcheck_examples.ml</a></p>
+    <p>We will look at several examples of the <code>QCheck</code> library in action in <a href="../examples/quickcheck-examples/quickcheck_examples.ml">quickcheck_examples.ml</a>/<a href="../examples/zips/quickcheck_examples.zip">quickcheck_examples.zip</a></p>
   </li>
   <li>
-    <p>We will look at quickchecking on a <code>Map</code> in <a href="../examples/quickcheck/school_quickcheck.ml">school_quickcheck.ml</a></p>
+    <p>We will look at quickchecking on a <code>Map</code> in <a href="../examples/school-quickcheck/school_quickcheck.ml">school_quickcheck.ml</a>/<a href="../examples/zips/school-quickcheck.zip">school_quickcheck.zip</a></p>
   </li>
-  <li><a href="https://ocaml.org/p/base_quickcheck/v0.15.0/doc/Base_quickcheck/index.html">Base_quickcheck docs</a></li>
-  <li>The <a href="https://dev.realworldocaml.org/testing.html#property-testing-with-quickcheck">Real World OCaml</a> book has a short tutorial (note it uses <code>ppx_inline_tests</code> and not <code>OUnit2</code>)</li>
+  <li><a href="https://ocaml.org/p/qcheck-core/0.91">QCheck docs</a></li>
 </ul>
 
 <h3 id="fuzz-testing-vs-quickcheck">Fuzz testing vs Quickcheck</h3>

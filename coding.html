@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="js/jquery.dropotron.min.js"></script>
  <script src="js/skel.min.js"></script>
  <script src="js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
           <li><a href="contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -110,98 +118,137 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <link rel="stylesheet" href="css/friendly.css" />
 <meta charset="utf-8" />
-    <h2 id="ocaml-coding-information">OCaml Coding Information</h2>
+    <h1 id="ocaml-coding-information">OCaml Coding Information</h1>
 
-<p>We are using <a href="https://ocaml.org">OCaml</a> version 5.3.0.</p>
+<p>We are using <a href="https://ocaml.org">OCaml</a> version 5.5.1. Please follow all instructions here to set up your coding environment.</p>
 
-<h3 id="installing-ocaml-530-and-associated-tools">Installing OCaml 5.3.0 and associated tools</h3>
+<h2 id="installing-ocaml-551-and-associated-tools">Installing OCaml 5.5.1 and associated tools</h2>
 
-<p>We require that you use the <a href="https://opam.ocaml.org">opam packaging system</a> for installing OCaml and its extensions.  Once you get <code>opam</code> installed and working, everything else should be easy to install .. so the only hard part is the first step.</p>
+<p>We require that you use the <a href="https://opam.ocaml.org">opam packaging system</a> for installing OCaml and its extensions.  Once you get <code>opam</code> installed and working, everything else should be easy to install.</p>
 
-<ul>
-  <li>For Linux or Mac see <a href="https://opam.ocaml.org/doc/Install.html">The OPAM install page</a> for install instructions.</li>
-  <li>For Mac users, the above requires <a href="https://brew.sh">Homebrew</a> (a package manager for Linux-ish libraries) so here is a more detailed suggestion of some copy/paste that should work.
-    <ul>
-      <li>Mac without homebrew installed:<code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code> will install Homebrew.  Follow the instructions of things to copy/paste into your shell to complete the setup.</li>
-      <li>Mac with Homebrew already installed, or if you just installed as per above: run <code>brew update; brew install gpatch; brew install opam</code></li>
-    </ul>
-  </li>
-  <li>For Windows you should use WSL2, the Windows Subsystem for Linux.  It creates a Linux-like system from within Windows.
-    <ul>
-      <li>Once you install <a href="https://learn.microsoft.com/en-us/windows/wsl/">WSL 2</a> you will be able to follow the Linux Ubuntu install instructions linked above.
-        <ul>
-          <li>Note that your WSL2 Ubuntu needs the C compiler and tools for the <code>opam</code> install to work; the following Linux shell command will get you those: <code>sudo apt install make m4 gcc zip unzip bubblewrap</code>.</li>
-          <li>You can still use your Windows install of VSCode to edit files by using the <a href="https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode">VSCode Remote WSL Extension</a> – it will connect the Windows editor to the underlying WSL2 subsystem.  See below where VSCode is described for details on how to set this up.</li>
-        </ul>
-      </li>
-      <li>WSL2 has been working well for most people, but another option is to set up a Linux VM on your Windows box, and then set up a Linux install of OCaml within the VM.  There are many good tutorials on how to build a Linux VM, <a href="https://www.lifewire.com/run-ubuntu-within-windows-virtualbox-2202098">here is one of them</a>.  Once your virtual Linux box is set up, you can follow the <code>opam</code> Linux install instructions.</li>
-    </ul>
-  </li>
-</ul>
+<p>To get <code>opam</code>, please follow the following instructions for your operating system exactly to avoid any issues.</p>
 
-<h3 id="initial-setup-of-opam">Initial setup of <code>opam</code></h3>
-<p>You will need to run some terminal commands to set up the basics:</p>
-<ol>
-  <li><code>opam init</code> will initialize OPAM (it should give a list of options 1/2/3/4/5, pick 1, <code>Yes update ~/.bash_profile</code> or something similar depending on your shell setup);</li>
-  <li>If you didn’t get that question or said to do nothing, you will need to add line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</li>
-  <li><code>opam update</code> to make sure your <code>opam</code> is aware of all the versions of OCaml that are out there;</li>
-  <li><code>opam switch create 5.3.0</code> will build OCaml version 5.3.0.;</li>
-  <li>After a <code>opam switch</code> command it might instruct you to reset your path with some instructions like “Run <code>eval $(opam env --switch=5.3.0)</code> to update the current shell environment” – if you get that message, follow those instructions and copy/paste the in the command into the shell (if you are on a Mac you may be using <code>zsh</code>; replace the <code>$(...)</code> with back-quotes <code>`...`</code>).</li>
-</ol>
+<h3 id="linux">Linux</h3>
 
-<p>If you already have an earlier version of OCaml installed via <code>opam</code>, start on step 3. above to update to 5.3.0.</p>
+<p>At the time of writing, you only need to run</p>
 
-<h4 id="required-opam-standard-packages">Required OPAM Standard packages</h4>
+<pre><code>bash -c "sh &lt;(curl -fsSL https://opam.ocaml.org/install.sh)"
+</code></pre>
 
-<p>Once you have <code>opam</code> and <code>ocaml</code> 5.3.0 installed, run the following <code>opam</code> command to install additional necessary packages for the class (just copy/paste these two lines into your shell):</p>
+<p>See <a href="https://opam.ocaml.org/doc/Install.html">the OPAM install page</a> for further installation instructions. We suggest curling the shell script like above because most system’s packager managers do not support the latest version of <code>opam</code>.</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam <span class="nb">install </span>ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 base <span class="se">\</span>
-base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_ppx
+<h3 id="mac">Mac</h3>
+
+<p>You may follow the Linux instructions above or use <a href="https://brew.sh">Homebrew</a> (a package manager for Linux-ish libraries).</p>
+
+<p>If you do not have Homebrew yet, then install it with this line (taken from the Homebrew website):</p>
+
+<pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+</code></pre>
+
+<p>Now run</p>
+
+<pre><code>brew update; brew install gpatch; brew install opam
+</code></pre>
+
+<h3 id="windows">Windows</h3>
+
+<p>Windows users should use WSL2 because Windows is not fully supported by OCaml. WSL2 creates a Linux-like system from within Windows.</p>
+
+<p>You can follow the installation instructions <a href="https://learn.microsoft.com/en-us/windows/wsl/install">here</a>. They are as simple as running the following command from PowerShell as administrator:</p>
+
+<pre><code>wsl --install
+</code></pre>
+
+<p>Now start up WSL: you can just run <code>ubuntu</code> from inside PowerShell, or you may run the WSL app that is now on your PC.</p>
+
+<p>From inside the WSL box, you need a few basic tools (e.g. a C compiler) before installing <code>opam</code>. Get them with this:</p>
+
+<pre><code>sudo apt install make m4 gcc zip unzip bubblewrap
+</code></pre>
+
+<p>Now you may follow the Linux instructions above to install <code>opam</code>.</p>
+
+<h2 id="initial-setup-of-opam">Initial setup of <code>opam</code></h2>
+
+<p>Now that you have installed <code>opam</code>, you will need to run some terminal commands to set up the basics. Please follow these in order.</p>
+
+<pre><code>opam init
+</code></pre>
+
+<p>This will initialize OPAM. It should give a list of options 1/2/3/4/5, pick 1, <code>Yes update ~/.bash_profile</code> or something similar depending on your shell setup.</p>
+
+<p>If you did not get that question, or you said to do nothing, you will need to add line, <code>eval $(opam env)</code>, to your <code>~/.bash_profile</code> or <code>~/.profile</code> or <code>~/.bashrc</code> shell init file (add to the first one of these files that exists already) as you would need to do that in every new terminal window otherwise. If you are using <code>zsh</code> on macs, add line <code>eval `opam env`</code> instead to your <code>~/.zshrc</code> file.</p>
+
+<p>Now run</p>
+
+<pre><code>opam update
+</code></pre>
+
+<p>to make sure your <code>opam</code> is aware of all the latest versions of OCaml and its packages. Then you will install the latest version of the OCaml compiler:</p>
+
+<pre><code>opam switch create 5.5.1
+</code></pre>
+
+<p>You may now be asked to reset your path with some instructions like “Run <code>eval $(opam env --switch=5.5.1)</code> to update the current shell environment”. If you get that message, then follow those instructions and copy/paste the command into the shell (if you are on a Mac you may be using <code>zsh</code>; replace the <code>$(...)</code> with back-quotes <code>`...`</code>).</p>
+
+<p>If you already have an earlier version of OCaml installed via <code>opam</code>, then start at <code>opam switch create 5.5.1</code>.</p>
+
+<h3 id="required-opam-packages">Required <code>opam</code> packages</h3>
+
+<p>Once you have <code>opam</code> and <code>ocaml</code> 5.5.1 installed, run the following <code>opam</code> command to install additional necessary packages for the class (just copy/paste this line into your shell and answer yes to all questions):</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam <span class="nb">install </span>ocaml-lsp-server ocamlformat utop dune ounit2 ppx_deriving cmdliner sexplib ppx_deriving_yojson qcheck ppx_deriving_qcheck
 </code></pre></div></div>
 
-<p>Lastly, in order for the OCaml top loop to start up with some of these libraries already loaded, create  or edit the file <code>~/.ocamlinit</code> to contain the lines below.  The lines in this file are input to the top loop when it first starts.  <code>topfind</code> really should be built-in, it allows you to load libraries.  The <code>require</code> command is one thing <code>topfind</code> adds, here it is loading the <code>Core</code> libraries to replace the standard ones coming with OCaml.  We will be using <code>Core</code> as they are improved versions.</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">use</span> <span class="s2">"topfind"</span><span class="p">;;</span>
-<span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_jane"</span><span class="p">;;</span> 
-<span class="o">#</span><span class="n">require</span> <span class="s2">"core.top"</span><span class="p">;;</span>
-<span class="k">open</span> <span class="nc">Core</span><span class="p">;;</span>
+<!--
+   TODO:
+      We may want some of these:
+         some community bisect    instead of   bisect_ppx
+         ppx_deriving_yojson (added - SS)
+         async?
+         ppx_sexp_conv            instead of   hand-coding serializers
+
+   Old install was this:
+      opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 base \
+      base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_ppx
+ -->
+
+<p>Lastly, in order for the OCaml top loop to work properly, create or edit the file <code>~/.ocamlinit</code> to contain the line below.  All lines in this file are input to the top loop when it first starts.</p>
+
+<p>This line goes in your <code>~/.ocamlinit</code>:</p>
+
+<pre><code>#use "topfind";;
+</code></pre>
+
+<p>Here is a shell command that you can run to make the above file for you:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="nb">echo</span> <span class="s1">'#use "topfind";;'</span><span class="o">)</span> <span class="o">&gt;</span>~/.ocamlinit
 </code></pre></div></div>
 
-<p>And here is a shell command which you can simply copy/paste to make the above file:</p>
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="nb">echo</span> <span class="s1">'#use "topfind";;'</span><span class="p">;</span> <span class="nb">echo</span><span class="p">;</span> <span class="nb">echo</span> <span class="s1">'#require "ppx_jane";;'</span><span class="p">;</span> <span class="nb">echo</span><span class="p">;</span> <span class="se">\</span>
-<span class="nb">echo</span> <span class="s1">'#require "core.top";;'</span><span class="p">;</span> <span class="nb">echo</span><span class="p">;</span> <span class="nb">echo</span> <span class="s1">'open Core;;'</span><span class="o">)</span> <span class="o">&gt;</span>~/.ocamlinit
-</code></pre></div></div>
+<!-- This next instruction is out of date -->
+<!-- To test that your install works, type the shell command `utop`, which will start up an interactive OCaml session (more later on that).  Type `Fn.id;;` into the `utop` prompt followed by return, this is just a test to make sure the `Core` libraries were properly loaded.  If you didn't get an error message you are all good!  Type control-D to quit `utop`. -->
 
-<p>To test that your install works, type the shell command <code>utop</code> which will start up an interactive OCaml session (more later on that).  Type <code>Fn.id;;</code> into the <code>utop</code> prompt followed by return, this is just a test to make sure the <code>Core</code> libraries were properly loaded.  If you didn’t get an error message you are all good!  Type control-D to quit <code>utop</code>.</p>
-
-<h3 id="ocaml-documentation">OCaml Documentation</h3>
+<h2 id="ocaml-documentation">OCaml Documentation</h2>
 <p><a href="https://ocaml.org">ocaml.org</a> is the central repository of OCaml information.</p>
-<h4 id="the-ocaml-manual">The OCaml Manual</h4>
+<h3 id="the-ocaml-manual">The OCaml Manual</h3>
 
 <p>The OCaml manual is <a href="https://ocaml.org/manual/">here</a>.</p>
 <ul>
   <li>We will cover most of the topics in Part I Chapters 1 and 2 from the manual.</li>
-  <li>Manual Chapter 7 is the language reference where you can look up details if needed.</li>
+  <li>Manual Chapter 11 is the language reference where you can look up details if needed.</li>
   <li>We will be covering a few topics in the <a href="https://ocaml.org/manual/extn.html">language extensions</a> chapter:
     <ul>
       <li><a href="https://ocaml.org/manual/locallyabstract.html">locally abstract types</a>,</li>
       <li><a href="https://ocaml.org/manual/firstclassmodules.html">First-class modules</a>, and</li>
-      <li><a href="https://ocaml.org/manual/gadts.html">GADT’s</a>.</li>
+      <li><a href="https://ocaml.org/manual/5.5/effects.html">effect handlers</a>.</li>
     </ul>
   </li>
-  <li>Part III of the manual documents the tools, we will not be using much of this because third parties have improved on many of the tools and we will instead use those improved versions.  See below in the Tools list where we give “our” list of tools.</li>
-  <li>Part IV describes the standard libraries but we are <em>not</em> using them so please <em>don’t</em> look here for <code>List</code>, <code>Map</code>, etc documentation.  Note that if you Google up some OCaml library name you will likely get these libraries which will have subtly wrong documentation for us.  We will primarily use Jane Street’s <code>Core</code> which replaces these with more modern versions, see the next item.</li>
+  <li>Part III of the manual documents the tools. We will not be using much of this because third parties have improved on many of the tools, and we will instead use those improved versions.  See below in the Tools list where we give “our” list of tools.</li>
+  <li>Part IV describes the standard libraries. These have historically been small (too small to rely on, some might say), but they have improved drastically in recent versions of OCaml. We will be using the OCaml standard library in this course, and this chapter is a good resource.</li>
 </ul>
 
-<h4 id="core">Core</h4>
-<p><code>Core</code> is a complete rewrite of the standard libraries that come built in to OCaml.  Think of it as a “more modern” version of lists, sets, hash tables, etc, with lots of little improvements in many places.  <code>Core</code> itself an extension of <code>Base</code> and many modules in <code>Core</code> are directly lifted from <code>Base</code>.</p>
-
-<ul>
-  <li><a href="https://ocaml.org/p/core/latest/doc/index.html">Core documentation</a></li>
-  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book gives tutorial introductions to many of the <code>Core</code>/<code>Base</code> features.</li>
-  <li><strong>Important note</strong>: if you use a search engine to look up e.g. “OCaml Set” to see how the OCaml Set module is defined you will likely not get the <code>Core</code> version and it can be very confusing as it is similar.  Even if you search “OCaml Set Core” you will likely get an outdated version of <code>Core.Set</code>.  So, please <strong>bookmark the above link, and avoid countless hours of fruitless debugging because you are using the wrong library docs</strong>.</li>
-</ul>
-
-<h3 id="the-fpse-ocaml-toolbox">The FPSE OCaml Toolbox</h3>
+<h2 id="the-fpse-ocaml-toolbox">The FPSE OCaml Toolbox</h2>
 
 <p>Here are all the tools we will be using.  You are required to have a build for which all these tools work, and the above <code>opam</code> one-liner should install them all.</p>
 
@@ -209,21 +256,22 @@ base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_
   <li><a href="https://opam.ocaml.org"><code>opam</code></a> is the package management system.  See above for install and setup instructions.</li>
   <li><a href="https://ocaml.org/manual/comp.html"><code>ocamlc</code></a> is the standalone compiler which we will be invoking via the <code>dune</code> build tool.</li>
   <li><a href="https://opam.ocaml.org/blog/about-utop/"><code>utop</code></a> is the  read/eval/print loop.  It is a replacement for the original <a href="https://ocaml.org/manual/toplevel.html"><code>ocaml</code></a> command, with many more features such as command history, replay, etc.</li>
-  <li><a href="https://opensource.janestreet.com/core/"><code>Core</code></a> was described above</li>
   <li><a href="https://ocaml.github.io/odoc/odoc/index.html"><code>odoc</code></a> is the OCaml documentation generator, turning code comments into documentation webpages similar to JavaDoc etc.</li>
   <li><a href="https://dune.build"><code>dune</code></a> is the build tool (think <code>make</code>) that we will be using.</li>
   <li><a href="https://github.com/gildor478/ounit">OUnit</a> is the unit tester for OCaml.  The opam package is called <code>ounit2</code> for obscure reasons.</li>
-  <li><a href="https://github.com/janestreet/ppx_jane"><code>ppx_jane</code></a> adds boilerplate functions to type definitions as well as many other macros.  Unfortunately it is not documented, but <code>[@@deriving equal, compare, sexp]</code> for example will add equal and compare on a type, and to/from s-expression convertor functions.</li>
+  <li><a href="https://github.com/ocaml-ppx/ppx_deriving"><code>ppx_deriving</code></a> is a pre-process extension that derives useful functions from your types.</li>
 </ul>
 
-<p>All of the above packages have documentation, but you may also want to try <a href="https://doc.sherlocode.com/">sherlodocs</a> where you can find documentation on all opam package details in one spot.  For example typing <code>Core.Array</code> into the search will give all the documentation for the <code>Array</code> module in <code>Core</code>.  Another documentation compilation is <a href="https://docs.ocaml.pro/about.html">The OCaml Documentation Hub</a>.</p>
+<p>All of the above packages have documentation, but you may also want to try <a href="https://doc.sherlocode.com/">sherlodoc</a> where you can find documentation on all opam packages in one spot.  For example typing <code>Sexplib.Conv</code> into the search will give all the documentation for the <code>Conv</code> module in <code>Sexplib</code>.</p>
 
-<p>The above tools will be our “bread and butter”, we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.</p>
+<p>The above tools will be our “bread and butter”, and we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.</p>
 
+<!-- * [Bisect](https://github.com/aantron/bisect_ppx) will be used for code coverage.
+* [Lwt](https://ocsigen.org/lwt/latest/api/Lwt) is a non-preempting asychronous threads library. -->
 <ul>
-  <li><a href="https://github.com/aantron/bisect_ppx">Bisect</a> will be used for code coverage.</li>
-  <li><a href="https://opensource.janestreet.com/base_quickcheck/">base_quickcheck</a> is a fuzz tester / automated test generator for OCaml.</li>
-  <li><a href="https://ocsigen.org/lwt/latest/api/Lwt">Lwt</a> is a non-preempting asychronous threads library.</li>
+  <li><a href="https://ocaml.org/p/qcheck-core/0.91">QCheck</a> is a fuzz tester / automated test generator for OCaml.</li>
+  <li><a href="https://github.com/janestreet/sexplib"><code>sexplib</code></a> is a library for s-expression conversions, which we will use to serialize and deserialize data.</li>
+  <li><a href="https://erratique.ch/software/cmdliner"><code>cmdliner</code></a> is a useful tool for reading command line arguments from your OCaml programs.</li>
 </ul>
 
 <h3 id="development-environments-for-ocaml">Development Environments for OCaml</h3>
@@ -242,7 +290,7 @@ base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_
     <p>You can easily run a <code>utop</code> shell from within VSCode, just open up a shell from the <code>Terminal</code> menu and type <code>utop</code>.</p>
   </li>
   <li>
-    <p>If you are on Windows and using WSL2, you need to run Visual Studio “in WSL2 space” to get OCaml syntax highlighting and other nice features. See the <a href="https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode">Remote WSL Extension Docs</a> for details on how to set up the VSCode-WSL2 connection.  If you are having trouble look at the <a href="https://docs.microsoft.com/en-us/windows/wsl/tutorials/wsl-vscode#additional-resources">Additional Resources</a> on that page.  Once you have the above set up, install the OCaml Platform as described above and you should have syntax highlighting etc working.</p>
+    <p>If you are on Windows and using WSL2, then we still suggest VSCode, and you can even use your Windows installation of it. Just install the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl">WSL VSCode extension</a> from the marketplace (the “extensions” tab in VSCode). Now from inside any directory in WSL, you can run <code>code .</code> to open up VSCode in that remote directory. You are now developing in a Linux environment but are connected to the Windows editor. Then install VSCode extensions like <strong>OCaml Platform</strong> from the extensions tab but as a remote extension.</p>
   </li>
 </ul>
 
@@ -253,19 +301,16 @@ base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_
 <h3 id="books">Books</h3>
 
 <ul>
-  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book has a fairly good overlap with what we will cover, and can be used as a supplementary resource.
-    <ul>
-      <li>It documents many of the extensions we will be using, the <code>Core</code> libraries in particular.</li>
-    </ul>
-  </li>
-  <li><a href="https://cs3110.github.io/textbook/cover.html">Cornell cs3110 book</a> is the online text for a somewhat-related course at Cornell.  They have recently added many videos if you like watching videos to learn.  Note that they are not using <code>Core</code>.</li>
+  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book has a fairly good overlap with what we will cover and can be used as a supplementary resource. Note that it uses the <code>Core</code> standard library overlow, so its library functions may look different from yours.</li>
+  <li><a href="https://cs3110.github.io/textbook/cover.html">Cornell cs3110 book</a> is the online text for a somewhat-related course at Cornell.  They have recently added many videos if you like watching videos to learn.</li>
   <li><a href="https://johnwhitington.net/ocamlfromtheverybeginning/">OCaml from the very beginning</a> is a free online book.</li>
+  <li><a href="https://usr.lmf.cnrs.fr/lpo/">Learn Programming with OCaml</a> has an introduction to OCaml and several neat algorithms and data structures, but it does not emphasize learning <em>functional</em> programming with OCaml. It is nevertheless an excellent resource.</li>
 </ul>
 
 <h3 id="coding-style">Coding Style</h3>
 
 <ul>
-  <li>The <a href="style-guide.html">FPSE Style Guide</a> is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 2 on.</li>
+  <li>The <a href="style-guide.html">FPSE Style Guide</a> is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 3 and onward.</li>
 </ul>
 
 <h3 id="example-worked-exercises">Example Worked Exercises</h3>
@@ -273,7 +318,7 @@ base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_
 
 <ul>
   <li><a href="https://exercism.io/tracks/ocaml/exercises">Exercism OCaml Track</a> has a large set of programming problems to solve which have solutions by many other programmers as well.  We will reference some of these examples in lecture.</li>
-  <li><a href="https://ocaml.org/problems">99 problems</a> solves 99 basic OCaml tasks.</li>
+  <li><a href="https://ocaml.org/exercises">99 problems</a> solves 99 basic OCaml tasks.</li>
   <li><a href="https://ocaml-sf.org/learn-ocaml-public/#activity%3Dexercises">Learn OCaml</a> has a large number of exercises to solve.  The <a href="https://github.com/ocaml-sf/learn-ocaml-corpus/tree/master/exercises">solutions are online</a>.</li>
 </ul>
       

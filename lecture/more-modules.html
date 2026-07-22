@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="../js/jquery.dropotron.min.js"></script>
  <script src="../js/skel.min.js"></script>
  <script src="../js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(../images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="../assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="../assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="../assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
           <li><a href="../contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -122,7 +130,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">String_set</span> <span class="o">=</span> <span class="k">struct</span>
-  <span class="k">open</span> <span class="nc">Core</span>
 
   <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span>
 
@@ -134,7 +141,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
     <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"item is not in set"</span>
     <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
-      <span class="k">if</span> <span class="nn">String</span><span class="p">.</span><span class="n">equal</span> <span class="n">hd</span> <span class="n">x</span>
+      <span class="k">if</span> <span class="n">hd</span> <span class="o">=</span> <span class="n">x</span>
       <span class="k">then</span> <span class="n">tl</span>
       <span class="k">else</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">remove</span> <span class="n">x</span> <span class="n">tl</span>
 
@@ -142,7 +149,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <span class="k">match</span> <span class="n">s</span> <span class="k">with</span>
     <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">false</span>
     <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span>
-      <span class="k">if</span> <span class="nn">String</span><span class="p">.</span><span class="n">equal</span> <span class="n">x</span> <span class="n">hd</span> 
+      <span class="k">if</span> <span class="n">hd</span> <span class="o">=</span> <span class="n">x</span> 
       <span class="k">then</span> <span class="bp">true</span> 
       <span class="k">else</span> <span class="n">contains</span> <span class="n">x</span> <span class="n">tl</span>
 <span class="k">end</span>
@@ -350,9 +357,9 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
 
 <p>Here is how we could apply the <code>Make_set</code> functor with our own data type. We’ll do it on nucleotides in the top loop.</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_jane"</span><span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_deriving.eq"</span><span class="p">;;</span>
 
-<span class="o">#</span> <span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">=</span> <span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">]</span> <span class="k">end</span><span class="p">;;</span>
+<span class="o">#</span> <span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">=</span> <span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">eq</span><span class="p">]</span> <span class="k">end</span><span class="p">;;</span>
 <span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">:</span> <span class="k">sig</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="k">val</span> <span class="n">equal</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="k">end</span>
 
 <span class="o">#</span> <span class="k">module</span> <span class="nc">Nuc_set</span> <span class="o">=</span> <span class="nc">Make_set</span> <span class="p">(</span><span class="nc">Nucleotide</span><span class="p">);;</span>
@@ -368,7 +375,7 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
 
 <ul>
   <li>Note this requires us to make a module out of our type.</li>
-  <li>also note that we used <code>[@@deriving equal]</code> to make the <code>equal</code> for free
+  <li>also note that we used <code>[@@deriving eq]</code> to make the <code>equal</code> for free
     <ul>
       <li>and note it is given the name <code>Nucleotide.equal</code> and not <code>Nucleotide.equal_nucleotide</code>, since it is in a module and is the type <code>t</code> there</li>
     </ul>
@@ -462,10 +469,10 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
   </li>
 </ul>
 
-<h3 id="cores-set-map-hash-table-etc"><code>Core</code>’s Set, Map, Hash table, etc</h3>
+<h3 id="the-standard-librarys-set-map-hash-table-etc">The Standard Library’s Set, Map, Hash table, etc</h3>
 
 <ul>
-  <li>The <code>Core</code> advanced data structures support something similar to what we did above
+  <li>The standard library advanced data structures support something similar to what we did above
     <ul>
       <li>“plug in the comparison in an initialization phase and then forget about it”</li>
     </ul>
@@ -481,52 +488,34 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
 <span class="k">let</span> <span class="n">mm</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">empty</span>
 
 <span class="c">(* Use the Map module to work with all maps. *)</span>
-<span class="k">let</span> <span class="n">mm'</span> <span class="o">:</span> <span class="kt">int</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="n">add_exn</span> <span class="n">mm</span> <span class="o">~</span><span class="n">key</span><span class="o">:</span><span class="mi">0</span><span class="o">.</span><span class="mi">4</span> <span class="o">~</span><span class="n">data</span><span class="o">:</span><span class="mi">5</span>
-<span class="c">(* int FloatMap.t is equivalent to 
-
-    val mm' : (float, int, FloatMap.Key.comparator_witness) Map.t
-
-  It has three type parameters: key, value, and witness to the way the keys are compared
-*)</span>
+<span class="k">let</span> <span class="n">mm'</span> <span class="o">:</span> <span class="kt">int</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">add</span> <span class="mi">0</span><span class="o">.</span><span class="mi">4</span> <span class="mi">5</span> <span class="n">mm</span>
 
 <span class="c">(* evaluates to 5 *)</span>
-<span class="k">let</span> <span class="n">data_5</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="n">find_exn</span> <span class="n">mm'</span> <span class="mi">0</span><span class="o">.</span><span class="mi">4</span>
+<span class="k">let</span> <span class="n">data_5</span> <span class="o">=</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">find</span> <span class="mi">0</span><span class="o">.</span><span class="mi">4</span> <span class="n">mm'</span>
 
 <span class="c">(* Use FloatMap.of_X functions to convert to a float map: *)</span>
-<span class="k">let</span> <span class="n">mm2</span> <span class="o">=</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">of_alist_exn</span> <span class="p">[</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">,</span><span class="s2">"hi"</span><span class="p">;</span> <span class="mi">3</span><span class="o">.</span><span class="mi">3</span><span class="o">,</span><span class="s2">"low"</span><span class="p">;</span> <span class="mi">2</span><span class="o">.</span><span class="mi">6</span><span class="o">,</span><span class="s2">"medium"</span><span class="p">;</span> <span class="mi">22</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="s2">"wavy"</span><span class="p">]</span>
+<span class="k">let</span> <span class="n">mm2</span> <span class="o">=</span> <span class="nn">FloatMap</span><span class="p">.</span><span class="n">of_list</span> <span class="p">[</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">,</span><span class="s2">"hi"</span><span class="p">;</span> <span class="mi">3</span><span class="o">.</span><span class="mi">3</span><span class="o">,</span><span class="s2">"low"</span><span class="p">;</span> <span class="mi">2</span><span class="o">.</span><span class="mi">6</span><span class="o">,</span><span class="s2">"medium"</span><span class="p">;</span> <span class="mi">22</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="s2">"wavy"</span><span class="p">]</span>
 </code></pre></div></div>
 
-<ul>
-  <li>We will ignore the above <code>FloatMap.Key.comparator_witness</code> type for now. We will learn about that later.</li>
-  <li>Note it requires a bit more than just the type and <code>compare</code> to be in <code>Float</code> for this to work with <code>Core</code></li>
-  <li><code>#show Map.Make;;</code> will show the functor type and we can look at what <code>Map.Make</code>s argument expects</li>
-  <li>In particular to/from S-expression conversions are also needed; use <code>[@@deriving compare, sexp]</code> on your own type in the top loop:</li>
-</ul>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_jane"</span><span class="p">;;</span> <span class="c">(* this is in the ~/.ocamlinit so you should not need this *)</span>
-
-<span class="o">#</span> <span class="k">module</span> <span class="nc">IntPair</span> <span class="o">=</span> <span class="k">struct</span>
-  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="o">,</span> <span class="n">sexp</span><span class="p">]</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">IntPair</span> <span class="o">=</span> <span class="k">struct</span>
+  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">ord</span><span class="p">]</span>
 <span class="k">end</span><span class="p">;;</span>
 <span class="k">module</span> <span class="nc">IntPair</span> <span class="o">:</span>
   <span class="k">sig</span>
     <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span>
     <span class="k">val</span> <span class="n">compare</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
-    <span class="k">val</span> <span class="n">t_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">sexp_of_t</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span>
   <span class="k">end</span>
 
 <span class="o">#</span> <span class="k">module</span> <span class="nc">IPMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="nc">IntPair</span><span class="p">);;</span>
 <span class="k">module</span> <span class="nc">IPMap</span> <span class="o">:</span>
   <span class="k">sig</span> <span class="o">...</span> <span class="k">end</span> <span class="c">(* big long omitted type *)</span>
 
-<span class="o">#</span> <span class="k">module</span> <span class="nc">IPSet</span> <span class="o">=</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="nc">IntPair</span><span class="p">);;</span>  <span class="c">(* Sets in Core also use compare (it sorts internally) *)</span>
+<span class="o">#</span> <span class="k">module</span> <span class="nc">IPSet</span> <span class="o">=</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="nc">IntPair</span><span class="p">);;</span>  <span class="c">(* Sets also use compare (it sorts internally) *)</span>
 <span class="o">...</span>
 
-<span class="o">#</span> <span class="nn">IPSet</span><span class="p">.</span><span class="n">empty</span> <span class="o">|&gt;</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">flip</span> <span class="nn">Set</span><span class="p">.</span><span class="n">add</span> <span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">flip</span> <span class="nn">Set</span><span class="p">.</span><span class="n">add</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">flip</span> <span class="nn">Set</span><span class="p">.</span><span class="n">add</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="nn">Set</span><span class="p">.</span><span class="n">to_list</span><span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="nn">IntPair</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="p">);</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">2</span><span class="p">)]</span>
+<span class="o">#</span> <span class="nn">IPSet</span><span class="p">.</span><span class="n">empty</span> <span class="o">|&gt;</span> <span class="nn">IPSet</span><span class="p">.</span><span class="n">add</span> <span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="nn">IPSet</span><span class="p">.</span><span class="n">add</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="nn">IPSet</span><span class="p">.</span><span class="n">add</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="mi">2</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="nn">IPSet</span><span class="p">.</span><span class="n">to_list</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="nn">IPSet</span><span class="p">.</span><span class="n">elt</span> <span class="kt">list</span> <span class="kt">list</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="p">);</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">2</span><span class="p">)]</span>
 </code></pre></div></div>
-
 <p>Observe that only non-parametric types can be keys for maps:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">ListMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="nc">List</span><span class="p">);;</span>
@@ -534,12 +523,10 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
 <span class="nc">Error</span><span class="o">:</span> <span class="nc">Signature</span> <span class="n">mismatch</span><span class="o">:</span>
        <span class="o">...</span>
        <span class="nc">Type</span> <span class="n">declarations</span> <span class="k">do</span> <span class="n">not</span> <span class="k">match</span><span class="o">:</span>
-         <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span>
+         <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">=</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">..</span>
        <span class="n">is</span> <span class="n">not</span> <span class="n">included</span> <span class="k">in</span>
          <span class="k">type</span> <span class="n">t</span>
-       <span class="nc">They</span> <span class="n">have</span> <span class="n">different</span> <span class="n">arities</span><span class="o">.</span>
-       <span class="nc">File</span> <span class="s2">"src/map_intf.ml"</span><span class="o">,</span> <span class="n">line</span> <span class="mi">29</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">2</span><span class="o">-</span><span class="mi">35</span><span class="o">:</span> <span class="nc">Expected</span> <span class="n">declaration</span>
-       <span class="nc">File</span> <span class="s2">"src/list.mli"</span><span class="o">,</span> <span class="n">line</span> <span class="mi">12</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">0</span><span class="o">-</span><span class="mi">48</span><span class="o">:</span> <span class="nc">Actual</span> <span class="n">declaration</span>
+       <span class="o">...</span>
 </code></pre></div></div>
 
 <ul>
@@ -551,13 +538,11 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
   </li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">SList</span> <span class="o">=</span> <span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="o">,</span> <span class="n">sexp</span><span class="p">]</span> <span class="k">end</span><span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">SList</span> <span class="o">=</span> <span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">ord</span><span class="p">]</span> <span class="k">end</span><span class="p">;;</span>
 <span class="k">module</span> <span class="nc">SList</span> <span class="o">:</span>
   <span class="k">sig</span>
     <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span>
     <span class="k">val</span> <span class="n">compare</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
-    <span class="k">val</span> <span class="n">t_of_sexp</span> <span class="o">:</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">sexp_of_t</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Sexp</span><span class="p">.</span><span class="n">t</span>
   <span class="k">end</span>
 
 <span class="o">#</span> <span class="k">module</span> <span class="nc">SListMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="nc">SList</span><span class="p">);;</span>
@@ -567,7 +552,7 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
 
 <p>And remember that we can inline module definitions, so the following will work as well.</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">SListMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">compare</span><span class="o">,</span><span class="n">sexp</span><span class="p">]</span> <span class="k">end</span><span class="p">);;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">SListMap</span> <span class="o">=</span> <span class="nn">Map</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">ord</span><span class="p">]</span> <span class="k">end</span><span class="p">);;</span>
 <span class="k">module</span> <span class="nc">SListMap</span> <span class="o">:</span>
   <span class="k">sig</span> <span class="o">..</span> <span class="k">end</span>
 </code></pre></div></div>
@@ -600,15 +585,9 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
   </li>
 </ul>
 
-<h3 id="a-small-example-using-coremap">A Small Example Using Core.Map</h3>
+<h3 id="a-small-example-using-map">A Small Example Using Map</h3>
 <ul>
-  <li>We will go over the code of <a href="../examples/school/school.ml">school.ml</a>, simple code that uses a <code>Core.Map</code>.</li>
-  <li>Note that there is an alternative to <code>Map.Make</code> using advanced features we will cover in detail later: <em>first-class modules</em>.
-    <ul>
-      <li>The advantage of this code is you don’t need to make a new module for every type you use it at</li>
-      <li>Also avoids the <code>Map.add</code> vs <code>IntMap.empty</code> issue of two different interfaces to use same map.</li>
-    </ul>
-  </li>
+  <li>We will go over the code of <a href="../examples/school/school.ml">school.ml</a>/<a href="../examples/zips/school.zip">zipfile</a>, simple code that uses a <code>Map</code>.</li>
 </ul>
 
 <h3 id="the-with-type-refinement-operation">The <code>with</code> type refinement operation</h3>
@@ -753,19 +732,19 @@ module Int3 : sig type t = int val equal : t -> t -> bool end
 <span class="k">end</span>
 </code></pre></div></div>
 
-<h3 id="other-data-structures-in-core">Other Data Structures in <code>Core</code></h3>
+<h3 id="other-data-structures-in-the-standard-library">Other Data Structures in the standard library</h3>
 
 <ul>
-  <li><code>Core</code> has complete implementations of many classic data structures, many of which are built similarly with functor like <code>Map.Make</code></li>
+  <li>The standard library has complete implementations of many classic data structures, many of which are built similarly with a functor like <code>Map.Make</code></li>
   <li>Be careful on imperative vs functional, look carefully to see which it is</li>
-  <li>Functional data structures in <code>Core</code>:
+  <li>Functional data structures:
     <ul>
-      <li><code>Set</code>, <code>Map</code>, <code>Doubly_linked</code> (list), <code>Fqueue</code>, <code>Fdeque</code> (functional (double-ended) queue)</li>
+      <li><code>Set</code>, <code>Map</code>, <code>IArray</code> (immutable arrays)</li>
     </ul>
   </li>
   <li>Imperative data structures:
     <ul>
-      <li><code>Stack</code> and <code>Queue</code> (which don’t need <code>Make</code>/<code>compare</code>), plus <code>Hash_queue</code>, <code>Hash_set</code>, <code>Hashtbl</code> (mutable hashed queue/set/map),  <code>Linked_queue</code>,  <code>Bag</code> (a multi-set)</li>
+      <li><code>Stack</code>, <code>Queue</code> (which don’t need <code>Make</code>/<code>compare</code>), <code>Hashtbl</code>, <code>Pqueue</code> (priority queue)</li>
     </ul>
   </li>
 </ul>

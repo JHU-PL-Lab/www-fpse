@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="js/jquery.dropotron.min.js"></script>
  <script src="js/skel.min.js"></script>
  <script src="js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
           <li><a href="contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -104,7 +112,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
             <div id="banner">
                <section class="container">
                   <h2>Functional Programming in Software Engineering</h2>
-                  <span>601.429/629  &nbsp;  Fall 2025   &nbsp; Prof. Scott Smith</span>
+                  <span>601.429/629  &nbsp;  Fall 2026   &nbsp; Prof. Scott Smith</span>
                </section>
             </div>
 
