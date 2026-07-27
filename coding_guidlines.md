@@ -19,7 +19,7 @@
 
 **Don’t be too clever.** The most elegant solution is not always the best one. Readability is about more than just concision. Write the shorter code if doing so does not drastically increase complexity. Point-free programming (especially excessive function composition and partial application) is often clever but unreadable. Be explicit and simple without being overly verbose.
 
-**Use the weakest feature.** Prefer the simplest feature that expresses your intent. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist. Every additional capability imposes a cost on the reader because they must be prepared for you to use it; introduce mechanisms only when they buy you something. Search for the simplest type or feature that solves your problem
+**Use the weakest feature.** Prefer the simplest feature that expresses your intent. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist. Every additional capability imposes a cost on the reader because they must be prepared for you to use it; introduce mechanisms only when they buy you something. Search for the simplest type or feature that solves your problem.
 
 > For example, do not use a list where a tuple works, or a first class module when you only need a higher order function, or objects when records and variants suffice.
 
@@ -66,7 +66,7 @@
 
 **Options over exceptions.** Exceptions for recoverable failures require the programmer to _remember_ to catch them. Options _force_ the programmer to handle them. Don’t leave anything up to chance, and favor options in your interfaces. Results allow you to express reasons for failure and are a good alternative to options.
 
-> For example, to normalize a vector to a unit vector, you may prefer `val : normalize_opt : vector -> vector option` instead of `val : normalize : vector -> vector` because normalization is not total: it is not defined on the zero vector, so the second can fail.
+> For example, to normalize a vector to a unit vector, you may prefer `val normalize_opt : vector -> vector option` instead of `val normalize : vector -> vector` because normalization is not total: it is not defined on the zero vector, so the second can fail.
 
 **Prefer records over tuples.** Tuples are useful for transiently packing data together, but they should not be used for meaningful, long-lived groupings of data. When defining types, choose to make a new record instead of aliasing a tuple type.
 
