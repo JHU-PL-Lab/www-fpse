@@ -15,6 +15,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <script src="../js/jquery.dropotron.min.js"></script>
  <script src="../js/skel.min.js"></script>
  <script src="../js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
 			background: #222222 url(../images/banner.jpg) no-repeat;
@@ -92,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="../assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="../assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="../assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/1192943254">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/2026049765">Q&A</a></li>
           <li><a href="../contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -119,7 +127,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>All the code must be in OCaml (excepting small bits of glue code, or explicit exceptions if you petition).</li>
-  <li>You must use the standard course libraries – <code>Core</code>, <code>Lwt</code>, <code>OUnit2</code> etc – as your basis, plus any other libraries you find useful.</li>
+  <li>You must use the standard course libraries – ``, <code>Lwt</code>, <code>OUnit2</code> etc – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 2-4 people.</li>
   <li>OCaml excels for non-trivial algorithms, and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.</li>
   <li>You are also <strong>required</strong> to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.</li>
@@ -224,7 +232,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
   <p>We are going to make a Rubik’s Cube solver for the 4x4x4 Rubik’s Cube where the user inputs their cube through a web frontend, and they get back a sequence of moves to solve the cube.</p>
 
-  <p>To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use Core because the Rubik’s Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.</p>
+  <p>To get the Web frontend to work, we need Dream and Lwt, and for the OCaml backend, we will only use the standard libraries because the Rubik’s Cube library will be from scratch. We might use OCamlGraph in case we choose some graph search method to solve parts of the cube.</p>
 </blockquote>
 
 <p>This submission will count for very little; its purpose is just to get your group off the ground, and to give us some direction on who to assign as your group advisor.</p>

@@ -100,7 +100,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
                 <li><a href="../assignments/assignment6.html">Assignment 6</a></li>
                 <li><a href="../assignments/assignment7.html">Assignment 7</a></li>
                 <li><a href="../assignments/project.html">Project</a></li>
-              </ul></li>          <li><a href="https://courselore.org/courses/TBA">Q&A</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/2026049765">Q&A</a></li>
           <li><a href="../contact.html">Contact Us</a></li>
       </ul>
 </nav>
@@ -420,7 +420,7 @@ To make a library module from the <code>string_set.ml</code> file, we include th
 <p>Suppose we made a module out of our previous nucleotide example, either by putting in a file <code>nucleotide.ml</code> or adding <code>module Nucleotide = struct .. end</code> to make a top-loop or nested module:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">=</span> <span class="k">struct</span>
-  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">equal</span><span class="p">]</span>
+  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">eq</span><span class="p">]</span>
 
   <span class="k">let</span> <span class="n">hamming_distance</span> <span class="n">l</span> <span class="o">=</span> <span class="n">failwith</span> <span class="s2">"dummy"</span>
 <span class="k">end</span>
