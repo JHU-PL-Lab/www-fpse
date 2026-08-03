@@ -7,7 +7,7 @@
 
 **Functional first.** Functional code makes effects and data flow explicit. Meaningful outcomes are expressed in the return type. Imperative code, on the other hand, has side effects and state that you must know about and keep in mind; the returned value, if any, is not the only outcome of calling the function. Keep the scope small and prefer functional solutions. But remember: this is "functional first", not "functional only". Use imperative style where it is the least cumbersome.
 
-**Encapsulate with modules.** Your code should be grouped into meaningful, coherent modules. Modules should have a single purpose, and that purpose is often to contain a single type and several functions that work mainly on that type. Writing code in this way separates responsibilities and creates appropriate abstraction boundaries. Then, **document with interface files**. Interfaces are a great spot to comment and to think critically about the purpose of your module.
+**Encapsulate with modules.** Your code should be grouped into meaningful, coherent modules. Modules should have a single purpose, and that purpose is often to contain a single type and several functions that work mainly on that type. Writing code in this way separates responsibilities and creates appropriate abstraction boundaries. Then, **document with interface files**. Interfaces are a great place to comment and to think critically about the purpose of your module.
 
 **Hide representations.** Modules should expose operations, not representations. Hide implementation details behind interfaces whenever practical so that users depend on the semantics of the module rather than its implementation. This prevents misuse and enhances maintainability. However, hiding is not always the best choice. For example, if you are writing getters and setters for every field of a record type, you should instead just expose the type.
 
@@ -15,29 +15,64 @@
 
 **Think structurally.** Using too many combinators clouds the structure of the problem and leads to indirect solutions. You should not be asking yourself how you can assemble a solution from existing library functions but instead how you can best solve the problem with OCaml. If you think primarily in terms of library functions, then you are missing out on the power that the language itself provides. Moreover, combinator-heavy code is likely to have many nested function calls without explanatory variable names.
 
+> For example, something like `List.map (Fun.flip List.cons ls) xs` is over-using combinators. Just write `List.map (fun x -> x :: ls) xs`.
+
 **Don’t be too clever.** The most elegant solution is not always the best one. Readability is about more than just concision. Write the shorter code if doing so does not drastically increase complexity. Point-free programming (especially excessive function composition and partial application) is often clever but unreadable. Be explicit and simple without being overly verbose.
 
-**Use the weakest feature.** Prefer the simplest feature that expresses your intent. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist. Every additional capability imposes a cost on the reader because they must be prepared for you to use it; introduce mechanisms only when they buy you something. Search for the simplest type or feature that solves your problem: do not use a list where a tuple works, or objects when records and variants suffice, or a first class module when you only need a higher order function.
+**Use the weakest feature.** Prefer the simplest feature that expresses your intent. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist. Every additional capability imposes a cost on the reader because they must be prepared for you to use it; introduce mechanisms only when they buy you something. Search for the simplest type or feature that solves your problem.
+
+> For example, do not use a list where a tuple works, or a first class module when you only need a higher order function, or objects when records and variants suffice.
 
 **Use the appropriate data structure.** Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are. Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution. When an advanced data structure is required, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.
 
-**Libraries, not frameworks.** Frameworks are opinionated and invite conflicts. Good luck using more than one of them at a time. Adopt these sparingly, and only when they are fundamental to your project. A good library is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you. In general, though, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. Dependencies can be heavy, and they should be worth their weight.
+**Libraries, not frameworks.** Frameworks are opinionated and invite conflicts. They are large dependencies that massively influence the structure of your program. Good luck using more than one of them at a time. Adopt frameworks sparingly, and only when they are fundamental to your project. A good library, on the other hand, is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you. In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. Dependencies can be heavy, and they should be worth their weight.
 
-**Abstract appropriately.** Use abstraction to avoid duplication and to avoid hardcoding. Abstraction should enhance readability by allowing the reader to focus on the fundamental problem the code at hand is solving. It should not hinder readability by being too implicit or clever, so choose the smallest abstraction that captures the common idea. A piece of code lacks abstraction when the same idea is repeated in several places or buried under irrelevant detail.
+> An example framework is `Lwt` for concurrency. It will take over your code with monads, and you cannot nest its use, so you cannot depend on other libraries that use it themselves.
+
+> Some example libaries are the timing library `Mtime` or the data structure `Psq`. These define a few types and functions that are tightly contained and are unopinionated.
+
+**Abstract appropriately.** Use abstraction to avoid duplication and to avoid hardcoding. Abstraction should enhance readability by allowing the reader to focus on the fundamental problem the code at hand is solving. It should not hinder readability by being too implicit or clever, so choose the smallest abstraction that captures the common idea. A piece of code lacks abstraction when the same idea is repeated in several places or when the main idea is buried under irrelevant detail.
 
 **Parse, don’t validate.** Use new types to parse your data into always-valid forms where illegal states are unrepresentable. Avoid implicit invariants or frequent re-validation. Effective use of types can often uphold those invariants by themselves and will aid in readability.
+
+> For example, parse a string into an abstract `email` type exactly once instead of checking at every use that it is a valid email string.
 
 ## Specific suggestions
 
 **Pattern match and destructure.** Pattern matching and `let`-destructuring (e.g. `let a, b = ... in ...`) are some of OCaml's clearest tools, and they express intent very explicitly. Use them liberally.
 
+**Avoid programming with indices.** An index in a list is most often not the right idea. Using indices invites off-by-one errors that are not possible in a structural approach to the problem. Lean into pattern matching and forming your solution with structure rather than numbers because structure can be better visualized and verified.
+
+> For example, to get the element in a list before the first one satisfying `p`, this:
+> ```ocaml
+> List.find_mapi (fun i x ->
+>   if p x then List.nth_opt xs (i - 1) else None
+> ) xs
+> ```
+> is less clear than:
+> ```ocaml
+> let rec find = function
+>   | [] | [_] -> None
+>   | prev :: next :: _ when p next -> Some prev
+>   | _ :: tl -> find tl
+> in
+> find xs
+> ```
+> especially because the first raises an exception in the singleton list case satisfying `p`.
+
 **New types, not aliases.** New types force structure and separation, while aliases may accidentally cross data because they do not create distinct types. New types also document themselves in interfaces.
 
+> For example, for a 2D integer point, prefer `type t = { x : int ; y : int }`, a new record type, instead of `type t = int * int`.
+
 **Options over exceptions.** Exceptions for recoverable failures require the programmer to _remember_ to catch them. Options _force_ the programmer to handle them. Don’t leave anything up to chance, and favor options in your interfaces. Results allow you to express reasons for failure and are a good alternative to options.
+
+> For example, to normalize a vector to a unit vector, you may prefer `val normalize_opt : vector -> vector option` instead of `val normalize : vector -> vector` because normalization is not total: it is not defined on the zero vector, so the second can fail.
 
 **Prefer records over tuples.** Tuples are useful for transiently packing data together, but they should not be used for meaningful, long-lived groupings of data. When defining types, choose to make a new record instead of aliasing a tuple type.
 
 **Label function arguments of the same type.** If any two arguments have the same type, you invite the caller to confuse them, or you require them to read a documenting comment. Instead, use labeled arguments to distinguish them, or, even better, use new types so that it is impossible to mess up.
+
+> For example, the standard library function `String.split_first : sep:string -> string -> (string * string) option` uses labels to distinguish its arguments, yet `String.concat : string -> string list -> string` does not because the types are different.
 
 **Monomorphic, not polymorphic, comparison.** Performance aside, monomorphic comparison (e.g. `String.equal`) is defined specifically for the type at hand, while polymorphic comparison may not behave as intended. Polymorphic comparison is too structure-sensitive (e.g. on sets), may fail at runtime (e.g. on functions), and may be unsound in the presence of existential types (e.g. in GADTs). Further, type-specific comparison documents the type you intend to compare.
 
@@ -59,7 +94,7 @@ match x with
 
 ## Design patterns
 
-**Name your types `t`.** Most types should be named `t`. This naturally encourages each type to live in its own module, where the module name describes that type `t`. This keeps modules focused and small, it and separates responsibilities by type. For example, `List.t` is the type of lists, and the `List` module is limited to only operations on lists.
+**Name your types `t`.** Most types should be named `t`. This naturally encourages each type to live in its own module, where the module name describes that type `t`. This keeps modules focused and small, and it separates responsibilities by type. For example, `List.t` is the type of lists, and the `List` module is limited to only operations on lists.
 
 **`module T`/`include T`**. When defining a type that will be passed to a functor, it is common practice to wrap the type and its operations in a module called `T`. Suppose you intend to implement this interface:
 

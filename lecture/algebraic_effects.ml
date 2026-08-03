@@ -188,7 +188,7 @@ let _ : int = (3 / 0) + (8 / 0) + 1 (* same as 1 + 1 + 1 *)
 
 (* Function to turn [n;m;p] to n/m/p etc.
    but use the above division to allow for recovery *)
-let rec div_list (l : int list) : int =
+let div_list (l : int list) : int =
   match l with
   | [] -> 1
   | hd :: tl -> List.fold_left (fun acc n -> acc / n) hd tl
