@@ -120,209 +120,169 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h1 id="ocaml-style-guide-for-fpse">OCaml Style Guide for FPSE</h1>
 
-<p>Author: Kelvin Qian with updates by Scott Smith</p>
+<p>Here are the FPSE guidelines for writing well-formatted, good-looking OCaml code. <a href="./coding_guidelines.md">Here</a> are the guidelines for writing <em>good</em> code, not just <em>good-looking</em> code, which we will cover later in the course.</p>
 
-<h2 id="preface">Preface</h2>
+<p>It matters that your code is easy to read, and this means following conventions. These are not all hard rules: code style involves judgment. But consistency is important, and you should have a good reason to depart from the conventions below.</p>
 
-<p>Clean, readable code is essential in software development, especially as code is more often read than written.  This style guide is partly based on the <a href="https://ocaml.org/learn/tutorials/guidelines.html#How-to-use-modules">OCaml Programming Guidelines</a> from the official OCaml website; while there is no “official” style, that webpage reflects the consensus view of the OCaml community.  Other style guides include the <a href="https://www.seas.upenn.edu/~cis341/current/programming_style.shtml#10">UPenn style guide</a> and the <a href="https://opensource.janestreet.com/standards/">Jane Street style guide</a>.</p>
+<h2 id="naming-and-documentation">Naming and documentation</h2>
 
-<p>Many of these guidelines are more recommendations than absolute requirements; understand <em>why</em> these guidelines are in place rather than just following them mindlessly, and if you decide to break a recommendation, you should have a good reason.  Software development, after all, is oftentimes more art than science.  That said, we do expect that you will generally follow these guidelines (in particular the ones with <strong>bold</strong> remarks below) to produce clean code, and we will take off points if your code is ugly or unreadable, including cases where guidelines were abused.</p>
+<p><strong>Casing conventions.</strong></p>
 
-<h3 id="acknowledgements">Acknowledgements</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Kind</th>
+      <th>Convention</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Files</td>
+      <td><code>lowercase_with_underscores.ml(i)</code></td>
+    </tr>
+    <tr>
+      <td>Modules</td>
+      <td><code>Capitalized_with_underscores</code> (preferred over <code>CamelCase</code>, to match file names)</td>
+    </tr>
+    <tr>
+      <td>Variant constructors</td>
+      <td><code>Capitalized_with_underscores</code> or <code>CamelCase</code></td>
+    </tr>
+    <tr>
+      <td>Module types</td>
+      <td><code>ALL_CAPS_WITH_UNDERSCORES</code></td>
+    </tr>
+    <tr>
+      <td>Types</td>
+      <td><code>lowercase_with_underscores</code></td>
+    </tr>
+    <tr>
+      <td>Values</td>
+      <td><code>lowercase_with_underscores</code></td>
+    </tr>
+  </tbody>
+</table>
 
-<p>This document would not have been made possible without input of the original FPSE team - myself, Dr. Scott, Devin Hill, and Shiwei Weng.  Special thanks is also given to Peter Frölich, whose C style guide served as the inspiration for this document.</p>
+<p>Modules and variant constructors do not have a hard rule. Use what reads best, and stick with it throughout the entire project.</p>
 
-<h2 id="general-guidelines">General Guidelines</h2>
+<p><strong>Use meaningful names for values.</strong> A name should say what a value is or computes: if a value is bound with <code>let</code>/<code>in</code>, then it should have a descriptive name. Avoid single letters and unclear abbreviations, except for common conventions like <code>f</code> for an arbitrary function argument, <code>hd</code>/<code>tl</code> for list patterns, <code>t</code> for type names, etc.</p>
 
-<ol>
-  <li>
-    <p>The golden rule of style: readability comes first.  Regardless of if you’re an OCaml newbie or veteran, unreadable code is your worst enemy and is the source of many bugs.</p>
-  </li>
-  <li>
-    <p>Each line of code should be of reasonable length.  Traditionally this meant that each line had a max length of 80 columns, but this rule has <a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Linux-Kernel-Deprecates-80-Col">become less relevant</a> with modern displays.  What is <strong>not</strong> acceptable are massive lines of 200+ columns or more that are either painful to side-scroll or are unreadable thanks to text wrapping.</p>
-  </li>
-  <li>
-    <p>Your functions should be short - a reader will either glaze over at an overly long function or be utterly confused from having to keep track of all the moving parts. Functions in good functional code often outsource tasks to helper functions that each perform a single, specific, and easy to understand task.  (Note: you can get away with a longer function if it’s <em>conceptually</em> simple, such as a <code>match</code> statement with very many short cases.)</p>
-  </li>
-  <li>
-    <p>Your functions should not have an excessive number of arguments - functions with five arguments are okay, seven arguments is a bit too much, and ten arguments is beyond reason.  If you have a ton of function arguments, look for packages of related argumenrts and consider packaging them up aas a new record type.  (This also applies to the length of tuples being passed into functions; see the “Miscellaneous” section.)  Additionally, for functions with more than a couple arguments use named arguments (the <code>~f:...</code> in function definitions and uses) to keep things straight.</p>
-  </li>
-  <li>
-    <p>Do not duplicate code.  Functions that share functionality should have that code split off into a helper function that both can call, for example; if you wish to later fix that code, you’d only have to do it once and not twice.  That said, avoiding code duplication is sometimes either impossible or not worth it, so (like most things in this guide) use your best judgement.</p>
-  </li>
-  <li>
-    <p>Give descriptive names to your variables, (non-anonymous) functions, variants, etc.  We know what <code>add2</code> does, but what the heck does <code>foo</code> do?  (You might get away with it for local variables or when using <code>x</code> and <code>y</code> in mathematical functions, but even then some description can be useful, e.g. <code>counter</code> instead of <code>c</code>.)</p>
-  </li>
-  <li>
-    <p>Pattern matching is your friend in OCaml, and you should use it extensively to match on cases and destructure data structures.  Pattern match on a pair rather than nesting patterns, use <code>with</code> to add side-conditions if needed, use <code>let {num; denom} = r in ..</code> instead of <code>let num = r.num in let denom = r.denom in ..</code> etc.</p>
-  </li>
-  <li>
-    <p>Exceptions can make debugging difficult when they are thrown from deep within the code structure.  Especially for larger programs use <code>option</code> or <code>result</code> values, and handle errors locally.</p>
-  </li>
-  <li>Excessive nesting of conditionals or match statements should be avoided; it causes confusion and bugs (especially if parentheses aren’t used).  In particular, when matching on nested data structures (e.g. variants that contain other variants), it’s usually clearer to match on the entire data structure at once instead of matching each layer.  For instance, the following:
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
- <span class="o">|</span> <span class="nc">Ok</span> <span class="p">(</span><span class="nc">Some</span> <span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
- <span class="o">|</span> <span class="nc">Ok</span> <span class="p">(</span><span class="nc">None</span><span class="p">)</span> <span class="o">-&gt;</span>  <span class="c">(* ... *)</span>
- <span class="o">|</span> <span class="nc">Error</span> <span class="n">msg</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
-</code></pre></div>    </div>
-    <p>is more concise than</p>
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
- <span class="o">|</span> <span class="nc">Ok</span> <span class="n">z</span> <span class="o">-&gt;</span>
-   <span class="k">match</span> <span class="n">z</span> <span class="k">with</span>
-   <span class="o">|</span> <span class="nc">Some</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
-   <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
- <span class="o">|</span> <span class="nc">Error</span> <span class="n">msg</span> <span class="o">-&gt;</span> <span class="c">(* ... *)</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Use library modules whenever possible instead of “rolling your own.”  At the end of the day, it’s not worth it to re-invent the wheel when there’s correct, efficient code out there designed by OCaml experts and used/bugtested by thousands of people.</p>
-  </li>
-  <li>Generally you should be writing functional code, with no mutation.  However, OCaml does have mutable data structures like refs and arrays, and sometimes there are cases where mutation and other non-functional constructs are important.  Use them judiciously; don’t shy away from mutation if it makes your code more elegant, but do not put for-loops everywhere either.  In order to get used to functional programming you will be required to avoid mutation on all homeworks (but, you can use mutation in your projects if it has a clear advantage).</li>
-</ol>
+<p>For example, prefer <code>last_elt</code> over <code>x</code>, and <code>total_cost</code> over <code>tc</code>. Some common abbreviations for long words are fine, like <code>desc</code> instead of <code>description</code>.</p>
 
-<h2 id="modules">Modules</h2>
+<p><strong>Write odoc comments.</strong> Document your <code>.mli</code> files with <code>(** ... *)</code> comments below each value, type, and module. A short description of purpose and behavior is usually enough. Mention important edge cases, assumptions, exceptions, or effects. Remember that when a function is purely functional, it usually just returns something or <em>is</em> something. It does not <em>do</em>, so choose your words to reflect this.</p>
 
-<ol>
-  <li>
-    <p>Modules are a critical component of code encapsulation in OCaml.  Creating modules and submodules is a key tool used to divide your code up and keep everything straight.</p>
-  </li>
-  <li>
-    <p>You should always write an <code>.mli</code> file corresponding to each <code>.ml</code> file that you make.  This enforces separation between interface and implementation (a concept shared by other languages like C++ and Java) and provides the best place to put documentation (see “Documentation” below).  If your <code>.ml</code> file contains a lot of helper functions, <code>.mli</code> functions ensure that they are not exposed to other parts of the codebase, let alone external programs that may use your code as a library.</p>
-  </li>
-  <li>Use the <code>open</code> keyword judiciously.  Many style guides will tell you to avoid using <code>open</code> for any module; they have a point since opening modules without care can result in unwanted name shadowing, as well as confusion over which function belongs to which module.  However, never opening modules can result in <code>Long.Module_paths.Polluting.Your.codebase</code>.  In general, it is a good idea to use <code>open</code> in a module when:
-    <ul>
-      <li>The module is a standard library that you want to use throughout your entire environment</li>
-      <li>The module is closely related to the module it’s being opened in (e.g. if you’re opening <code>My_module</code> in <code>my_module_utils.ml</code>).</li>
-    </ul>
-
-    <p>You should also take advantage of the <code>let open My_Module in ...</code> and <code>My_module.( ... )</code> syntax.  Both features restrict opening the module to the <code>...</code> code, allowing you to have the best of both worlds. For example, <code>String.("hi" = ho")</code> is easier to read than <code>String.(=) "hi" "ho"</code>.</p>
-  </li>
-  <li>When making a new data structure, always encapsulate it in its own module.  The type of the underlying data of the module should then be written as <code>t</code> (for “type”), e.g. <code>String_set.t</code> would the type of a set of strings module, not e.g. <code>String_set.string_set_underlying_type</code>.  This may seem to contradict the guideline to give descriptive names, but the descriptiveness is already in the module name.  All the standard libraries also use this convention.</li>
-</ol>
-
-<h2 id="naming-conventions">Naming Conventions</h2>
-
-<ol>
-  <li>
-    <p>Naming conventions for variables and other identifiers provide a baseline level of consistency and cleaniness in your code.  They also allow for people familiar with these conventions to instantly identify whether something is a variable, module, and so on.  Coders often take naming conventions for granted, but they are an essential part of coding style; for these reasons, you <strong>must</strong> follow the following OCaml naming conventions in this course.</p>
-  </li>
-  <li>
-    <p>Variables, functions, and (non-module) type signtaures are written in <code>all_lowercase_using_underscores</code>, not using <code>camelCase</code> nor <code>using-dashes-aka-kebab-case</code>.</p>
-  </li>
-  <li>
-    <p>Module names (both signatures and structs) are written similarly, with the exception that the first letter must be uppercase <code>Like_this</code>.  (In dune files, however, library names are <code>all_undercase</code>.)</p>
-  </li>
-  <li>
-    <p>Variant names are written in either <code>UpperCamelCase</code> or <code>Initial_upper_case_with_underscores</code>.  (Pick one and stick with it in your codebase.)</p>
-  </li>
-  <li>
-    <p>File names <code>use_underscores</code>, but directory names <code>use-dashes</code>.</p>
-  </li>
-</ol>
-
-<h2 id="indentation">Indentation</h2>
-
-<p>In this course you will be required to use an automatic code formatter, we recommend that you use <code>ocamlformat</code> as it works directly with the default course install.  The convention dictated by <code>ocamlformat</code> mandates 2 spaces per indent, as opposed to the usual 4 spaces. (Also, please don’t use tabs for indentation!).  To enable <code>ocamlformat</code> for your project you need to put an (empty) file at the root with the name <code>.ocamlformat</code>.  You can simply make this file with the shell command</p>
-
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">touch</span> .ocamlformat
-</code></pre></div></div>
-<p>at the root of your project.  Note that the homeworks should have this file present for you already.</p>
-
-<p>To automatically format your code in VSCode, use <code>option-shift-F</code> on Mac or <code>alt-shift-F</code> on Windows.  The following examples show how these tools indent common OCaml expressions:</p>
-
-<ul>
-  <li><code>let ... in ...</code> expressions.  Nested <code>let ... in ...</code> blocks should not be indented, but variable definitions should if they are placed on a new line.
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">let</span> <span class="n">short_string</span> <span class="o">=</span> <span class="s2">"s"</span> <span class="k">in</span>
-  <span class="k">let</span> <span class="n">long_string</span> <span class="o">=</span> 
-    <span class="s2">"This is a very long string so it is indented and on a new line."</span>
-  <span class="k">in</span>
-  <span class="n">short_string</span> <span class="o">^</span> <span class="s2">" "</span> <span class="o">^</span> <span class="n">long_string</span>
-</code></pre></div>    </div>
-  </li>
-  <li><code>match</code> (and <code>with</code>) statements.  The patterns themselves align with the <code>match</code> keyword, while the inner expressions are indented if they are on a new line.
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="nc">Some</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="mi">0</span>
-  <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span>
-    <span class="n">failwith</span> <span class="s2">"This is a long string, so we put it on a new line and indented it."</span>
-</code></pre></div>    </div>
-  </li>
-  <li><code>if ... then ... else ...</code> expressions.  The conditional branches (if they’re on a new line) should be idented, but the keyword <code>else</code> should not be.
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">if</span> <span class="n">x</span> <span class="k">then</span>
-    <span class="mi">0</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">2</span>
-  <span class="k">else</span>
-    <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span>
-</code></pre></div>    </div>
-  </li>
-</ul>
-
-<p>As a side note, notice how the <code>if</code> and <code>then</code> keywords are on the same line, while the <code>else</code> keyword is on its own line.  In if-statements, predicate variables or expressions (in this case <code>x</code>) should be short, but branches can be (reasonably) long.</p>
-
-<p>One thing to point out is that it’s bad form to over-indent. These tools should fix any cases of over-indentation, but just remember that this:</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">let</span> <span class="k">rec</span> <span class="n">map</span> <span class="n">fn</span> <span class="n">lst</span> <span class="o">=</span>
-            <span class="k">match</span> <span class="n">lst</span> <span class="k">with</span>
-            <span class="o">|</span> <span class="bp">[]</span>      <span class="o">-&gt;</span> <span class="bp">[]</span>
-            <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">fn</span> <span class="n">x</span><span class="p">)</span> <span class="o">::</span> <span class="p">(</span><span class="k">match</span> <span class="n">fn</span> <span class="n">xs</span><span class="p">)</span>
-</code></pre></div></div>
-<p>looks worse than this:</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">let</span> <span class="k">rec</span> <span class="n">map</span> <span class="n">fn</span> <span class="n">lst</span> <span class="o">=</span>
-      <span class="k">match</span> <span class="n">lst</span> <span class="k">with</span>
-      <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
-      <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">fn</span> <span class="n">x</span><span class="p">)</span> <span class="o">::</span> <span class="p">(</span><span class="k">match</span> <span class="n">fn</span> <span class="n">xs</span><span class="p">)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">normalize_opt</span> <span class="o">:</span> <span class="n">vector</span> <span class="o">-&gt;</span> <span class="n">vector</span> <span class="n">option</span>
+<span class="c">(** [normalize_opt v] is [Some u], where [u] is the unit vector in the
+  direction of [v] if [v] is not the zero vector. Otherwise, it is [None]. *)</span>
 </code></pre></div></div>
 
-<h2 id="documentation">Documentation</h2>
+<h2 id="clarity">Clarity</h2>
 
-<ol>
-  <li>
-    <p>Good documentation is a must in software engineering.  Imagine if you go back to some code you haven’t touched in a year or more, and there are no comments.  Good luck.</p>
-  </li>
-  <li>
-    <p>Many people think that documentation = comments, but that is not necessarily true.  We already mentioned the “give descriptive names” guideline as one example.  Another example is using type annotations like <code>(x : int)</code> for function arguments and return types (which has the bonus benefit of helping the compiler perform type inference).  Good variable names and type annotations can be just as descriptive as comments to someone familiar with OCaml.</p>
-  </li>
-  <li>
-    <p>The key place to put comments is the <code>.mli</code> file, where functions and types of the module signature are described.  You can also put comments in the <code>.ml</code> file, but putting most of your documentation in the interface allows for comments to focus on <em>what</em> something is doing or <em>why</em> it exists, rather than <em>how</em> it works; it also serves as API documentation if you choose to release your library to the wider world.</p>
-  </li>
-  <li>
-    <p>Both of the previous points hint at how over-documentation is a thing.  Over-documentation clutters the code and can make it unreadable.  For example, you should not spam the body of your functions with comments describing every little thing it does; instead, the bulk of the explaining should be done by the code.  That said, do put comments if the code isn’t clear enough, or if there’s unusual behavior, weird edge cases, interesting algorithms, etc. in your functions, but make sure to do so judiciously.</p>
-  </li>
-  <li>
-    <p>In <code>.mli</code> files, you should follow <a href="https://ocaml.github.io/odoc/"><code>odoc</code></a> syntax when writing comments that describe functions or types - i.e. start your comments with <code>(**</code> instead of <code>(*</code>, and use square brackets to contain OCaml values (e.g. <code>(** [compare x y] compares two values in a certain way *)</code>).  For other comments, using <code>(*</code> is perfectly acceptable and odoc syntax isn’t required.</p>
-  </li>
-</ol>
+<p><strong>Write short functions.</strong> A function should do little more than what its name says. If you find yourself writing a long function, look for a natural point to split it into several functions, each with its own name and purpose. The natural breaking point is often where nesting gets deep: if there are many matches inside of matches, it is sign to extract some behavior into a smaller function. Long functions are fine when there are many match cases, each with a short body.</p>
 
-<h2 id="miscellaneous">Miscellaneous</h2>
+<p><strong>Explain with comments.</strong> In <code>.ml</code> files, prefer clear code over comments, but add ordinary comments for non-obvious algorithms, invariants, design choices, or surprising edge cases.</p>
 
-<ol>
-  <li>
-    <p>Do not write parentheses around function arguments that consist of a single variable or value: <code>my_function (a) ("bee") (3)</code> looks worse than <code>my_function a "bee" 3</code>.</p>
-  </li>
-  <li>
-    <p>Use the power of pattern matching in <code>let</code>, for tuples and records, e.g. <code>let x, y = tuple_fn 0 in ...</code>, and in function definitions, <code>let get_numerator {num, denom} = num</code></p>
-  </li>
-  <li>Use <code>@@</code> or <code>begin ... end</code> syntax to avoid too many parentheses.  The latter is just “big parentheses”, e.g.
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="mi">70</span> <span class="o">*</span>
-   <span class="k">begin</span> 
-     <span class="nn">Int</span><span class="p">.</span><span class="n">abs</span><span class="p">(</span><span class="o">-</span><span class="mi">44</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">*</span> <span class="mi">2</span>
-   <span class="k">end</span>
-</code></pre></div>    </div>
-    <ul>
-      <li>This is useful when there is a large code block in an expression</li>
-    </ul>
-  </li>
-  <li>
-    <p>For anonymous functions you can also directly pattern match in what was the argument position if you use the <code>function</code> keyword: <code>let tl = function [] -&gt; [] | x :: xs -&gt; xs</code>.</p>
-  </li>
-  <li>
-    <p>Use <code>|&gt;</code> <strong>very</strong> liberally, since it makes a “pipeline” of function operations which is much easier to intuitively understand.</p>
-  </li>
-  <li>
-    <p>Tuples should be short and simple.  Do not write tuples with many elements.  A five-element tuple should instead be a record with named fields.</p>
-  </li>
-  <li>
-    <p>Take advantage of label punning.  For labeled arguments, <code>my_fun ~compare x y</code> is more concise than <code>my_fun ~compare:compare x y</code>.  For record labels, <code>let {num, denom} = rational</code> is a more concise version of <code>let {num=num, denom=denom} = rational</code>.</p>
-  </li>
-  <li>If you have large records, use the <code>with</code> keyword if you only need to update a few values.</li>
-</ol>
+<p><strong>Do not overly nest.</strong> Deeply nested <code>if</code>s, <code>match</code>es, or <code>let</code>s are hard to read because the reader must track many levels at once. This can be a sign that a function is doing too much and should be split up, or that a pattern match can be flattened (see below).</p>
+
+<p><strong>Open judiciously.</strong> Avoid <code>open</code>ing modules at the top of a file just to save some keystrokes later; it makes it unclear where a name comes from. On the other hand, try not to write out very long qualified paths repeatedly because they dominate screen space. A local open is a good compromise:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">ten_ms</span> <span class="o">=</span>
+  <span class="k">let</span> <span class="k">open</span> <span class="nn">Mtime</span><span class="p">.</span><span class="nc">Span</span> <span class="k">in</span>
+  <span class="mi">10</span> <span class="o">*</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Long module paths can also be shortened with a module alias.</p>
+
+<h2 id="code-shape">Code shape</h2>
+
+<p><strong>Keep lines short.</strong> Most lines can and should be 80 characters or fewer, but this is not a hard rule. Sometimes code is more readable with a longer line (often because of long, descriptive names). Use 80 characters as a soft cutoff and consider 100 as a hard cutoff.</p>
+
+<p><strong>Indent with meaning.</strong> Indentation should reflect the structure of the code: a token is more indented than another exactly when it more deeply nested. Consistent indentation lets a reader infer structure at a glance without having to match up keywords. If your code becomes <em>too</em> indented because of this, then it may be a sign that the structure is too deep, and you need to extract out some logic.</p>
+
+<p><strong>Align delimiters.</strong> Matching delimiters (<code>let</code>/<code>in</code>, <code>begin</code>/<code>end</code>, <code>(</code>/<code>)</code> etc.) should either be on the same line or aligned in the same column, so a reader only has to scan in one direction to find the end of a block (right only or down only). If a <code>let ... in</code> does not fit on one line, break it like this:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">good_name</span> <span class="o">=</span>
+  <span class="n">expression</span>
+<span class="k">in</span>
+<span class="n">cont</span>
+</code></pre></div></div>
+<p>so that <code>let</code> and <code>in</code> always line up, regardless of how long <code>expression</code> is.</p>
+
+<p>This is easier to read than</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">good_name</span> <span class="o">=</span>
+  <span class="n">expression</span> <span class="k">in</span>
+<span class="n">cont</span>
+</code></pre></div></div>
+
+<p>The common exception is <code>struct</code>/<code>end</code> in modules, where the <code>end</code> usually aligns with the introductory <code>module</code> keyword to save a line and/or an indentation. For example:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">My_module</span> <span class="o">=</span> <span class="k">struct</span>
+  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">Int_constr</span> <span class="k">of</span> <span class="kt">int</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><strong>Use <code>begin</code>/<code>end</code> for control flow.</strong> Prefer <code>begin</code>/<code>end</code> over parentheses to delimit control-flow constructs like <code>match</code>, <code>if</code>, and <code>try</code>, especially when nested.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
+<span class="o">|</span> <span class="nc">A</span> <span class="o">-&gt;</span>
+  <span class="k">begin</span> <span class="k">match</span> <span class="n">y</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">B</span> <span class="o">-&gt;</span> <span class="mi">1</span>
+  <span class="o">|</span> <span class="nc">C</span> <span class="o">-&gt;</span> <span class="mi">2</span>
+  <span class="k">end</span>
+<span class="o">|</span> <span class="nc">D</span> <span class="o">-&gt;</span> <span class="mi">3</span>
+</code></pre></div></div>
+
+<p>Otherwise, use parentheses for ordinary grouping, function arguments, tuples, and operator precedence–everything that is <em>not</em> control flow.</p>
+
+<p><strong>Use blank lines to separate ideas.</strong> Put blank lines between top-level definitions unless they are very closely related and are short. Avoid large unbroken blocks of definitions.</p>
+
+<h2 id="idioms">Idioms</h2>
+
+<p><strong>Nest patterns.</strong> If a <code>match</code> immediately matches again on a variable pattern, consider combining the patterns instead of nesting them.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
+<span class="o">|</span> <span class="nc">Some</span> <span class="n">y</span> <span class="o">-&gt;</span>
+  <span class="k">begin</span> <span class="k">match</span> <span class="n">y</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">A</span> <span class="o">-&gt;</span> <span class="mi">1</span>
+  <span class="o">|</span> <span class="nc">B</span> <span class="o">-&gt;</span> <span class="mi">2</span>
+  <span class="k">end</span>
+<span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="mi">0</span>
+</code></pre></div></div>
+<p>is better written as</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
+<span class="o">|</span> <span class="nc">Some</span> <span class="nc">A</span> <span class="o">-&gt;</span> <span class="mi">1</span>
+<span class="o">|</span> <span class="nc">Some</span> <span class="nc">B</span> <span class="o">-&gt;</span> <span class="mi">2</span>
+<span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="mi">0</span>
+</code></pre></div></div>
+
+<p><strong>Use record punning.</strong> When a field name and the variable it binds/matches/creates share the same name, use punning instead of writing it twice.</p>
+
+<p><code>{ x = x ; y = y }</code> becomes <code>{ x ; y }</code>; <code>match p with { x = x ; y = y } -&gt; ...</code> becomes <code>match p with { x ; y } -&gt; ...</code>; and <code>{ p with x = x }</code> becomes <code>{ p with x }</code>.</p>
+
+<h2 id="small-details">Small details</h2>
+
+<p><strong>Indent with two spaces.</strong> Indent with two spaces instead of tabs. Tabs render inconsistently across editors and displays. Two spaces are just enough to visibly indent without losing much space to work with. If you are editing with VS Code, use the command palette to run “Indent Using Spaces” and choose “2”.</p>
+
+<p><strong>No trailing whitespace.</strong> Trailing whitespace can bloat diffs with invisible changes. Most editors can be configured to strip it automatically on save.</p>
+
+<p><strong>Avoid many arguments.</strong> Functions with many positional arguments of the same type are easy to call incorrectly, and they can be hard to read. Prefer fewer arguments, and use labels when a function needs several. Lots of arguments can also be a sign that conceptually related data is floating around loosely and should be put into a record or other data structure and then passed as one argument.</p>
+
+<p><strong>Use <code>@@</code> occasionally.</strong> Use <code>@@</code> to avoid a pile of closing parentheses, especially for a final function argument.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print_string</span> <span class="p">(</span><span class="nn">String</span><span class="p">.</span><span class="n">concat</span> <span class="s2">", "</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">string_of_int</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">append</span> <span class="n">xs</span> <span class="n">ys</span><span class="p">)))</span>
+<span class="c">(* has more parentheses and requires more visual parsing than *)</span>
+<span class="n">print_string</span> <span class="o">@@</span> <span class="nn">String</span><span class="p">.</span><span class="n">concat</span> <span class="s2">", "</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">string_of_int</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">append</span> <span class="n">xs</span> <span class="n">ys</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Beware that several uses of <code>@@</code> in the same expression can sometimes be confusing because of its associativity:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print_string</span> <span class="o">@@</span> <span class="nn">String</span><span class="p">.</span><span class="n">concat</span> <span class="s2">", "</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">string_of_int</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">append</span> <span class="n">xs</span> <span class="n">ys</span>
+</code></pre></div></div>
+
+<p>In this case, a pipeline with <code>|&gt;</code>, an intermediate name, or a combination of <code>@@</code> and parentheses is often much clearer; do not get carried away with just <code>@@</code>.</p>
+
+<p><strong>Do not overparenthesize.</strong> Use only as many parentheses as necessary for function calls or when operator precedence is unclear. When in doubt about precedence, use parentheses for clarity.</p>
       
           </section>
         </div>
