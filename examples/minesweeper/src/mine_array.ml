@@ -12,14 +12,14 @@
 (* Lets also use actual arrays.  Since grids don't get extended/shunk lists have no advantage *)
 (* This shows we can use arrays functionally, we don't mutate it but we get O(1) access benefit *)
 module Array_2d = struct
-  type 'a t = 'a array array
+  type 'a t = 'a iarray iarray
 
 (* The following functions are much more sensible with an OCaml array *)
   let get (b : 'a t) (x : int) (y : int) : 'a option =
-    try Some(b.(x).(y)) with _ -> None
+    try Some(Iarray.get (Iarray.get b x) y) with _ -> None
 
   let mapxy (b : 'a t) (f : int -> int -> 'a -> 'b) : 'b t =
-    Array.mapi (fun y r -> Array.mapi (f y) r) b
+    Iarray.mapi (fun y r -> Iarray.mapi (f y) r) b
 
   let adjacents (b : 'a t) (x : int) (y : int) : 'a list =
     let g xo yo = get b (x + xo) (y + yo) in
@@ -47,13 +47,13 @@ let is_field = Fun.negate is_mine
 
 (* Need conversion functions to/from list of strings format since tests are that form *)
 
-let from_string_list (l : string list) : char array array =
-  Array.of_list (List.map (fun s -> Array.init (String.length s) (String.get s)) l)
+let from_string_list (l : string list) : char iarray iarray =
+  Iarray.of_list (List.map (fun s -> Iarray.init (String.length s) (String.get s)) l)
 
 let to_string_list (board : char Array_2d.t) : string list =
-  Array.fold_left (fun accum_l a ->
+  Iarray.fold_left (fun accum_l a ->
       accum_l
-      @ [ Array.fold_left (fun accum c -> accum ^ String.make 1 c) "" a]) [] board
+      @ [ Iarray.fold_left (fun accum c -> accum ^ String.make 1 c) "" a]) [] board
 
 (* Main calculation: annotate a board of mines; similar to minesweeper.ml *)
 
