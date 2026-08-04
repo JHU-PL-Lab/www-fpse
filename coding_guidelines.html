@@ -1,0 +1,285 @@
+<!DOCTYPE HTML>
+<!--
+Solarize by TEMPLATED
+templated.co @templatedco
+Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+<html>
+<head>
+ <title>Functional Programming and Software Engineering</title>
+ <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+ <meta name="description" content="" />
+ <meta name="keywords" content="" />
+ <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
+ <script src="js/jquery.min.js"></script>
+ <script src="js/jquery.dropotron.min.js"></script>
+ <script src="js/skel.min.js"></script>
+ <script src="js/skel-layers.min.js"></script>
+ <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
+      For this had to hoist stuff that had URLs in it up to the top here.  And the
+      bash scripts for making the pages are also now doing rewriting of these.
+      It probably was a stupid move as it just makes things more complex..
+      but it seems to work. Note that assignments still have absolute URLS
+      which would need patching, they also are in the READMEs so need to be.
+      If I want to undo this just put the style stuff back in the style.css file
+      and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
+ <style>.wrapper.style1 {
+			padding: 0em;
+			background: #222222 url(images/banner.jpg) no-repeat;
+			background-size: cover;
+		}</style>
+ <script>skel.init({
+		reset: 'full',
+		breakpoints: {
+			global:		{ range: '*', href: 'css/style.css', containers: 1400, grid: { gutters: 50 } },
+			wide:		{ range: '-1680', href: 'css/style-wide.css', containers: 1200, grid: { gutters: 40 } },
+			normal:		{ range: '-1280', href: 'css/style-normal.css', containers: 960, lockViewport: true },
+			narrow:		{ range: '-980', href: 'css/style-narrow.css', containers: '95%', grid: { gutters: 25 } },
+			narrower:	{ range: '-840', href: 'css/style-narrower.css', grid: { collapse: true } },
+			mobile:		{ range: '-640', href: 'css/style-mobile.css', containers: '90%', grid: { gutters: 15 } }
+		}
+	}, {
+		layers: {
+			layers: {
+				navPanel: {
+					animation: 'pushX',
+					breakpoints: 'narrower',
+					clickToClose: true,
+					height: '100%',
+					hidden: true,
+					html: '<div data-action="navList" data-args="nav"></div>',
+					orientation: 'vertical',
+					position: 'top-left',
+					side: 'left',
+					width: 275
+				},
+				titleBar: {
+					breakpoints: 'narrower',
+					height: 44,
+					html: '<span class="toggle" data-action="toggleLayer" data-args="navPanel"></span><span class="title" data-action="copyHTML" data-args="logo"></span>',
+					position: 'top-left',
+					side: 'top',
+					width: '100%'
+				}
+			}
+		}
+	});
+  </script>
+ <script src="js/init.js"></script>
+ <noscript>
+  <link rel="stylesheet" href="css/skel.css" />
+  <link rel="stylesheet" href="css/style.css" />
+ </noscript>
+ <!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
+</head>
+<body>
+
+ <!-- Header Wrapper -->
+  <div class="wrapper style1">
+  
+  <!-- Header -->
+   <div id="header">
+    <div class="container">
+      
+     <!-- Logo -->
+      <h1><a href="index.html" id="logo">FPSE</a></h1>
+     
+     <!-- Nav -->
+      <nav id="nav">
+       <ul>
+          <li><a href="logistics.html">Logistics</a></li>
+          <li><a href="dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="coding.html">Coding</a>
+            <li><a href="">Assignments</a>
+                <ul class="menu">
+                <li><a href="assignments/assignment1.html">Assignment 1</a></li>
+                <li><a href="assignments/assignment2.html">Assignment 2</a></li>
+                <li><a href="assignments/assignment3.html">Assignment 3</a></li>
+                <li><a href="assignments/assignment4.html">Assignment 4</a></li>
+                <li><a href="assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="assignments/assignment6.html">Assignment 6</a></li>
+                <li><a href="assignments/assignment7.html">Assignment 7</a></li>
+                <li><a href="assignments/project.html">Project</a></li>
+              </ul></li>          <li><a href="https://courselore.org/courses/2026049765">Q&A</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+      </ul>
+</nav>
+</div>
+</div>
+
+
+<!-- close-out code before the standard footer .. use to glue in raw html. -->
+</div>
+<!-- Main -->
+<div id="main" class="wrapper style4">
+<!-- Content -->
+<div id="content" class="container">
+<section>
+
+<link rel="stylesheet" href="css/friendly.css" />
+<meta charset="utf-8" />
+    
+<h1 id="coding-guidelines-for-fpse">Coding Guidelines for FPSE</h1>
+
+<p><strong>Be explicit.</strong> Don’t make the reader solve a puzzle; tell them what is happening by being explicit. Implicit behavior requires lots of hard thinking to understand, whereas explicit behavior can be read straight off the page. This guide here is all about how to be explicit in your code so that you are clear in your intent and so that others can review, understand, and extend your code easily and correctly.</p>
+
+<h2 id="general-guidelines">General guidelines</h2>
+
+<p><strong>Functional first.</strong> Functional code makes effects and data flow explicit. Meaningful outcomes are expressed in the return type. Imperative code, on the other hand, has side effects and state that you must know about and keep in mind; the returned value, if any, is not the only outcome of calling the function. Keep the scope small and prefer functional solutions. But remember: this is “functional first”, not “functional only”. Use imperative style where it is the least cumbersome.</p>
+
+<p><strong>Encapsulate with modules.</strong> Your code should be grouped into meaningful, coherent modules. Modules should have a single purpose, and that purpose is often to contain a single type and several functions that work mainly on that type. Writing code in this way separates responsibilities and creates appropriate abstraction boundaries. Then, <strong>document with interface files</strong>. Interfaces are a great place to comment and to think critically about the purpose of your module.</p>
+
+<p><strong>Hide representations.</strong> Modules should expose operations, not representations. Hide implementation details behind interfaces whenever practical so that users depend on the semantics of the module rather than its implementation. This prevents misuse and enhances maintainability. However, hiding is not always the best choice. For example, if you are writing getters and setters for every field of a record type, you should instead just expose the type.</p>
+
+<p><strong>Know your standard library.</strong> It is not too big (and that is a good thing), so you should know what it provides. It will solve many simple problems for you. Never reimplement anything that is in the standard library, and always reach for the standard library when it expresses your intent. If you find that your code is a library function, then use the library function. If you find that your code is essentially a composition of two library functions, then use those two libraries functions. That said…</p>
+
+<p><strong>Think structurally.</strong> Using too many combinators clouds the structure of the problem and leads to indirect solutions. You should not be asking yourself how you can assemble a solution from existing library functions but instead how you can best solve the problem with OCaml. If you think primarily in terms of library functions, then you are missing out on the power that the language itself provides. Moreover, combinator-heavy code is likely to have many nested function calls without explanatory variable names.</p>
+
+<blockquote>
+  <p>For example, something like <code>List.map (Fun.flip List.cons ls) xs</code> is over-using combinators. Just write <code>List.map (fun x -&gt; x :: ls) xs</code>.</p>
+</blockquote>
+
+<p><strong>Don’t be too clever.</strong> The most elegant solution is not always the best one. Readability is about more than just concision. Write the shorter code if doing so does not drastically increase complexity. Point-free programming (especially excessive function composition and partial application) is often clever but unreadable. Be explicit and simple without being overly verbose.</p>
+
+<p><strong>Use the weakest feature.</strong> Prefer the simplest feature that expresses your intent. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist. Every additional capability imposes a cost on the reader because they must be prepared for you to use it; introduce mechanisms only when they buy you something. Search for the simplest type or feature that solves your problem.</p>
+
+<blockquote>
+  <p>For example, do not use a list where a tuple works, or a first class module when you only need a higher order function, or objects when records and variants suffice.</p>
+</blockquote>
+
+<p><strong>Use the appropriate data structure.</strong> Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are. Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution. When an advanced data structure is required, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.</p>
+
+<p><strong>Libraries, not frameworks.</strong> Frameworks are opinionated and invite conflicts. They are large dependencies that massively influence the structure of your program. Good luck using more than one of them at a time. Adopt frameworks sparingly, and only when they are fundamental to your project. A good library, on the other hand, is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you. In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. Dependencies can be heavy, and they should be worth their weight.</p>
+
+<blockquote>
+  <p>An example framework is <code>Lwt</code> for concurrency. It will take over your code with monads, and you cannot nest its use, so you cannot depend on other libraries that use it themselves.</p>
+</blockquote>
+
+<blockquote>
+  <p>Some example libaries are the timing library <code>Mtime</code> or the data structure <code>Psq</code>. These define a few types and functions that are tightly contained and are unopinionated.</p>
+</blockquote>
+
+<p><strong>Abstract appropriately.</strong> Use abstraction to avoid duplication and to avoid hardcoding. Abstraction should enhance readability by allowing the reader to focus on the fundamental problem the code at hand is solving. It should not hinder readability by being too implicit or clever, so choose the smallest abstraction that captures the common idea. A piece of code lacks abstraction when the same idea is repeated in several places or when the main idea is buried under irrelevant detail.</p>
+
+<p><strong>Parse, don’t validate.</strong> Use new types to parse your data into always-valid forms where illegal states are unrepresentable. Avoid implicit invariants or frequent re-validation. Effective use of types can often uphold those invariants by themselves and will aid in readability.</p>
+
+<blockquote>
+  <p>For example, parse a string into an abstract <code>email</code> type exactly once instead of checking at every use that it is a valid email string.</p>
+</blockquote>
+
+<h2 id="specific-suggestions">Specific suggestions</h2>
+
+<p><strong>Pattern match and destructure.</strong> Pattern matching and <code>let</code>-destructuring (e.g. <code>let a, b = ... in ...</code>) are some of OCaml’s clearest tools, and they express intent very explicitly. Use them liberally.</p>
+
+<p><strong>Avoid programming with indices.</strong> An index in a list is most often not the right idea. Using indices invites off-by-one errors that are not possible in a structural approach to the problem. Lean into pattern matching and forming your solution with structure rather than numbers because structure can be better visualized and verified.</p>
+
+<blockquote>
+  <p>For example, to get the element in a list before the first one satisfying <code>p</code>, this:</p>
+  <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">find_mapi</span> <span class="p">(</span><span class="k">fun</span> <span class="n">i</span> <span class="n">x</span> <span class="o">-&gt;</span>
+  <span class="k">if</span> <span class="n">p</span> <span class="n">x</span> <span class="k">then</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth_opt</span> <span class="n">xs</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="nc">None</span>
+<span class="p">)</span> <span class="n">xs</span>
+</code></pre></div>  </div>
+  <p>is less clear than:</p>
+  <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">find</span> <span class="o">=</span> <span class="k">function</span>
+  <span class="o">|</span> <span class="bp">[]</span> <span class="o">|</span> <span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="nc">None</span>
+  <span class="o">|</span> <span class="n">prev</span> <span class="o">::</span> <span class="n">next</span> <span class="o">::</span> <span class="n">_</span> <span class="k">when</span> <span class="n">p</span> <span class="n">next</span> <span class="o">-&gt;</span> <span class="nc">Some</span> <span class="n">prev</span>
+  <span class="o">|</span> <span class="n">_</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">find</span> <span class="n">tl</span>
+<span class="k">in</span>
+<span class="n">find</span> <span class="n">xs</span>
+</code></pre></div>  </div>
+  <p>especially because the first raises an exception in the singleton list case satisfying <code>p</code>.</p>
+</blockquote>
+
+<p><strong>New types, not aliases.</strong> New types force structure and separation, while aliases may accidentally cross data because they do not create distinct types. New types also document themselves in interfaces.</p>
+
+<blockquote>
+  <p>For example, for a 2D integer point, prefer <code>type t = { x : int ; y : int }</code>, a new record type, instead of <code>type t = int * int</code>.</p>
+</blockquote>
+
+<p><strong>Options over exceptions.</strong> Exceptions for recoverable failures require the programmer to <em>remember</em> to catch them. Options <em>force</em> the programmer to handle them. Don’t leave anything up to chance, and favor options in your interfaces. Results allow you to express reasons for failure and are a good alternative to options.</p>
+
+<blockquote>
+  <p>For example, to normalize a vector to a unit vector, you may prefer <code>val normalize_opt : vector -&gt; vector option</code> instead of <code>val normalize : vector -&gt; vector</code> because normalization is not total: it is not defined on the zero vector, so the second can fail.</p>
+</blockquote>
+
+<p><strong>Prefer records over tuples.</strong> Tuples are useful for transiently packing data together, but they should not be used for meaningful, long-lived groupings of data. When defining types, choose to make a new record instead of aliasing a tuple type.</p>
+
+<p><strong>Label function arguments of the same type.</strong> If any two arguments have the same type, you invite the caller to confuse them, or you require them to read a documenting comment. Instead, use labeled arguments to distinguish them, or, even better, use new types so that it is impossible to mess up.</p>
+
+<blockquote>
+  <p>For example, the standard library function <code>String.split_first : sep:string -&gt; string -&gt; (string * string) option</code> uses labels to distinguish its arguments, yet <code>String.concat : string -&gt; string list -&gt; string</code> does not because the types are different.</p>
+</blockquote>
+
+<p><strong>Monomorphic, not polymorphic, comparison.</strong> Performance aside, monomorphic comparison (e.g. <code>String.equal</code>) is defined specifically for the type at hand, while polymorphic comparison may not behave as intended. Polymorphic comparison is too structure-sensitive (e.g. on sets), may fail at runtime (e.g. on functions), and may be unsound in the presence of existential types (e.g. in GADTs). Further, type-specific comparison documents the type you intend to compare.</p>
+
+<p><strong>Do not write long anonymous functions.</strong> Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous. This frequently applies to function arguments to mapping and folding; if the argument is long and inlined, the behavior is mysterious.</p>
+
+<p><strong>Align delimiters.</strong> Matching delimiters (e.g. <code>begin</code> and <code>end</code>, or <code>let</code> and <code>in</code>) should appear on the same line or be aligned in the same column. This helps the reader find the end of an expression by scanning in only one direction (either to the right or down).</p>
+
+<p><strong><code>begin</code>/<code>end</code></strong>. Delimit program constructs with <code>begin</code> and <code>end</code>. They are especially preferable to parentheses around control flow constructs like <code>match</code>, <code>if</code>, and <code>try</code>. For example, in the following, <code>begin match</code> reads like one keyword, and it aligns better than any parentheses would.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
+<span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span>
+  <span class="k">begin</span> <span class="k">match</span> <span class="n">y</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="o">...</span>
+  <span class="o">|</span> <span class="nc">Some</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="o">...</span>
+  <span class="k">end</span>
+<span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="o">...</span>
+</code></pre></div></div>
+
+<h2 id="design-patterns">Design patterns</h2>
+
+<p><strong>Name your types <code>t</code>.</strong> Most types should be named <code>t</code>. This naturally encourages each type to live in its own module, where the module name describes that type <code>t</code>. This keeps modules focused and small, and it separates responsibilities by type. For example, <code>List.t</code> is the type of lists, and the <code>List</code> module is limited to only operations on lists.</p>
+
+<p><strong><code>module T</code>/<code>include T</code></strong>. When defining a type that will be passed to a functor, it is common practice to wrap the type and its operations in a module called <code>T</code>. Suppose you intend to implement this interface:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* my_module.mli *)</span>
+<span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="k">of</span> <span class="kt">int</span>
+<span class="k">val</span> <span class="n">compare</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
+<span class="k">module</span> <span class="nc">Set</span> <span class="o">:</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">S</span> <span class="k">with</span> <span class="k">type</span> <span class="n">elt</span> <span class="o">=</span> <span class="n">t</span>
+</code></pre></div></div>
+
+<p>A good design to avoid redefinitions and aliasing is:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* my_module.ml *)</span>
+<span class="k">module</span> <span class="nc">T</span> <span class="o">=</span> <span class="k">struct</span>
+  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="k">of</span> <span class="kt">int</span>
+  <span class="k">let</span> <span class="n">compare</span> <span class="p">(</span><span class="nc">A</span> <span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="nc">A</span> <span class="n">y</span><span class="p">)</span> <span class="o">=</span> <span class="nn">Int</span><span class="p">.</span><span class="n">compare</span> <span class="n">x</span> <span class="n">y</span>
+<span class="k">end</span>
+<span class="k">include</span> <span class="nc">T</span>
+<span class="k">module</span> <span class="nc">Set</span> <span class="o">=</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="nc">T</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><strong><code>module type S</code></strong>. When a module type is implemented by a functor, it is typical to call that module type <code>S</code>. While not descriptive by itself, the enclosing module provides the context. For example, <code>Set.S</code> is the module type of sets, and <code>Set.Make</code> is a functor that produces modules with type <code>Set.S</code>. Like naming your types <code>t</code>, this keeps modules focused–the <code>Set</code> module contains little more than <code>S</code> and <code>Make</code>.</p>
+
+<p><strong>Contain syntax in submodules</strong>. Sugar does have its place in your code, and that place is in submodules. If you define custom operators or <code>let</code>-syntax, then put them in submodules such as <code>Infix</code> and <code>Syntax</code> respectively, rather than in the top level. This keeps the default interface uncluttered and requires users to explicitly opt into the additional syntax. For example, with a monad,</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* monad.ml *)</span>
+<span class="k">module</span> <span class="k">type</span> <span class="nc">S</span> <span class="o">=</span> <span class="k">sig</span>
+  <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">m</span>
+  <span class="k">val</span> <span class="n">return</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">m</span>
+  <span class="k">val</span> <span class="n">bind</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">m</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">m</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">m</span>
+  <span class="k">module</span> <span class="nc">Infix</span> <span class="o">:</span> <span class="k">sig</span>
+    <span class="k">val</span> <span class="p">(</span><span class="o">&gt;&gt;=</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">m</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">m</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">m</span>
+    <span class="k">val</span> <span class="p">(</span><span class="o">&gt;&gt;|</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">m</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">m</span>
+  <span class="k">end</span>
+  <span class="k">module</span> <span class="nc">Syntax</span> <span class="o">:</span> <span class="k">sig</span>
+    <span class="k">val</span> <span class="p">(</span> <span class="k">let</span><span class="o">*</span> <span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">m</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">m</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">m</span>
+    <span class="k">val</span> <span class="p">(</span> <span class="k">let</span><span class="o">+</span> <span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">m</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">m</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The user must make it clear they are using sugar for a monad <code>M</code> by writing <code>open M.Syntax</code> or <code>let open M.Syntax in ...</code>. This tells the reader both what the sugar means and where it comes from.</p>
+      
+          </section>
+        </div>
+      </div>
+
+				<div id="copyright">
+					Web Design: TEMPLATED
+				</div>			
+
+
+   </body>
+</html>
