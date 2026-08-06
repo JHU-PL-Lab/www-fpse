@@ -3,9 +3,9 @@
 (see the file [basic-ocaml.ml](basic-ocaml.ml) if you want all of the ml examples in this file extracted out.  See [basic-ocaml.md](basic-ocaml.md) for the Markdown which you can Preview in VSCode like I am doing in lecture)
 ### Installing
 
- * See [the Coding page](../coding.html) for install instructions and lots of other information.  
- * Make sure to use the required version of OCaml, 5.5.1, install all the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
-    - This will let us all "play in the same sandbox" and avoid confusion
+* See [the Coding page](../coding.html) for install instructions and lots of other information.
+* Make sure to use the required version of OCaml, 5.5.1, install all the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
+  - This will let us all "play in the same sandbox" and avoid confusion
 
 ### The Ecosystem via Hello World in OCaml
 
@@ -15,7 +15,7 @@
 
 * Top loops allow you to type in small snippets of code which will run and produce a result.
   - e.g. shells like `bash`, Python's `python3`, JavaScript `node`, etc.
-* The OCaml top loop is started with the shell command `utop`.  
+* The OCaml top loop is started with the shell command `utop`.
 * We will run the OCaml top loop and show you you can enter expressions such as `3+4`, follow with `;;` to indicate end of input (`;;` is **required**), and hit return to get the result
 
 ```ocaml
@@ -58,13 +58,16 @@ Printf.printf "the string is %s\n" hw
 ### OCaml Language Basics in `utop`
 
 * We will start with OCaml by running tiny examples in the top-loop, but for the first assignment you will be working in both worlds.
- 
+
 ###  Integers
 
 ```ocaml
 3 + 4;; (* outputs `- : int = 7` -- the value is 7, int is the type, "-" means no name given *)
+
 let x = 3 + 4;; (* outputs `val x : int = 7` - give the result value a name, via let. *)
+
 let y = x + 5;; (* the above defines `x` so can use it subsequently *)
+
 let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
 (* z is not defined after the `in` is over: z + 1 ;; will give an error. *)
 ```
@@ -73,53 +76,70 @@ let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
 
 ```ocaml
 let b = true;;
+
 b && false;;
+
 true || false;;
+
 1 = 2;; (* = not == for equality comparison - ! Can compare at any type with = *)
+
 1 <> 2;;  (* <>, not !=, for not equal *)
 ```
 
 #### Other basic data -- see documentation for details
 ```ocaml
 4.5;; (* floats *)
+
 4.5 +. 4.3;; (* operations are +. etc not just + which is for ints only *)
+
 30980314323422L;; (* 64-bit integers *)
+
 'c';; (* characters *)
+
 "and of course strings";;
 ```
 
 #### Simple functions on integers
 
 Let's declare a function `squared` with `x` as its one parameter.  `return` is  implicit.
+
 ```ocaml
 let squared x = x * x;; (* outputs `val squared : int -> int = <fun>` *)
+
 squared 4;; (* to call a function -- separate arguments with S P A C E S - ! *)
 ```
- *  OCaml has no `return` statement; value of the whole body-expression is what gets returned
- *  Type is automatically **inferred** and printed as `domain -> range`; `int -> int` here.
- *  OCaml functions in fact always take only one argument - !  multiple arguments can be encoded (covered later)
 
-#### Fibonacci series example - `0 1 1 2 3 5 8 13 ...` 
+* OCaml has no `return` statement; value of the whole body-expression is what gets returned
+* Type is automatically **inferred** and printed as `domain -> range`; `int -> int` here.
+* OCaml functions in fact always take only one argument - ! multiple arguments can be encoded (covered later)
+
+#### Fibonacci series example - `0 1 1 2 3 5 8 13 ...`
 
 Let's write a well-known function with recursion and if-then-else syntax
 
 ```ocaml
 let rec fib n = (* the "rec" keyword needs to be added to allow recursion *)
-  if n <= 0 then 0
-  else if n = 1 then 1
-  else fib (n - 1) + fib (n - 2);; (* notice again everything is an expression, no "return" *)
+  if n <= 0 then
+    0
+  else if n = 1 then
+    1
+  else
+    fib (n - 1) + fib (n - 2) (* notice again everything is an expression, no "return" *)
+;;
 
 fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)
 ```
 
-* Nested conditionals as above are generally avoided in OCaml since they are not very readable.  
+* Nested conditionals as above are generally avoided in OCaml since they are not very readable.
 * Here is an easier to read `fib` using pattern `match` notation similar to Java/C `switch` (we will cover `match` in detail later):
 
 ```ocaml
-let rec fib x = match x with
-  | 0 -> 0 
-  | 1 -> 1 
-  | n -> fib (n - 1) + fib (n - 2);;
+let rec fib x =
+  match x with
+  | 0 -> 0
+  | 1 -> 1
+  | n -> fib (n - 1) + fib (n - 2)
+;;
 ```
 #### Functions are just values like integers and booleans
 
@@ -129,11 +149,17 @@ let rec fib x = match x with
 
 ```ocaml
 let add1 x = x + 1;; (* the normal way to define an add1 function in OCaml *)
+
 add1 3;;
+
 let add1' = (function x -> x + 1);;  (* another way: define a `function` value and put in a regular variable *)
+
 let add1'' = (fun x -> x + 1);;      (* equivalent shorthand -- cut off the "ction" *)
+
 add1'' 3;;
-(add1'' 4) + 7;; 
+
+(add1'' 4) + 7;;
+
 ((fun x -> x + 1) 4) + 7;; (* can inline so function NEVER named; useful when passing one function to another *)
 ```
 
@@ -141,13 +167,18 @@ add1'' 3;;
 
 ```ocaml
 let add x y = x + y;;
+
 add 3 4;;
+
 (add 3) 4;; (* same meaning as previous application -- two applications, " " associates LEFT *)
-let add3 = add 3;; (* No need to give all arguments at once - !  
+
+let add3 = add 3;; (* No need to give all arguments at once - !
                       Type of add is int -> (int -> int) - "CURRIED" *)
 add3 4;;
+
 add3 20;;
-(+) 3 4;; (* Putting () around any infix operator turns it into a 2-argument function *)
+
+(+) 3 4;; (* Putting () around any infix operator turns it into a prefix function *)
 ```
 
 * Conclusion: `add` is a function taking an integer, and returning a **function** which takes ints to ints.
@@ -157,9 +188,12 @@ add3 20;;
 Observe `int -> int -> int` is parenthesized as `int -> (int -> int)` -- **right** associativity which is opposite of arithmetic operators
 
 Be careful with operator precedence in the unusual way that function application doesn't need parens!
+
 ```ocaml
 add3 (3 * 2);;
+
 add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - application binds TIGHTER than `*` *)
+
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like " " for application BUT binds LOOSER than all other ops *)
 ```
 
@@ -181,16 +215,18 @@ None;;
 - : 'a option = None
 ```
 
- * Notice these are both in the `option` type .. either you have `Some` data or you have `None`.
- * `option` is similar to how you can have null or non-null objects in other languages, but it is more explicit.
- * These kinds of types with the capital-letter-named tags are called **variants** in OCaml; each tag wraps a different variant.
- * The `option` type is very useful; here is an oversimplified example.
+* Notice these are both in the `option` type .. either you have `Some` data or you have `None`.
+* `option` is similar to how you can have null or non-null objects in other languages, but it is more explicit.
+* These kinds of types with the capital-letter-named tags are called **variants** in OCaml; each tag wraps a different variant.
+* The `option` type is very useful; here is an oversimplified example.
 
  ```ocaml
 # let nice_div m n = if n = 0 then None else Some (m / n);;
 val nice_div : int -> int -> int option = <fun>
+
 # nice_div 10 0;;
 - : int option = None
+
 # nice_div 10 2;;
 - : int option = Some 5
 ```
@@ -209,21 +245,23 @@ Error: This expression has type int option
 * This type error is saying the `+` lhs needs to be type `int` but is a `Some` value which is not an `int`.
 
 Here is a failed attempt at solving this problem:
+
  ```ocaml
 # let not_nice_div m n = if n = 0 then None else m / n;;
 Line 1, characters 47-52:
 Error: This expression has type int but an expression was expected of type
          'a option
 ```
-- The `then` and `else` branches must return the same type, here they do not: `int` and `int option` are disjoint types.
+
+The `then` and `else` branches must return the same type, here they do not: `int` and `int option` are disjoint types.
 
 #### Using pattern matching to use `nice_div`
 
 Here is how we can in fact use `nice_div`:
 ```ocaml
-# match (nice_div 5 2) with 
-   | Some i -> i + 7 (* the nice_div result is (Some 2) and i is bound to the 2 by this pattern *)
-   | None -> failwith "This should never happen, we divided by 2";;
+# match nice_div 5 2 with
+  | Some i -> i + 7 (* the nice_div result is (Some 2) and i is bound to the 2 by this pattern *)
+  | None -> failwith "This should never happen, we divided by 2";;
 - : int = 9
 ```
 * This shows how OCaml lets us *destruct* option values, via the `match` syntax.
@@ -239,31 +277,42 @@ Moral from the above example
 A similar approach to the above is to use the `result` type, which like `option` but is specialized for error handling.
 
 ```ocaml
-# let nicer_div m n = if n = 0 then Error "Divide by zero" else Ok (m / n);;
+# let nicer_div m n =
+  if n = 0 then
+    Error "Divide by zero"
+  else
+    Ok (m / n)
+;;
 val nicer_div : int -> int -> (int, string) result = <fun>
 ```
 * The `result` type is explicitly intended for this case of failure-result
-    - `Ok` means the normal result
-    - `Error` is the error case, which unlike `None` can include failure data, usually a string.
+  - `Ok` means the normal result
+  - `Error` is the error case, which unlike `None` can include failure data, usually a string.
 
 ```ocaml
-# match (nicer_div 5 2) with 
-   | Ok i -> i + 7
-   | Error s -> failwith s;;
+# match nicer_div 5 2 with
+  | Ok i -> i + 7
+  | Error s -> failwith s;;
 - : int = 9
 ```
 
 To complete the picture there is a third way to handle divide by zero, raise an exception:
 
 ```ocaml
-let div_exn m n = if n = 0 then failwith "divide by zero is bad!" else m / n;;
+let div_exn m n =
+  if n = 0 then
+    failwith "divide by zero is bad!"
+  else
+    m / n
+;;
+
 div_exn 3 4;;
 ```
 
-* This has the positive property of not needing a match on the result.  
+* This has the positive property of not needing a match on the result.
 * (Note that the built-in `/` also raises an exception.)
 * But, exceptions are side effects though and we want to minimize their usage to avoid error-at-a-distance.
-* The above examples show how exceptional conditions can either be handled via exceptions or in the return value; 
+* The above examples show how exceptional conditions can either be handled via exceptions or in the return value;
    - A key dimension of this course is this side effect vs direct passing trade-off
    - Many bugs, security leaks, etc are due to ignorance of side effects; the `Error/Ok` approach keeps them "in your face" by being in the return type
    - Also recall `Error/Ok` keeps us completely in math-land, the return result tells everything.  Exceptions are not math.
@@ -276,20 +325,29 @@ div_exn 3 4;;
 
 ```ocaml
 let l1 = [1; 2; 3];;
+
 let l2 = ["a"; "b"; "c"];;
+
 let l3 = [1; "a"];; (* error - All elements must have same type *)
+
 let l5 = [];; (* the empty list *)
 ```
 
-#### Building lists 
+#### Building lists
 
 Lists are represented internally as **binary trees** with left child always a leaf.
+
 ```ocaml
 let l0 = 0 :: l1;; (* "::" is 'consing' 0 to the top of the tree - fast *)
+
 0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to more concise [0;1;2;3] *)
-[1; 2; 3] @ [4; 5];; (* appending lists - slower than `::`, needs to cons 3/2/1 on front of [4;5] *)
+
+[1; 2; 3] @ [4; 5];; (* appending lists - slower than a single `::`, needs to cons 3/2/1 on front of [4;5] *)
+
 let z = [2; 4; 6];;
+
 let y = 0 :: z;; (* in y, 0 is the *head* (first elt) of the list and z is the *tail* (rest of list) *)
+
 z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
 ```
 
@@ -309,14 +367,19 @@ let tl l =
   |  [] -> invalid_arg "empty lists have no tail"
   |  h :: t -> t  (* the pattern h :: t  binds h to the first elt (left subtree), t to ALL the others (right subtree) *)
 ;;
-let l = [1;2;3];; 
+
+let l = [1;2;3];;
+
 let l' = tl l;;
+
 l;; (* Note: lists are immutable, so l didn't change *)
+
 let l'' =  tl l' (* To get tail of tail, take tail of l' ..  THREAD the state! *)
+
 tl [];; (* Raises an `invalid_arg` exception if the list had no tail *)
 ```
 
-* Note that an alternative to avoid the exception effect is to return `Ok/Error`:
+Note that an alternative to avoid the exception effect is to return `Ok/Error`:
 
 ```ocaml
 let tl' l =
@@ -324,25 +387,35 @@ let tl' l =
   |  [] -> Error "empty list has no tail"
   |  h :: t -> Ok t
 ;;
-let l = [1;2;3];; 
+
+let l = [1;2;3];;
+
 let l' = tl' l;;
+
 tl' [];;
+
 let l'' = tl' l' (* Oops this fails!  As in the div example above need to case on `Ok/Error` *)
 ```
 
 ### Recursive Functions on Lists
 
-* For the first homework many of the programs you need to write work on list inputs.  
-* Recursion is the key here.  
+* For the first homework many of the programs you need to write work on list inputs.
+* Recursion is the key here.
 * Here is an example of how to get the nth element of a list, by walking along the list with recursion:
 
 ```ocaml
 let rec nth l n =
   match l with
   |  [] -> invalid_arg "there is no nth element in this list"
-  |  hd :: tl -> if n = 0 then hd else nth_exn tl (n-1) (* "the nth element of l is the (n-1)-th element of tl" *)
+  |  hd :: tl ->
+    if n = 0 then
+      hd
+    else
+      nth_exn tl (n-1) (* "the nth element of l is the (n-1)-th element of tl" *)
 ;;
+
 nth [33;22;11] 1;;
+
 nth [33;22;11] 3;;
 ```
 
@@ -357,20 +430,23 @@ Fortunately many common operations are already in the `List` module:
 # List.nth [1;2;3] 2;;
 - : int = 3
 ```
-* On Assignment 1 you **cannot** use `List.` libraries, you first need to practice using `let rec`
-   - On Assignment 2 you will start using the `List.` libraries.
 
+* On Assignment 1 you **cannot** use `List` library, you first need to practice using `let rec`.
+  - On Assignment 2 you will start using the `List` library.
 
 Note that like our implementation `List.nth` will not be happy if there is no nth element:
+
 ```ocaml
 # List.nth [1;2;3] 5;;
 Exception: Failure "nth".
 ```
+
 But there is a version which returns an `option` type for this:
 
 ```ocaml
 # List.nth_opt [1;2;3] 5;;
 - : int option = None
+
 # List.nth_opt [1;2;3]1;;
 - : int option = Some 2
 ```
@@ -384,8 +460,8 @@ But there is a version which returns an `option` type for this:
 ```ocaml
 let rec zero_negs l =
   match l with
-  |  [] -> []
-  |  hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl (* can assume by induction that zero_negs tl will properly zero tl *)
+  | [] -> []
+  | hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl (* can assume by induction that zero_negs tl will properly zero tl *)
 ;;
 
 zero_negs [1;-2;3];;
