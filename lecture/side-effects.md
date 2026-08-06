@@ -7,17 +7,17 @@
 
 Side effects of OCaml include
 * Mutatable state - *changing* the contents of a memory location intead of making a new one
-    - Three built-in sorts in OCaml: references, mutable record fields, and arrays.
-    - Plus many libraries: `Stack`, `Queue`, `Hashtbl`, etc
-    - Faster because rebuilding avoided, but slower due to impossibility of sharing sub-components
+  - Three built-in sorts in OCaml: references, mutable record fields, and arrays.
+  - Plus many libraries: `Stack`, `Queue`, `Hashtbl`, etc
+  - Faster because rebuilding avoided, but slower due to impossibility of sharing sub-components
 * Exceptions (we saw a bit of this already, `failwith "ill-formed"` etc)
 * Input/output (in basic modules lecture we looked at file input and results printing for example)
 * Concurrency and parallelism (will cover later)
 
 ### State
- * Variables in OCaml are *never* directly mutable
- * But, they can hold a *reference* to memory that can be mutated
- * i.e. it is only indirect mutability - variable itself can't change, but what it points to can.
+* Variables in OCaml are *never* directly mutable
+* But, they can hold a *reference* to memory that can be mutated
+* i.e. it is only indirect mutability - variable itself can't change, but what it points to can.
 
 ### Mutable References
 
@@ -43,7 +43,7 @@ Error: This expression has type int ref but an expression was expected of type
 
 * Addition with `(+)` works on integers, but `x` is of type `int ref`.
 * Get the value from a ref cell with the `!` prefix operator.
-  * It simply gets the (immutable) value that the ref cell points to. 
+  * It simply gets the (immutable) value that the ref cell points to.
   * It does *not* get the memory location that it points to.
 
 ```ocaml
@@ -77,20 +77,23 @@ Since `()` is useless, any function that returns it is either useless **or** per
 ```ocaml
 # print_endline;; (* returns unit; has the side effect of printing *)
 - : string -> unit = <fun>
+
 # (:=);; (* returns unit; has the side effect of assignment to LHS *)
 - : 'a ref -> 'a -> unit = <fun>
-# Hashtbl.add;; (* returns unit, so it has the side effect of assignment *)
- : ('a, 'b) Hashtbl.t -> 'a -> 'b -> unit = <fun>
- ```
 
-* `Hashtbl.add` returns `unit` so it must be a mutable data structure.
+# Hashtbl.add;; (* returns unit, so it has the side effect of assignment *)
+: ('a, 'b) Hashtbl.t -> 'a -> 'b -> unit = <fun>
+```
+
+* `Hashtbl.add` returns `unit`, so it must be a mutable data structure.
 * On the flip side, functions taking `unit` as argument are often also only performing side effects.
 
 ```ocaml
 # Stack.create;; (* takes unit, so it is making a new mutable data structure *)
 - : unit -> 'a Stack.t = <fun>
+
 # Stack.create ();; (* Note the convention of putting a space here *)
-- : '_weak1  Stack.t = <abstr> (* Its abstract, we can't see internals.. more on weak types soon *)
+- : '_weak1 Stack.t = <abstr> (* It is abstract, we can't see internals.. more on weak types soon *)
 ```
 
 ### Variables are still themselves immutable
@@ -102,10 +105,10 @@ let x = ref 4;;
 let f () = !x;;
 
 x := 234;;
-f();;
+f ();;
 
 let x = ref 6;; (* shadows previous x definition, NOT an assignment to x !! *)
-f ();; (* 234, not 6 *)
+f ();; (* 234 still, not 6 *)
 ```
 
 ### Null or Nil initial cell contents in OCaml, and Weakly Polymorphic types
@@ -113,27 +116,30 @@ f ();; (* 234, not 6 *)
 * If you don't yet have a well-formed initial value, use an `option`:
 
 ```ocaml
-let x = ref None;;
+# let x = ref None;;
 val x : '_weak1 option ref = {contents = None}
 ```
+
 * Note the type here, `'_weak1 option ref`, this is a *weakly polymorphic type*
 * Which really is not polymorphic at all - what it means is the type can be only a single type
   - which is not known yet
-* To the first order, a weakly polymorphic type is like a "Schrodinger's type". 
+* To the first order, a weakly polymorphic type is like a "Schrodinger's type".
   - It is ready to be any (single) type until it is observed (i.e. used), after which it is fixed.
-* If you think about it, there is no other possibility, can't put int and string in same cell
-    - would not know the type when taking out of cell.
+* If you think about it, there is no other possibility: you can't put int and string in same cell.
+  - In that case, you would not know the type when taking out of cell.
 
 ```ocaml
 # x := Some 3;;
+- : unit = ()
+
 # !x;;
 - : int option = Some 3 (* now we see '_weak1 was touched and its now forevermore an int *)
 ```
 
-* At various points OCaml will infer only weak types on certain things
-* Most of the time it is because it would be incorrect not to
-* But occasionally OCaml is too dumb to realize things are not weak
-    - there are advanced workarounds for this case which we will not cover
+* At various points, OCaml will infer only weak types on certain things.
+* Most of the time it is because it would be incorrect not to.
+* But occasionally OCaml is too dumb to realize things are not weak.
+  - there are advanced workarounds for this case which we will not cover
 
 The weak types are here so that we cannot do this:
 
@@ -147,36 +153,35 @@ let _ = x := Some "hello" (* type error! x is not a string ref *)
 
 ### Mutable Records
 
-* Along with refs we can declare some record fields `mutable`
+* Along with refs, we can declare some record fields `mutable`
 * `'a ref` is really implemented by a mutable record with one field, contents:
-* `'a ref` in fact abbreviates the type `{ mutable contents: 'a }`
+* `'a ref` in fact is the type `{ mutable contents: 'a }`
   * And `ref` is a just a function to make creation convenient.
   * And `(:=)` is just a function to make assignment convenient.
   * And `(!)` is just a function to make reading convenient and explicit.
-* The keyword mutable on a record field means it can mutate
+* The keyword `mutable` on a record field means it can mutate.
 
 ```ocaml
 let x = { contents = 4 };; (* 100.0% identical to `let x = ref 4` *)
 
-
 x.contents <- 7;;  (* identical to `x := 6` *)
-
 
 x.contents + 1;; (* identical to `!x + 1` *)
 ```
 
 ### Declaring Mutable Record Types
 
-* Default on each field is that the value is *immutable*
-* Put `mutable` qualifier on each field that you want to mutate
-* Principle of least mutability: you should only put `mutable` on fields you **have** to mutate
+* The default on each field is that the value is *immutable*.
+* Put `mutable` qualifier on each field that you want to mutate>
+* Principle of least mutability: you should only put `mutable` on fields you **have** to mutate.
 
 ```ocaml
 type mutable_point = { mutable x : float ; mutable y : float };;
 
 let translate p dx dy =
   p.x <- (p.x +. dx); (* observe use of ";" here to sequence effects *)
-  p.y <- (p.y +. dy);;
+  p.y <- (p.y +. dy)
+;;
 
 let mypoint = { x = 0.0; y = 0.0 };; (* new mutable record *)
 
@@ -187,26 +192,33 @@ mypoint;;
 
 * Here, the `x` and `y` fields of the point are mutable, but the point as a whole you cannot swap in a different point for.
 
-* Note that `;` is the standard sequencing operator
-  * But in OCaml everything is an expression so its a bit non-standard
-  * `e ; e'` is roughly the same as `let () = e in e'`: evaluate `e`, ignore result, evaluate `e;`.
+* Note that `;` is the standard sequencing operator.
+  * But in OCaml everything is an expression so it's a bit non-standard.
+  * `e ; e'` is roughly the same as `let () = e in e'`: evaluate `e`, ignore result, then evaluate `e'`.
   * `(5 + 2); true` will give you a warning since `5` is not of type `unit`
-  * The reasoning here is if you are using `;` the first thing must be a side effect
-    - and, as we covered above those functions will nearly always return `unit`.
+  * The reasoning here is if you are using `;` the left-hand side should have a side effect because you are throwing away the result,
+    - and, as we covered above, side-effecting functions will nearly always return `unit`.
 
 ### Tree with mutable subtrees
 
 ```ocaml
 (* version using ref: *)
-type 'a mtree_ref = MLeaf | MNode of 'a * 'a mtree ref * 'a mtree ref;;
+type 'a mtree_ref =
+  | MLeaf
+  | MNode of 'a * 'a mtree ref * 'a mtree ref
+;;
+
 (* But, use this type with mutable records - no `!` needed: *)
-type 'a mtree = MLeaf | MNode of { data : 'a ; mutable left : 'a mtree ; mutable right : 'a mtree };;
+type 'a mtree =
+  | MLeaf
+  | MNode of { data : 'a ; mutable left : 'a mtree ; mutable right : 'a mtree }
+;;
 ```
 
-- Note that in this `mtree` we can only mutate the subtrees, *not* the data
-- Also, cannot replace a leaf at top of tree with a non-leaf.
+- Note that in this `mtree`, we can only mutate the subtrees, *not* the data.
+- Also, we cannot replace a leaf at top of tree with a non-leaf.
 - The idea is to put mutablility only where you are doing mutation, no more no less.
-- So if the tree structure never changes but the node values can, only make the `data` mutable.
+- So if the tree structure never changes but the node values can, you would only make the `data` mutable.
 
 Example use: mutate left subtree
 
@@ -214,10 +226,10 @@ Example use: mutate left subtree
 # let mt = MNode { data = 3 ; left = MLeaf ; right = MLeaf };;
 val mt : int mtree = MNode {data = 3; left = MLeaf; right = MLeaf}
 
-# match mt with 
+# match mt with
 | MLeaf -> ()
-| MNode ({data;left;right} as r) -> (* "as" captures it all under one name *)
-  r.left <- MNode {data = 5; left = MLeaf; right = MLeaf};;
+| MNode ({ data ; left ; right } as r) -> (* "as" captures it all under one name *)
+  r.left <- MNode { data = 5 ; left = MLeaf ; right = MLeaf };;
 - : unit = ()
 
 (* Verify that mt mutated *)
@@ -232,8 +244,8 @@ MNode
 ### Physical equality
 
 * Occasionally in imperative programs you need to check for "same pointer".
-  * It's also useful in functional programming for fast comparison when data is shared.
-  * There's no need to compare entire structures if their memory addresses are identical.
+* It's also useful in functional programming for fast comparison when data is shared.
+* There's no need to compare entire structures if their memory addresses are identical.
 
 ```ocaml
 # 2 == 2;; (* memory layout of 2 is always the same *)
@@ -265,46 +277,48 @@ We can use `==` to see that data is shared in functional data structures.
 # let y = 11 :: big_list ;;
 
 # x == y ;;
-- : bool = false 
+- : bool = false
 
-# (List.tl_exn x) == (List.tl_exn y) ;;
+# List.tl x == List.tl y ;;
 - : bool = true (* the tails are physically identical, they are big_list *)
 ```
 
 ### Control structures to help with mutution
 
 * As mentioned above, side effecting operations usually return `unit`
-* But occasionally they don't, and you might want to use `;` with them which OCaml will complain about:
+* But occasionally they don't, and you might want to use `;` with them, which OCaml will complain about:
 
 ```ocaml
-# let incr = 
-    let count = ref 0 in 
-    let incr () = count := !count + 1; !count in
-    incr;;
+# let next =
+  let count = ref 0 in
+  fun () ->
+    count := !count + 1;
+    !count
+;;
 - : unit -> int = <fun>
 
-# incr() ; incr();; (* Increment twice *)
-Line 1, characters 0-6:
-Warning 10: this expression should have type unit.
-...
+# next () ; next ();; (* Increment twice *)
+Line 1, characters 0-7:
+Warning 10 [non-unit-statement]: this expression should have type unit.
+- : int = 2
 ```
 
-* Gives a warning since first `incr()` does not return `unit`
-* To silence warning (once you are clear you are doing the right thing):
+* Gives a warning since the first `next ()` does not return `unit`, but it is sequenced with `;`.
+* To silence the warning (once you are clear you are doing the right thing):
 
 ```ocaml
-# ignore (incr ()); incr () (* or, let _ = incr () in incr () *)
+# ignore (next ()); next () (* or, better, let _ = next () in next () *)
 ```
 
-* `for` and `while` loops are useful with mutable state
-* But they are almost always a code smell in OCaml, usually a data structure iterator like map fold etc is better.
+* `for` and `while` loops are useful with mutable state.
+* But they are often a code smell in OCaml. Usually a data structure iterator like map, fold, etc. is better.
 * Here is a `while .. do .. done` loop; `for` syntax also standard
 
 ```ocaml
 let x = ref 1 in
 while !x < 10 do
-  printf "count is %i ...\n" !x;
-  x := !x + 1;
+  Printf.printf "count is %i ...\n" !x;
+  x := !x + 1
 done;;
 ```
 
@@ -313,30 +327,29 @@ done;;
 * Remember that `e1; e2` is exactly the same as writing `let () = e1 in e2`
 
 ### Arrays
-- They are mutable, and they are also constant time to access nth element unlike lists
+
+- They are mutable, and they are also constant time to access nth element, unlike lists
 - But, extending an array is inefficient: cannot share sub-array due to mutation
 - And, sub-components of different arrays cannot be shared since they may change
-- Entered and shown as `[| 1; 2; 3 |]` (added "`|`") in top-loop to distinguish from lists.
-- Have to be initialized before using
+- They have syntax `[| 1; 2; 3 |]` (added "`|`" inside the usual list brackets) to distinguish from lists.
+- They have to be initialized an entry in every slot before using.
   - In general, there is no such thing as "uninitialized" in OCaml.
   - If you need "undefined"/"null" array, make it an `int option array` and init to `None`'s.
-
 
 ```ocaml
 let arrhi = Array.init 10 (fun _ -> "hi");; (* length and initial value maker *)
 
 let arr = [| 4; 3; 2 |];; (* make a literal array *)
 
-arr.(0);; (* access (unfortunately already used [] for lists so a bit ugly) *)
+arr.(0);; (* access *)
 
-arr.(0) <- 55;; (* update like with mutable record fields *)
+arr.(0) <- 55;; (* update cell, like with mutable record fields *)
 
 arr;; (* see that arr has changed *)
 
-(* Don't use for loops for arrays, use your favorite iterators: *)
 Array.map (fun x -> x + 1) arr;; (* standard map - produces a new array *)
 
-Array.map_inplace (fun x -> x + 1) arr;; (* This *changes* the array using the map function *)
+Array.map_inplace (fun x -> x + 1) arr;; (* This *changes* the array using the map function and returns unit *)
 
 (* Here are some conversions *)
 let a = Array.of_list [1;2;3];;
@@ -367,11 +380,10 @@ Exception: Invalid_argument "List.combine".
 ### OCaml syntax for defining raising and handling exceptions
 
 * New exception names need to be declared via `exception` like `type`s needs to be declared
-* Unfortunately, oCaml types do not include what exceptions a function may raise 
+* Unfortunately, OCaml types do not include what exceptions a function may raise
   - an outdated aspect of OCaml; even Java has this with `raises` on method declarations
 * The value returned by an exception is very similar in looks to a variant.
-  - (tangent: under the hood, the `exn` type is an extensible variant)
-
+  - (tangent: under the hood, the `exn` type is an extensible variant!)
 
 Extend the `exn` type with your exception using the `exception` keyword.
 - Everything following the `exception` keyword is just like a variant constructor declaration.
@@ -385,8 +397,7 @@ let f _ = raise @@ Boom "keyboard on fire";; (* raise is ultimately how all exce
 f ();; (* this raises the exception *)
 
 let g () =
-  try f ()
-  with
+  try f () with
   | Boom s -> printf "exception Boom raised with payload string \"%s\"\n" s
 ;;
 
@@ -396,8 +407,8 @@ g ();;
 ### Mutating data structures in the standard libraries
 
 * The `Stack` and `Queue` modules are *mutable* data structures.
-* (There are no immutable stack/queue libraries - just use `list`s)
-* (There is also `Hash_set` which is a (hashed) mutable set and `Hashtbl` which is a mutable hashtable; more on those later)
+* (There are no immutable stack/queue libraries - but just use `list`s most of the time)
+* (There is also `Hashtbl` which is a mutable hash table)
 * Here is a simple example of playing around with a `Stack`.
 
 ```ocaml
@@ -413,7 +424,10 @@ val s : '_weak1 Stack.t = <abstr> (* Stack.t is the underlying implementation an
 # Stack.push "hello one more time" s;;
 - : unit = ()
 
-# Stack.pop s;; (* exception raised if empty here *)
+# Stack.pop s;; (* exception Stack.Empty will be raised if empty here *)
+- : string = "hello one more time"
+
+# Stack.pop s;;
 - : string = "hello again" (* s changed from the last pop, so this pop is different! *)
 
 # Stack.pop s;;
@@ -432,5 +446,4 @@ Exception: Stdlib.Stack.Empty.
 * See file [match.ml](../examples/match/match.ml)/[match.zip](../examples/zips/match.zip) which has several versions of a simple parenthesis matching function
 * It shows uses of `Stack`, and some trade-offs of using exceptions vs option type.
 * Lastly there is a pure functional version which is arguably simpler
- - Yes, you **don't** need that mutation!
- 
+  - Yes, you **don't** need that mutation!
