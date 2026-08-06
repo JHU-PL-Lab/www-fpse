@@ -48,7 +48,7 @@ Printf.printf "the string is %s\n" hw
 )
 ```
 * This is the **build file**, specifying how to compile/test/run the program.  The notation is S-expressions.
-* Also a file `dune-project` is needed with only `(lang dune 3.19)` in it.
+* Also a file `dune-project` is needed with only `(lang dune 3.24)` in it.
 * Now, type `dune build` to compile this `helloworld.ml` code as an executable.
 * All of the results are placed in a new `_build/` sub-directory
 * Then, run with `dune exec ./helloworld.exe` - same as typing `_build/default/helloworld.exe`

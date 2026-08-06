@@ -34,7 +34,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * We recommend the simple [`Cohttp_lwt_unix`](https://github.com/mirage/ocaml-cohttp) for web client (API reading / crawling) applications.
 * We recommend [`Dream`](https://github.com/camlworks/dream) for web applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
 * [`Opium`](https://github.com/rgrinberg/opium) is a good alternative to `Dream` to consider as well.  Both are built on `Lwt`.
-* `Cohttp` also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation. 
+* `Cohttp` also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.
 * For the client, it is possible to code your client in "OCaml" using [ReScript](https://rescript-lang.org) which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  Since ReScript is available we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!
 
 #### Persistence
@@ -43,7 +43,7 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * If you are familiar with databases, the [sqlite3-ocaml](https://github.com/mmottl/sqlite3-ocaml) and [postgresql-ocaml](https://mmottl.github.io/postgresql-ocaml/) bindings should work for accessing SQLite or Postgres databases from within OCaml.
 
 #### Data Processing
-There are some good libraries here but they don't have many users and we have had **issues with people being able to install these libraries in the past**.  If you wanted to base your project around one of these libraries **you will be required to** (1) get the library successfully installed on all your team members' computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below. 
+There are some good libraries here but they don't have many users and we have had **issues with people being able to install these libraries in the past**.  If you wanted to base your project around one of these libraries **you will be required to** (1) get the library successfully installed on all your team members' computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.
 * [Owl](https://ocaml.xyz/) is a very well-documented numerical processing library.
 * [ocaml-torch](https://github.com/janestreet/torch) PyTorch bindings for OCaml.   (Note that the OCaml TensorFlow bindings are old and don't seem to work.)
 * [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.
@@ -63,7 +63,7 @@ You may want to start with a command-line app and add more features later:
   2. In addition to 1., `Dream` supports html templates and you could "reply" to the `http` queries with html and so you can run your app in the browser.
   3. Use [ReScript](https://rescript-lang.org) and React to beef it up and make an OCaml front-end in the browser. Rescript is basically OCaml with somewhat different syntax that compiles to JavaScript and can run in the browser.
   4. Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
-  5. Rather than using your own ad-hoc format for data in a file or database, make an s-expression representation and convert back and forth.  
+  5. Rather than using your own ad-hoc format for data in a file or database, make an s-expression representation and convert back and forth.
     - You should do this from the beginning in fact, it will be easier and more robust.
   6. Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.
 
@@ -72,8 +72,8 @@ You may want to start with a command-line app and add more features later:
 
 * There will be **four** submission points in Gradescope, one ungraded for initial group and idea, one for the design, one for a code checkpoint, and one for the final code.  For each group only one person should submit to Gradescope, as a group submission.
 
-#### Initial Group and Idea(s) 
- 
+#### Initial Group and Idea(s)
+
 The initial group and idea should include 1) list of names in the group and 2) a sentence or two on a potential idea or two plus 3) potential libraries.  Basically, the result of one initial brainstorming session.  This can just be a pdf or markdown file.
 
 E.g.
@@ -148,11 +148,11 @@ For the demo you should prepare a 5-10 minute presentation on your project.
   1. A Powerpoint slide deck intro might be useful depending on your project; it is not required.
   2. You will demonstrate the project, showing all the functionality.
   3. We will ask you questions during this and perhaps ask you to try additional cases.
-  4. Code review: take us through your code, we will be commenting as we go.  
+  4. Code review: take us through your code, we will be commenting as we go.
      - Make sure to describe your use of libraries; if you are using a novel library we may not know, give a brief overview of it.
   5. Build and test: build your project and tests, and then review your test suite. Show us the coverage report.
 
-The final submission should include 
+The final submission should include
   1. Everything in your repository, of course!
   2. A `dune` file that successfully builds your project with `dune build` and tests it with `dune test`.
   3. A top-level `Readme.md` that describes the project and tells users how to build and run it. The `Readme` also explains how to handle any other system-level installs that are needed outside of the official course list.
@@ -177,7 +177,7 @@ A few comments on testing:
 #### Making and testing an `.opam` package file
  As was mentioned above you will need to make an `.opam` file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any `opam` dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your `dune-project` file and edit as appropriate.  Make sure to include any `opam` packages you are using in the `depends` section.
   ```scheme
-  (lang dune 3.16)
+  (lang dune 3.24)
   (generate_opam_files true)
   (authors "Yours Truly" "Truly Yours")
   (maintainers "your@email.org")
@@ -188,10 +188,9 @@ A few comments on testing:
    (description "A longer description")
    (depends
     (ounit2 (>= 2.2.7)) ; for each opam dependency list the version
-    (core (>= 0.17.1)) ; `opam list core` will display which version of core you have
  ))
  ```
- 
+
 With these lines, `dune build` will build a file `<your_project>.opam`.  You can then use command `opam install . --deps-only --working-dir` to install any of the `opam` dependencies if they are not already installed.  We will use this command to install all of your `opam` dependencies.  See [dune opam integration](https://dune.readthedocs.io/en/stable/explanation/opam-integration.html) for details on this dune file format, and [opam packaging](https://opam.ocaml.org/doc/Packaging.html) for details on the `.opam` file format.
 
 Note that any non-`opam` dependencies you will need to list in your `Readme.md` file. You can also add them to the `.opam` file with `depexts`, but it is not trivial to do, so we will not require it.
@@ -206,7 +205,7 @@ Here are some defining features of the labs.
 
 1. There will be seven labs.  Your group will be required to attend the first lab in-person on Oct 28th.
 2. Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework. You won't get credit for a lab if you show up and choose to work on something other than your FPSE project.
-3. Attendance will be taken at all labs and will be a part of your final grade. 
+3. Attendance will be taken at all labs and will be a part of your final grade.
 4. Your group is required to attend **seven** labs total.  Conveniently, there are seven class periods which are project labs, but you may alternatively select a CA office hour (the whole hour and it should be your group advisor if at all possible) to be a "lab".  If you wish to do that, show up in-person at the start of the office hour and notify the CA that you are doing a lab, and they will mark you down for attendance.  At most two in-class labs can made up in this way.
 5. All labs must be attended in-person, but you may petition for an exception.
 6. **Attendance is all or none for a group** -- for a lab to count, **all** group members must be present.  Group work is group work.
