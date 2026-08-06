@@ -1,8 +1,8 @@
 ## Specification
 
 * Terminology
-   - Specification: *what* the program should do
-   - Implementation: *how* it does it
+  - Specification: *what* the program should do
+  - Implementation: *how* it does it
 
 * Let us step back and look at the bigger picture of specifying
 
@@ -10,11 +10,11 @@
 
 * The high-level goal is to have software that is *correct*
 * There are many levels of interpretation for correct
-   - Informal spec.: we had some vague idea of what the code should do, wrote it, and iteratively addressed feedback of users until bug reports shrunk to very low levels.
-   - Semi-formal spec.: Sat down with stakeholders, wrote out a specification document in English with a few pictures/formulas, added many tests to code which affirmed all aspects of this spec.
-   - Rigorous spec.: Have an unambiguous mathematical notion of what correct behavior should be, write it out as the formal specification, make sure code meets it.
+  - Informal spec.: we had some vague idea of what the code should do, wrote it, and iteratively addressed feedback of users until bug reports shrunk to very low levels.
+  - Semi-formal spec.: Sat down with stakeholders, wrote out a specification document in English with a few pictures/formulas, added many tests to code which affirmed all aspects of this spec.
+  - Rigorous spec.: Have an unambiguous mathematical notion of what correct behavior should be, write it out as the formal specification, make sure code meets it.
 * The best mode from the above depends on the project: how complex are the algorithms/architecture, and how mission-critical is it?
-   - Need to go further down the above list as complexity and mission-critical aspects increase
+  - Need to go further down the above list as complexity and mission-critical aspects increase
 
 ### Forms of specification
 Specifications can range from informal to completely rigorous and unambiguous
@@ -52,87 +52,102 @@ Specifications can range from informal to completely rigorous and unambiguous
   - Particularly nice in that they are all quickly checked and can even be inferred.
   - Think of types as outlining the "shape" of the code you need to write in terms of the data structures/functions.
 
-
 What is Type-Directed Programming??
 
- * In fact, you have been doing type-directed programming all along
-   - We gave you the types for the HW questions, and those types are useful in debugging your code, right??
- * That is all the principle is: writing code that matches declared type will get you well on the way to an implementation
-   - So, *start* with the type
-   - Type errors are definitely errors, no need to run tests to find them, the editor will yell at you immediately.
-   - When the last type error drops, the code often will directly work
- * Type-directed programming is 100% rigorous, but is incomplete: types only express *rough shapes* of data 
-   - e.g. `int list` is a rough shape compared to "sorted `int list`" but the latter isn't a type in OCaml
-   - Our lab (and others) are working on type systems which allow you to state `{ l : int list | is_sorted(l) }`"
+* In fact, you have been doing type-directed programming all along
+  - We gave you the types for the HW questions, and those types are useful in debugging your code, right??
+* That is all the principle is: writing code that matches declared type will get you well on the way to an implementation
+  - So, *start* with the type
+  - Type errors are definitely errors, no need to run tests to find them, the editor will yell at you immediately.
+  - When the last type error drops, the code often will directly work
+* Type-directed programming is 100% rigorous, but is incomplete: types only express *rough shapes* of data
+  - e.g. `int list` is a rough shape compared to "sorted `int list`" but the latter isn't a type in OCaml
+  - Our lab (and others) are working on type systems which allow you to state `{ l : int list | is_sorted(l) }`"
 
 #### Simple type-directed programming examples
 
 Not bubbling up `option` or other wrapped results properly
 
+<!-- Brandon: this example is very strange. The code doesn't make sense at all. I reformatted it but did not rewrite it -->
+
 ```ocaml
-# let sum_first_n (l : int list) (n : int) : int = 
-  List.nth_opt l n |> List.fold_left (fun acc elt -> acc + elt) 0;;
+# let sum_first_n (l : int list) (n : int) : int =
+  List.nth_opt l n
+  |> List.fold_left (fun acc elt -> acc + elt) 0
+;;
 Error: This expression has type int option
        but an expression was expected of type int list
 ```
- - Recall that `List.nth_opt` doesn't just return a list, the programmer missed that here
- - Instead it returns an option list since the n could have been beyond the end of the list
- - To solve this type error you will need to `match` on the result, which should fix both type error *and* code behavior
+
+- Recall that `List.nth_opt` doesn't just return a list, the programmer missed that here.
+- Instead it returns an option list since the n could have been beyond the end of the list.
+- To solve this type error you will need to `match` on the result, which should fix both type error *and* code behavior.
 
 Variation on type-directed programming: with only some parameters applied, the remaining types hint at what is still needed.
 
 ```ocaml
-# List.fold_left (fun acc elt -> acc - elt );;
+# List.fold_left (fun acc elt -> acc - elt);;
 - : int -> int list -> int = <fun>
 ```
- - The type shows that we first need the integer initial value and then the list
- - In VSCode you can better see this
 
-The type in an `.mli` file can direct your implementation, e.g. `map` on `simpledict` example from Assn3 (recall that `t` here is the `simpledict`)
+- The type shows that we first need the integer initial value and then the list.
+- In VSCode you can better see this by hovering over the expression.
+
+The type in an `.mli` file can direct your implementation, e.g. `map` on `Simpledict` example from Assignment 3 (where `t` here is `Simpledict.t`):
+
 ```ocaml
 val map : (string -> 'a -> 'b) -> 'a t -> 'b t
 ```
- - Q: "How can I get a dict of `'b`'s built from a dict of `'a`'s here?"
- - A: "Use the function from `'a` to `'b` to make elements of `'b simpledict`.
+
+- Q: "How can I get a dict of `'b`'s built from a dict of `'a`'s here?"
+- A: "Use the function from `'a` to `'b` to make elements of `'b Simpledict.t`.
 
 
 Variant extension: add a new variant case, chase the type errors to patch the code (similar tactic for record field addition)
 
 ```ocaml
 type party = Dem | Rep
-type voter = { name : string; party: party }
+
+type voter = { name : string ; party : party }
+
 let count_parties (l : voter list) =
-  List.fold_left
-    (fun (cd,cr) -> fun {party; _} -> 
-     match party with 
-     | Dem -> (cd+1, cr)
-     | Rep -> (cd, cr+1) ) (0,0) l ;;
+  List.fold_left (fun (cd, cr) { party ; _} ->
+    match party with
+    | Dem -> (cd + 1, cr)
+    | Rep -> (cd, cr + 1)
+  ) (0, 0) l
+;;
 ```
 
-Adding a `Gre` for green party: first **just** change the type, and chase/fix errors
+Adding a `Gre` for green party: first **just** change the type, and chase/fix errors.
 
 ```ocaml
 # type party = Dem | Rep | Gre
-  type voter = { name : string; party: party }
-  let count_parties (l : voter list) =
-     List.fold_left
-      (fun (cd,cr) -> fun {party; _} -> 
-      match party with 
-      | Dem -> (cd+1, cr)
-      | Rep -> (cd, cr+1) ) (0,0) l ;;
-Lines 6-8, characters 5-24:
-Warning 8: this pattern-matching is not exhaustive.
-Here is an example of a case that is not matched:
-Gre
+
+type voter = { name : string ; party : party }
+
+let count_parties (l : voter list) =
+  List.fold_left (fun (cd, cr) { party ; _} ->
+    match party with
+    | Dem -> (cd + 1, cr)
+    | Rep -> (cd, cr + 1)
+  ) (0, 0) l
+;;
+
+Lines 7-9, characters 4-25:
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+  Here is an example of a case that is not matched: Gre
+
 type party = Dem | Rep | Gre
 type voter = { name : string; party : party; }
 val count_parties : voter list -> int * int = <fun>
-```     
+```
 
-- Shows a new `match` case is needed; in process of adding new case it will become clear a triple is also needed
-- This example also shows why non-exhaustive pattern matches are bad: errors often lurk
+- This shows a new `match` case is needed; in the process of adding new case, it will become clear a triple is also needed.
+- This example also shows why non-exhaustive pattern matches are bad: errors often lurk.
+  - This is why polymorphic variants are not typical. They are useful at times, but they do not help you with errors like this.
 
-Conclusion: Don't **wrestle** with OCaml's types, *dance* with them
+Conclusion: Do not **wrestle** with OCaml's types, *dance* with them.
 
 <a name="specs"></a>
 
@@ -163,38 +178,38 @@ end
 ```
 
 Here are some pre/post conditions in the above code:
-* Precondition on `remove`: `s` is not empty (fails otherwise)
-* Stronger precondition on `remove`: `contains x s` must hold
-* Postcondition on `remove` for it returning set `s'`:  `not(contains x s')` - ??
-  - This simple "set" data structure is in fact a **multiset** and this will not always hold
-  - If we were trying to implement a true set this postcondition would help us catch an error
-* Postcondition on `add x s`: for the resulting set `s'`, `contains x s'` holds
+* Precondition on `remove`: `s` is not empty (fails otherwise).
+* Stronger precondition on `remove`: `contains x s` must hold.
+* Postcondition on `remove` for it returning set `s'`:  `not (contains x s')` - ??
+  - This simple "set" data structure is in fact a **multiset** and this will not always hold.
+  - If we were trying to implement a true set, this postcondition would help us catch an error.
+* Postcondition on `add x s`: for the resulting set `s'`, `contains x s'` holds.
 
 #### Assertions in code
 
-* OCaml `assert` statements can be placed in code to directly verify properties
-  - program dies if the assertion fails, it should always hold
-  - silently returns `()` if it succeeds
+* OCaml `assert` statements can be placed in code to directly verify properties.
+  - The program will die if the assertion fails, so the assertion should always hold.
+  - It silently returns `()` if it succeeds.
 * Example new version of `add` above:
 ```ocaml
-let add (x : M.t) (s : t) = 
-  let s' = (x :: s) in assert (contains x s'); s'
+let add (x : M.t) (s : t) =
+  let s' = x :: s in assert (contains x s'); s'
 ```
-* Asserts are handy for development mode, but not after deployment (slows things down)
-* Generally it is better to make *tests* to spot-check assertions instead of using `assert`
-  - But, one thing handy about `assert` is it puts the assertions in the code, as "rigorous comments"
-  - Middle approach: [`ppx_inline_tests`](https://github.com/janestreet/ppx_inline_test) is a library where you can write tests in-line with your code
-  - example: 
+* Asserts are handy for development mode, but not after deployment (slows things down).
+  - The compiler has an option to turn assertions off in release mode: `-noassert`.
+* Generally it is better to make *tests* to spot-check assertions instead of using `assert`.
+  - But, one thing handy about `assert` is it puts the assertions in the code, as "rigorous comments".
+  - Middle approach: [`ppx_inline_tests`](https://github.com/janestreet/ppx_inline_test) is a library where you can write tests in-line with your code.
+  - example:
   ```ocaml
   let%test "add adds" = contains (add (add 5 emptyset) 22) 22
   ```
-  - inline tests both document invariants and serve as tests: two-for-one!
+  - Inline tests both document invariants and serve as tests: two-for-one!
   - They also allow functions and data structures hidden in a module to be tested within that module
-    - This also gets around an issue with OCaml's modules and hidden code that needs to be tested
-      - The tester module needs to see the local-only functions in the library module to test them 
-        (recall we make local-only things in an `.ml` file by leaving them out of the `.mli`)
-      - So, they would need to be made non-local for that, defeating the locality
-      - Besides `ppx_test` and exposing, a third solution is to put the local functions in a separate `local.ml` module with no `.mli`
+  - This also gets around an issue with OCaml's modules and hidden code that needs to be tested
+    - The tester module needs to be able to see the local-only functions in the library module to test them
+      (recall we make local-only things in an `.ml` file by leaving them out of the `.mli`)
+    - So, they would need to be made non-local for that, defeating the locality
 
 ### Data structure invariants
 
@@ -209,51 +224,62 @@ let add (x : M.t) (s : t) =
 * A standard invariant for recursive functions is that the recursive calls return what the calling function expected
 
 ```ocaml
-let rec rev l = 
-  match l with 
+let rec rev l =
+  match l with
   | [] -> []
-  | x::xs -> let rxs = rev xs in assert(List.rev xs = rxs); rxs @ [x]
+  | x :: xs ->
+    let rxs = rev xs in
+    assert (List.rev xs = rxs);
+    rxs @ [x]
 ```
- * Note that we have to use the built-in `List.rev` to test our version - somewhat circular
- * In general a major issue with specification is it is often very difficult to give a code-based definition of the full spec.
- * So, the main focus should be on *partial* specs, give sanity conditions
+
+* Note that we have to use the built-in `List.rev` to test our version - somewhat circular
+* In general, a major issue with specification is it is often very difficult to give a code-based definition of the full spec.
+* So, the main focus should be on *partial* specs: use some sanity-check conditions.
 
 ### Examples of Invariants Over Folds
 
-* In re-implementing some of the common `List` functions with `fold`s it helps to think of the invariant
+* In re-implementing some of the common `List` functions with `fold_left`, it helps to think of the invariant.
 * Folding left (`List.fold_left`):
-   - Suppose we are at some arbitrary point processing the fold;
-   - assume accumulation `accum` has "the result of the task" for all elements to the *left* in the list
-   - require `f` to then "do the task" to incorporate the current element `elt`
-   - also assume `accum` is initially `init`
+  - Suppose we are at some arbitrary point processing the fold;
+  - assume accumulation `accum` has "the result of the task" for all elements to the *left* in the list
+  - require `f` to then "do the task" to incorporate the current element `elt`
+  - also assume `accum` is initially `init`
 * Folding right: very similar, but `accum` is result for all elements to the *right* in the list
 
 ```ocaml
 (* invariant for length fold: accum is number of elements to the left of the current `elt` we are at *)
-let length l = List.fold_left (fun accum _ -> accum + 1) 0 l
+let length l =
+  List.fold_left (fun accum _ -> accum + 1) 0 l
+
 (* invariant for rev fold: accum is reverse of list up to here *)
-let rev l = List.fold (fun accum elt -> elt :: accum) [] l 
-(* invariant for map fold: accum is f applied to each element of list up to here *)
-let map f l = List.fold_right (fun elt accum -> (f elt) :: accum) [] l
+let rev l =
+  List.fold_left (fun accum elt -> elt :: accum) [] l
+
+(* invariant for map fold: accum is f applied to each element of list after here *)
+let map f l =
+  List.fold_right (fun elt accum -> f elt :: accum) [] l
+
 (* etc *)
-let filter f l = List.fold_right (fun elt accum -> if f elt then elt :: accum else accum) [] l
+let filter f l =
+  List.fold_right (fun elt accum -> if f elt then elt :: accum else accum) [] l
 ```
 
 ### Specification and Abstraction
 
-* The more completely a module is specified the less the users need to know about the underlying implementation
-* `Map` is an example where the users need to know limited information about the implementation
-  - they still *do* need to know it is O(log n) for add/remove/find, that should be in the docs (`.mli`/odoc)
-* On your own libraries you will want to document them well
+* The more completely a module is specified, the less the users need to know about the underlying implementation.
+* `Map` is an example where the users need to know very limited information about the implementation.
+  - They still *do* need to know it is O(log n) for add/remove/find, which should be in the docs (`.mli`/odoc)
+* On your own libraries, you will want to document them well.
   - It will make it a lot easier for your users, they can just think about the spec. view.
   - `odoc` formatting for `.mli` files is in the FPSE Style Guide
 
 ## Testing
 
-* Writing tests has two important and distinct goals
+* Writing tests has two important and distinct goals.
   1. For specification: use tests to define and refine what the code should do
     - Writing tests before fully coding the answer lets the tests serve as your "coding spec"
-    - Adding tests for corner cases will clarify the behavior in those cases 
+    - Adding tests for corner cases will clarify the behavior in those cases
       (e.g. does removing an element from a set which doesn't contain the element raise an exception, or does it just return the set unchanged?)
   2. For implementation: use tests to find bugs in code
     - Before the code is working the tests will point out which cases are failing
@@ -264,10 +290,11 @@ let filter f l = List.fold_right (fun elt accum -> if f elt then elt :: accum el
   - *Glass-box* tests are in the context of bugs in the code and other code properties
 
 ### Standard categories of tests
+
 * **Unit testing**: what you have mainly done -- test the small pieces of the app; no I/O testing
 * **Acceptance testing**: test the bigger pieces including I/O
   - For example testing your `keywordcount.exe` on a certain fixed directory tree.
-* **Random testing** of which there are many types: fuzz testing / monkey testing / property-based testing / quickcheck: 
+* **Random testing** of which there are many types: fuzz testing / monkey testing / property-based testing / quickcheck:
   - the tests are run on data generated **randomly** from some distribution
   - "quickcheck"ing aka property-based testing is running **unit** tests on randomly generated data (random lists of ints, etc)
   - "fuzz testing" is running **acceptance** tests with random input strings supplied.
@@ -284,87 +311,89 @@ let filter f l = List.fold_right (fun elt accum -> if f elt then elt :: accum el
 * We have been using the `OUnit2` library mostly as a black box up to now
 * Now we will go through the details, which are in fact very simple
   - There is not much in `OUnit2` per se, if you want something extra just write some higher-order functions to do it
-* To review, here is your standard simple `tests.ml` file, this one is from the String set example:
+* To review, here is your standard simple `tests.ml` file, this one is from the `String_set` example:
   ```ocaml
   open OUnit2
   open String_set
 
-  let tests = "test suite for simple set" >::: [
-  "empty"  >:: (fun _ -> assert_equal empty empty);
-  "3-elt"    >:: (fun _ -> assert_equal true (contains "5" (add "5" empty)));
-  "1-elt nested" >:: (fun _ -> assert_equal false (contains "5" (remove "5" (add "5" empty))));
-  ]
+  let tests =
+    "test suite for simple set" >:::
+      [ "empty"        >:: (fun _ -> assert_equal empty empty)
+      ; "3-elt"        >:: (fun _ -> assert_equal true (contains "5" (add "5" empty)))
+      ; "1-elt nested" >:: (fun _ -> assert_equal false (contains "5" (remove "5" (add "5" empty))))
+      ]
 
   let () = run_test_tt_main tests
   ```
 
-* `OUnit2.assert_equal` is just the `OUnit2` version of `assert`, it uses `Poly.(=)` for simplicity (but be careful)
-* The infix `>::` operator takes a string (test name) and a piece of test code under `fun _ ->` (to keep it from running right away) and builds a single test of type `test` (type `#require "ounit2"` and `open OUnit2` to the top-loop before playing with this code there):
+* `OUnit2.assert_equal` is just the `OUnit2` version of `assert`.
+  - It uses `Repr.equal` for simplicity (but be careful because it is equality of runtime representation, which is not necessarily the intended notion of equality)
+* The infix `>::` operator takes a string (test name) and a piece of test code under `fun _ ->` (to keep it from running right away) and builds a single test of type `test` (run `#require "ounit2"` and `open OUnit2` in the top-loop before playing with this code there):
   ```ocaml
   # let test1 = "simple test" >:: fun _ -> assert_equal (2 :: []) [2];;
-    val test1 : test =
-    TestLabel ("simple test",
-    TestCase (Short, <fun>))
-   ```
+  val test1 : test = TestLabel ("simple test", TestCase (Short, <fun>))
+  ```
 
 * The `>:::` operator simply takes a `test list` and builds a test suite (which in fact is just of type `test`)
   ```ocaml
   # let test_suite = "suite now" >::: [test1];;
   val test_suite : test =
-  TestLabel ("suite now",
-   TestList
-    [TestLabel ("simple test",
-      TestCase (Short, <fun>))])
+    TestLabel ("suite now",
+    TestList [TestLabel ("simple test", TestCase (Short, <fun>))])
   ```
-* Then, `OUnit2.run_test_tt_main tests` will run the suite `tests` 
+* Then, `OUnit2.run_test_tt_main tests` will run the suite `tests`
   - (Note this will work but will then freeze the top loop - `OUnit` is designed to run in the command line only)
 
 #### How the tests run when you say dune test
-* The above `tests.ml` file is just defining an executable, like `keywordcount.exe` on HW4
-* Build and run the executable to run the tests
-* Here a dune build file which would work for the simple set tests for example:
+
+* The above `tests.ml` file is just defining an executable, like `keywordcount.exe` in Assignment 4.
+* Build and run the executable to run the tests.
+* Here is a `dune` build file which would work for the `Simple_set` tests, for example:
 
 ```scheme
 (executable
-  (name tests)
-  (libraries
-    ounit2
-    simple_set
-  ))
+ (name tests)
+ (libraries
+   ounit2
+   simple_set
+ ))
 
-; dune rule so command line "dune runtest" (and "dune test") will run tests.
-; in other words, there is nothing special about `dune test`, its just a build plus running `_build/default/test/tests.exe`
+; dune rule so that command line "dune runtest" (and "dune test") will run tests.
+; in other words, there is nothing special about `dune test`. It is just a build plus running `_build/default/test/tests.exe`
 (rule
  (alias runtest)
  (action (chdir %{project_root}
   (run ./test/tests.exe))))
 ```
+
 * There is even special shorthand for the above: replace `executable` with `test` and it makes an executable plus the above alias to run tests:
 
 ```scheme
 (test
-  (name tests)
-  (libraries
-    ounit2
-    simple_set
-  ))
+ (name tests)
+ (libraries
+   ounit2
+   simple_set
+ ))
 ```
-
 
 ### Higher-order testing
 
-* If you did unit testing in other languages it looks pretty much like the above
-* But in OCaml we can make tests programatically which makes for less code duplication
-* Example: lets make a bunch of different tests on the same invariant, that reversing a list twice is a no-op:
+* If you did unit testing in other languages it looks pretty much like the above.
+* But in OCaml we can make tests programatically which makes for less code duplication.
+* Example: lets make a bunch of different tests on the same invariant that reversing a list twice is a no-op:
 
 ```ocaml
-# let make_rev_test l = ("a rev test" >:: (fun _ -> assert_equal (List.rev @@ List.rev l) l));; 
+# let make_rev_test l =
+  "a rev test" >:: (fun _ -> assert_equal l (List.rev @@ List.rev l))
+;;
 val make_rev_test : 'a list -> test = <fun>
 ```
 
 ```ocaml
-let make_test_suite l ~f = 
-  "suite of tests of f" >::: List.map l ~f ;;
+let make_test_suite l ~f =
+  "suite of tests of f" >::: List.map f l
+;;
 val make_test_suite : 'a list -> f:('a -> test) -> test = <fun>
 ```
 
@@ -373,14 +402,17 @@ let s = make_test_suite [[];[1;2;3];[2;44;2];[32;2;3;2;1]] ~f:make_rev_test ;;
 let () = run_test_tt_main s;; (* recall this crashes the top loop when finished *)
 ```
 
-* In general you can build an arbitrarily big tree of tests with suites of suites etc
-   - As can be seen above, a suite of tests just has type `test`
+* In general you can build an arbitrarily big tree of tests with suites of suites etc.
+  - As can be seen above, a suite of tests just has type `test`
 
 ```ocaml
-let s' = "id tests" >::: 
+let s' = "id tests" >:::
   [ "one" >:: (fun _ -> assert_equal (Fun.id 4) 4)
-  ; "two" >:: (fun _ -> assert_equal (Fun.id "hello") "hello") ];;
+  ; "two" >:: (fun _ -> assert_equal (Fun.id "hello") "hello") ]
+;;
+
 let suites = test_list [s;s'];; (* make suite of suites *)
+
 let named_suites = "revrev and Fun.id" >: suites (* any tree of tests can be named with >: *)
 ```
 
@@ -388,37 +420,41 @@ Here is the type of `test` under the hood (from the docs) which should make clea
 
 ```ocaml
 type test =
-| TestCase of test_fun
-| TestList of test list
-| TestLabel of string * test
+  | TestCase of test_fun
+  | TestList of test list
+  | TestLabel of string * test
 ```
 
 ### Tangent: defining infix operators
 
 * The OUnit infix operators `>:`/`>::`/`>:::` are just like `+`, `^` etc
-* Using them arguably makes the code more readable, so consider defining your own infix operators
+* Using them arguably makes the code more readable, so consider defining your own infix operators when appropriate.
 
 ```ocaml
 # #require "ounit2";;
+
 # open OUnit2;;
+
 # (>::) ;;
 - : string -> test_fun -> test = <fun>
+
 # (>:::);;
 - : string -> test list -> test = <fun>
 ```
 
-* There is no magic to this, you can also do it:
+* There is no magic to infix operators like this. You can also do it:
 
 ```ocaml
 # let (^^) x y = x + y;;
 val ( ^^ ) : int -> int -> int = <fun>
+
 # 3 ^^ 5;;
 - : int = 8
 ```
-* Note that unlike in C++ we are *not* overloading operators, `^^` only works on two ints now.
+
+* Note that unlike in C++, we are *not* overloading operators, `^^` only works on two ints now.
 * The old version of `^^` for printing is now shadowed so is not directly accessible.
-* So, new infix ops are always defined within a module to avoid overlap
-* OCaml will eventually have true operator overloading but it is still in the development pipe
+* So, new infix ops are always defined within a module to avoid overlap.
 
 ### The different assert_X statements possible in OUnit2
 
@@ -426,13 +462,14 @@ val ( ^^ ) : int -> int -> int = <fun>
 * `assert_bool` which is like the `assert` OCaml command: `assert_bool "name that test" (0=0)` for example
 * If you want to verify some code raises an exception, use `assert_raises`
 * To perform acceptance testing (I/O), use `assert_command` to run a shell command and compare against output
-  - in the A4 `exec_tests.ml` code we provided you can see we are using `assert_command` to test the executable
+  - in the A4 `exec_tests.ml` code we provided, you can see we are using `assert_command` to test the executable
 * If you need fixed setup/teardown code bracketing a group of tests to setup e.g. files: `bracket_tmpfile`
 
-As always, see the documentation for more details: 
+As always, see the documentation for more details:
 OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
 
 ### Tangent: Testing executables with cram
+
 * As mentioned above `OUnit` can be used to test executables: `OUnit2.assert_command` can run any shell command (in particular, your OCaml `.exe` file)
  - This is probably the approach you should use
 * `dune` also contains an extension called `cram` which allows for output to be compared against expected output for a given input
@@ -456,7 +493,7 @@ OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
 ### Bisect for OCaml code coverage
 TODO: not in 5.5.1 now
 
-* The `bisect_ppx` preprocessor can decorate your code with one hit-bit per line 
+* The `bisect_ppx` preprocessor can decorate your code with one hit-bit per line
   - it can then show which lines are "hit" upon running your test suite
 * Add `(preprocess (pps bisect_ppx))` to library or executable declaration in `dune` to decorate
   - *don't* add to your `(test ... )` dune declaration, you want to count lines hit in your code not in your test code!
@@ -465,6 +502,7 @@ TODO: not in 5.5.1 now
 * Shell command `bisect-ppx-report html` generates a pretty report showing which lines hit in latest execution
   - open `_coverage/index.html` in your browser to see the report
   - if this command is not working make sure you did the `opam install bisect-ppx` in the course required installs
+* Alternatively, `bisect-ppx-report summary` prints you a very small report, in case you do not need details.
 * See [Bisect docs](https://github.com/aantron/bisect_ppx) for more details
 * Note that if you have single lines of code that you know should not be run (e.g. invariants that should not fail) you can put `[@coverage off]` at the end of those lines.  To turn coverage off on a single `let` definition, put `[@@coverage off]` immediately after the end of definition. To turn coverage off on an arbitrary range of lines in the file, put `[@@@coverage off]` to turn it off and then `[@@@coverage on]` to turn it back on.  See [the docs](https://github.com/aantron/bisect_ppx?tab=readme-ov-file#controlling-coverage-with-coverage-off) for details.
 
@@ -502,8 +540,6 @@ Here is the methodology
 * We will look at quickchecking on a `Map` in [school_quickcheck.ml](../examples/school-quickcheck/school_quickcheck.ml)/[school_quickcheck.zip](../examples/zips/school-quickcheck.zip)
 
 * [QCheck docs](https://ocaml.org/p/qcheck-core/0.91)
-
-
 
 ### Fuzz testing vs Quickcheck
 
