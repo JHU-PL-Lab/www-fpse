@@ -11,7 +11,7 @@ A module is a collection of OCaml definitions:
 * types
 * other modules
 
-* Modules are something like records, but they can also hold e.g. types which makes them much more powerful.
+* Modules are something like records, but they can also hold other things, like types, which makes them much more powerful.
 * But, modules are not first class values like records -- for example, they can't directly be passed as arguments to functions.
 
 ## `.ml` files are modules
@@ -25,7 +25,7 @@ In this lecture, we'll work with a running example. See [set-example.zip](../exa
 Here is `string_set.ml` from that example:
 
 ```ocaml
-type t = string list (* This is a *type abreviation*: a string set is a list of strings *)
+type t = string list (* This is a *type abbreviation*: a string set is a list of strings *)
 
 let empty : t = [] (* the one canonical empty set *)
 
@@ -35,17 +35,19 @@ let rec remove (x : string) (s : t) : t =
   match s with
   | [] -> failwith "item is not in set"
   | hd :: tl ->
-    if hd = x
-    then tl (* we don't remove from the tail: this is actually a multiset *)
-    else hd :: remove x tl
+    if hd = x then
+      tl (* we don't remove from the tail: this is actually a multiset *)
+    else
+      hd :: remove x tl
 
 let rec contains (x : string) (s : t) : bool =
   match s with
   | [] -> false
   | hd :: tl ->
-    if hd = x
-    then true 
-    else contains x tl
+    if hd = x then
+      true
+    else
+      contains x tl
 ```
 
 ### Loading a module into `utop`
@@ -86,7 +88,7 @@ Modules have _types_, called **module types** or **signatures**.
 - Here are the contents of that file:
 
 ```ocaml
-type t = string list (* Type declarations are by default copied from .ml to .mli file *)
+type t = string list
 (* type t (* this alternate version of type t declaration *hides* t's internals *) *)
 val empty : t
 val add : string -> t -> t
@@ -134,7 +136,7 @@ To make a library module from the `string_set.ml` file, we include this in the `
 ; in file `src/dune`
 (library
  (name string_set)
- (modules string_set) 
+ (modules string_set)
 )
 ```
 
@@ -147,17 +149,19 @@ Let's make an actual executable program to do something, not just a library.
 * Note that pure functional programs are useless as executables, input and output is a side effect and we need it to write applications.
 * Typically, the main work in an executable is put under a `let () = ...` statement. The `...` evaluates to `() : unit`, and the side effects it performs are what we see.
 
+<!-- Brandon: I updated this example to not leak resources. The input channel was opened but never closed. -->
+
 ```ocaml
 (* Just a helper function. Does not run until it's given arguments in `let () = ...` *)
 let do_search search_string filename =
+  let lines = In_channel.with_open_bin filename In_channel.input_lines in
   let my_set =
-    (In_channel.open_text filename)
-    |> In_channel.input_lines
-    |> List.fold_left (fun set elt -> String_set.add elt set) String_set.empty
+    List.fold_left (fun set elt -> String_set.add elt set) String_set.empty lines
   in
-  if String_set.contains search_string my_set
-  then print_string @@ "\"" ^ search_string ^ "\" found\n"
-  else print_string @@ "\"" ^ search_string ^ "\" not found\n"
+  if String_set.contains search_string my_set then
+    print_string @@ "\"" ^ search_string ^ "\" found\n"
+  else
+    print_string @@ "\"" ^ search_string ^ "\" not found\n"
 
 (* This statement has some printing side effects that we observe when running the executable *)
 let () =
@@ -209,7 +213,7 @@ This makes an executable out of the `set_main.ml` file.
 * It is often useful to have modules inside of modules for further code "modularization"
 * The way it is declared is in e.g. `foo.ml` (which itself defines the items for module `Foo` using the above convention), add
   ```ocaml
-  module Sub = struct 
+  module Sub = struct
     let blah = ...
    ...
   end
@@ -242,11 +246,15 @@ let rb = B.{ x = 0 ; z = 1.1 }
 open A
 open B
 
-let f r = r.x (* type inferred for r is B.t, just like with newratio *)
+let f r = r.x (* type inferred for r is B.t, just like with newratio from the records lecture *)
 
 (* A type annotation will disambiguate: *)
 let f (r : A.t) : int = r.x
+
+let f' r = r.A.x (* this works too )
 ```
+
+<!-- Brandon: I am commenting out the rest because there was no deriving on the nucleotide example. We used polymorphic equality because the constructors are effectively just ints. Also, we have not covered ppx yet.
 
 ### Aside: @@deriving in modules
 
@@ -263,4 +271,4 @@ end
 ```
 * When this type was called `nucleotide` not in a module the `ppx` made a function `equal_nucleotide`
 * Here the `ppx` is smarter, instead of `Nucleotide.equal_t` it just makes `Nucleotide.equal` - `t` is a special type in the module
-* Note that `[@@deriving ..]` declarations in types in the `.ml` file need to be repeated in the `.mli` file if the types are not hidden
+* Note that `[@@deriving ..]` declarations in types in the `.ml` file need to be repeated in the `.mli` file if the types are not hidden -->
