@@ -1,5 +1,7 @@
 # More Modules and Libraries
 
+<!-- Brandon: just leaving a note here that I think we should emphasize that these lectures are centered around functors. The name "More Modules" is not very descriptive when students look at the dateline for resources. -->
+
 ## Defining Modules in the top loop or nesting them in a file
 
 * Modules can be defined in the top loop just like how we had defined nested modules in a `my_module.ml` file
@@ -7,9 +9,10 @@
 * `struct` stands for structure, modules used to be called that in OCaml; view a `struct` as a synonym of a module.
 * Here is a string set example put in top-loop syntax:
 
+<!-- Brandon: Using `String.equal` here instead of polymorphic equality because with polymorphic equality, it is not so obvious why we would need a functor. -->
+
 ```ocaml
 # module String_set = struct
-
   type t = string list
 
   let empty : t = []
@@ -20,17 +23,19 @@
     match s with
     | [] -> failwith "item is not in set"
     | hd :: tl ->
-      if hd = x
-      then tl
-      else hd :: remove x tl
+      if String.equal hd x then
+        tl
+      else
+        hd :: remove x tl
 
   let rec contains (x : string) (s : t) : bool =
     match s with
     | [] -> false
     | hd :: tl ->
-      if hd = x 
-      then true 
-      else contains x tl
+      if String.equal hd x then
+        true
+      else
+        contains x tl
 end
 module String_set :
   sig
@@ -47,7 +52,7 @@ module String_set :
 * Modules are to `.ml` files as module types are to `.mli` files
 * We can also define module types and explicitly use them to annotate the module.
 * Use `module type TYPE_NAME_HERE = sig ... declarations here ... end` to define module types (`.mli` file equivalents).
-  - It is common to use all capital letters when naming module types, but this is not enforced by the language.
+  - It is common to use all capital letters when naming module types, but this is not enforced by the language, nor by the standard library.
 
 ```ocaml
 module type STRING_SET = sig
@@ -69,23 +74,19 @@ module String_set : STRING_SET = struct ... end
 Notice the parallel to when we define types and values as we've done in the past:
 
 ```ocaml
-type t = ... (* like `module type STRING_SET = sig ... end` above *)
+type t = ...
+module type T = sig ... end
 
-let x : t = ... (* like `module String_set : STRING_SET = struct ... end` above *)
+let x : t = ...
+module X : T = struct ... end
 ```
 
 We can take this similarity even further. Just like we have functions on values, we can have functions on modules, called "functors".
 
 ## Functors
 
-* Functors are parametric modules, i.e. functions from modules to modules
-* They let us define a generic code library to which we can plug in some concrete code later
-    <!-- - in other words, just like what higher-order functions do except for modules
-    - the main advantage is we get to include *types* as parameters since modules have types in them: very powerful!!
-      * When we say "very powerful", we mean it! Don't overlook this! -->
-<!-- * You want to use a functor when there could be multiple modules to plug in.
-  - Example A: if you just want to write code depending on our `String_set` module, use put `(libraries string_set)` in the `dune` file and use it. 
-  - Example B: on the other hand if you want to be able to "plug in" which implementation of sets you use, make a functor where the set module is a parameter. -->
+* Functors are parametric modules, i.e. functions from modules to modules.
+* They let us define a generic code library to which we can plug in some concrete code later.
 
 ### Simple example
 
@@ -122,26 +123,30 @@ module Make_set (M : EQ) = struct
     match s with
     | [] -> failwith "item is not in set"
     | hd :: tl ->
-      if M.equal hd x (* M.equal is the equal function from M *)
-      then tl 
-      else hd :: remove x tl
+      if M.equal hd x then (* M.equal is the equal function from M *)
+        tl
+      else
+        hd :: remove x tl
 
   let rec contains (x : M.t) (s : t) : bool =
     match s with
     | [] -> false
     | hd :: tl ->
-      if M.equal x hd 
-      then true 
-      else contains x tl
+      if M.equal x hd then
+        true
+      else
+        contains x tl
 end
 ```
 
 Here is the similarity to types and values as we've seen before, just to demonstrate syntactic similarity.
 
 ```ocaml
-type eq = ... (* like `module type EQ = sig ... end` *)
+type eq = ...
+module type EQ = sig ... end
 
-let make_set (m : eq) = ... (* like `module Make_set (M : EQ) = struct ... end` *)
+let make_set (m : eq) = ...
+module Make_set (M : EQ) = struct ... end
 ```
 
 * The reason we use functors is because we can pass in types _and_ functions on those types.
@@ -185,18 +190,9 @@ module Int2 : EQ
 - Note that `Int2` is restricted to *only* have `t`/`equal` with this declaration.
   - Everything else has been chopped off.
 
-<!-- ALARM!
-- The type `t` in `EQ` is abstract. This means the type in `Int2` is now abstract; it is not observably equivalent to `int`.
-- This is a slightly complex issue. We'll address it later in detail.
-- But for the curious, here is a way we could make sure the type is still observably `int`.
-
-```ocaml
-# module Int3 : (EQ with type t = int) = Int;;
-module Int3 : sig type t = int val equal : t -> t -> bool end
-``` 
--->
-
 ### Using functors with our own custom type
+
+<!-- Brandon: we have not covered ppx yet, so this example is not so good anymore. We should probably do the pair example from below instead. -->
 
 Here is how we could apply the `Make_set` functor with our own data type. We'll do it on nucleotides in the top loop.
 
@@ -291,48 +287,51 @@ module Int_set_hidden = Make_set_hidden (Int)
 ### The Standard Library's Set, Map, Hash table, etc
 
 * The standard library advanced data structures support something similar to what we did above
-  - "plug in the comparison in an initialization phase and then forget about it"
 * Here for example is how you make a (functional) map where the key is a built-in type
 * `Map.Make` is a functor just like our `Simple_set.Make` above
  - We need to supply the type of *keys* as we need to compare on them; the types of values is arbitrary so we let it be `'a` as in a list
 
+<!-- Brandon: switched from float to int map because float equality is brittle -->
+
 ```ocaml
-module FloatMap = Map.Make (Float) (* Or Char/Int/String/Bool/etc. Anything that is comparable and serializable *)
+module Int_map = Map.Make (Int) (* Or Char/String/Bool/etc. Anything that is comparable *)
 
 (* Alias the empty map -- maps are functional, so there is one canonical empty map *)
-let mm : 'a FloatMap.t = FloatMap.empty
+let mm : 'a Int_map.t = Int_map.empty
 
-(* Use the Map module to work with all maps. *)
-let mm' : int FloatMap.t = FloatMap.add 0.4 5 mm
+(* Add the maping (1 -> true) to the empty map *)
+let mm' : bool Int_map.t = Int_map.add 1 true mm
 
-(* evaluates to 5 *)
-let data_5 = FloatMap.find 0.4 mm'
+(* evaluates to true *)
+let data_true = Int_map.find 1 mm'
 
-(* Use FloatMap.of_X functions to convert to a float map: *)
-let mm2 = FloatMap.of_list [2.3,"hi"; 3.3,"low"; 2.6,"medium"; 22.2,"wavy"]
+let mm2 = Int_map.of_list [(2, "hi"); (3, "low"); (4, "medium"); (22, "wavy")]
 ```
 
 
+
 ```ocaml
-# module IntPair = struct
-  type t = int * int [@@deriving ord]
+# module Int_pair = struct
+  type t = int * int
+  let compare a b = Pair.compare Int.compare Int.compare a b
 end;;
-module IntPair :
+module Int_pair :
   sig
     type t = int * int
     val compare : t -> t -> int
   end
 
-# module IPMap = Map.Make (IntPair);;
-module IPMap :
+# module IP_map = Map.Make (Int_pair);;
+module IP_map :
   sig ... end (* big long omitted type *)
 
-# module IPSet = Set.Make (IntPair);;  (* Sets also use compare (it sorts internally) *)
+# module IP_set = Set.Make (Int_pair);; (* Sets also use compare (it sorts internally) *)
 ...
 
-# IPSet.empty |> IPSet.add (1,2) |> IPSet.add (3,2) |> IPSet.add (3,2) |> IPSet.to_list;;
-- : IPSet.elt list list = [(1, 2); (3, 2)]
+# IP_set.empty |> IP_set.add (1,2) |> IP_set.add (3,2) |> IP_set.add (3,2) |> IP_set.to_list;;
+- : IP_set.elt list list = [(1, 2); (3, 2)]
 ```
+
 Observe that only non-parametric types can be keys for maps:
 
 ```ocaml
@@ -352,24 +351,19 @@ Error: Signature mismatch:
   * Say we want to make maps where keys are string lists.
 
 ```ocaml
-# module SList = struct type t = string list [@@deriving ord] end;;
-module SList :
+# module SL = struct
+  type t = string list
+  let compare a b = List.compare String.compare a b
+end;;
+module SL :
   sig
     type t = string list
     val compare : t -> t -> int
   end
 
-# module SListMap = Map.Make (SList);;
-module SListMap :
+# module SL = Map.Make (SL);;
+module SL_map :
   sig ... end
-```
-
-And remember that we can inline module definitions, so the following will work as well.
-
-```ocaml
-# module SListMap = Map.Make (struct type t = string list [@@deriving ord] end);;
-module SListMap :
-  sig .. end
 ```
 
 * The above is a map where the *keys* are lists of strings.
@@ -378,35 +372,37 @@ module SListMap :
 * This assumes the keys are integer pairs, and the values can be any type (`'a`).
 
 ```ocaml
-# type 'a intpairmaptree = 
-    | Leaf 
-    | Node of ('a IPMap.t) * 'a intpairmaptree * 'a intpairmaptree;; 
+# type 'a intpairmaptree =
+    | Leaf
+    | Node of 'a IP_map.t * 'a intpairmaptree * 'a intpairmaptree;;
 type 'a intpairmaptree =
     Leaf
-  | Node of 'a IPMap.t * 'a intpairmaptree * 'a intpairmaptree
+  | Node of 'a IP_map.t * 'a intpairmaptree * 'a intpairmaptree
 ```
-* Notice how we refer to our pair map type as `'a IPMap.t`
-  - The keys are integer pairs, that is built-in to `IPMap.t`, and the values are `'a`s, the parameter here
+* Notice how we refer to our pair map type as `'a IP_map.t`
+  - The keys are integer pairs, that is built-in to `IP_map.t`, and the values are `'a`s, the parameter here
   - Compare with `'a list` instead of a map in the nodes; `'a List.t` is just an alias for that type:
+
   ```ocaml
-  type 'a listtree = 
-    | Leaf 
-    | Node of ('a List.t) * 'a listtree * 'a listtree;; 
+  type 'a listtree =
+    | Leaf
+    | Node of ('a List.t) * 'a listtree * 'a listtree;;
   ```
 
 ### A Small Example Using Map
+
 * We will go over the code of [school.ml](../examples/school/school.ml)/[zipfile](../examples/zips/school.zip), simple code that uses a `Map`.
 
 ### The `with` type refinement operation
-
 
 * `with` is sometimes needed when you have a module type with an abstract `type t` (just the type name, no explicit definition)
  - Sometimes you made it just `type t`, not to hide it like we did in `simple_set.mli`, but because **we didn't know it** - it is a generic type.
  - This is common in functor parameter module types in particular, e.g. our `EQ` above has a `type t` which is intended to be generic, not hidden.
  - Above, everything worked fine because `t` was only a parameter, but if the functor result module type had a `type t` in it, it would be hidden, and that might not be desired.
- 
+
 * Example: here is a type of modules which contain pairs (a toy example)
 * We want this to be generic over any type of pair so we let `l` and `r` be undefined
+
 ```ocaml
 module type PAIR = sig
   type l
@@ -420,7 +416,7 @@ end
 OK lets make a concrete example of the above on `int` and `string`:
 
 ```ocaml
-module Pair = struct 
+module Pair = struct
  type l = int
  type r = string
  type t = l * r
@@ -490,7 +486,8 @@ module Make_pair_too_hidden (Datum1 : DATUM) (Datum2 : DATUM) : PAIR = struct
   type t = l * r
   let left (p : t) = match p with (a,_) -> a
   let right (p : t) = match p with (_,b) -> b
-  let equal (p1 : t) (p2 : t) = Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
+  let equal (p1 : t) (p2 : t) =
+    Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
 end
 
 module Example_pair_too_hidden = Make_pair_too_hidden (Int) (String)
@@ -500,13 +497,15 @@ module Example_pair_too_hidden = Make_pair_too_hidden (Int) (String)
 Let us fix this by specializing the `Pair` module type with `with`:
 
 ```ocaml
-module Make_pair_unhidden (Datum1 : DATUM) (Datum2 : DATUM) : (PAIR with type l = Datum1.t with type r = Datum2.t) = struct
+module Make_pair_unhidden (Datum1 : DATUM) (Datum2 : DATUM)
+  : (PAIR with type l = Datum1.t with type r = Datum2.t) = struct
   type l = Datum1.t
   type r = Datum2.t
   type t = l * r
   let left (p : t) = match p with (a,_) -> a
   let right (p : t) = match p with (_,b) -> b
-  let equal (p1 : t) (p2 : t) = Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
+  let equal (p1 : t) (p2 : t) =
+    Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
 end
 
 module Example_pair_unhidden = Make_pair_unhidden (Int) (String)
@@ -515,13 +514,15 @@ module Example_pair_unhidden = Make_pair_unhidden (Int) (String)
 Sometimes we might want to *inline* the types we are instantiating in `with`: use `:=` in place of `=` for that:
 
 ```ocaml
-module Make_pair (Datum1 : DATUM) (Datum2 : DATUM) : (PAIR with type l := Datum1.t with type r := Datum2.t) = struct
+module Make_pair (Datum1 : DATUM) (Datum2 : DATUM)
+  : (PAIR with type l := Datum1.t with type r := Datum2.t) = struct
   (* type l = Datum1.t *) (* Not needed! They were destructively substituted! *)
   (* type r = Datum2.t *)
   type t = Datum1.t * Datum2.t
   let left (p : t) = match p with (a,_) -> a
   let right (p : t) = match p with (_,b) -> b
-  let equal (p1 : t) (p2 : t) = Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
+  let equal (p1 : t) (p2 : t) =
+    Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
 end
 
 module Example_pair = Make_pair (Int) (String)
@@ -530,16 +531,16 @@ module Example_pair = Make_pair (Int) (String)
 This could use an example to really spell out:
 
 ```ocaml
-module type TLIST = sig
-  type a 
+module type T_LIST = sig
+  type a
   type t = a list
 end
 
 (* Substitutes `int` in for `a` and then deletes `a`. *)
-module type INTLIST = TLIST with type a := int
+module type INT_LIST = T_LIST with type a := int
 
 (* Equivalent definition: *)
-module type INTLIST = sig
+module type INT_LIST = sig
   (* No type a! It's been deleted *)
   type t = int list
 end
@@ -564,7 +565,7 @@ end
 * `#use "afile.ml"` - loads code file as if it was copied and pasted into the top loop.
 * `#mod_use` - like `#use` but loads the file like it was a module (i.e. like we typed `module Filename = struct ... contents of filename.ml ... end`)
 * `#load "blah.cmo"`, `#load "blahlib.cma"` etc - load a compiled binary or library file (only the `.cmo/a` versions, the bytecode compiler).
-* `#use_output "dune top"` - run a command and assume output is top loop input commands.  
+* `#use_output "dune top"` - run a command and assume output is top loop input commands.
   - The particular argument `dune top` here generates top loop commands to load the current project.
   - If `dune utop` is not working this is very similar but less glitchy.
 * `#directory adir` - adds `adir` to the list of directories to search for files.

@@ -1,29 +1,15 @@
-(* Example of a main executable reading command line arguments.
-   Uses Core libaries to parse command line arguments.
-   Uses Simple_set for a set data structure (normally would use Core.Set) *)
-
-(** [do_search search_string filename] searches for a string line in file.
-  Only matches on the whole line, a very simple search. **)
 
 module String_set = Simple_set.Make (String) (* Apply Make functor to make a String set *)
 
 let do_search search_string filename =
+  let lines = In_channel.with_open_bin filename In_channel.input_lines in
   let my_set =
-    (In_channel.open_text filename)
-    |> In_channel.input_lines
-    |> List.fold_left (fun set elt -> String_set.add elt set) String_set.empty
+    List.fold_left (fun set elt -> String_set.add elt set) String_set.empty lines
   in
-  if String_set.contains search_string my_set
-  then print_string @@ "\"" ^ search_string ^ "\" found\n"
-  else print_string @@ "\"" ^ search_string ^ "\" not found\n"
-
-(*
-    The main program.
-   let () = ... is a common idiom in a main module: the code will run when module loaded
-   So, the code below de facto is the `main()` of our beloved C/Java/etc. world.
-   You can also just directly put the code in with out the let (), but the parser
-   can get confused as to whether it is part of the previous function or not.
-*)
+  if String_set.contains search_string my_set then
+    print_string @@ "\"" ^ search_string ^ "\" found\n"
+  else
+    print_string @@ "\"" ^ search_string ^ "\" not found\n"
 
 let () =
   match Array.to_list Sys.argv with
