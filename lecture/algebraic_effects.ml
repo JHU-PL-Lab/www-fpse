@@ -322,6 +322,42 @@ let counter () =
 
 let test_counter = run ~init:0 counter
 
+(* You can also use shallow effect handlers, which do not have a nice built-in
+  syntax but are arguably easier to understand because we explicitly install
+  the new handler. *)
+let run (type a) ~init (main : unit -> a) : int * a =
+  let open Shallow in
+  let type state = int in
+  (** [handler s] is the state effect handler in current state [s]. *)
+  let rec handler (s : state) =
+    let retc a = (* how to handle values, specifically the final value *)
+      s, a
+    and exnc = (* how to handle any exceptions *)
+      raise
+    and effc (type c) (eff : c t) = (* how to handle effects *)
+      match eff with
+      | Get ->
+        let get (k : (c, _) continuation) =
+          (* continue with the state, and install the same handler again *)
+          continue_with k s (handler s)
+        in
+        Some get
+      | Set s' ->
+        let set (k : (c, _) continuation) =
+          (* install a handler that has the new state *)
+          continue_with k () (handler s')
+        in
+        Some set
+      | _ ->
+        (* do not handle any effects other than Get and Set *)
+        None
+    in
+    (* Now put all those separate handlers into a record, and together they make
+      the shallow effect handler! *)
+    { retc ; exnc ; effc }
+  in
+  continue_with (fiber main) () (handler init)
+
 (* Lastly is it even possible to do coroutines in this setting
 
 See https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/cooperative.ml for simple independent runs
