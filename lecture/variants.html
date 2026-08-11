@@ -202,8 +202,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Goal beyond using variants is to cover some useful OCaml programming patterns.</li>
 </ul>
 
-<!-- Brandon: edited to use `count` and polymorphic equality because we do not have the deriving on nucleotide anymore. I did the `count` thing because I thought the filter/length was super ugly, and after I made the change I realized you used fold left later anyways. The filter/length is the first one they see when reading the notes, and I thought it was best to not encourage that but instead encourage the `count` solution. We also save some space and time, too! -->
-
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Example derived from
    https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
 *)</span>
@@ -349,8 +347,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="nc">Node</span> <span class="p">(</span><span class="s2">"fiddly"</span><span class="o">,</span> <span class="nc">Node</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">)</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">);;</span>
 </code></pre></div></div>
 
-<!-- Brandon: small thing, but there was a `bt2` which was exactly the same as `bt1`, so I just deleted it. In case you see that sizeable deletion, I just wanted to clarify. -->
-
 <h4 id="combinators-for-binary-trees">Combinators for Binary Trees</h4>
 
 <ul>
@@ -400,8 +396,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
 </ul>
-
-<!-- Brandon: I would wager this is really a `reduce` or `collapse` sort of function, not a fold. A fold-left or fold-right would still just have one accumulator, which I described above in the bullet points. We have them write fold in Assignment 3, so I decided to name this something else, not imply that it is fold, and then leave real fold up to them as an exercise. -->
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">reduce</span> <span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span><span class="p">)</span> <span class="p">(</span><span class="n">tree</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="p">(</span><span class="n">leaf</span> <span class="o">:</span> <span class="k">'</span><span class="n">acc</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">acc</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">tree</span> <span class="k">with</span>

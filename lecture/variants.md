@@ -73,7 +73,6 @@ let parsing = Fun.id @@ Nonzero (3.2, 11.2);; (* so use @@ instead of " " *)
 * Lets write Hamming distance calculator for DNA
 * Goal beyond using variants is to cover some useful OCaml programming patterns.
 
-<!-- Brandon: edited to use `count` and polymorphic equality because we do not have the deriving on nucleotide anymore. I did the `count` thing because I thought the filter/length was super ugly, and after I made the change I realized you used fold left later anyways. The filter/length is the first one they see when reading the notes, and I thought it was best to not encourage that but instead encourage the `count` solution. We also save some space and time, too! -->
 
 ```ocaml
 (* Example derived from
@@ -213,8 +212,6 @@ let bt1 =
 Node ("fiddly", Node (0, Leaf, Leaf), Leaf);;
 ```
 
-<!-- Brandon: small thing, but there was a `bt2` which was exactly the same as `bt1`, so I just deleted it. In case you see that sizeable deletion, I just wanted to clarify. -->
-
 #### Combinators for Binary Trees
 
 * Since lists are built-in we get a library of functions on them.
@@ -251,8 +248,6 @@ let add_gobble tree = map (fun s -> s ^ " gobble") tree
 * It is also natural to fold and collapse binary trees.
   - Fold left (in order): fold on the left, then apply the operation on the current node, then fold on the right.
   - Reduce (post process): reduce each subtree, then apply the operation to the current node.
-
-<!-- Brandon: I would wager this is really a `reduce` or `collapse` sort of function, not a fold. A fold-left or fold-right would still just have one accumulator, which I described above in the bullet points. We have them write fold in Assignment 3, so I decided to name this something else, not imply that it is fold, and then leave real fold up to them as an exercise. -->
 
 ```ocaml
 let rec reduce (f : 'a -> 'acc -> 'acc -> 'acc) (tree : 'a bin_tree) (leaf : 'acc) : 'acc =
