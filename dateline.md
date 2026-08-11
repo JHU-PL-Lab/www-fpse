@@ -1,554 +1,554 @@
 ## DATELINE
 
-Lecture material and assigments are under the indicated links.  
+Lecture material and assigments are under the indicated links.
 
 Note that lecture material will be updated as topics are covered so consider the below just a draft until the lecture has in fact happened.  Assignment links will be dead until the assignment is posted.
 
 <table class="date" width="100%" border="1" cellspacing="0" cellpadding="0" bordercolor="#CCCCCC">
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="heading"><strong>Day</strong></div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="heading"><strong>Date</strong></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="heading">&nbsp;<strong>Lecture</strong></div>
           </td>
             <td width="30%">
             <div align="center" class="heading"><strong>Assignment out</strong></div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="heading"><strong>Assignment due</strong></div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Aug 31</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/intro.html">Course Overview</a>; <a href="lecture/basic-ocaml.html">Basic OCaml</a>
 	    </div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body"><a href="coding.html">Install OCaml</a>
 	    </div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Sep 2</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Continuing Basic OCaml
-	    </div> 
+	    </div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body"><a href="assignments/assignment1.html">A1</a></div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Sep 7</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Labor Day No Class</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Sep 9</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/lists.html">Lists</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body"><a href="assignments/assignment2.html">A2</a></div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">A1 due Friday</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Sep 14</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Finish <a href="lecture/lists.html">Lists</a>;  <a href="lecture/variants.html">Variants</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Sep 16</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"> Finish <a href="lecture/variants.html">Variants</a>; <a href="lecture/records.html">Records</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body"><a href="assignments/assignment3.html">A3</a></div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">A2 Fri</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Sep 21</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/basic-modules.html">Basic Modules</a>; <a href="style-guide.html">Code style</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Sep 23</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/functors.html">Functors</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body"><a href="assignments/assignment4.html">A4</a></div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">A3 Fri</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Sep 28</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/functors.html">Functors</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Sep 30</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/specification-test.html">Specification and Testing</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">A4 Sun</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Oct 5</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/specification-test.html">Specification and Testing</a>; <a href="lecture/ppx.html">PPX</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body"><a href="assignments/assignment5.html">A5</a></div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Oct 7</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/side-effects.html">Side Effects</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-       <tr> 
-          <td width="8%"> 
+       <tr>
+          <td width="8%">
             <div align="center" class="body">Oct 12</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/idiomatic-fp.html">Idiomatic Functional Programming</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-       <tr> 
-          <td width="8%"> 
+       <tr>
+          <td width="8%">
             <div align="center" class="body">Oct 14</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/idiomatic-fp.html#examples">Idiomatic Functional Programming Examples</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body"><a href="assignments/assignment6.html">A6</a></div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">A5</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Oct 19</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="assignments/project.html">The Projects</a>; <a href="lecture/advanced_modules.ml">Advanced Modules</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body"><a href="assignments/project.html">Project</a></div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Oct 21</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/monads.ml">Monads I</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Oct 26</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/monads.ml">Mondas II</a></div>
+          <td width="30%">
+            <div align="left" class="body"><a href="lecture/monads.ml">Monads II</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Oct 28</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/monads.ml">Monads III</a>; <a href="lecture/coroutines.html">Coroutines</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">Project initial idea (Weds); A6 (Fri)</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Nov 2</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Project Lab Day</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body"><a href="assignments/assignment7.html">A7</a></div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Nov 4</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/efficiency.html">Efficiency</a>; <a href="lecture/algebraic_effects.ml">Algebraic Effects</a></div>
-          </td>	
-          <td width="30%"> 
+          </td>
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Nov 9</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Project Lab Day</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Nov 11</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body"><a href="lecture/fp-universe.html">The FP Universe</a></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">A7</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Nov 16</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Project Lab Day</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Nov 18</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Project Lab Day</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">Project Designs</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Nov 23</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Eat Turkey or Tofurky</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Nov 25</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Eat More Turkey or Tofurky</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-        </tr>  
-        <tr> 
-          <td width="8%"> 
-            <div align="center" class="body">Nov 30</div>
-          </td> 
-          <td width="8%"> 
-            <div align="center" class="body">Mon</div>
-          </td>
-          <td width="30%"> 
-            <div align="left" class="body">Project Lab Day</div>
-          </td>
-          <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-        <tr> 
-          <td width="8%"> 
+        <tr>
+          <td width="8%">
+            <div align="center" class="body">Nov 30</div>
+          </td>
+          <td width="8%">
+            <div align="center" class="body">Mon</div>
+          </td>
+          <td width="30%">
+            <div align="left" class="body">Project Lab Day</div>
+          </td>
+          <td width="30%">
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+          <td width="15%">
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+        </tr>
+        <tr>
+          <td width="8%">
             <div align="center" class="body">Dec 2</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">Wed</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Exam (<a href ="assignments/quiz-2024.pdf">2024</a>/<a href ="assignments/quiz-2025.pdf">2025</a>)</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-        </tr>      
-        <tr> 
-          <td width="8%"> 
-            <div align="center" class="body">Dec 1</div>
-          </td>
-          <td width="8%"> 
-            <div align="center" class="body">Mon</div>
-          </td>
-          <td width="30%"> 
-            <div align="left" class="body">Project Lab Day</div>
-          </td>
-          <td width="30%"> 
-            <div align="center" class="body">&nbsp;</div>
-          </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>
-                <tr> 
-          <td width="8%"> 
-            <div align="center" class="body">Dec 3</div>
+        <tr>
+          <td width="8%">
+            <div align="center" class="body">Dec 1</div>
           </td>
-          <td width="8%"> 
-            <div align="center" class="body">Weds</div>
+          <td width="8%">
+            <div align="center" class="body">Mon</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">Project Lab Day</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+        </tr>
+                <tr>
+          <td width="8%">
+            <div align="center" class="body">Dec 3</div>
+          </td>
+          <td width="8%">
+            <div align="center" class="body">Weds</div>
+          </td>
+          <td width="30%">
+            <div align="left" class="body">Project Lab Day</div>
+          </td>
+          <td width="30%">
+            <div align="center" class="body">&nbsp;</div>
+          </td>
+          <td width="15%">
             <div align="center" class="body">Code Checkpoint (Fri)</div>
           </td>
         </tr>
-	<tr> 
-          <td width="8%"> 
+	<tr>
+          <td width="8%">
             <div align="center" class="body">TBA</div>
           </td>
-          <td width="8%"> 
+          <td width="8%">
             <div align="center" class="body">TBA</div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="left" class="body">&nbsp;<strong>Project Demos (exact date is the course final exam date)</strong></div>
           </td>
-          <td width="30%"> 
+          <td width="30%">
             <div align="center" class="body">&nbsp;</div>
           </td>
-          <td width="15%"> 
+          <td width="15%">
             <div align="center" class="body">&nbsp;</div>
           </td>
         </tr>

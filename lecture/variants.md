@@ -104,7 +104,7 @@ First there is a library function `Option.bind` which you pass a computation and
 
 ```ocaml
 let hamming_distance' (left : nucleotide list) (right : nucleotide list) : int option =
-  Option.bind (combine_opt left right) (fun l -> Some(count (fun (a, b) -> a <> b) l))
+  Option.bind (combine_opt left right) (fun l -> Some (count (fun (a, b) -> a <> b) l))
 ```
 
 And there is even some fancy syntax for that which makes it look more like normal code:
@@ -113,7 +113,7 @@ And there is even some fancy syntax for that which makes it look more like norma
 let (let*) = Option.bind
 
 let hamming_distance'' (left : nucleotide list) (right : nucleotide list) : int option =
-  let* l = combine_opt left right in Some(count (fun (a, b) -> a <> b) l)
+  let* l = combine_opt left right in Some (count (fun (a, b) -> a <> b) l)
 ```
 
 This is a form of *monadic programming*, a topic we cover later.
