@@ -239,72 +239,91 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Not bubbling up <code>option</code> or other wrapped results properly</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">sum_first_n</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> 
-  <span class="nn">List</span><span class="p">.</span><span class="n">nth_opt</span> <span class="n">l</span> <span class="n">n</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">elt</span><span class="p">)</span> <span class="mi">0</span><span class="p">;;</span>
+<!-- Brandon: this example is very strange. The code doesn't make sense at all. I reformatted it but did not rewrite it -->
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">sum_first_n</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">nth_opt</span> <span class="n">l</span> <span class="n">n</span>
+  <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">elt</span><span class="p">)</span> <span class="mi">0</span>
+<span class="p">;;</span>
 <span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="kt">int</span> <span class="n">option</span>
        <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span> <span class="kt">int</span> <span class="kt">list</span>
 </code></pre></div></div>
+
 <ul>
-  <li>Recall that <code>List.nth_opt</code> doesn’t just return a list, the programmer missed that here</li>
-  <li>Instead it returns an option list since the n could have been beyond the end of the list</li>
-  <li>To solve this type error you will need to <code>match</code> on the result, which should fix both type error <em>and</em> code behavior</li>
+  <li>Recall that <code>List.nth_opt</code> doesn’t just return a list, the programmer missed that here.</li>
+  <li>Instead it returns an option list since the n could have been beyond the end of the list.</li>
+  <li>To solve this type error you will need to <code>match</code> on the result, which should fix both type error <em>and</em> code behavior.</li>
 </ul>
 
 <p>Variation on type-directed programming: with only some parameters applied, the remaining types hint at what is still needed.</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">-</span> <span class="n">elt</span> <span class="p">);;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">-</span> <span class="n">elt</span><span class="p">);;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
+
 <ul>
-  <li>The type shows that we first need the integer initial value and then the list</li>
-  <li>In VSCode you can better see this</li>
+  <li>The type shows that we first need the integer initial value and then the list.</li>
+  <li>In VSCode you can better see this by hovering over the expression.</li>
 </ul>
 
-<p>The type in an <code>.mli</code> file can direct your implementation, e.g. <code>map</code> on <code>simpledict</code> example from Assn3 (recall that <code>t</code> here is the <code>simpledict</code>)</p>
+<p>The type in an <code>.mli</code> file can direct your implementation, e.g. <code>map</code> on <code>Simpledict</code> example from Assignment 3 (where <code>t</code> here is <code>Simpledict.t</code>):</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">map</span> <span class="o">:</span> <span class="p">(</span><span class="kt">string</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="n">t</span>
 </code></pre></div></div>
+
 <ul>
   <li>Q: “How can I get a dict of <code>'b</code>’s built from a dict of <code>'a</code>’s here?”</li>
-  <li>A: “Use the function from <code>'a</code> to <code>'b</code> to make elements of <code>'b simpledict</code>.</li>
+  <li>A: “Use the function from <code>'a</code> to <code>'b</code> to make elements of <code>'b Simpledict.t</code>.</li>
 </ul>
 
 <p>Variant extension: add a new variant case, chase the type errors to patch the code (similar tactic for record field addition)</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">party</span> <span class="o">=</span> <span class="nc">Dem</span> <span class="o">|</span> <span class="nc">Rep</span>
-<span class="k">type</span> <span class="n">voter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span> <span class="o">:</span> <span class="kt">string</span><span class="p">;</span> <span class="n">party</span><span class="o">:</span> <span class="n">party</span> <span class="p">}</span>
+
+<span class="k">type</span> <span class="n">voter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span> <span class="o">:</span> <span class="kt">string</span> <span class="p">;</span> <span class="n">party</span> <span class="o">:</span> <span class="n">party</span> <span class="p">}</span>
+
 <span class="k">let</span> <span class="n">count_parties</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="n">voter</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span>
-  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span>
-    <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span><span class="n">cr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="p">{</span><span class="n">party</span><span class="p">;</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> 
-     <span class="k">match</span> <span class="n">party</span> <span class="k">with</span> 
-     <span class="o">|</span> <span class="nc">Dem</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">cr</span><span class="p">)</span>
-     <span class="o">|</span> <span class="nc">Rep</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">)</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">0</span><span class="p">)</span> <span class="n">l</span> <span class="p">;;</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span><span class="p">)</span> <span class="p">{</span> <span class="n">party</span> <span class="p">;</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span>
+    <span class="k">match</span> <span class="n">party</span> <span class="k">with</span>
+    <span class="o">|</span> <span class="nc">Dem</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">cr</span><span class="p">)</span>
+    <span class="o">|</span> <span class="nc">Rep</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">)</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="p">)</span> <span class="n">l</span>
+<span class="p">;;</span>
 </code></pre></div></div>
 
-<p>Adding a <code>Gre</code> for green party: first <strong>just</strong> change the type, and chase/fix errors</p>
+<p>Adding a <code>Gre</code> for green party: first <strong>just</strong> change the type, and chase/fix errors.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">type</span> <span class="n">party</span> <span class="o">=</span> <span class="nc">Dem</span> <span class="o">|</span> <span class="nc">Rep</span> <span class="o">|</span> <span class="nc">Gre</span>
-  <span class="k">type</span> <span class="n">voter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span> <span class="o">:</span> <span class="kt">string</span><span class="p">;</span> <span class="n">party</span><span class="o">:</span> <span class="n">party</span> <span class="p">}</span>
-  <span class="k">let</span> <span class="n">count_parties</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="n">voter</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span>
-     <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span>
-      <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span><span class="n">cr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="p">{</span><span class="n">party</span><span class="p">;</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> 
-      <span class="k">match</span> <span class="n">party</span> <span class="k">with</span> 
-      <span class="o">|</span> <span class="nc">Dem</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">cr</span><span class="p">)</span>
-      <span class="o">|</span> <span class="nc">Rep</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="p">)</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span><span class="mi">0</span><span class="p">)</span> <span class="n">l</span> <span class="p">;;</span>
-<span class="nc">Lines</span> <span class="mi">6</span><span class="o">-</span><span class="mi">8</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">5</span><span class="o">-</span><span class="mi">24</span><span class="o">:</span>
-<span class="nc">Warning</span> <span class="mi">8</span><span class="o">:</span> <span class="n">this</span> <span class="n">pattern</span><span class="o">-</span><span class="n">matching</span> <span class="n">is</span> <span class="n">not</span> <span class="n">exhaustive</span><span class="o">.</span>
-<span class="nc">Here</span> <span class="n">is</span> <span class="n">an</span> <span class="n">example</span> <span class="k">of</span> <span class="n">a</span> <span class="n">case</span> <span class="n">that</span> <span class="n">is</span> <span class="n">not</span> <span class="n">matched</span><span class="o">:</span>
-<span class="nc">Gre</span>
+
+<span class="k">type</span> <span class="n">voter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span> <span class="o">:</span> <span class="kt">string</span> <span class="p">;</span> <span class="n">party</span> <span class="o">:</span> <span class="n">party</span> <span class="p">}</span>
+
+<span class="k">let</span> <span class="n">count_parties</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="n">voter</span> <span class="kt">list</span><span class="p">)</span> <span class="o">=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span><span class="p">)</span> <span class="p">{</span> <span class="n">party</span> <span class="p">;</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span>
+    <span class="k">match</span> <span class="n">party</span> <span class="k">with</span>
+    <span class="o">|</span> <span class="nc">Dem</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span> <span class="n">cr</span><span class="p">)</span>
+    <span class="o">|</span> <span class="nc">Rep</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">cd</span><span class="o">,</span> <span class="n">cr</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="p">)</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="p">)</span> <span class="n">l</span>
+<span class="p">;;</span>
+
+<span class="nc">Lines</span> <span class="mi">7</span><span class="o">-</span><span class="mi">9</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">4</span><span class="o">-</span><span class="mi">25</span><span class="o">:</span>
+<span class="nc">Warning</span> <span class="mi">8</span> <span class="p">[</span><span class="n">partial</span><span class="o">-</span><span class="k">match</span><span class="p">]</span><span class="o">:</span> <span class="n">this</span> <span class="n">pattern</span><span class="o">-</span><span class="n">matching</span> <span class="n">is</span> <span class="n">not</span> <span class="n">exhaustive</span><span class="o">.</span>
+  <span class="nc">Here</span> <span class="n">is</span> <span class="n">an</span> <span class="n">example</span> <span class="k">of</span> <span class="n">a</span> <span class="n">case</span> <span class="n">that</span> <span class="n">is</span> <span class="n">not</span> <span class="n">matched</span><span class="o">:</span> <span class="nc">Gre</span>
+
 <span class="k">type</span> <span class="n">party</span> <span class="o">=</span> <span class="nc">Dem</span> <span class="o">|</span> <span class="nc">Rep</span> <span class="o">|</span> <span class="nc">Gre</span>
 <span class="k">type</span> <span class="n">voter</span> <span class="o">=</span> <span class="p">{</span> <span class="n">name</span> <span class="o">:</span> <span class="kt">string</span><span class="p">;</span> <span class="n">party</span> <span class="o">:</span> <span class="n">party</span><span class="p">;</span> <span class="p">}</span>
 <span class="k">val</span> <span class="n">count_parties</span> <span class="o">:</span> <span class="n">voter</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
 <ul>
-  <li>Shows a new <code>match</code> case is needed; in process of adding new case it will become clear a triple is also needed</li>
-  <li>This example also shows why non-exhaustive pattern matches are bad: errors often lurk</li>
+  <li>This shows a new <code>match</code> case is needed; in the process of adding new case, it will become clear a triple is also needed.</li>
+  <li>This example also shows why non-exhaustive pattern matches are bad: errors often lurk.
+    <ul>
+      <li>This is why polymorphic variants are not typical. They are useful at times, but they do not help you with errors like this.</li>
+    </ul>
+  </li>
 </ul>
 
-<p>Conclusion: Don’t <strong>wrestle</strong> with OCaml’s types, <em>dance</em> with them</p>
+<p>Conclusion: Do not <strong>wrestle</strong> with OCaml’s types, <em>dance</em> with them.</p>
 
 <p><a name="specs"></a></p>
 
@@ -335,51 +354,51 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Here are some pre/post conditions in the above code:</p>
 <ul>
-  <li>Precondition on <code>remove</code>: <code>s</code> is not empty (fails otherwise)</li>
-  <li>Stronger precondition on <code>remove</code>: <code>contains x s</code> must hold</li>
-  <li>Postcondition on <code>remove</code> for it returning set <code>s'</code>:  <code>not(contains x s')</code> - ??
+  <li>Precondition on <code>remove</code>: <code>s</code> is not empty (fails otherwise).</li>
+  <li>Stronger precondition on <code>remove</code>: <code>contains x s</code> must hold.</li>
+  <li>Postcondition on <code>remove</code> for it returning set <code>s'</code>:  <code>not (contains x s')</code> - ??
     <ul>
-      <li>This simple “set” data structure is in fact a <strong>multiset</strong> and this will not always hold</li>
-      <li>If we were trying to implement a true set this postcondition would help us catch an error</li>
+      <li>This simple “set” data structure is in fact a <strong>multiset</strong> and this will not always hold.</li>
+      <li>If we were trying to implement a true set, this postcondition would help us catch an error.</li>
     </ul>
   </li>
-  <li>Postcondition on <code>add x s</code>: for the resulting set <code>s'</code>, <code>contains x s'</code> holds</li>
+  <li>Postcondition on <code>add x s</code>: for the resulting set <code>s'</code>, <code>contains x s'</code> holds.</li>
 </ul>
 
 <h4 id="assertions-in-code">Assertions in code</h4>
 
 <ul>
-  <li>OCaml <code>assert</code> statements can be placed in code to directly verify properties
+  <li>OCaml <code>assert</code> statements can be placed in code to directly verify properties.
     <ul>
-      <li>program dies if the assertion fails, it should always hold</li>
-      <li>silently returns <code>()</code> if it succeeds</li>
+      <li>The program will die if the assertion fails, so the assertion should always hold.</li>
+      <li>It silently returns <code>()</code> if it succeeds.</li>
     </ul>
   </li>
   <li>Example new version of <code>add</code> above:
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> 
-<span class="k">let</span> <span class="n">s'</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">::</span> <span class="n">s</span><span class="p">)</span> <span class="k">in</span> <span class="k">assert</span> <span class="p">(</span><span class="n">contains</span> <span class="n">x</span> <span class="n">s'</span><span class="p">);</span> <span class="n">s'</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="nn">M</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="p">(</span><span class="n">s</span> <span class="o">:</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span>
+<span class="k">let</span> <span class="n">s'</span> <span class="o">=</span> <span class="n">x</span> <span class="o">::</span> <span class="n">s</span> <span class="k">in</span> <span class="k">assert</span> <span class="p">(</span><span class="n">contains</span> <span class="n">x</span> <span class="n">s'</span><span class="p">);</span> <span class="n">s'</span>
 </code></pre></div>    </div>
   </li>
-  <li>Asserts are handy for development mode, but not after deployment (slows things down)</li>
-  <li>Generally it is better to make <em>tests</em> to spot-check assertions instead of using <code>assert</code>
+  <li>Asserts are handy for development mode, but not after deployment (slows things down).
     <ul>
-      <li>But, one thing handy about <code>assert</code> is it puts the assertions in the code, as “rigorous comments”</li>
-      <li>Middle approach: <a href="https://github.com/janestreet/ppx_inline_test"><code>ppx_inline_tests</code></a> is a library where you can write tests in-line with your code</li>
+      <li>The compiler has an option to turn assertions off in release mode: <code>-noassert</code>.</li>
+    </ul>
+  </li>
+  <li>Generally it is better to make <em>tests</em> to spot-check assertions instead of using <code>assert</code>.
+    <ul>
+      <li>But, one thing handy about <code>assert</code> is it puts the assertions in the code, as “rigorous comments”.</li>
+      <li>Middle approach: <a href="https://github.com/janestreet/ppx_inline_test"><code>ppx_inline_tests</code></a> is a library where you can write tests in-line with your code.</li>
       <li>example:
         <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="o">%</span><span class="n">test</span> <span class="s2">"add adds"</span> <span class="o">=</span> <span class="n">contains</span> <span class="p">(</span><span class="n">add</span> <span class="p">(</span><span class="n">add</span> <span class="mi">5</span> <span class="n">emptyset</span><span class="p">)</span> <span class="mi">22</span><span class="p">)</span> <span class="mi">22</span>
 </code></pre></div>        </div>
       </li>
-      <li>inline tests both document invariants and serve as tests: two-for-one!</li>
-      <li>They also allow functions and data structures hidden in a module to be tested within that module
+      <li>Inline tests both document invariants and serve as tests: two-for-one!</li>
+      <li>They also allow functions and data structures hidden in a module to be tested within that module</li>
+      <li>This also gets around an issue with OCaml’s modules and hidden code that needs to be tested
         <ul>
-          <li>This also gets around an issue with OCaml’s modules and hidden code that needs to be tested
-            <ul>
-              <li>The tester module needs to see the local-only functions in the library module to test them <br />
+          <li>The tester module needs to be able to see the local-only functions in the library module to test them<br />
 (recall we make local-only things in an <code>.ml</code> file by leaving them out of the <code>.mli</code>)</li>
-              <li>So, they would need to be made non-local for that, defeating the locality</li>
-              <li>Besides <code>ppx_test</code> and exposing, a third solution is to put the local functions in a separate <code>local.ml</code> module with no <code>.mli</code></li>
-            </ul>
-          </li>
+          <li>So, they would need to be made non-local for that, defeating the locality</li>
         </ul>
       </li>
     </ul>
@@ -405,21 +424,25 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>A standard invariant for recursive functions is that the recursive calls return what the calling function expected</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span> 
-  <span class="k">match</span> <span class="n">l</span> <span class="k">with</span> 
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
-  <span class="o">|</span> <span class="n">x</span><span class="o">::</span><span class="n">xs</span> <span class="o">-&gt;</span> <span class="k">let</span> <span class="n">rxs</span> <span class="o">=</span> <span class="n">rev</span> <span class="n">xs</span> <span class="k">in</span> <span class="k">assert</span><span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">rxs</span><span class="p">);</span> <span class="n">rxs</span> <span class="o">@</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+  <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span>
+    <span class="k">let</span> <span class="n">rxs</span> <span class="o">=</span> <span class="n">rev</span> <span class="n">xs</span> <span class="k">in</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">rxs</span><span class="p">);</span>
+    <span class="n">rxs</span> <span class="o">@</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
 </code></pre></div></div>
+
 <ul>
   <li>Note that we have to use the built-in <code>List.rev</code> to test our version - somewhat circular</li>
-  <li>In general a major issue with specification is it is often very difficult to give a code-based definition of the full spec.</li>
-  <li>So, the main focus should be on <em>partial</em> specs, give sanity conditions</li>
+  <li>In general, a major issue with specification is it is often very difficult to give a code-based definition of the full spec.</li>
+  <li>So, the main focus should be on <em>partial</em> specs: use some sanity-check conditions.</li>
 </ul>
 
 <h3 id="examples-of-invariants-over-folds">Examples of Invariants Over Folds</h3>
 
 <ul>
-  <li>In re-implementing some of the common <code>List</code> functions with <code>fold</code>s it helps to think of the invariant</li>
+  <li>In re-implementing some of the common <code>List</code> functions with <code>fold_left</code>, it helps to think of the invariant.</li>
   <li>Folding left (<code>List.fold_left</code>):
     <ul>
       <li>Suppose we are at some arbitrary point processing the fold;</li>
@@ -432,25 +455,32 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* invariant for length fold: accum is number of elements to the left of the current `elt` we are at *)</span>
-<span class="k">let</span> <span class="n">length</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">0</span> <span class="n">l</span>
+<span class="k">let</span> <span class="n">length</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">0</span> <span class="n">l</span>
+
 <span class="c">(* invariant for rev fold: accum is reverse of list up to here *)</span>
-<span class="k">let</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span> 
-<span class="c">(* invariant for map fold: accum is f applied to each element of list up to here *)</span>
-<span class="k">let</span> <span class="n">map</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
+<span class="k">let</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
+
+<span class="c">(* invariant for map fold: accum is f applied to each element of list after here *)</span>
+<span class="k">let</span> <span class="n">map</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
+
 <span class="c">(* etc *)</span>
-<span class="k">let</span> <span class="n">filter</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">f</span> <span class="n">elt</span> <span class="k">then</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span> <span class="k">else</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
+<span class="k">let</span> <span class="n">filter</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">f</span> <span class="n">elt</span> <span class="k">then</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span> <span class="k">else</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
 </code></pre></div></div>
 
 <h3 id="specification-and-abstraction">Specification and Abstraction</h3>
 
 <ul>
-  <li>The more completely a module is specified the less the users need to know about the underlying implementation</li>
-  <li><code>Map</code> is an example where the users need to know limited information about the implementation
+  <li>The more completely a module is specified, the less the users need to know about the underlying implementation.</li>
+  <li><code>Map</code> is an example where the users need to know very limited information about the implementation.
     <ul>
-      <li>they still <em>do</em> need to know it is O(log n) for add/remove/find, that should be in the docs (<code>.mli</code>/odoc)</li>
+      <li>They still <em>do</em> need to know it is O(log n) for add/remove/find, which should be in the docs (<code>.mli</code>/odoc)</li>
     </ul>
   </li>
-  <li>On your own libraries you will want to document them well
+  <li>On your own libraries, you will want to document them well.
     <ul>
       <li>It will make it a lot easier for your users, they can just think about the spec. view.</li>
       <li><code>odoc</code> formatting for <code>.mli</code> files is in the FPSE Style Guide</li>
@@ -461,12 +491,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h2 id="testing">Testing</h2>
 
 <ul>
-  <li>Writing tests has two important and distinct goals
+  <li>Writing tests has two important and distinct goals.
     <ol>
       <li>For specification: use tests to define and refine what the code should do
         <ul>
           <li>Writing tests before fully coding the answer lets the tests serve as your “coding spec”</li>
-          <li>Adding tests for corner cases will clarify the behavior in those cases <br />
+          <li>Adding tests for corner cases will clarify the behavior in those cases<br />
  (e.g. does removing an element from a set which doesn’t contain the element raise an exception, or does it just return the set unchanged?)</li>
         </ul>
       </li>
@@ -490,6 +520,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h3 id="standard-categories-of-tests">Standard categories of tests</h3>
+
 <ul>
   <li><strong>Unit testing</strong>: what you have mainly done – test the small pieces of the app; no I/O testing</li>
   <li><strong>Acceptance testing</strong>: test the bigger pieces including I/O
@@ -524,34 +555,35 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>There is not much in <code>OUnit2</code> per se, if you want something extra just write some higher-order functions to do it</li>
     </ul>
   </li>
-  <li>To review, here is your standard simple <code>tests.ml</code> file, this one is from the String set example:
+  <li>To review, here is your standard simple <code>tests.ml</code> file, this one is from the <code>String_set</code> example:
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">OUnit2</span>
 <span class="k">open</span> <span class="nc">String_set</span>
 
-<span class="k">let</span> <span class="n">tests</span> <span class="o">=</span> <span class="s2">"test suite for simple set"</span> <span class="o">&gt;:::</span> <span class="p">[</span>
-<span class="s2">"empty"</span>  <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="n">empty</span> <span class="n">empty</span><span class="p">);</span>
-<span class="s2">"3-elt"</span>    <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="bp">true</span> <span class="p">(</span><span class="n">contains</span> <span class="s2">"5"</span> <span class="p">(</span><span class="n">add</span> <span class="s2">"5"</span> <span class="n">empty</span><span class="p">)));</span>
-<span class="s2">"1-elt nested"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="bp">false</span> <span class="p">(</span><span class="n">contains</span> <span class="s2">"5"</span> <span class="p">(</span><span class="n">remove</span> <span class="s2">"5"</span> <span class="p">(</span><span class="n">add</span> <span class="s2">"5"</span> <span class="n">empty</span><span class="p">))));</span>
-<span class="p">]</span>
+<span class="k">let</span> <span class="n">tests</span> <span class="o">=</span>
+  <span class="s2">"test suite for simple set"</span> <span class="o">&gt;:::</span>
+    <span class="p">[</span> <span class="s2">"empty"</span>        <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="n">empty</span> <span class="n">empty</span><span class="p">)</span>
+    <span class="p">;</span> <span class="s2">"3-elt"</span>        <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="bp">true</span> <span class="p">(</span><span class="n">contains</span> <span class="s2">"5"</span> <span class="p">(</span><span class="n">add</span> <span class="s2">"5"</span> <span class="n">empty</span><span class="p">)))</span>
+    <span class="p">;</span> <span class="s2">"1-elt nested"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="bp">false</span> <span class="p">(</span><span class="n">contains</span> <span class="s2">"5"</span> <span class="p">(</span><span class="n">remove</span> <span class="s2">"5"</span> <span class="p">(</span><span class="n">add</span> <span class="s2">"5"</span> <span class="n">empty</span><span class="p">))))</span>
+    <span class="p">]</span>
 
 <span class="k">let</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">run_test_tt_main</span> <span class="n">tests</span>
 </code></pre></div>    </div>
   </li>
-  <li><code>OUnit2.assert_equal</code> is just the <code>OUnit2</code> version of <code>assert</code>, it uses <code>Poly.(=)</code> for simplicity (but be careful)</li>
-  <li>The infix <code>&gt;::</code> operator takes a string (test name) and a piece of test code under <code>fun _ -&gt;</code> (to keep it from running right away) and builds a single test of type <code>test</code> (type <code>#require "ounit2"</code> and <code>open OUnit2</code> to the top-loop before playing with this code there):
+  <li><code>OUnit2.assert_equal</code> is just the <code>OUnit2</code> version of <code>assert</code>.
+    <ul>
+      <li>It uses <code>Repr.equal</code> for simplicity (but be careful because it is equality of runtime representation, which is not necessarily the intended notion of equality)</li>
+    </ul>
+  </li>
+  <li>The infix <code>&gt;::</code> operator takes a string (test name) and a piece of test code under <code>fun _ -&gt;</code> (to keep it from running right away) and builds a single test of type <code>test</code> (run <code>#require "ounit2"</code> and <code>open OUnit2</code> in the top-loop before playing with this code there):
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">test1</span> <span class="o">=</span> <span class="s2">"simple test"</span> <span class="o">&gt;::</span> <span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="mi">2</span> <span class="o">::</span> <span class="bp">[]</span><span class="p">)</span> <span class="p">[</span><span class="mi">2</span><span class="p">];;</span>
-  <span class="k">val</span> <span class="n">test1</span> <span class="o">:</span> <span class="n">test</span> <span class="o">=</span>
-  <span class="nc">TestLabel</span> <span class="p">(</span><span class="s2">"simple test"</span><span class="o">,</span>
-  <span class="nc">TestCase</span> <span class="p">(</span><span class="nc">Short</span><span class="o">,</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span><span class="p">))</span>
+<span class="k">val</span> <span class="n">test1</span> <span class="o">:</span> <span class="n">test</span> <span class="o">=</span> <span class="nc">TestLabel</span> <span class="p">(</span><span class="s2">"simple test"</span><span class="o">,</span> <span class="nc">TestCase</span> <span class="p">(</span><span class="nc">Short</span><span class="o">,</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span><span class="p">))</span>
 </code></pre></div>    </div>
   </li>
   <li>The <code>&gt;:::</code> operator simply takes a <code>test list</code> and builds a test suite (which in fact is just of type <code>test</code>)
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">test_suite</span> <span class="o">=</span> <span class="s2">"suite now"</span> <span class="o">&gt;:::</span> <span class="p">[</span><span class="n">test1</span><span class="p">];;</span>
 <span class="k">val</span> <span class="n">test_suite</span> <span class="o">:</span> <span class="n">test</span> <span class="o">=</span>
-<span class="nc">TestLabel</span> <span class="p">(</span><span class="s2">"suite now"</span><span class="o">,</span>
- <span class="nc">TestList</span>
-  <span class="p">[</span><span class="nc">TestLabel</span> <span class="p">(</span><span class="s2">"simple test"</span><span class="o">,</span>
-    <span class="nc">TestCase</span> <span class="p">(</span><span class="nc">Short</span><span class="o">,</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span><span class="p">))])</span>
+  <span class="nc">TestLabel</span> <span class="p">(</span><span class="s2">"suite now"</span><span class="o">,</span>
+  <span class="nc">TestList</span> <span class="p">[</span><span class="nc">TestLabel</span> <span class="p">(</span><span class="s2">"simple test"</span><span class="o">,</span> <span class="nc">TestCase</span> <span class="p">(</span><span class="nc">Short</span><span class="o">,</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span><span class="p">))])</span>
 </code></pre></div>    </div>
   </li>
   <li>Then, <code>OUnit2.run_test_tt_main tests</code> will run the suite <code>tests</code>
@@ -562,52 +594,57 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h4 id="how-the-tests-run-when-you-say-dune-test">How the tests run when you say dune test</h4>
+
 <ul>
-  <li>The above <code>tests.ml</code> file is just defining an executable, like <code>keywordcount.exe</code> on HW4</li>
-  <li>Build and run the executable to run the tests</li>
-  <li>Here a dune build file which would work for the simple set tests for example:</li>
+  <li>The above <code>tests.ml</code> file is just defining an executable, like <code>keywordcount.exe</code> in Assignment 4.</li>
+  <li>Build and run the executable to run the tests.</li>
+  <li>Here is a <code>dune</code> build file which would work for the <code>Simple_set</code> tests, for example:</li>
 </ul>
 
 <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>
-  <span class="p">(</span><span class="nf">name</span> <span class="nv">tests</span><span class="p">)</span>
-  <span class="p">(</span><span class="nf">libraries</span>
-    <span class="nv">ounit2</span>
-    <span class="nv">simple_set</span>
-  <span class="p">))</span>
+ <span class="p">(</span><span class="nf">name</span> <span class="nv">tests</span><span class="p">)</span>
+ <span class="p">(</span><span class="nf">libraries</span>
+   <span class="nv">ounit2</span>
+   <span class="nv">simple_set</span>
+ <span class="p">))</span>
 
-<span class="c1">; dune rule so command line "dune runtest" (and "dune test") will run tests.</span>
-<span class="c1">; in other words, there is nothing special about `dune test`, its just a build plus running `_build/default/test/tests.exe`</span>
+<span class="c1">; dune rule so that command line "dune runtest" (and "dune test") will run tests.</span>
+<span class="c1">; in other words, there is nothing special about `dune test`. It is just a build plus running `_build/default/test/tests.exe`</span>
 <span class="p">(</span><span class="nf">rule</span>
  <span class="p">(</span><span class="nf">alias</span> <span class="nv">runtest</span><span class="p">)</span>
  <span class="p">(</span><span class="nf">action</span> <span class="p">(</span><span class="nf">chdir</span> <span class="nv">%</span><span class="err">{</span><span class="nv">project_root</span><span class="err">}</span>
   <span class="p">(</span><span class="nf">run</span> <span class="o">.</span><span class="nv">/test/tests</span><span class="o">.</span><span class="nv">exe</span><span class="p">))))</span>
 </code></pre></div></div>
+
 <ul>
   <li>There is even special shorthand for the above: replace <code>executable</code> with <code>test</code> and it makes an executable plus the above alias to run tests:</li>
 </ul>
 
 <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">test</span>
-  <span class="p">(</span><span class="nf">name</span> <span class="nv">tests</span><span class="p">)</span>
-  <span class="p">(</span><span class="nf">libraries</span>
-    <span class="nv">ounit2</span>
-    <span class="nv">simple_set</span>
-  <span class="p">))</span>
+ <span class="p">(</span><span class="nf">name</span> <span class="nv">tests</span><span class="p">)</span>
+ <span class="p">(</span><span class="nf">libraries</span>
+   <span class="nv">ounit2</span>
+   <span class="nv">simple_set</span>
+ <span class="p">))</span>
 </code></pre></div></div>
 
 <h3 id="higher-order-testing">Higher-order testing</h3>
 
 <ul>
-  <li>If you did unit testing in other languages it looks pretty much like the above</li>
-  <li>But in OCaml we can make tests programatically which makes for less code duplication</li>
-  <li>Example: lets make a bunch of different tests on the same invariant, that reversing a list twice is a no-op:</li>
+  <li>If you did unit testing in other languages it looks pretty much like the above.</li>
+  <li>But in OCaml we can make tests programatically which makes for less code duplication.</li>
+  <li>Example: lets make a bunch of different tests on the same invariant that reversing a list twice is a no-op:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">make_rev_test</span> <span class="n">l</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"a rev test"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">l</span><span class="p">)</span> <span class="n">l</span><span class="p">));;</span> 
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">make_rev_test</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="s2">"a rev test"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="n">l</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="o">@@</span> <span class="nn">List</span><span class="p">.</span><span class="n">rev</span> <span class="n">l</span><span class="p">))</span>
+<span class="p">;;</span>
 <span class="k">val</span> <span class="n">make_rev_test</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">make_test_suite</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span> <span class="o">=</span> 
-  <span class="s2">"suite of tests of f"</span> <span class="o">&gt;:::</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span> <span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">make_test_suite</span> <span class="n">l</span> <span class="o">~</span><span class="n">f</span> <span class="o">=</span>
+  <span class="s2">"suite of tests of f"</span> <span class="o">&gt;:::</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">f</span> <span class="n">l</span>
+<span class="p">;;</span>
 <span class="k">val</span> <span class="n">make_test_suite</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">test</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
@@ -616,57 +653,64 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>In general you can build an arbitrarily big tree of tests with suites of suites etc
+  <li>In general you can build an arbitrarily big tree of tests with suites of suites etc.
     <ul>
       <li>As can be seen above, a suite of tests just has type <code>test</code></li>
     </ul>
   </li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">s'</span> <span class="o">=</span> <span class="s2">"id tests"</span> <span class="o">&gt;:::</span> 
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">s'</span> <span class="o">=</span> <span class="s2">"id tests"</span> <span class="o">&gt;:::</span>
   <span class="p">[</span> <span class="s2">"one"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fun</span><span class="p">.</span><span class="n">id</span> <span class="mi">4</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span>
-  <span class="p">;</span> <span class="s2">"two"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fun</span><span class="p">.</span><span class="n">id</span> <span class="s2">"hello"</span><span class="p">)</span> <span class="s2">"hello"</span><span class="p">)</span> <span class="p">];;</span>
+  <span class="p">;</span> <span class="s2">"two"</span> <span class="o">&gt;::</span> <span class="p">(</span><span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_equal</span> <span class="p">(</span><span class="nn">Fun</span><span class="p">.</span><span class="n">id</span> <span class="s2">"hello"</span><span class="p">)</span> <span class="s2">"hello"</span><span class="p">)</span> <span class="p">]</span>
+<span class="p">;;</span>
+
 <span class="k">let</span> <span class="n">suites</span> <span class="o">=</span> <span class="n">test_list</span> <span class="p">[</span><span class="n">s</span><span class="p">;</span><span class="n">s'</span><span class="p">];;</span> <span class="c">(* make suite of suites *)</span>
+
 <span class="k">let</span> <span class="n">named_suites</span> <span class="o">=</span> <span class="s2">"revrev and Fun.id"</span> <span class="o">&gt;:</span> <span class="n">suites</span> <span class="c">(* any tree of tests can be named with &gt;: *)</span>
 </code></pre></div></div>
 
 <p>Here is the type of <code>test</code> under the hood (from the docs) which should make clear why the above works:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">test</span> <span class="o">=</span>
-<span class="o">|</span> <span class="nc">TestCase</span> <span class="k">of</span> <span class="n">test_fun</span>
-<span class="o">|</span> <span class="nc">TestList</span> <span class="k">of</span> <span class="n">test</span> <span class="kt">list</span>
-<span class="o">|</span> <span class="nc">TestLabel</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">*</span> <span class="n">test</span>
+  <span class="o">|</span> <span class="nc">TestCase</span> <span class="k">of</span> <span class="n">test_fun</span>
+  <span class="o">|</span> <span class="nc">TestList</span> <span class="k">of</span> <span class="n">test</span> <span class="kt">list</span>
+  <span class="o">|</span> <span class="nc">TestLabel</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">*</span> <span class="n">test</span>
 </code></pre></div></div>
 
 <h3 id="tangent-defining-infix-operators">Tangent: defining infix operators</h3>
 
 <ul>
   <li>The OUnit infix operators <code>&gt;:</code>/<code>&gt;::</code>/<code>&gt;:::</code> are just like <code>+</code>, <code>^</code> etc</li>
-  <li>Using them arguably makes the code more readable, so consider defining your own infix operators</li>
+  <li>Using them arguably makes the code more readable, so consider defining your own infix operators when appropriate.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ounit2"</span><span class="p">;;</span>
+
 <span class="o">#</span> <span class="k">open</span> <span class="nc">OUnit2</span><span class="p">;;</span>
+
 <span class="o">#</span> <span class="p">(</span><span class="o">&gt;::</span><span class="p">)</span> <span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">test_fun</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+
 <span class="o">#</span> <span class="p">(</span><span class="o">&gt;:::</span><span class="p">);;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="kt">list</span> <span class="o">-&gt;</span> <span class="n">test</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
 <ul>
-  <li>There is no magic to this, you can also do it:</li>
+  <li>There is no magic to infix operators like this. You can also do it:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="p">(</span><span class="o">^^</span><span class="p">)</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;;</span>
 <span class="k">val</span> <span class="p">(</span> <span class="o">^^</span> <span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+
 <span class="o">#</span> <span class="mi">3</span> <span class="o">^^</span> <span class="mi">5</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">8</span>
 </code></pre></div></div>
+
 <ul>
-  <li>Note that unlike in C++ we are <em>not</em> overloading operators, <code>^^</code> only works on two ints now.</li>
+  <li>Note that unlike in C++, we are <em>not</em> overloading operators, <code>^^</code> only works on two ints now.</li>
   <li>The old version of <code>^^</code> for printing is now shadowed so is not directly accessible.</li>
-  <li>So, new infix ops are always defined within a module to avoid overlap</li>
-  <li>OCaml will eventually have true operator overloading but it is still in the development pipe</li>
+  <li>So, new infix ops are always defined within a module to avoid overlap.</li>
 </ul>
 
 <h3 id="the-different-assert_x-statements-possible-in-ounit2">The different assert_X statements possible in OUnit2</h3>
@@ -677,16 +721,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>If you want to verify some code raises an exception, use <code>assert_raises</code></li>
   <li>To perform acceptance testing (I/O), use <code>assert_command</code> to run a shell command and compare against output
     <ul>
-      <li>in the A4 <code>exec_tests.ml</code> code we provided you can see we are using <code>assert_command</code> to test the executable</li>
+      <li>in the A4 <code>exec_tests.ml</code> code we provided, you can see we are using <code>assert_command</code> to test the executable</li>
     </ul>
   </li>
   <li>If you need fixed setup/teardown code bracketing a group of tests to setup e.g. files: <code>bracket_tmpfile</code></li>
 </ul>
 
-<p>As always, see the documentation for more details: <br />
+<p>As always, see the documentation for more details:<br />
 OUnit2 <a href="https://ocaml.org/p/ounit2/latest/doc/index.html">API docs</a></p>
 
 <h3 id="tangent-testing-executables-with-cram">Tangent: Testing executables with cram</h3>
+
 <ul>
   <li>As mentioned above <code>OUnit</code> can be used to test executables: <code>OUnit2.assert_command</code> can run any shell command (in particular, your OCaml <code>.exe</code> file)</li>
   <li>This is probably the approach you should use</li>
@@ -734,6 +779,7 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
       <li>if this command is not working make sure you did the <code>opam install bisect-ppx</code> in the course required installs</li>
     </ul>
   </li>
+  <li>Alternatively, <code>bisect-ppx-report summary</code> prints you a very small report, in case you do not need details.</li>
   <li>See <a href="https://github.com/aantron/bisect_ppx">Bisect docs</a> for more details</li>
   <li>Note that if you have single lines of code that you know should not be run (e.g. invariants that should not fail) you can put <code>[@coverage off]</code> at the end of those lines.  To turn coverage off on a single <code>let</code> definition, put <code>[@@coverage off]</code> immediately after the end of definition. To turn coverage off on an arbitrary range of lines in the file, put <code>[@@@coverage off]</code> to turn it off and then <code>[@@@coverage on]</code> to turn it back on.  See <a href="https://github.com/aantron/bisect_ppx?tab=readme-ov-file#controlling-coverage-with-coverage-off">the docs</a> for details.</li>
 </ul>

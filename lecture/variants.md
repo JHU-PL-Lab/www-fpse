@@ -91,13 +91,33 @@ let count f l =
     if f x then 1 + acc else acc
   ) 0 l
 
-let hamming_distance (left : nucleotide list) (right : nucleotide list) : (int, string) result =
+let hamming_distance (left : nucleotide list) (right : nucleotide list) : int option =
   match combine_opt left right with (* this returns Some list or None *)
-  | None -> Error "left and right strands must be of equal length"
-  | Some l -> Ok (count (fun (a, b) -> a <> b) l)
+  | None -> None
+  | Some l -> Some (count (fun (a, b) -> a <> b) l)
 
 let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
 ```
+
+If you are extensively using `Some/None` to bubble up exceptional conditions you may want to use special syntax designed for this since you would otherwise need to do many `match`es.
+
+First there is a library function `Option.bind` which you pass a computation and a function and it only runs the function if the first computation returns a `Some`, *and* if so it automatically removes the `Some` before running the function:
+
+```ocaml
+let hamming_distance' (left : nucleotide list) (right : nucleotide list) : int option =
+  Option.bind (combine_opt left right) (fun l -> Some(count (fun (a, b) -> a <> b) l))
+```
+
+And there is even some fancy syntax for that which makes it look more like normal code:
+
+```ocaml
+let (let*) = Option.bind
+
+let hamming_distance'' (left : nucleotide list) (right : nucleotide list) : int option =
+  let* l = combine_opt left right in Some(count (fun (a, b) -> a <> b) l)
+```
+
+This is a form of *monadic programming*, a topic we cover later.
 
 #### Parametric variant types
 

@@ -94,3 +94,20 @@ j : Yojson.Safe.t =
 # let s = Yojson.Safe.to_string j;; (* function to get you the actual JSON *)
 val s : string = "[[\"A\"],[\"G\"],[\"G\"]]" (* this is a json rep'n of a list *)
 ```
+
+### @@deriving in modules
+
+`@@deriving` names things slightly differently when used in a module.
+
+Suppose we made a module out of the nucleotide example, either by putting in a file `nucleotide.ml` or adding `module Nucleotide = struct .. end` to make a top-loop or nested module:
+
+```ocaml
+module Nucleotide = struct
+  type t = A | C | G | T [@@deriving eq]
+
+  let hamming_distance l = failwith "dummy"
+end
+```
+* When this type was called `nucleotide` not in a module the `ppx` made a function `equal_nucleotide`
+* Here the `ppx` is smarter, instead of `Nucleotide.equal_t` it just makes `Nucleotide.equal` - `t` is a special type in the module
+* Note that `[@@deriving ..]` declarations in types in the `.ml` file need to be repeated in the `.mli` file if the types are not hidden

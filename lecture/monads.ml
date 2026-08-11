@@ -1,10 +1,8 @@
 [@@@ocaml.warning "-8-32-27"]
 
-(* ***************************** *)
-(* Encoding effects functionally *)
-(* ***************************** *)
-
-(* Aka "A Journey through Monad Land" *)
+(* ***************************************** *)
+(* Encoding effects functionally with monads *)
+(* ***************************************** *)
 
 (*
   * So far we have seen the advantages of functional programming

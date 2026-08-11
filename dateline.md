@@ -152,7 +152,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/more-modules.html">More Modules</a></div>
+            <div align="left" class="body"><a href="lecture/functors.html">Functors</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body"><a href="assignments/assignment4.html">A4</a></div>

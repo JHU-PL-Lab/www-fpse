@@ -120,6 +120,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     
 <h2 id="records">Records</h2>
+
 <ul>
   <li>Records make <strong>and</strong> data: they have this-and-this-and-this</li>
   <li>Tuples also make <strong>and</strong> data, but records have labels for each component
@@ -139,10 +140,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>similar to variants, but not like inferred variants or tuples</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">7</span> <span class="p">}</span> <span class="c">(* doesn't work! Its type isn't defined yet *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">5</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">7</span> <span class="p">}</span> <span class="c">(* doesn't work! Its type isn't defined yet *)</span>
 </code></pre></div></div>
 
 <p>So let’s define the type:</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">ratio</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">}</span>
 </code></pre></div></div>
 
@@ -152,7 +154,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><code>denom</code> is a label with an <code>int</code> value, too.</li>
 </ul>
 
-<p>To make a value of a type simply replace the <code>:</code> with <code>=</code>:</p>
+<p>To make a value of a type, simply replace the <code>:</code> with <code>=</code>:</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">q</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">53</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">6</span> <span class="p">}</span>
 </code></pre></div></div>
 
@@ -209,11 +212,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ol>
-  <li>Yet another shortcut, <code>; _</code> can be used for dont-care fields:</li>
+  <li>Yet another shortcut, <code>; _</code> can be used for don’t-care fields:</li>
 </ol>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">numerator</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">_</span> <span class="p">}</span> <span class="o">=</span> <span class="c">(* the _ catches all the other labels, no matter how many there are *)</span>
-   <span class="n">num</span> 
+   <span class="n">num</span>
 </code></pre></div></div>
 
 <h3 id="shadowing-shared-labels-and-namespaces">Shadowing, shared labels, and namespaces</h3>
@@ -223,11 +226,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">newratio</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">coeff</span> <span class="o">:</span> <span class="kt">float</span> <span class="p">}</span> <span class="c">(* shadows above ratio type's label num *)</span>
 
 <span class="c">(* Inferred type for x is newratio because its num field is more recent *)</span>
-<span class="k">let</span> <span class="n">get_num</span> <span class="n">x</span> <span class="o">=</span> 
+<span class="k">let</span> <span class="n">get_num</span> <span class="n">x</span> <span class="o">=</span>
   <span class="n">x</span><span class="o">.</span><span class="n">num</span>
 
 <span class="c">(* Resolve the ambiguity by explicitly declaring x's type *)</span>
-<span class="k">let</span> <span class="n">get_new_num</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="n">newratio</span><span class="p">)</span> <span class="o">=</span> 
+<span class="k">let</span> <span class="n">get_new_num</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="n">newratio</span><span class="p">)</span> <span class="o">=</span>
   <span class="n">x</span><span class="o">.</span><span class="n">num</span>
 </code></pre></div></div>
 
@@ -282,16 +285,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="o">|</span> <span class="nc">Bad</span> <span class="n">_</span> <span class="o">|</span> <span class="nc">Ugly</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"unhandled"</span>
 </code></pre></div></div>
 
-<p>For a binary tree type the record labels are handy so you don’t get the order mixed up</p>
+<p>For a binary tree type, the record labels are handy so you don’t get the order mixed up</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="o">=</span> 
-  <span class="o">|</span> <span class="nc">Leaf</span> 
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="o">=</span>
+  <span class="o">|</span> <span class="nc">Leaf</span>
   <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="p">{</span> <span class="n">data</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="p">;</span> <span class="n">left</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="p">;</span> <span class="n">right</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="p">}</span>
 </code></pre></div></div>
 
-<p>If you write <code>{left = Leaf; node = 5; right = Leaf}</code> you are still fine</p>
+<p>If you write <code>{ left = Leaf ; node = 5 ; right = Leaf }</code> you are still fine</p>
 <ul>
-  <li>like with named function arguments the order doesn’t matter if there is a name that disambiguates</li>
+  <li>like with named function arguments, the order doesn’t matter if there is a name that disambiguates</li>
 </ul>
       
           </section>

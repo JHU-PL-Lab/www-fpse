@@ -127,6 +127,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h3 id="variants-1">Variants</h3>
+
 <ul>
   <li>The <code>option</code> and <code>result</code> types we have been using are simple forms of <em>variant types</em></li>
   <li>Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the specific form</li>
@@ -136,9 +137,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Example variant type for doing mixed arithmetic (integers and floats)</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">ff_num</span> <span class="o">=</span> <span class="nc">Fixed</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="nc">Floating</span> <span class="k">of</span> <span class="kt">float</span><span class="p">;;</span>  <span class="c">(* read "|" as "or" *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">ff_num</span> <span class="o">=</span> <span class="nc">Fixed</span> <span class="k">of</span> <span class="kt">int</span> <span class="o">|</span> <span class="nc">Floating</span> <span class="k">of</span> <span class="kt">float</span><span class="p">;;</span> <span class="c">(* read "|" as "or" *)</span>
 
 <span class="nc">Fixed</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* tag 5 as a Fixed *)</span>
+
 <span class="nc">Floating</span> <span class="mi">4</span><span class="o">.</span><span class="mi">0</span><span class="p">;;</span> <span class="c">(* tag 4.0 as a Floating *)</span>
 </code></pre></div></div>
 
@@ -156,9 +158,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">ff_as_int</span> <span class="n">x</span> <span class="o">=</span>
-    <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
-    <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span>    <span class="c">(* pattern match like with option/list/result - those types are also variants *)</span>
-    <span class="o">|</span> <span class="nc">Floating</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">int_of_float</span> <span class="n">z</span><span class="p">;;</span>
+  <span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="c">(* pattern match like with option/list/result - those types are also variants *)</span>
+  <span class="o">|</span> <span class="nc">Floating</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">int_of_float</span> <span class="n">z</span>
+<span class="p">;;</span>
 
 <span class="n">ff_as_int</span> <span class="p">(</span><span class="nc">Fixed</span> <span class="mi">5</span><span class="p">);;</span>
 </code></pre></div></div>
@@ -166,27 +169,30 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>A function using the above variant type</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">ff_add</span> <span class="n">n1</span> <span class="n">n2</span> <span class="o">=</span>
-   <span class="k">match</span> <span class="n">n1</span><span class="o">,</span> <span class="n">n2</span> <span class="k">with</span>    <span class="c">(* note use of pair here to parallel-match on two variables  *)</span>
-     <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">i1</span><span class="o">,</span> <span class="nc">Fixed</span> <span class="n">i2</span> <span class="o">-&gt;</span> <span class="nc">Fixed</span> <span class="p">(</span><span class="n">i1</span> <span class="o">+</span> <span class="n">i2</span><span class="p">)</span>
-     <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">i1</span><span class="o">,</span> <span class="nc">Floating</span> <span class="n">f2</span> <span class="o">-&gt;</span>  <span class="nc">Floating</span><span class="p">(</span><span class="kt">float</span> <span class="n">i1</span> <span class="o">+.</span> <span class="n">f2</span><span class="p">)</span> <span class="c">(* need to coerce *)</span>
-     <span class="o">|</span> <span class="nc">Floating</span> <span class="n">f1</span><span class="o">,</span> <span class="nc">Fixed</span> <span class="n">i2</span> <span class="o">-&gt;</span> <span class="nc">Floating</span><span class="p">(</span><span class="n">f1</span> <span class="o">+.</span> <span class="kt">float</span> <span class="n">i2</span><span class="p">)</span>  <span class="c">(* ditto *)</span>
-     <span class="o">|</span> <span class="nc">Floating</span> <span class="n">f1</span><span class="o">,</span> <span class="nc">Floating</span> <span class="n">f2</span> <span class="o">-&gt;</span> <span class="nc">Floating</span><span class="p">(</span><span class="n">f1</span> <span class="o">+.</span> <span class="n">f2</span><span class="p">)</span>
+  <span class="k">match</span> <span class="n">n1</span><span class="o">,</span> <span class="n">n2</span> <span class="k">with</span> <span class="c">(* note use of pair here to parallel-match on two variables  *)</span>
+  <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">i1</span><span class="o">,</span> <span class="nc">Fixed</span> <span class="n">i2</span> <span class="o">-&gt;</span> <span class="nc">Fixed</span> <span class="p">(</span><span class="n">i1</span> <span class="o">+</span> <span class="n">i2</span><span class="p">)</span>
+  <span class="o">|</span> <span class="nc">Fixed</span> <span class="n">i1</span><span class="o">,</span> <span class="nc">Floating</span> <span class="n">f2</span> <span class="o">-&gt;</span>  <span class="nc">Floating</span> <span class="p">(</span><span class="kt">float</span> <span class="n">i1</span> <span class="o">+.</span> <span class="n">f2</span><span class="p">)</span> <span class="c">(* need to coerce *)</span>
+  <span class="o">|</span> <span class="nc">Floating</span> <span class="n">f1</span><span class="o">,</span> <span class="nc">Fixed</span> <span class="n">i2</span> <span class="o">-&gt;</span> <span class="nc">Floating</span> <span class="p">(</span><span class="n">f1</span> <span class="o">+.</span> <span class="kt">float</span> <span class="n">i2</span><span class="p">)</span> <span class="c">(* ditto *)</span>
+  <span class="o">|</span> <span class="nc">Floating</span> <span class="n">f1</span><span class="o">,</span> <span class="nc">Floating</span> <span class="n">f2</span> <span class="o">-&gt;</span> <span class="nc">Floating</span> <span class="p">(</span><span class="n">f1</span> <span class="o">+.</span> <span class="n">f2</span><span class="p">)</span>
 <span class="p">;;</span>
 
 <span class="n">ff_add</span> <span class="p">(</span><span class="nc">Fixed</span> <span class="mi">123</span><span class="p">)</span> <span class="p">(</span><span class="nc">Floating</span> <span class="mi">3</span><span class="o">.</span><span class="mi">14159</span><span class="p">);;</span>
 </code></pre></div></div>
 
 <ul>
-  <li>No data item?  leave off the <code>of</code>.</li>
-  <li>Multiple data items in a single variant clause?  Wrap with a tuple (or record once we cover them):</li>
+  <li>No data item? Leave off the <code>of</code>.</li>
+  <li>Multiple data items in a single variant clause? Wrap with a tuple (or record once we cover them):</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">complex</span> <span class="o">=</span> <span class="nc">CZero</span> <span class="o">|</span> <span class="nc">Nonzero</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">*</span> <span class="kt">float</span><span class="p">;;</span>
 
-<span class="k">let</span> <span class="n">com</span> <span class="o">=</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span>
+<span class="k">let</span> <span class="n">com</span> <span class="o">=</span> <span class="nc">Nonzero</span> <span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span> <span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span>
+
 <span class="k">let</span> <span class="n">zer</span> <span class="o">=</span> <span class="nc">CZero</span><span class="p">;;</span>
-<span class="k">let</span> <span class="n">ocaml_annoyance</span> <span class="o">=</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span> <span class="c">(* this is a parsing error, it views as (Fn.id Nonzero)(3.2,11.2) *)</span>
-<span class="k">let</span> <span class="n">ocaml_annoyance</span> <span class="o">=</span> <span class="nn">Fn</span><span class="p">.</span><span class="n">id</span> <span class="o">@@</span> <span class="nc">Nonzero</span><span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span><span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span> <span class="c">(* so use @@ instead of " " *)</span>
+
+<span class="k">let</span> <span class="n">parsing</span> <span class="o">=</span> <span class="nn">Fun</span><span class="p">.</span><span class="n">id</span> <span class="nc">Nonzero</span> <span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span> <span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span> <span class="c">(* this is a typing error, it views as (Fun.id Nonzero) (3.2, 11.2) *)</span>
+
+<span class="k">let</span> <span class="n">parsing</span> <span class="o">=</span> <span class="nn">Fun</span><span class="p">.</span><span class="n">id</span> <span class="o">@@</span> <span class="nc">Nonzero</span> <span class="p">(</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">,</span> <span class="mi">11</span><span class="o">.</span><span class="mi">2</span><span class="p">);;</span> <span class="c">(* so use @@ instead of " " *)</span>
 </code></pre></div></div>
 
 <h4 id="an-example-of-variants-plus-list-libraries">An Example of Variants plus List. libraries</h4>
@@ -196,60 +202,80 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Goal beyond using variants is to cover some useful OCaml programming patterns.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Example derived from 
+<!-- Brandon: edited to use `count` and polymorphic equality because we do not have the deriving on nucleotide anymore. I did the `count` thing because I thought the filter/length was super ugly, and after I made the change I realized you used fold left later anyways. The filter/length is the first one they see when reading the notes, and I thought it was best to not encourage that but instead encourage the `count` solution. We also save some space and time, too! -->
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Example derived from
    https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
- *)</span>
+*)</span>
 
 <span class="k">type</span> <span class="n">nucleotide</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span>
 
-<span class="k">let</span> <span class="n">combine_opt</span> <span class="n">l</span> <span class="n">r</span> <span class="o">=</span> <span class="k">try</span> <span class="nc">Some</span><span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">combine</span> <span class="n">l</span> <span class="n">r</span><span class="p">)</span> <span class="k">with</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="nc">None</span>
+<span class="k">let</span> <span class="n">combine_opt</span> <span class="n">l</span> <span class="n">r</span> <span class="o">=</span>
+  <span class="k">try</span> <span class="nc">Some</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">combine</span> <span class="n">l</span> <span class="n">r</span><span class="p">)</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="nc">None</span>
 
-<span class="k">let</span> <span class="n">hamming_distance</span> <span class="p">(</span><span class="n">left</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="p">((</span><span class="kt">int</span><span class="o">,</span> <span class="kt">string</span><span class="p">)</span> <span class="n">result</span><span class="p">)</span><span class="o">=</span>
+<span class="k">let</span> <span class="n">count</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">x</span> <span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="n">f</span> <span class="n">x</span> <span class="k">then</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">acc</span> <span class="k">else</span> <span class="n">acc</span>
+  <span class="p">)</span> <span class="mi">0</span> <span class="n">l</span>
+
+<span class="k">let</span> <span class="n">hamming_distance</span> <span class="p">(</span><span class="n">left</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">combine_opt</span> <span class="n">left</span> <span class="n">right</span> <span class="k">with</span> <span class="c">(* this returns Some list or None *)</span>
-  <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"left and right strands must be of equal length"</span>
-  <span class="o">|</span> <span class="nc">Some</span> <span class="n">l</span> <span class="o">-&gt;</span>
-    <span class="n">l</span>
-    <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">not</span> <span class="p">(</span><span class="n">equal_nucleotide</span> <span class="n">a</span> <span class="n">b</span><span class="p">))</span>
-    <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">length</span> 
-    <span class="o">|&gt;</span> <span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="nc">Ok</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c">(* Unfortunately we can't just pipe to `Ok` since `Ok` is not a function in OCaml - make it one here *)</span>
+  <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="nc">None</span>
+  <span class="o">|</span> <span class="nc">Some</span> <span class="n">l</span> <span class="o">-&gt;</span> <span class="nc">Some</span> <span class="p">(</span><span class="n">count</span> <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">a</span> <span class="o">&lt;&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="n">l</span><span class="p">)</span>
 
 <span class="k">let</span> <span class="n">hamm_example</span> <span class="o">=</span> <span class="n">hamming_distance</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">C</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">T</span><span class="p">;</span><span class="nc">T</span><span class="p">]</span> <span class="p">[</span><span class="nc">A</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">G</span><span class="p">;</span><span class="nc">A</span><span class="p">;</span><span class="nc">C</span><span class="p">;</span><span class="nc">T</span><span class="p">]</span>
 </code></pre></div></div>
-<p>Now let’s use <code>fold_left</code> instead of <code>filter</code>/<code>length</code></p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">hamming_distance</span> <span class="p">(</span><span class="n">left</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="p">((</span><span class="kt">int</span><span class="o">,</span> <span class="kt">string</span><span class="p">)</span> <span class="n">result</span><span class="p">)</span><span class="o">=</span>
-  <span class="k">match</span> <span class="n">combine_opt</span> <span class="n">left</span> <span class="n">right</span> <span class="k">with</span>
-  <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="nc">Error</span> <span class="s2">"left and right strands must be of equal length"</span>
-  <span class="o">|</span> <span class="nc">Some</span> <span class="n">l</span> <span class="o">-&gt;</span>
-    <span class="n">l</span>
-    <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">+</span> <span class="k">if</span> <span class="p">(</span><span class="n">equal_nucleotide</span> <span class="n">a</span> <span class="n">b</span><span class="p">)</span> <span class="k">then</span> <span class="mi">0</span>  <span class="k">else</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">0</span> 
-    <span class="o">|&gt;</span> <span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="nc">Ok</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<p>If you are extensively using <code>Some/None</code> to bubble up exceptional conditions you may want to use special syntax designed for this since you would otherwise need to do many <code>match</code>es.</p>
+
+<p>First there is a library function <code>Option.bind</code> which you pass a computation and a function and it only runs the function if the first computation returns a <code>Some</code>, <em>and</em> if so it automatically removes the <code>Some</code> before running the function:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">hamming_distance'</span> <span class="p">(</span><span class="n">left</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span>
+  <span class="nn">Option</span><span class="p">.</span><span class="n">bind</span> <span class="p">(</span><span class="n">combine_opt</span> <span class="n">left</span> <span class="n">right</span><span class="p">)</span> <span class="p">(</span><span class="k">fun</span> <span class="n">l</span> <span class="o">-&gt;</span> <span class="nc">Some</span><span class="p">(</span><span class="n">count</span> <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">a</span> <span class="o">&lt;&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="n">l</span><span class="p">))</span>
 </code></pre></div></div>
+
+<p>And there is even some fancy syntax for that which makes it look more like normal code:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="p">(</span><span class="k">let</span><span class="o">*</span><span class="p">)</span> <span class="o">=</span> <span class="nn">Option</span><span class="p">.</span><span class="n">bind</span>
+
+<span class="k">let</span> <span class="n">hamming_distance''</span> <span class="p">(</span><span class="n">left</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">right</span> <span class="o">:</span> <span class="n">nucleotide</span> <span class="kt">list</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span>
+  <span class="k">let</span><span class="o">*</span> <span class="n">l</span> <span class="o">=</span> <span class="n">combine_opt</span> <span class="n">left</span> <span class="n">right</span> <span class="k">in</span> <span class="nc">Some</span><span class="p">(</span><span class="n">count</span> <span class="p">(</span><span class="k">fun</span> <span class="p">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">a</span> <span class="o">&lt;&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="n">l</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>This is a form of <em>monadic programming</em>, a topic we cover later.</p>
+
 <h4 id="parametric-variant-types">Parametric variant types</h4>
+
 <p>We have used several of these but have not looked at the type too carefully.</p>
 
 <p>Here is the system’s declaration of the <code>option</code> type – the <code>#show_type</code> top loop directive (or just <code>#show</code>) will print it:</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="n">option</span><span class="p">;;</span>
 <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span> <span class="o">|</span> <span class="nc">Some</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span>
 </code></pre></div></div>
+
 <ul>
   <li>The <code>'a</code> here is a <em>parameter</em>, which gets filled in by a concrete type to make an actual type.</li>
-  <li>e.g. <code>Some("hello") : string option</code> – the <code>string</code> fills in the parameter <code>'a</code></li>
+  <li>e.g. <code>Some "hello" : string option</code> – the <code>string</code> fills in the parameter <code>'a</code></li>
   <li><code>None : 'a option</code> type means instantiate the <code>'a</code> parameter with polymorphic/generic <code>'a</code></li>
   <li>This may have been more clear if OCaml used function notation for these types, e.g.<br />
- <code>type option('a) = None | Some of 'a</code> and  <code>Some("hello") : option(string)</code></li>
+ <code>type option('a) = None | Some of 'a</code> and  <code>Some "hello" : option(string)</code></li>
 </ul>
 
 <p>And here is <code>result</code>:</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="n">result</span><span class="p">;;</span>
 <span class="k">type</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span><span class="o">,</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span><span class="o">,</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="n">result</span> <span class="o">=</span> <span class="nc">Ok</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">|</span> <span class="nc">Error</span> <span class="k">of</span> <span class="k">'</span><span class="n">b</span>
 </code></pre></div></div>
 
 <ul>
   <li>Same idea but <em>a pair</em> of type parameters; <code>'b</code> is the type of the <code>Error</code>.</li>
-  <li>Observe <code>Ok(4) : (int, 'a) result</code> and <code>Error("bad") : ('a, string) result</code></li>
+  <li>Observe <code>Ok 4 : (int, 'a) result</code> and <code>Error "bad" : ('a, string) result</code></li>
 </ul>
 
 <h4 id="recursive-data-structures">Recursive data structures</h4>
+
 <ul>
   <li>A common use of variant types is to build recursive data structures (trees)</li>
   <li>Functional programming is fantastic for computing over tree-structured data</li>
@@ -269,23 +295,31 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">lizt</span> <span class="o">=</span> <span class="nc">Mt</span> <span class="o">|</span> <span class="nc">Cons</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">lizt</span><span class="p">;;</span> <span class="c">(* the recursive "'a lizt" on the rhs is a lizt of 'a *)</span>
-<span class="k">let</span> <span class="n">lizt_eg</span> <span class="o">=</span> <span class="nc">Cons</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">5</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">7</span><span class="o">,</span><span class="nc">Mt</span><span class="p">)));;</span> <span class="c">(* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)</span>
+
+<span class="k">let</span> <span class="n">lizt_eg</span> <span class="o">=</span> <span class="nc">Cons</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="nc">Cons</span> <span class="p">(</span><span class="mi">5</span><span class="o">,</span> <span class="nc">Cons</span> <span class="p">(</span><span class="mi">7</span><span class="o">,</span> <span class="nc">Mt</span><span class="p">)));;</span> <span class="c">(* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)</span>
 </code></pre></div></div>
+
 <p>Coding over lizts is nearly identical to built-in lists; here is mapping:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">lizt_map</span> <span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="p">(</span><span class="n">ml</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">lizt</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">b</span> <span class="n">lizt</span><span class="p">)</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">lizt_map</span> <span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="p">(</span><span class="n">ml</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">lizt</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">b</span> <span class="n">lizt</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">ml</span> <span class="k">with</span>
-    <span class="o">|</span> <span class="nc">Mt</span> <span class="o">-&gt;</span> <span class="nc">Mt</span>
-    <span class="o">|</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">hd</span><span class="o">,</span><span class="n">tl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nc">Cons</span><span class="p">(</span><span class="n">f</span> <span class="n">hd</span><span class="o">,</span><span class="n">lizt_map</span> <span class="n">f</span> <span class="n">tl</span><span class="p">)</span>
+  <span class="o">|</span> <span class="nc">Mt</span> <span class="o">-&gt;</span> <span class="nc">Mt</span>
+  <span class="o">|</span> <span class="nc">Cons</span> <span class="p">(</span><span class="n">hd</span><span class="o">,</span> <span class="n">tl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nc">Cons</span> <span class="p">(</span><span class="n">f</span> <span class="n">hd</span><span class="o">,</span> <span class="n">lizt_map</span> <span class="n">f</span> <span class="n">tl</span><span class="p">)</span>
 
-<span class="k">let</span> <span class="n">map_eg</span> <span class="o">=</span> <span class="n">lizt_map</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">5</span><span class="o">,</span><span class="nc">Cons</span><span class="p">(</span><span class="mi">7</span><span class="o">,</span><span class="nc">Mt</span><span class="p">))))</span> 
+<span class="k">let</span> <span class="n">map_eg</span> <span class="o">=</span> <span class="n">lizt_map</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="nc">Cons</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="nc">Cons</span> <span class="p">(</span><span class="mi">5</span><span class="o">,</span> <span class="nc">Cons</span> <span class="p">(</span><span class="mi">7</span><span class="o">,</span> <span class="nc">Mt</span><span class="p">))))</span>
 </code></pre></div></div>
 
-<p>Lets look at the built-in <code>list</code> type:</p>
+<p>Let’s look at the built-in <code>list</code> type:</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">show_type</span> <span class="kt">list</span><span class="p">;;</span>
 <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span> <span class="o">=</span> <span class="bp">[]</span> <span class="o">|</span> <span class="p">(</span><span class="o">::</span><span class="p">)</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="kt">list</span>
 </code></pre></div></div>
-<p>This is the exact same structure as <code>lizt</code></p>
+
+<ul>
+  <li>This is the exact same structure as <code>lizt</code>!</li>
+  <li>There are just special constructors called <code>[]</code> and <code>(::)</code>, which is allowed to be infix.</li>
+  <li>Thus <code>(::)</code> is not an operator at all, but a variant constructor, instead!</li>
+</ul>
 
 <h3 id="binary-trees">Binary trees</h3>
 
@@ -294,87 +328,94 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Here is a tree with data in the intermediate <em>nodes</em> but not in the leaves.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="o">=</span> <span class="nc">Leaf</span> <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="o">=</span>
+  <span class="o">|</span> <span class="nc">Leaf</span>
+  <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span>
 </code></pre></div></div>
 
 <p>Here are some simple example trees</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">bt0</span> <span class="o">=</span> <span class="nc">Node</span><span class="p">(</span><span class="s2">"whack!"</span><span class="o">,</span><span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">);;</span>
-<span class="k">let</span> <span class="n">bt1</span> <span class="o">=</span> <span class="nc">Node</span><span class="p">(</span><span class="s2">"fiddly "</span><span class="o">,</span>
-            <span class="nc">Node</span><span class="p">(</span><span class="s2">"backer "</span><span class="o">,</span>
-               <span class="nc">Leaf</span><span class="o">,</span>
-               <span class="nc">Node</span><span class="p">(</span><span class="s2">"crack "</span><span class="o">,</span>
-                  <span class="nc">Leaf</span><span class="o">,</span>
-                  <span class="nc">Leaf</span><span class="p">))</span><span class="o">,</span>
-            <span class="n">bt0</span><span class="p">);;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">bt0</span> <span class="o">=</span> <span class="nc">Node</span> <span class="p">(</span><span class="s2">"whack!"</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">);;</span>
 
-<span class="k">let</span> <span class="n">bt2</span> <span class="o">=</span> <span class="nc">Node</span><span class="p">(</span><span class="s2">"fiddly "</span><span class="o">,</span>
-            <span class="nc">Node</span><span class="p">(</span><span class="s2">"backer "</span><span class="o">,</span>
-               <span class="nc">Leaf</span><span class="o">,</span>
-               <span class="nc">Node</span><span class="p">(</span><span class="s2">"crack "</span><span class="o">,</span>
-                  <span class="nc">Leaf</span><span class="o">,</span>
-                  <span class="nc">Leaf</span><span class="p">))</span><span class="o">,</span>
-            <span class="n">bt0</span><span class="p">);;</span>
+<span class="k">let</span> <span class="n">bt1</span> <span class="o">=</span>
+  <span class="nc">Node</span>
+    <span class="p">(</span> <span class="s2">"fiddly"</span>
+    <span class="o">,</span> <span class="nc">Node</span> <span class="p">(</span><span class="s2">"backer"</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Node</span> <span class="p">(</span><span class="s2">"crack"</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">))</span>
+    <span class="o">,</span> <span class="n">bt0</span>
+    <span class="p">)</span>
+<span class="p">;;</span>
+
 <span class="c">(* Type error, like list, must have uniform type: *)</span>
-<span class="nc">Node</span><span class="p">(</span><span class="s2">"fiddly"</span><span class="o">,</span><span class="nc">Node</span><span class="p">(</span><span class="mi">0</span><span class="o">,</span><span class="nc">Leaf</span><span class="o">,</span><span class="nc">Leaf</span><span class="p">)</span><span class="o">,</span><span class="nc">Leaf</span><span class="p">);;</span>
+<span class="nc">Node</span> <span class="p">(</span><span class="s2">"fiddly"</span><span class="o">,</span> <span class="nc">Node</span> <span class="p">(</span><span class="mi">0</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">)</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">);;</span>
 </code></pre></div></div>
+
+<!-- Brandon: small thing, but there was a `bt2` which was exactly the same as `bt1`, so I just deleted it. In case you see that sizeable deletion, I just wanted to clarify. -->
 
 <h4 id="combinators-for-binary-trees">Combinators for Binary Trees</h4>
 
 <ul>
-  <li>Since lists are built-in we get a massive library of functions on them.</li>
+  <li>Since lists are built-in we get a library of functions on them.</li>
   <li>For these binary trees (and in general for whatever variant types you roll yourself) there is no such luxury.
     <ul>
       <li>This is because there is no single canonical form of tree, there are many different kinds of trees used</li>
     </ul>
   </li>
-  <li><strong>Still</strong>, that doesn’t mean you should just code everything by recursing over the tree.  Instead
+  <li><strong>Still</strong>, that doesn’t mean you should just code everything by recursing over the tree. Instead
     <ol>
-      <li>Define the combinators you need (maps, folds, node counts, etc.) using <code>let rec</code></li>
-      <li>Use your combinators without needing <code>let rec</code></li>
+      <li>Define the combinators you need (maps, folds, node counts, etc.) using <code>let rec</code>.</li>
+      <li>Use your combinators without needing <code>let rec</code> most of the time.</li>
     </ol>
   </li>
-  <li>Here is a simple recursive function over binary trees:
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">add_gobble</span> <span class="n">binstringtree</span> <span class="o">=</span>
- <span class="k">match</span> <span class="n">binstringtree</span> <span class="k">with</span>
- <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Leaf</span>
- <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
-     <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">^</span><span class="s2">"gobble"</span><span class="o">,</span><span class="n">add_gobble</span> <span class="n">left</span><span class="o">,</span><span class="n">add_gobble</span> <span class="n">right</span><span class="p">)</span>
-</code></pre></div>    </div>
-  </li>
-  <li>(Remember, as with lists this is not mutating the tree, its building a new one)</li>
-  <li>Observe: this is an instance of the general operation of building a tree with same structure but applying an operation on each node value</li>
-  <li>i.e. it is a <strong>map</strong> operation over a tree.  Let us code <code>map</code> and use it to add gobbles.</li>
+  <li>Here is a simple recursive function over binary trees:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">map</span> <span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="p">(</span><span class="n">tree</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">b</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">=</span>
-   <span class="k">match</span> <span class="n">tree</span> <span class="k">with</span>
-   <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Leaf</span>
-   <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
-       <span class="nc">Node</span><span class="p">(</span><span class="n">f</span> <span class="n">y</span><span class="o">,</span><span class="n">map</span> <span class="n">f</span> <span class="n">left</span><span class="o">,</span><span class="n">map</span> <span class="n">f</span> <span class="n">right</span><span class="p">)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">add_gobble</span> <span class="n">string_bintree</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">string_bintree</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Leaf</span>
+  <span class="o">|</span> <span class="nc">Node</span> <span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="nc">Node</span> <span class="p">(</span><span class="n">y</span> <span class="o">^</span> <span class="s2">" gobble"</span><span class="o">,</span> <span class="n">add_gobble</span> <span class="n">left</span><span class="o">,</span> <span class="n">add_gobble</span> <span class="n">right</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>(Remember, like with lists, this is not mutating the tree. It is building a new one)</li>
+  <li>Observe: this is an instance of the general operation of building a tree with same structure but applying an operation on each node value</li>
+  <li>i.e. it is a <strong>map</strong> operation over a tree. Let us code <code>map</code> and use it to add gobbles.</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">map</span> <span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="p">(</span><span class="n">tree</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">b</span> <span class="n">bin_tree</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">tree</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Leaf</span>
+  <span class="o">|</span> <span class="nc">Node</span> <span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="nc">Node</span> <span class="p">(</span><span class="n">f</span> <span class="n">y</span><span class="o">,</span> <span class="n">map</span> <span class="n">f</span> <span class="n">left</span><span class="o">,</span> <span class="n">map</span> <span class="n">f</span> <span class="n">right</span><span class="p">)</span>
 
 <span class="c">(* using tree map to make a non-recursive add_gobble *)</span>
-<span class="k">let</span> <span class="n">add_gobble</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">map</span> <span class="p">(</span><span class="k">fun</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span> <span class="o">^</span> <span class="s2">"gobble"</span><span class="p">)</span> <span class="n">tree</span>
+<span class="k">let</span> <span class="n">add_gobble</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">map</span> <span class="p">(</span><span class="k">fun</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span> <span class="o">^</span> <span class="s2">" gobble"</span><span class="p">)</span> <span class="n">tree</span>
 </code></pre></div></div>
+
 <ul>
-  <li>Fold is also natural on binary trees, apply operation f to node value and each subtree result.
+  <li>It is also natural to fold and collapse binary trees.
     <ul>
-      <li>This is a fold right (post-processed), folding left on a tree isn’t sensible because there are two subtrees to go down in to.</li>
+      <li>Fold left (in order): fold on the left, then apply the operation on the current node, then fold on the right.</li>
+      <li>Reduce (post process): reduce each subtree, then apply the operation to the current node.</li>
     </ul>
   </li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold</span> <span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span><span class="p">)</span> <span class="p">(</span><span class="n">tree</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span>  <span class="p">(</span><span class="n">leaf</span> <span class="o">:</span> <span class="k">'</span><span class="n">acc</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">acc</span> <span class="o">=</span>
-   <span class="k">match</span> <span class="n">tree</span> <span class="k">with</span>
-   <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="n">leaf</span>
-   <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
-       <span class="n">f</span> <span class="n">y</span> <span class="p">(</span><span class="n">fold</span> <span class="n">f</span> <span class="n">left</span> <span class="n">leaf</span><span class="p">)</span> <span class="p">(</span><span class="n">fold</span> <span class="n">f</span> <span class="n">right</span> <span class="n">leaf</span><span class="p">)</span>
+<!-- Brandon: I would wager this is really a `reduce` or `collapse` sort of function, not a fold. A fold-left or fold-right would still just have one accumulator, which I described above in the bullet points. We have them write fold in Assignment 3, so I decided to name this something else, not imply that it is fold, and then leave real fold up to them as an exercise. -->
 
-<span class="c">(* using tree fold *)</span>
-<span class="k">let</span> <span class="n">int_summate</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">fold</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">laccum</span> <span class="n">raccum</span> <span class="o">-&gt;</span> <span class="n">elt</span> <span class="o">+</span> <span class="n">laccum</span> <span class="o">+</span> <span class="n">raccum</span><span class="p">)</span> <span class="n">tree</span> <span class="mi">0</span><span class="p">;;</span>
-<span class="n">int_summate</span> <span class="o">@@</span> <span class="nc">Node</span><span class="p">(</span><span class="mi">3</span><span class="o">,</span><span class="nc">Node</span><span class="p">(</span><span class="mi">1</span><span class="o">,</span><span class="nc">Leaf</span><span class="o">,</span><span class="nc">Node</span><span class="p">(</span><span class="mi">2</span><span class="o">,</span><span class="nc">Leaf</span><span class="o">,</span><span class="nc">Leaf</span><span class="p">))</span><span class="o">,</span><span class="nc">Leaf</span><span class="p">);;</span>
-<span class="c">(* fold can also do map-like operations - the folder can return a tree *)</span>
-<span class="k">let</span> <span class="n">inc_nodes</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">fold</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">la</span> <span class="n">ra</span> <span class="o">-&gt;</span> <span class="nc">Node</span><span class="p">(</span><span class="n">elt</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span><span class="n">la</span><span class="o">,</span><span class="n">ra</span><span class="p">))</span> <span class="nc">Leaf</span> <span class="n">tree</span><span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">reduce</span> <span class="p">(</span><span class="n">f</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">acc</span><span class="p">)</span> <span class="p">(</span><span class="n">tree</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="p">(</span><span class="n">leaf</span> <span class="o">:</span> <span class="k">'</span><span class="n">acc</span><span class="p">)</span> <span class="o">:</span> <span class="k">'</span><span class="n">acc</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">tree</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="n">leaf</span>
+  <span class="o">|</span> <span class="nc">Node</span> <span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="n">f</span> <span class="n">y</span> <span class="p">(</span><span class="n">reduce</span> <span class="n">f</span> <span class="n">left</span> <span class="n">leaf</span><span class="p">)</span> <span class="p">(</span><span class="n">reduce</span> <span class="n">f</span> <span class="n">right</span> <span class="n">leaf</span><span class="p">)</span>
+
+<span class="c">(* using tree reduce *)</span>
+<span class="k">let</span> <span class="n">int_summate</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">reduce</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">laccum</span> <span class="n">raccum</span> <span class="o">-&gt;</span> <span class="n">elt</span> <span class="o">+</span> <span class="n">laccum</span> <span class="o">+</span> <span class="n">raccum</span><span class="p">)</span> <span class="n">tree</span> <span class="mi">0</span><span class="p">;;</span>
+
+<span class="n">int_summate</span> <span class="o">@@</span> <span class="nc">Node</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="nc">Node</span> <span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Node</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">))</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">);;</span>
+
+<span class="c">(* reduce can also do map-like operations - the reduction can return a tree *)</span>
+<span class="k">let</span> <span class="n">inc_nodes</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">reduce</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">la</span> <span class="n">ra</span> <span class="o">-&gt;</span> <span class="nc">Node</span> <span class="p">(</span><span class="n">elt</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">la</span><span class="o">,</span> <span class="n">ra</span><span class="p">))</span> <span class="n">tree</span> <span class="nc">Leaf</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <ul>
@@ -385,20 +426,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>For some operations we need to know how to compare the tree elements
     <ul>
-      <li>we will use the built-in <code>&lt;=</code> which is fine on simple types but not on Maps etc.</li>
+      <li>we will use the built-in <code>&lt;=</code>, which is fine on simple types but not on Maps etc.</li>
       <li>Beware!</li>
     </ul>
   </li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">insert</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">bt</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">=</span>
-   <span class="k">match</span> <span class="n">bt</span> <span class="k">with</span>
-   <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Node</span><span class="p">(</span><span class="n">x</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">)</span>
-   <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
-       <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="k">then</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">insert</span> <span class="n">x</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span>
-       <span class="k">else</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">insert</span> <span class="n">x</span> <span class="n">right</span><span class="p">)</span>
+  <span class="k">match</span> <span class="n">bt</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Node</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">)</span>
+  <span class="o">|</span> <span class="nc">Node</span> <span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">y</span> <span class="k">then</span>
+      <span class="nc">Node</span> <span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">insert</span> <span class="n">x</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="nc">Node</span> <span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">insert</span> <span class="n">x</span> <span class="n">right</span><span class="p">)</span>
 <span class="p">;;</span>
 </code></pre></div></div>
+
+<p>(Note that this inserts duplicate elements instead of overwriting them)</p>
 
 <ul>
   <li>Like list operations this is not mutating – it returns a whole new tree.</li>
@@ -407,6 +452,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">bt'</span> <span class="o">=</span> <span class="n">insert</span> <span class="mi">4</span> <span class="n">bt</span><span class="p">;;</span>
+
 <span class="k">let</span> <span class="n">bt''</span> <span class="o">=</span> <span class="n">insert</span> <span class="mi">0</span> <span class="n">bt'</span><span class="p">;;</span> <span class="c">(* thread in the most recent tree into subsequent insert *)</span>
 </code></pre></div></div>
 
@@ -421,12 +467,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Here is an example of how to sort a string list with <code>List.sort</code>:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">sort</span> <span class="p">(</span><span class="nn">String</span><span class="p">.</span><span class="n">compare</span><span class="p">)</span> <span class="p">[</span><span class="s2">"Zoo"</span><span class="p">;</span><span class="s2">"Hey"</span><span class="p">;</span><span class="s2">"Abba"</span><span class="p">];;</span> <span class="c">(* pass string's comparison function as argument *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">sort</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="p">[</span><span class="s2">"Zoo"</span><span class="p">;</span><span class="s2">"Hey"</span><span class="p">;</span><span class="s2">"Abba"</span><span class="p">];;</span> <span class="c">(* pass string's comparison function as argument *)</span>
+
 <span class="c">(* insight into OCaml expected behavior for compare: *)</span>
 <span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Ahh"</span><span class="p">;;</span> <span class="c">(* =  returns 0 : equal *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">0</span>
+
 <span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Bee"</span><span class="p">;;</span> <span class="c">(* &lt; returns -1 : less *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
 <span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Ack"</span><span class="p">;;</span> <span class="c">(* &gt; returns 1 : greater *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div></div>
@@ -434,12 +483,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>So, our more general tree insert should follow the lead of <code>List.sort</code>:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">insert</span> <span class="n">compare</span> <span class="n">x</span> <span class="n">bt</span>  <span class="o">=</span>
-   <span class="k">match</span> <span class="n">bt</span> <span class="k">with</span>
-   <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Node</span><span class="p">(</span><span class="n">x</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">)</span>
-   <span class="o">|</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
-       <span class="k">if</span> <span class="p">(</span><span class="n">compare</span> <span class="n">x</span> <span class="n">y</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">insert</span> <span class="n">compare</span> <span class="n">x</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span>
-       <span class="k">else</span> <span class="nc">Node</span><span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">insert</span> <span class="n">compare</span> <span class="n">x</span> <span class="n">right</span><span class="p">)</span>
+  <span class="k">match</span> <span class="n">bt</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nc">Leaf</span> <span class="o">-&gt;</span> <span class="nc">Node</span> <span class="p">(</span><span class="n">x</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">)</span>
+  <span class="o">|</span> <span class="nc">Node</span> <span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="k">if</span> <span class="n">compare</span> <span class="n">x</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">then</span>
+      <span class="nc">Node</span> <span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">insert</span> <span class="n">compare</span> <span class="n">x</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="p">)</span>
+    <span class="k">else</span>
+      <span class="nc">Node</span> <span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">insert</span> <span class="n">compare</span> <span class="n">x</span> <span class="n">right</span><span class="p">)</span>
 <span class="p">;;</span>
+
 <span class="k">let</span> <span class="n">bt'</span> <span class="o">=</span> <span class="n">insert</span> <span class="p">(</span><span class="nn">Int</span><span class="p">.</span><span class="n">compare</span><span class="p">)</span> <span class="mi">4</span> <span class="n">bt</span> <span class="p">;;</span>
 </code></pre></div></div>
 
@@ -447,28 +499,33 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The built-in equality <code>(=)</code> and built-in compare, <code>compare</code> in fact work fine on all standard types and their compositions.</li>
   <li>All of the data types we have used thus far, e.g. our <code>bin_tree</code> they compare well on.</li>
   <li>But they don’t accurately compare <code>Map</code>, <code>Set</code>, <code>Hashtbl</code>, <code>Queue</code>, <code>Stack</code> and others.</li>
-  <li>Its dangerous because they don’t give an exception they give a perhaps incorrect answer.</li>
+  <li>Its dangerous because they don’t give an exception; they give a perhaps incorrect answer.</li>
   <li>Also it raises an exception when trying to compare functions.</li>
 </ul>
 
 <p>Here is an example of how <code>Set</code> comparison is not what you want:</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">S</span> <span class="o">=</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="nc">Int</span><span class="p">)</span> <span class="c">(* This is how you set up an int set; covered later *)</span>
 
-<span class="k">let</span> <span class="n">s1</span> <span class="o">=</span>  <span class="nn">S</span><span class="p">.</span><span class="n">empty</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">1</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">2</span> <span class="c">(* the set {1, 2} *)</span>
-<span class="k">let</span> <span class="n">s2</span> <span class="o">=</span>  <span class="nn">S</span><span class="p">.</span><span class="n">empty</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">2</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">1</span> <span class="c">(* the set {1, 2} again *)</span>
-<span class="k">let</span> <span class="n">_</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">s2</span> <span class="c">(* returns false but they are the same set - ! *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">S</span> <span class="o">=</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="nc">Int</span><span class="p">);;</span> <span class="c">(* This is how you set up an int set; covered later *)</span>
+
+<span class="k">let</span> <span class="n">s1</span> <span class="o">=</span>  <span class="nn">S</span><span class="p">.</span><span class="n">empty</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">1</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* the set {1, 2} *)</span>
+<span class="k">let</span> <span class="n">s2</span> <span class="o">=</span>  <span class="nn">S</span><span class="p">.</span><span class="n">empty</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">2</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* the set {1, 2} again *)</span>
+
+<span class="k">let</span> <span class="n">_</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">s2</span><span class="p">;;</span> <span class="c">(* returns false, but they represent the same set - ! *)</span>
+
 <span class="k">let</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compare</span> <span class="n">m1</span> <span class="n">m2</span><span class="p">;;</span> <span class="c">(* the second one is considered "greater" due to internal rep'n *)</span>
 </code></pre></div></div>
-<p>The reason is sets are implemented as binary search trees and the order of addition affects the tree structure which is what <code>=</code> compares.</p>
+
+<p>The reason is sets are implemented as binary search trees and the order of addition affects the tree structure, which is what <code>=</code> compares.</p>
 
 <h4 id="solution-if-you-want-to-properly-compare-set-etc">Solution if you want to properly compare Set etc</h4>
+
 <ul>
-  <li>For sets in particular there is a better one built-in: <code>S.equal s1 s2</code> returns <code>true</code>.
+  <li>For sets in particular, there is a better one built-in: <code>S.equal s1 s2</code> returns <code>true</code>.
     <ul>
-      <li>(why doesn’t <code>=</code> invoke that?  Good question, its an historical oddity)</li>
+      <li>(why doesn’t <code>=</code> invoke that?  Good question: because types can be hidden, <code>=</code> does not know which notion of equality you actually want)</li>
     </ul>
   </li>
-  <li>Making your own definition of compare/equal is also possible</li>
+  <li>You cane make you own definition of <code>compare</code>/<code>equal</code>.</li>
   <li>To define equality more easily you can also use a ppx extension, a form of macro for OCaml</li>
   <li>Use library <code>ppx_deriving.eq</code> and append <code>[@@deriving eq]</code> to automatically define function <code>equal_mytype</code> for your type <code>mytype</code></li>
   <li>Use library <code>ppx_deriving.ord</code> and append <code>[@@deriving ord]</code> will define function <code>compare_mytype</code>.</li>
@@ -476,20 +533,25 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <p>Here is an example of using these in the top loop to define equality on trees:</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_deriving.eq"</span><span class="p">;;</span> <span class="c">(* loads the extension into utop *)</span>
 <span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_deriving.ord"</span><span class="p">;;</span> <span class="c">(* ditto *)</span>
+
 <span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">tree</span> <span class="o">=</span> <span class="nc">Leaf</span> <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">tree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">tree</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">ord</span><span class="o">,</span> <span class="n">eq</span><span class="p">];;</span>
 </code></pre></div></div>
+
 <p>produces output</p>
+
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">tree</span> <span class="o">=</span> <span class="nc">Leaf</span> <span class="o">|</span> <span class="nc">Node</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">tree</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">tree</span>
 <span class="k">val</span> <span class="n">compare_tree</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">tree</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">tree</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 <span class="k">val</span> <span class="n">equal_tree</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">tree</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="n">tree</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
+
 <ul>
   <li>This defines these functions for you that will compare trees.</li>
-  <li>For example, <code>compare_tree compare (Node (4,Leaf,Leaf)) (Leaf)</code> returns 1, it considers the left tree smaller since <code>Leaf</code> was listed first in the variant.</li>
+  <li>For example, <code>compare_tree compare (Node (4, Leaf, Leaf)) (Leaf)</code> returns 1, it considers the left tree smaller since <code>Leaf</code> was listed first in the variant.</li>
   <li>Notice that we need to pass in a comparison function for the underlying data in the tree (integers); here we just pass in the default comparison.</li>
-  <li>Note that <code>compare (Node (4,Leaf,Leaf)) (Leaf)</code> also returns 1 since this is a simple type.</li>
+  <li>Note that <code>compare (Node (4, Leaf, Leaf)) (Leaf)</code> also returns 1 since this is a simple type.</li>
   <li>To use these macros in a dune project add <code>(preprocess (pps ppx_deriving.eq))</code> or <code>(preprocess (pps ppx_deriving.ord))</code> to your dune file.</li>
 </ul>
 
@@ -500,32 +562,33 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>A better term would be “inferred variants” - you don’t need to declare them via <code>type</code>.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nt">`Zinger</span><span class="p">(</span><span class="mi">3</span><span class="p">);;</span> <span class="c">(* prefix constructors with a backtick for the inferred variants *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nt">`Zinger</span> <span class="mi">3</span><span class="p">;;</span> <span class="c">(* prefix constructors with a backtick for the inferred variants *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="p">[</span><span class="o">&gt;</span> <span class="nt">`Zinger</span> <span class="k">of</span> <span class="kt">int</span> <span class="p">]</span> <span class="o">=</span> <span class="nt">`Zinger</span> <span class="mi">3</span>
 </code></pre></div></div>
+
 <ul>
   <li>This looks a bit useless, it inferred a 1-ary variant type</li>
   <li>But the “<code>&gt;</code>” in the type means <em>there could be other variants showing up in the future</em>.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">f</span> <span class="n">b</span> <span class="o">=</span> <span class="k">if</span> <span class="n">b</span> <span class="k">then</span> <span class="p">[</span><span class="nt">`Zinger</span> <span class="mi">3</span><span class="p">]</span> <span class="k">else</span> <span class="p">[</span><span class="nt">`Zanger</span> <span class="s2">"hi"</span><span class="p">];;</span>
-<span class="k">val</span> <span class="n">f</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="o">&gt;</span> <span class="nt">`Zanger</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="nt">`Zinger</span> <span class="k">of</span> <span class="kt">int</span> <span class="p">]</span> <span class="kt">list</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">f</span> <span class="n">b</span> <span class="o">=</span> <span class="k">if</span> <span class="n">b</span> <span class="k">then</span> <span class="nt">`Zinger</span> <span class="mi">3</span> <span class="k">else</span> <span class="nt">`Zanger</span> <span class="s2">"hi"</span><span class="p">;;</span>
+<span class="k">val</span> <span class="n">f</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="o">&gt;</span> <span class="nt">`Zanger</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="nt">`Zinger</span> <span class="k">of</span> <span class="kt">int</span> <span class="p">]</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
-<ul>
-  <li>We can of course pattern match as well:</li>
-</ul>
+<p>We can of course pattern match as well:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">zing_zang</span> <span class="n">z</span> <span class="o">=</span> 
-<span class="k">match</span> <span class="n">z</span> <span class="k">with</span>
-<span class="o">|</span> <span class="nt">`Zinger</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="s2">"zing! "</span><span class="o">^</span><span class="p">(</span><span class="nn">Int</span><span class="p">.</span><span class="n">to_string</span> <span class="n">n</span><span class="p">)</span>
-<span class="o">|</span> <span class="nt">`Zanger</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="s2">"zang! "</span><span class="o">^</span><span class="n">s</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">zing_zang</span> <span class="n">z</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">z</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="nt">`Zinger</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="s2">"zing! "</span> <span class="o">^</span> <span class="n">string_of_int</span> <span class="n">n</span>
+  <span class="o">|</span> <span class="nt">`Zanger</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="s2">"zang! "</span> <span class="o">^</span> <span class="n">s</span>
 <span class="k">val</span> <span class="n">zing_zang</span> <span class="o">:</span> <span class="p">[</span><span class="o">&lt;</span> <span class="nt">`Zanger</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">|</span> <span class="nt">`Zinger</span> <span class="k">of</span> <span class="kt">int</span> <span class="p">]</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
+
 <p>Observe how the type now has a <code>&lt;</code> instead of a <code>&gt;</code>; the meaning is it is those fields or <em>fewer</em>.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="n">zing_zang</span> <span class="o">@@</span> <span class="nt">`Zanger</span> <span class="s2">"wow"</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s2">"zang! wow"</span>
+
 <span class="o">#</span> <span class="n">zing_zang</span> <span class="o">@@</span> <span class="nt">`Zuber</span> <span class="mi">1</span><span class="o">.</span><span class="mi">2</span><span class="p">;;</span>
 <span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">13</span><span class="o">-</span><span class="mi">23</span><span class="o">:</span>
 <span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="p">[</span><span class="o">&gt;</span> <span class="nt">`Zuber</span> <span class="k">of</span> <span class="kt">float</span> <span class="p">]</span>
@@ -538,9 +601,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Generally you should use the non-polymorphic form by default</li>
   <li>The main advantage of the polymorphic form is sharing tags amongst different types
     <ul>
-      <li>regular variants like <code>Ok(4)</code> <em>must</em> be in only one type, <code>result</code> for <code>Ok</code> for example.</li>
+      <li>regular variants like <code>Ok 4</code> <em>must</em> be in only one type, <code>result</code> for <code>Ok</code> for example.</li>
       <li>variants like <code>`Zanger "f"</code> can be in <code>[&gt; `Zanger of string ]</code>, <code>[&gt; `Zanger of string | `Zinger of int ]</code>, etc</li>
-      <li>really OCaml should just have one form; the two forms are historical baggage.</li>
+    </ul>
+  </li>
+  <li>The main disadvantage of polymorphic variants is a weaker type discipline:
+    <ul>
+      <li>you can get away with using more or fewer constructors than your type annotation, which is not always what you want!</li>
     </ul>
   </li>
 </ul>

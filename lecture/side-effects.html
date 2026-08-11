@@ -210,21 +210,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="n">print_endline</span><span class="p">;;</span> <span class="c">(* returns unit; has the side effect of printing *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+
 <span class="o">#</span> <span class="p">(</span><span class="o">:=</span><span class="p">);;</span> <span class="c">(* returns unit; has the side effect of assignment to LHS *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">ref</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+
 <span class="o">#</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">add</span><span class="p">;;</span> <span class="c">(* returns unit, so it has the side effect of assignment *)</span>
- <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span><span class="o">,</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+<span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span><span class="o">,</span> <span class="k">'</span><span class="n">b</span><span class="p">)</span> <span class="nn">Hashtbl</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">b</span> <span class="o">-&gt;</span> <span class="kt">unit</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
 <ul>
-  <li><code>Hashtbl.add</code> returns <code>unit</code> so it must be a mutable data structure.</li>
+  <li><code>Hashtbl.add</code> returns <code>unit</code>, so it must be a mutable data structure.</li>
   <li>On the flip side, functions taking <code>unit</code> as argument are often also only performing side effects.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">create</span><span class="p">;;</span> <span class="c">(* takes unit, so it is making a new mutable data structure *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="k">'</span><span class="n">a</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
+
 <span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">create</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* Note the convention of putting a space here *)</span>
-<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak1</span>  <span class="nn">Stack</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span> <span class="c">(* Its abstract, we can't see internals.. more on weak types soon *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak1</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">abstr</span><span class="o">&gt;</span> <span class="c">(* It is abstract, we can't see internals.. more on weak types soon *)</span>
 </code></pre></div></div>
 
 <h3 id="variables-are-still-themselves-immutable">Variables are still themselves immutable</h3>
@@ -237,10 +240,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">let</span> <span class="n">f</span> <span class="bp">()</span> <span class="o">=</span> <span class="o">!</span><span class="n">x</span><span class="p">;;</span>
 
 <span class="n">x</span> <span class="o">:=</span> <span class="mi">234</span><span class="p">;;</span>
-<span class="n">f</span><span class="bp">()</span><span class="p">;;</span>
+<span class="n">f</span> <span class="bp">()</span><span class="p">;;</span>
 
 <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">6</span><span class="p">;;</span> <span class="c">(* shadows previous x definition, NOT an assignment to x !! *)</span>
-<span class="n">f</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* 234, not 6 *)</span>
+<span class="n">f</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* 234 still, not 6 *)</span>
 </code></pre></div></div>
 
 <h3 id="null-or-nil-initial-cell-contents-in-ocaml-and-weakly-polymorphic-types">Null or Nil initial cell contents in OCaml, and Weakly Polymorphic types</h3>
@@ -249,9 +252,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>If you don’t yet have a well-formed initial value, use an <code>option</code>:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="nc">None</span><span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="nc">None</span><span class="p">;;</span>
 <span class="k">val</span> <span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">_weak1</span> <span class="n">option</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">{</span><span class="n">contents</span> <span class="o">=</span> <span class="nc">None</span><span class="p">}</span>
 </code></pre></div></div>
+
 <ul>
   <li>Note the type here, <code>'_weak1 option ref</code>, this is a <em>weakly polymorphic type</em></li>
   <li>Which really is not polymorphic at all - what it means is the type can be only a single type
@@ -264,22 +268,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>It is ready to be any (single) type until it is observed (i.e. used), after which it is fixed.</li>
     </ul>
   </li>
-  <li>If you think about it, there is no other possibility, can’t put int and string in same cell
+  <li>If you think about it, there is no other possibility: you can’t put int and string in same cell.
     <ul>
-      <li>would not know the type when taking out of cell.</li>
+      <li>In that case, you would not know the type when taking out of cell.</li>
     </ul>
   </li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="n">x</span> <span class="o">:=</span> <span class="nc">Some</span> <span class="mi">3</span><span class="p">;;</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
+
 <span class="o">#</span> <span class="o">!</span><span class="n">x</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">3</span> <span class="c">(* now we see '_weak1 was touched and its now forevermore an int *)</span>
 </code></pre></div></div>
 
 <ul>
-  <li>At various points OCaml will infer only weak types on certain things</li>
-  <li>Most of the time it is because it would be incorrect not to</li>
-  <li>But occasionally OCaml is too dumb to realize things are not weak
+  <li>At various points, OCaml will infer only weak types on certain things.</li>
+  <li>Most of the time it is because it would be incorrect not to.</li>
+  <li>But occasionally OCaml is too dumb to realize things are not weak.
     <ul>
       <li>there are advanced workarounds for this case which we will not cover</li>
     </ul>
@@ -298,23 +304,21 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="mutable-records">Mutable Records</h3>
 
 <ul>
-  <li>Along with refs we can declare some record fields <code>mutable</code></li>
+  <li>Along with refs, we can declare some record fields <code>mutable</code></li>
   <li><code>'a ref</code> is really implemented by a mutable record with one field, contents:</li>
-  <li><code>'a ref</code> in fact abbreviates the type <code>{ mutable contents: 'a }</code>
+  <li><code>'a ref</code> in fact is the type <code>{ mutable contents: 'a }</code>
     <ul>
       <li>And <code>ref</code> is a just a function to make creation convenient.</li>
       <li>And <code>(:=)</code> is just a function to make assignment convenient.</li>
       <li>And <code>(!)</code> is just a function to make reading convenient and explicit.</li>
     </ul>
   </li>
-  <li>The keyword mutable on a record field means it can mutate</li>
+  <li>The keyword <code>mutable</code> on a record field means it can mutate.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="p">{</span> <span class="n">contents</span> <span class="o">=</span> <span class="mi">4</span> <span class="p">};;</span> <span class="c">(* 100.0% identical to `let x = ref 4` *)</span>
 
-
 <span class="n">x</span><span class="o">.</span><span class="n">contents</span> <span class="o">&lt;-</span> <span class="mi">7</span><span class="p">;;</span>  <span class="c">(* identical to `x := 6` *)</span>
-
 
 <span class="n">x</span><span class="o">.</span><span class="n">contents</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* identical to `!x + 1` *)</span>
 </code></pre></div></div>
@@ -322,16 +326,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="declaring-mutable-record-types">Declaring Mutable Record Types</h3>
 
 <ul>
-  <li>Default on each field is that the value is <em>immutable</em></li>
-  <li>Put <code>mutable</code> qualifier on each field that you want to mutate</li>
-  <li>Principle of least mutability: you should only put <code>mutable</code> on fields you <strong>have</strong> to mutate</li>
+  <li>The default on each field is that the value is <em>immutable</em>.</li>
+  <li>Put <code>mutable</code> qualifier on each field that you want to mutate&gt;</li>
+  <li>Principle of least mutability: you should only put <code>mutable</code> on fields you <strong>have</strong> to mutate.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">mutable_point</span> <span class="o">=</span> <span class="p">{</span> <span class="k">mutable</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">float</span> <span class="p">;</span> <span class="k">mutable</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">float</span> <span class="p">};;</span>
 
 <span class="k">let</span> <span class="n">translate</span> <span class="n">p</span> <span class="n">dx</span> <span class="n">dy</span> <span class="o">=</span>
   <span class="n">p</span><span class="o">.</span><span class="n">x</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">x</span> <span class="o">+.</span> <span class="n">dx</span><span class="p">);</span> <span class="c">(* observe use of ";" here to sequence effects *)</span>
-  <span class="n">p</span><span class="o">.</span><span class="n">y</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">y</span> <span class="o">+.</span> <span class="n">dy</span><span class="p">);;</span>
+  <span class="n">p</span><span class="o">.</span><span class="n">y</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">y</span> <span class="o">+.</span> <span class="n">dy</span><span class="p">)</span>
+<span class="p">;;</span>
 
 <span class="k">let</span> <span class="n">mypoint</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="o">.</span><span class="mi">0</span><span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="o">.</span><span class="mi">0</span> <span class="p">};;</span> <span class="c">(* new mutable record *)</span>
 
@@ -345,14 +350,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <p>Here, the <code>x</code> and <code>y</code> fields of the point are mutable, but the point as a whole you cannot swap in a different point for.</p>
   </li>
   <li>
-    <p>Note that <code>;</code> is the standard sequencing operator</p>
+    <p>Note that <code>;</code> is the standard sequencing operator.</p>
     <ul>
-      <li>But in OCaml everything is an expression so its a bit non-standard</li>
-      <li><code>e ; e'</code> is roughly the same as <code>let () = e in e'</code>: evaluate <code>e</code>, ignore result, evaluate <code>e;</code>.</li>
+      <li>But in OCaml everything is an expression so it’s a bit non-standard.</li>
+      <li><code>e ; e'</code> is roughly the same as <code>let () = e in e'</code>: evaluate <code>e</code>, ignore result, then evaluate <code>e'</code>.</li>
       <li><code>(5 + 2); true</code> will give you a warning since <code>5</code> is not of type <code>unit</code></li>
-      <li>The reasoning here is if you are using <code>;</code> the first thing must be a side effect
+      <li>The reasoning here is if you are using <code>;</code> the left-hand side should have a side effect because you are throwing away the result,
         <ul>
-          <li>and, as we covered above those functions will nearly always return <code>unit</code>.</li>
+          <li>and, as we covered above, side-effecting functions will nearly always return <code>unit</code>.</li>
         </ul>
       </li>
     </ul>
@@ -362,16 +367,23 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="tree-with-mutable-subtrees">Tree with mutable subtrees</h3>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* version using ref: *)</span>
-<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree_ref</span> <span class="o">=</span> <span class="nc">MLeaf</span> <span class="o">|</span> <span class="nc">MNode</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="n">ref</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="n">ref</span><span class="p">;;</span>
+<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree_ref</span> <span class="o">=</span>
+  <span class="o">|</span> <span class="nc">MLeaf</span>
+  <span class="o">|</span> <span class="nc">MNode</span> <span class="k">of</span> <span class="k">'</span><span class="n">a</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="n">ref</span> <span class="o">*</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="n">ref</span>
+<span class="p">;;</span>
+
 <span class="c">(* But, use this type with mutable records - no `!` needed: *)</span>
-<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="o">=</span> <span class="nc">MLeaf</span> <span class="o">|</span> <span class="nc">MNode</span> <span class="k">of</span> <span class="p">{</span> <span class="n">data</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="p">;</span> <span class="k">mutable</span> <span class="n">left</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="p">;</span> <span class="k">mutable</span> <span class="n">right</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="p">};;</span>
+<span class="k">type</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="o">=</span>
+  <span class="o">|</span> <span class="nc">MLeaf</span>
+  <span class="o">|</span> <span class="nc">MNode</span> <span class="k">of</span> <span class="p">{</span> <span class="n">data</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="p">;</span> <span class="k">mutable</span> <span class="n">left</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="p">;</span> <span class="k">mutable</span> <span class="n">right</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">mtree</span> <span class="p">}</span>
+<span class="p">;;</span>
 </code></pre></div></div>
 
 <ul>
-  <li>Note that in this <code>mtree</code> we can only mutate the subtrees, <em>not</em> the data</li>
-  <li>Also, cannot replace a leaf at top of tree with a non-leaf.</li>
+  <li>Note that in this <code>mtree</code>, we can only mutate the subtrees, <em>not</em> the data.</li>
+  <li>Also, we cannot replace a leaf at top of tree with a non-leaf.</li>
   <li>The idea is to put mutablility only where you are doing mutation, no more no less.</li>
-  <li>So if the tree structure never changes but the node values can, only make the <code>data</code> mutable.</li>
+  <li>So if the tree structure never changes but the node values can, you would only make the <code>data</code> mutable.</li>
 </ul>
 
 <p>Example use: mutate left subtree</p>
@@ -379,10 +391,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">mt</span> <span class="o">=</span> <span class="nc">MNode</span> <span class="p">{</span> <span class="n">data</span> <span class="o">=</span> <span class="mi">3</span> <span class="p">;</span> <span class="n">left</span> <span class="o">=</span> <span class="nc">MLeaf</span> <span class="p">;</span> <span class="n">right</span> <span class="o">=</span> <span class="nc">MLeaf</span> <span class="p">};;</span>
 <span class="k">val</span> <span class="n">mt</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">mtree</span> <span class="o">=</span> <span class="nc">MNode</span> <span class="p">{</span><span class="n">data</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span> <span class="n">left</span> <span class="o">=</span> <span class="nc">MLeaf</span><span class="p">;</span> <span class="n">right</span> <span class="o">=</span> <span class="nc">MLeaf</span><span class="p">}</span>
 
-<span class="o">#</span> <span class="k">match</span> <span class="n">mt</span> <span class="k">with</span> 
+<span class="o">#</span> <span class="k">match</span> <span class="n">mt</span> <span class="k">with</span>
 <span class="o">|</span> <span class="nc">MLeaf</span> <span class="o">-&gt;</span> <span class="bp">()</span>
-<span class="o">|</span> <span class="nc">MNode</span> <span class="p">({</span><span class="n">data</span><span class="p">;</span><span class="n">left</span><span class="p">;</span><span class="n">right</span><span class="p">}</span> <span class="k">as</span> <span class="n">r</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="c">(* "as" captures it all under one name *)</span>
-  <span class="n">r</span><span class="o">.</span><span class="n">left</span> <span class="o">&lt;-</span> <span class="nc">MNode</span> <span class="p">{</span><span class="n">data</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span> <span class="n">left</span> <span class="o">=</span> <span class="nc">MLeaf</span><span class="p">;</span> <span class="n">right</span> <span class="o">=</span> <span class="nc">MLeaf</span><span class="p">};;</span>
+<span class="o">|</span> <span class="nc">MNode</span> <span class="p">({</span> <span class="n">data</span> <span class="p">;</span> <span class="n">left</span> <span class="p">;</span> <span class="n">right</span> <span class="p">}</span> <span class="k">as</span> <span class="n">r</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="c">(* "as" captures it all under one name *)</span>
+  <span class="n">r</span><span class="o">.</span><span class="n">left</span> <span class="o">&lt;-</span> <span class="nc">MNode</span> <span class="p">{</span> <span class="n">data</span> <span class="o">=</span> <span class="mi">5</span> <span class="p">;</span> <span class="n">left</span> <span class="o">=</span> <span class="nc">MLeaf</span> <span class="p">;</span> <span class="n">right</span> <span class="o">=</span> <span class="nc">MLeaf</span> <span class="p">};;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
 
 <span class="c">(* Verify that mt mutated *)</span>
@@ -397,12 +409,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="physical-equality">Physical equality</h3>
 
 <ul>
-  <li>Occasionally in imperative programs you need to check for “same pointer”.
-    <ul>
-      <li>It’s also useful in functional programming for fast comparison when data is shared.</li>
-      <li>There’s no need to compare entire structures if their memory addresses are identical.</li>
-    </ul>
-  </li>
+  <li>Occasionally in imperative programs you need to check for “same pointer”.</li>
+  <li>It’s also useful in functional programming for fast comparison when data is shared.</li>
+  <li>There’s no need to compare entire structures if their memory addresses are identical.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* memory layout of 2 is always the same *)</span>
@@ -433,9 +442,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">#</span> <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">11</span> <span class="o">::</span> <span class="n">big_list</span> <span class="p">;;</span>
 
 <span class="o">#</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span> <span class="p">;;</span>
-<span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span> 
+<span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">false</span>
 
-<span class="o">#</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">tl_exn</span> <span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">tl_exn</span> <span class="n">y</span><span class="p">)</span> <span class="p">;;</span>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">tl</span> <span class="n">x</span> <span class="o">==</span> <span class="nn">List</span><span class="p">.</span><span class="n">tl</span> <span class="n">y</span> <span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">true</span> <span class="c">(* the tails are physically identical, they are big_list *)</span>
 </code></pre></div></div>
 
@@ -443,39 +452,41 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>As mentioned above, side effecting operations usually return <code>unit</code></li>
-  <li>But occasionally they don’t, and you might want to use <code>;</code> with them which OCaml will complain about:</li>
+  <li>But occasionally they don’t, and you might want to use <code>;</code> with them, which OCaml will complain about:</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">incr</span> <span class="o">=</span> 
-    <span class="k">let</span> <span class="n">count</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">0</span> <span class="k">in</span> 
-    <span class="k">let</span> <span class="n">incr</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">count</span> <span class="o">:=</span> <span class="o">!</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="o">!</span><span class="n">count</span> <span class="k">in</span>
-    <span class="n">incr</span><span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">next</span> <span class="o">=</span>
+  <span class="k">let</span> <span class="n">count</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">0</span> <span class="k">in</span>
+  <span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span>
+    <span class="n">count</span> <span class="o">:=</span> <span class="o">!</span><span class="n">count</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="o">!</span><span class="n">count</span>
+<span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 
-<span class="o">#</span> <span class="n">incr</span><span class="bp">()</span> <span class="p">;</span> <span class="n">incr</span><span class="bp">()</span><span class="p">;;</span> <span class="c">(* Increment twice *)</span>
-<span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">0</span><span class="o">-</span><span class="mi">6</span><span class="o">:</span>
-<span class="nc">Warning</span> <span class="mi">10</span><span class="o">:</span> <span class="n">this</span> <span class="n">expression</span> <span class="n">should</span> <span class="n">have</span> <span class="k">type</span> <span class="kt">unit</span><span class="o">.</span>
-<span class="o">...</span>
+<span class="o">#</span> <span class="n">next</span> <span class="bp">()</span> <span class="p">;</span> <span class="n">next</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* Increment twice *)</span>
+<span class="nc">Line</span> <span class="mi">1</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">0</span><span class="o">-</span><span class="mi">7</span><span class="o">:</span>
+<span class="nc">Warning</span> <span class="mi">10</span> <span class="p">[</span><span class="n">non</span><span class="o">-</span><span class="kt">unit</span><span class="o">-</span><span class="n">statement</span><span class="p">]</span><span class="o">:</span> <span class="n">this</span> <span class="n">expression</span> <span class="n">should</span> <span class="n">have</span> <span class="k">type</span> <span class="kt">unit</span><span class="o">.</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">2</span>
 </code></pre></div></div>
 
 <ul>
-  <li>Gives a warning since first <code>incr()</code> does not return <code>unit</code></li>
-  <li>To silence warning (once you are clear you are doing the right thing):</li>
+  <li>Gives a warning since the first <code>next ()</code> does not return <code>unit</code>, but it is sequenced with <code>;</code>.</li>
+  <li>To silence the warning (once you are clear you are doing the right thing):</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="n">ignore</span> <span class="p">(</span><span class="n">incr</span> <span class="bp">()</span><span class="p">);</span> <span class="n">incr</span> <span class="bp">()</span> <span class="c">(* or, let _ = incr () in incr () *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="n">ignore</span> <span class="p">(</span><span class="n">next</span> <span class="bp">()</span><span class="p">);</span> <span class="n">next</span> <span class="bp">()</span> <span class="c">(* or, better, let _ = next () in next () *)</span>
 </code></pre></div></div>
 
 <ul>
-  <li><code>for</code> and <code>while</code> loops are useful with mutable state</li>
-  <li>But they are almost always a code smell in OCaml, usually a data structure iterator like map fold etc is better.</li>
+  <li><code>for</code> and <code>while</code> loops are useful with mutable state.</li>
+  <li>But they are often a code smell in OCaml. Usually a data structure iterator like map, fold, etc. is better.</li>
   <li>Here is a <code>while .. do .. done</code> loop; <code>for</code> syntax also standard</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="n">ref</span> <span class="mi">1</span> <span class="k">in</span>
 <span class="k">while</span> <span class="o">!</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="k">do</span>
-  <span class="n">printf</span> <span class="s2">"count is %i ...</span><span class="se">\n</span><span class="s2">"</span> <span class="o">!</span><span class="n">x</span><span class="p">;</span>
-  <span class="n">x</span> <span class="o">:=</span> <span class="o">!</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="nn">Printf</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"count is %i ...</span><span class="se">\n</span><span class="s2">"</span> <span class="o">!</span><span class="n">x</span><span class="p">;</span>
+  <span class="n">x</span> <span class="o">:=</span> <span class="o">!</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
 <span class="k">done</span><span class="p">;;</span>
 </code></pre></div></div>
 
@@ -486,12 +497,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h3 id="arrays">Arrays</h3>
+
 <ul>
-  <li>They are mutable, and they are also constant time to access nth element unlike lists</li>
+  <li>They are mutable, and they are also constant time to access nth element, unlike lists</li>
   <li>But, extending an array is inefficient: cannot share sub-array due to mutation</li>
   <li>And, sub-components of different arrays cannot be shared since they may change</li>
-  <li>Entered and shown as <code>[| 1; 2; 3 |]</code> (added “<code>|</code>”) in top-loop to distinguish from lists.</li>
-  <li>Have to be initialized before using
+  <li>They have syntax <code>[| 1; 2; 3 |]</code> (added “<code>|</code>” inside the usual list brackets) to distinguish from lists.</li>
+  <li>They have to be initialized an entry in every slot before using.
     <ul>
       <li>In general, there is no such thing as “uninitialized” in OCaml.</li>
       <li>If you need “undefined”/”null” array, make it an <code>int option array</code> and init to <code>None</code>’s.</li>
@@ -503,16 +515,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <span class="k">let</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">[</span><span class="o">|</span> <span class="mi">4</span><span class="p">;</span> <span class="mi">3</span><span class="p">;</span> <span class="mi">2</span> <span class="o">|</span><span class="p">];;</span> <span class="c">(* make a literal array *)</span>
 
-<span class="n">arr</span><span class="o">.</span><span class="p">(</span><span class="mi">0</span><span class="p">);;</span> <span class="c">(* access (unfortunately already used [] for lists so a bit ugly) *)</span>
+<span class="n">arr</span><span class="o">.</span><span class="p">(</span><span class="mi">0</span><span class="p">);;</span> <span class="c">(* access *)</span>
 
-<span class="n">arr</span><span class="o">.</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="mi">55</span><span class="p">;;</span> <span class="c">(* update like with mutable record fields *)</span>
+<span class="n">arr</span><span class="o">.</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="mi">55</span><span class="p">;;</span> <span class="c">(* update cell, like with mutable record fields *)</span>
 
 <span class="n">arr</span><span class="p">;;</span> <span class="c">(* see that arr has changed *)</span>
 
-<span class="c">(* Don't use for loops for arrays, use your favorite iterators: *)</span>
 <span class="nn">Array</span><span class="p">.</span><span class="n">map</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">arr</span><span class="p">;;</span> <span class="c">(* standard map - produces a new array *)</span>
 
-<span class="nn">Array</span><span class="p">.</span><span class="n">map_inplace</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">arr</span><span class="p">;;</span> <span class="c">(* This *changes* the array using the map function *)</span>
+<span class="nn">Array</span><span class="p">.</span><span class="n">map_inplace</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">arr</span><span class="p">;;</span> <span class="c">(* This *changes* the array using the map function and returns unit *)</span>
 
 <span class="c">(* Here are some conversions *)</span>
 <span class="k">let</span> <span class="n">a</span> <span class="o">=</span> <span class="nn">Array</span><span class="p">.</span><span class="n">of_list</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span>
@@ -547,14 +558,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>New exception names need to be declared via <code>exception</code> like <code>type</code>s needs to be declared</li>
-  <li>Unfortunately, oCaml types do not include what exceptions a function may raise
+  <li>Unfortunately, OCaml types do not include what exceptions a function may raise
     <ul>
       <li>an outdated aspect of OCaml; even Java has this with <code>raises</code> on method declarations</li>
     </ul>
   </li>
   <li>The value returned by an exception is very similar in looks to a variant.
     <ul>
-      <li>(tangent: under the hood, the <code>exn</code> type is an extensible variant)</li>
+      <li>(tangent: under the hood, the <code>exn</code> type is an extensible variant!)</li>
     </ul>
   </li>
 </ul>
@@ -572,8 +583,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">f</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* this raises the exception *)</span>
 
 <span class="k">let</span> <span class="n">g</span> <span class="bp">()</span> <span class="o">=</span>
-  <span class="k">try</span> <span class="n">f</span> <span class="bp">()</span>
-  <span class="k">with</span>
+  <span class="k">try</span> <span class="n">f</span> <span class="bp">()</span> <span class="k">with</span>
   <span class="o">|</span> <span class="nc">Boom</span> <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">printf</span> <span class="s2">"exception Boom raised with payload string </span><span class="se">\"</span><span class="s2">%s</span><span class="se">\"\n</span><span class="s2">"</span> <span class="n">s</span>
 <span class="p">;;</span>
 
@@ -584,8 +594,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>The <code>Stack</code> and <code>Queue</code> modules are <em>mutable</em> data structures.</li>
-  <li>(There are no immutable stack/queue libraries - just use <code>list</code>s)</li>
-  <li>(There is also <code>Hash_set</code> which is a (hashed) mutable set and <code>Hashtbl</code> which is a mutable hashtable; more on those later)</li>
+  <li>(There are no immutable stack/queue libraries - but just use <code>list</code>s most of the time)</li>
+  <li>(There is also <code>Hashtbl</code> which is a mutable hash table)</li>
   <li>Here is a simple example of playing around with a <code>Stack</code>.</li>
 </ul>
 
@@ -601,7 +611,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">push</span> <span class="s2">"hello one more time"</span> <span class="n">s</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">=</span> <span class="bp">()</span>
 
-<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* exception raised if empty here *)</span>
+<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop</span> <span class="n">s</span><span class="p">;;</span> <span class="c">(* exception Stack.Empty will be raised if empty here *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s2">"hello one more time"</span>
+
+<span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop</span> <span class="n">s</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s2">"hello again"</span> <span class="c">(* s changed from the last pop, so this pop is different! *)</span>
 
 <span class="o">#</span> <span class="nn">Stack</span><span class="p">.</span><span class="n">pop</span> <span class="n">s</span><span class="p">;;</span>
@@ -620,10 +633,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>To show how to use effects and some of the trade-offs, we look at a small example</li>
   <li>See file <a href="../examples/match/match.ml">match.ml</a>/<a href="../examples/zips/match.zip">match.zip</a> which has several versions of a simple parenthesis matching function</li>
   <li>It shows uses of <code>Stack</code>, and some trade-offs of using exceptions vs option type.</li>
-  <li>Lastly there is a pure functional version which is arguably simpler</li>
-  <li>Yes, you <strong>don’t</strong> need that mutation!</li>
+  <li>Lastly there is a pure functional version which is arguably simpler
+    <ul>
+      <li>Yes, you <strong>don’t</strong> need that mutation!</li>
+    </ul>
+  </li>
 </ul>
-
       
           </section>
         </div>

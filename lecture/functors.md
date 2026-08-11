@@ -1,6 +1,4 @@
-# More Modules and Libraries
-
-<!-- Brandon: just leaving a note here that I think we should emphasize that these lectures are centered around functors. The name "More Modules" is not very descriptive when students look at the dateline for resources. -->
+# Functors
 
 ## Defining Modules in the top loop or nesting them in a file
 
@@ -10,6 +8,7 @@
 * Here is a string set example put in top-loop syntax:
 
 <!-- Brandon: Using `String.equal` here instead of polymorphic equality because with polymorphic equality, it is not so obvious why we would need a functor. -->
+<!-- Scott: Maybe we need a better example here now, its fake however we slice it -->
 
 ```ocaml
 # module String_set = struct
@@ -290,8 +289,6 @@ module Int_set_hidden = Make_set_hidden (Int)
 * Here for example is how you make a (functional) map where the key is a built-in type
 * `Map.Make` is a functor just like our `Simple_set.Make` above
  - We need to supply the type of *keys* as we need to compare on them; the types of values is arbitrary so we let it be `'a` as in a list
-
-<!-- Brandon: switched from float to int map because float equality is brittle -->
 
 ```ocaml
 module Int_map = Map.Make (Int) (* Or Char/String/Bool/etc. Anything that is comparable *)

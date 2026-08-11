@@ -85,7 +85,7 @@ type ('key, 'value, 'cmp) t = ('key, 'value, 'cmp) Map.t (* existential / hidden
 (* Module type hiding and un-hiding review *)
 (* *************************************** *)
 
-(* We are picking up from the more-modules.md lecture, start with some review.. *)
+(* We are picking up from the funtors.md lecture, start with some review.. *)
 
 (* An abstract pairing module type: *)
 

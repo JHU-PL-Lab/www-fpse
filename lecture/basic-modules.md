@@ -149,8 +149,6 @@ Let's make an actual executable program to do something, not just a library.
 * Note that pure functional programs are useless as executables, input and output is a side effect and we need it to write applications.
 * Typically, the main work in an executable is put under a `let () = ...` statement. The `...` evaluates to `() : unit`, and the side effects it performs are what we see.
 
-<!-- Brandon: I updated this example to not leak resources. The input channel was opened but never closed. -->
-
 ```ocaml
 (* Just a helper function. Does not run until it's given arguments in `let () = ...` *)
 let do_search search_string filename =
@@ -253,22 +251,3 @@ let f (r : A.t) : int = r.x
 
 let f' r = r.A.x (* this works too )
 ```
-
-<!-- Brandon: I am commenting out the rest because there was no deriving on the nucleotide example. We used polymorphic equality because the constructors are effectively just ints. Also, we have not covered ppx yet.
-
-### Aside: @@deriving in modules
-
-`@@deriving` names things slightly differently when used in a module.
-
-Suppose we made a module out of our previous nucleotide example, either by putting in a file `nucleotide.ml` or adding `module Nucleotide = struct .. end` to make a top-loop or nested module:
-
-```ocaml
-module Nucleotide = struct
-  type t = A | C | G | T [@@deriving eq]
-
-  let hamming_distance l = failwith "dummy"
-end
-```
-* When this type was called `nucleotide` not in a module the `ppx` made a function `equal_nucleotide`
-* Here the `ppx` is smarter, instead of `Nucleotide.equal_t` it just makes `Nucleotide.equal` - `t` is a special type in the module
-* Note that `[@@deriving ..]` declarations in types in the `.ml` file need to be repeated in the `.mli` file if the types are not hidden -->
