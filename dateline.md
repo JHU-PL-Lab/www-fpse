@@ -169,7 +169,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/more-modules.html">More Modules</a></div>
+            <div align="left" class="body"><a href="lecture/functors.html">Functors</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -288,7 +288,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/encoding_effects.ml">Encoding Effects I</a></div>
+            <div align="left" class="body"><a href="lecture/monads.ml">Monads I</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -305,7 +305,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/encoding_effects.ml">Encoding Effects II</a></div>
+            <div align="left" class="body"><a href="lecture/monads.ml">Mondas II</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
@@ -322,7 +322,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%"> 
-            <div align="left" class="body"><a href="lecture/encoding_effects.ml">Encoding Effects III</a>; <a href="lecture/coroutines.html">Coroutines</a></div>
+            <div align="left" class="body"><a href="lecture/monads.ml">Monads III</a>; <a href="lecture/coroutines.html">Coroutines</a></div>
           </td>
           <td width="30%"> 
             <div align="center" class="body">&nbsp;</div>
