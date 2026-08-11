@@ -55,12 +55,12 @@ let hamming_distance (left : nucleotide list) (right : nucleotide list) : int op
 let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
 
 let hamming_distance' (left : nucleotide list) (right : nucleotide list) : int option =
-  Option.bind (combine_opt left right) (fun l -> Some(count (fun (a, b) -> a <> b) l))
+  Option.bind (combine_opt left right) (fun l -> Some (count (fun (a, b) -> a <> b) l))
 
 let (let*) = Option.bind
 
 let hamming_distance'' (left : nucleotide list) (right : nucleotide list) : int option =
-  let* l = combine_opt left right in Some(count (fun (a, b) -> a <> b) l)
+  let* l = combine_opt left right in Some (count (fun (a, b) -> a <> b) l)
 
 # #show_type option;;
 type 'a option = None | Some of 'a
