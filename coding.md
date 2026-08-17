@@ -87,16 +87,13 @@ If you already have an earlier version of OCaml installed via `opam`, then start
 Once you have `opam` and `ocaml` 5.5.1 installed, run the following `opam` command to install additional necessary packages for the class (just copy/paste this line into your shell and answer yes to all questions):
 
 ```sh
-opam install ocaml-lsp-server ocamlformat utop dune ounit2 ppx_deriving cmdliner sexplib ppx_deriving_yojson qcheck ppx_deriving_qcheck
+opam install ocaml-lsp-server ocamlformat utop dune ounit2 ppx_deriving cmdliner sexplib ppx_deriving_yojson qcheck ppx_deriving_qcheck bisect_ppx_ng
 ```
 
 <!--
    TODO:
       We may want some of these:
-         some community bisect    instead of   bisect_ppx
-         ppx_deriving_yojson (added - SS)
          async?
-         ppx_sexp_conv            instead of   hand-coding serializers
 
    Old install was this:
       opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 base \
@@ -147,8 +144,8 @@ All of the above packages have documentation, but you may also want to try [sher
 
 The above tools will be our "bread and butter", and we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.
 
-<!-- * [Bisect](https://github.com/aantron/bisect_ppx) will be used for code coverage.
-* [Lwt](https://ocsigen.org/lwt/latest/api/Lwt) is a non-preempting asychronous threads library. -->
+* [Bisect](https://github.com/Kakadu/bisect_ppx_ng) will be used for code coverage.
+<!-- * [Lwt](https://ocsigen.org/lwt/latest/api/Lwt) is a non-preempting asychronous threads library. -->
 * [QCheck](https://ocaml.org/p/qcheck-core/0.91) is a fuzz tester / automated test generator for OCaml.
 * [`sexplib`](https://github.com/janestreet/sexplib) is a library for s-expression conversions, which we will use to serialize and deserialize data.
 * [`cmdliner`](https://erratique.ch/software/cmdliner) is a useful tool for reading command line arguments from your OCaml programs.
