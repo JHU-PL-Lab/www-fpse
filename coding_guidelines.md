@@ -53,9 +53,9 @@
 * A good library, on the other hand, is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you.
 * In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. **Dependencies can be heavy, and they should be worth their weight.**
 
-  > An example framework is `Lwt` for concurrency. It will take over your code with monads, and you cannot nest its use, so you cannot depend on other libraries that use it themselves.
+  > An example framework is `Lwt` for concurrency. It will take over your code with monads, and you cannot always nest its use, so you may struggle to work with other libraries that use it themselves.
 
-  > Some example libaries are the monotonic timing library [`Mtime`](https://erratique.ch/software/mtime), and the priority search queue data structure [`Psq`](https://github.com/pqwy/psq). These define a few types and functions that are tightly contained and are unopinionated.
+  > Some example libraries are the monotonic timing library [`Mtime`](https://erratique.ch/software/mtime), and the priority search queue data structure [`Psq`](https://github.com/pqwy/psq). These define a few types and functions that are tightly contained and are unopinionated.
 
 * [Source](https://watch.ocaml.org/w/arLEkYE7NC4fdCcWz2LBLt) (Malcolm Matalka at FUN Ocaml 2025)
 
@@ -72,6 +72,12 @@
   > For example, parse a string into an abstract `email` type exactly once instead of checking at every use that it is a valid email string.
 
 * [Source](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/) (Alexis King, Nov 5 2019)
+
+### Put big ideas first
+* Use expression structure to emphasize the main idea. **The semantic center of an expression should draw the reader's eyes.**
+* Use pipelines with `|>` when the sequence of transformations is itself the important idea.
+* Pipelines are a poor fit for code with branching, shared intermediates, or one dominant operation. If the reader has to ride the pipeline until the last stop in order to discover the destination, then the expression is probably backwards.
+* A `let`-binding can separate data preparation from the important operation; `@@` can help put that operation front and center. Small pipelines are often still useful for preparing arguments.
 
 ## Specific suggestions
 

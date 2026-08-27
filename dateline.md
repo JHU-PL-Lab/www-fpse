@@ -237,7 +237,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="lecture/idiomatic-fp.html">Idiomatic Functional Programming</a></div>
+            <div align="left" class="body"><a href="coding_guidelines.html">FP Coding Guidelines</a></div>
           </td>
           <td width="30%">
             <div align="center" class="body">&nbsp;</div>
@@ -254,7 +254,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="lecture/idiomatic-fp.html#examples">Idiomatic Functional Programming Examples</a></div>
+            <div align="left" class="body"><a href="lecture/idiomatic-fp.html">Idiomatic Functional Programming Examples</a></div>
           </td>
           <td width="30%">
             <div align="center" class="body"><a href="assignments/assignment6.html">A6</a></div>

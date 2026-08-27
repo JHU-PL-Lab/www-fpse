@@ -21,9 +21,9 @@ Modules and variant constructors do not have a hard rule. Use what reads best, a
 
 **Use meaningful names for values.** A name should say what a value is or computes: if a value is bound with `let`/`in`, then it should have a descriptive name. Avoid single letters and unclear abbreviations, except for common conventions like `f` for an arbitrary function argument, `hd`/`tl` for list patterns, `t` for type names, etc.
 
-For example, prefer `last_elt` over `x`, and `total_cost` over `tc`. Some common abbreviations for long words are fine, like `desc` instead of `description`.
+For example, prefer `last_elt` over `x`, and `total_cost` over `tc`. Some common abbreviations for long words are fine, like `elt` instead of `element` or `desc` instead of `description`.
 
-**Write odoc comments.** Document your `.mli` files with `(** ... *)` comments below each value, type, and module. A short description of purpose and behavior is usually enough. Mention important edge cases, assumptions, exceptions, or effects. Remember that when a function is purely functional, it usually just returns something or _is_ something. It does not _do_, so choose your words to reflect this.
+**Write odoc comments.** Document your `.mli` files with `(** ... *)` comments below each value, type, and (maybe) module. A short description of purpose and behavior is usually enough. Mention important edge cases, assumptions, exceptions, or effects. Remember that when a function is purely functional, it usually just returns something or _is_ something. It does not _do_, so choose your words to reflect this.
 
 ```ocaml
 val normalize_opt : vector -> vector option
@@ -53,7 +53,7 @@ Long module paths can also be shortened with a module alias.
 
 **Keep lines short.** Most lines can and should be 80 characters or fewer, but this is not a hard rule. Sometimes code is more readable with a longer line (often because of long, descriptive names). Use 80 characters as a soft cutoff and consider 100 as a hard cutoff.
 
-**Indent with meaning.** Indentation should reflect the structure of the code: a token is more indented than another exactly when it more deeply nested. Consistent indentation lets a reader infer structure at a glance without having to match up keywords. If your code becomes _too_ indented because of this, then it may be a sign that the structure is too deep, and you need to extract out some logic.
+**Indent with meaning.** Indentation should reflect the structure of the code: a token is more indented than another exactly when it more deeply nested. **Well thought out indentation is much more important than you think.** Consistent indentation lets a reader infer structure at a glance without having to match up keywords. If your code becomes _too_ indented because of this, then it may be a sign that the structure is too deep, and you need to extract out some logic.
 
 **Align delimiters.** Matching delimiters (`let`/`in`, `begin`/`end`, `(`/`)` etc.) should either be on the same line or aligned in the same column, so a reader only has to scan in one direction to find the end of a block (right only or down only). If a `let ... in` does not fit on one line, break it like this:
 
@@ -93,7 +93,7 @@ match x with
 | D -> 3
 ```
 
-Otherwise, use parentheses for ordinary grouping, function arguments, tuples, and operator precedence--everything that is _not_ control flow.
+Otherwise, use parentheses for ordinary grouping, function arguments, tuples, and operator precedence--everything that is _not_ control flow. And remember to align them!
 
 **Use blank lines to separate ideas.** Put blank lines between top-level definitions unless they are very closely related and are short. Avoid large unbroken blocks of definitions.
 
@@ -119,8 +119,9 @@ match x with
 ```
 
 **Use record punning.** When a field name and the variable it binds/matches/creates share the same name, use punning instead of writing it twice.
-
-`{ x = x ; y = y }` becomes `{ x ; y }`; `match p with { x = x ; y = y } -> ...` becomes `match p with { x ; y } -> ...`; and `{ p with x = x }` becomes `{ p with x }`.
+  * `{ x = x ; y = y }` becomes `{ x ; y }`
+  * `match p with { x = x ; y = y } -> ...` becomes `match p with { x ; y } -> ...`
+  * `{ p with x = x }` becomes `{ p with x }`
 
 ## Small details
 
@@ -130,7 +131,7 @@ match x with
 
 **Avoid many arguments.** Functions with many positional arguments of the same type are easy to call incorrectly, and they can be hard to read. Prefer fewer arguments, and use labels when a function needs several. Lots of arguments can also be a sign that conceptually related data is floating around loosely and should be put into a record or other data structure and then passed as one argument.
 
-**Use `@@` occasionally.** Use `@@` to avoid a pile of closing parentheses, especially for a final function argument.
+**Try using `@@`.** The infix `@@` can help you avoid a pile of closing parentheses, especially for a final function argument.
 
 ```ocaml
 print_string (String.concat ", " (List.map string_of_int (List.append xs ys)))
