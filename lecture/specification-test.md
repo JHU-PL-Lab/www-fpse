@@ -491,7 +491,7 @@ OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
   ```
 
 ### Bisect for OCaml code coverage
-TODO: not in 5.5.1 now
+TODO: not in 5.5.0 now
 
 * The `bisect_ppx` preprocessor can decorate your code with one hit-bit per line
   - it can then show which lines are "hit" upon running your test suite

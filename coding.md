@@ -1,8 +1,8 @@
 # OCaml Coding Information
 
-We are using [OCaml](https://ocaml.org) version 5.5.1. Please follow all instructions here to set up your coding environment.
+We are using [OCaml](https://ocaml.org) version 5.5.0. Please follow all instructions here to set up your coding environment.
 
-## Installing OCaml 5.5.1 and associated tools
+## Installing OCaml 5.5.0 and associated tools
 
 We require that you use the [opam packaging system](https://opam.ocaml.org) for installing OCaml and its extensions.  Once you get `opam` installed and working, everything else should be easy to install.
 
@@ -75,16 +75,16 @@ opam update
 to make sure your `opam` is aware of all the latest versions of OCaml and its packages. Then you will install the latest version of the OCaml compiler:
 
 ```
-opam switch create 5.5.1
+opam switch create 5.5.0
 ```
 
-You may now be asked to reset your path with some instructions like "Run `eval $(opam env --switch=5.5.1)` to update the current shell environment". If you get that message, then follow those instructions and copy/paste the command into the shell (if you are on a Mac you may be using `zsh`; replace the `$(...)` with back-quotes `` `...` ``).
+You may now be asked to reset your path with some instructions like "Run `eval $(opam env --switch=5.5.0)` to update the current shell environment". If you get that message, then follow those instructions and copy/paste the command into the shell (if you are on a Mac you may be using `zsh`; replace the `$(...)` with back-quotes `` `...` ``).
 
-If you already have an earlier version of OCaml installed via `opam`, then start at `opam switch create 5.5.1`.
+If you already have an earlier version of OCaml installed via `opam`, then start at `opam switch create 5.5.0`.
 
 ### Required `opam` packages
 
-Once you have `opam` and `ocaml` 5.5.1 installed, run the following `opam` command to install additional necessary packages for the class (just copy/paste this line into your shell and answer yes to all questions):
+Once you have `opam` and `ocaml` 5.5.0 installed, run the following `opam` command to install additional necessary packages for the class (just copy/paste this line into your shell and answer yes to all questions):
 
 ```sh
 opam install ocaml-lsp-server ocamlformat utop dune ounit2 ppx_deriving cmdliner sexplib ppx_deriving_yojson qcheck ppx_deriving_qcheck bisect_ppx_ng
