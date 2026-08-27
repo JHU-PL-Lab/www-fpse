@@ -186,16 +186,14 @@ let (/) n m =
 
 let _ : int = (3 / 0) + (8 / 0) + 1 (* same as 1 + 1 + 1 *)
 
-(* Function to turn [n;m;p] to n/m/p etc.
+(* Function to turn [n;m;p] to n/(m/p) etc.
    but use the above division to allow for recovery *)
 let div_list (l : int list) : int =
-  match l with
-  | [] -> 1
-  | hd :: tl -> List.fold_left (fun acc n -> acc / n) hd tl
+  List.fold_right (fun n acc -> n / acc) l 1
 
-let _ = div_list [1000;100;2];; (* 1000/100/2, no failures *)
+let _ = div_list [1000;100;2];; (* 1000/(100/2) = 20, no failures *)
 
-let _ = div_list [1000;100;2;5];;  (* 1000/100/2/5 is 1 *)
+let _ = div_list [10;100;20;2];; (* 10/(100/(20/2)) = 1, still no failures *)
 
 let _ = div_list [20;4;2;1000;100;2;4];; (* multiple failures here *)
 
@@ -218,7 +216,7 @@ let adding_div n m =
     Printf.printf  "Div %d by 0, resuming\n%!" n;
     (continue k 1) + 77 (* add 77 to final result *)
 
-(* This is 1 + 77 + 4 + 1 *)
+(* This is 1 + 77 + 4 + 1 = 83 *)
 let _ = (adding_div 3 0) + (adding_div 8 2) + 1
 
 (*
