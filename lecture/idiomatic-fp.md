@@ -1,7 +1,9 @@
 
 ## Idiomatic Functional Programming
 
-* Design principles, design patterns, refactoring in Object-Oriented programming
+<!-- Brandon: I have commented all of this because I want to keep it for history (the git history might not be enough), but it is now almost all contained inside the coding guidelines file. The uncommented content is for the examples we cover in lecture. -->
+
+<!-- * Design principles, design patterns, refactoring in Object-Oriented programming
              =>
   **Idioms** in Functional Programming
 * We have touched on much of this so much of this is review
@@ -11,7 +13,7 @@
 
 Here is a list of principles/idioms, many of which are review as we touched on them before
 
-#### Don't Repeat Yourself (DRY from OO): 
+#### Don't Repeat Yourself (DRY from OO):
   - Extract duplicate code into its own function
   - if there is common code except for one spot, make that spot a code (i.e.function) parameter
     - example: make a map function on a tree if you are doing many tree operations that are maps.
@@ -87,7 +89,7 @@ Functional code is not always more concise than stateful code, but it is surpris
     - Do generally avoid high polynomial or exponential algorithms on potentially large inputs
     - Also pay more attention when data sets get extremely large, even n vs n log n gets noticeable there.
       - a functional `Map` may need to be replaced with a mutable `Hashtbl`
-    - We won't cover performance any more today but there is a [whole lecture](efficiency.html) coming up on the topic.
+    - We won't cover performance any more today but there is a [whole lecture](efficiency.html) coming up on the topic. -->
 
 
 ### Examples of Idiomatic FP
@@ -95,7 +97,7 @@ Functional code is not always more concise than stateful code, but it is surpris
 Here are example codebases we will spend time inspecting and critiqueing.
 
 #### Minesweeper
-  * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io 
+  * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io
   * Its not the full game, just calculating the number of mines adjacent to each non-mine square
   * Example input/input:
     ```ocaml
@@ -104,7 +106,7 @@ Here are example codebases we will spend time inspecting and critiqueing.
         "*****";
         "  *  ";
         "  *  "; ]
-     
+
       [ " 2*2 ";
         "25*52";
         "*****";
