@@ -271,7 +271,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="assignments/project.html">The Projects</a>; <a href="lecture/advanced_modules.ml">Advanced Modules</a></div>
+            <div align="left" class="body"><a href="assignments/project.html">The Projects</a>; <a href="lecture/monads.ml">Monads I</a></div>
           </td>
           <td width="30%">
             <div align="center" class="body"><a href="assignments/project.html">Project</a></div>
@@ -288,7 +288,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="lecture/monads.ml">Monads I</a></div>
+            <div align="left" class="body"><a href="lecture/monads.ml">Monads II</a></div>
           </td>
           <td width="30%">
             <div align="center" class="body">&nbsp;</div>
@@ -305,7 +305,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="lecture/monads.ml">Monads II</a></div>
+            <div align="left" class="body"><a href="lecture/monads.ml">Monads III</a></div>
           </td>
           <td width="30%">
             <div align="center" class="body">&nbsp;</div>
@@ -322,7 +322,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="lecture/monads.ml">Monads III</a>; <a href="lecture/coroutines.html">Coroutines</a></div>
+            <div align="left" class="body"><a href="lecture/coroutines.html">Coroutines</a>; <a href="lecture/advanced_modules.ml">Advanced Modules</a></div>
           </td>
           <td width="30%">
             <div align="center" class="body">&nbsp;</div>
