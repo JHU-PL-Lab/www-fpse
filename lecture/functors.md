@@ -191,30 +191,28 @@ module Int2 : EQ
 
 ### Using functors with our own custom type
 
-<!-- Brandon: we have not covered ppx yet, so this example is not so good anymore. We should probably do the pair example from below instead. -->
-
-Here is how we could apply the `Make_set` functor with our own data type. We'll do it on nucleotides in the top loop.
+Here is how we could apply the `Make_set` functor with some new data type for elements.
 
 ```ocaml
-# #require "ppx_deriving.eq";;
+# module AB = struct
+  type t = A | B
+  let equal x y =
+    match x, y with
+    | A, A | B, B -> true
+    | A, B | B, A -> false
+end;;
+module AB : sig type t = A | B val equal : t -> t -> bool end
 
-# module Nucleotide = struct type t = A | C | G | T [@@deriving eq] end;;
-module Nucleotide : sig type t = A | C | G | T val equal : t -> t -> bool end
-
-# module Nuc_set = Make_set (Nucleotide);;
-module Nuc_set :
+# module AB_set = Make_set (AB);;
+module AB_set :
   sig
-    type t = Nucleotide.t list
+    type t = AB.t list
     val empty : t
-    val add : Nucleotide.t -> t -> Nucleotide.t list
-    val remove : Nucleotide.t -> t -> Nucleotide.t list
-    val contains : Nucleotide.t -> t -> bool
+    val add : AB.t -> t -> t
+    val remove : AB.t -> t -> t
+    val contains : AB.t -> t -> bool
   end
 ```
-
-* Note this requires us to make a module out of our type.
-* also note that we used `[@@deriving eq]` to make the `equal` for free
-  - and note it is given the name `Nucleotide.equal` and not `Nucleotide.equal_nucleotide`, since it is in a module and is the type `t` there
 
 ### Types of functors
 
