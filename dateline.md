@@ -328,7 +328,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%">
-            <div align="center" class="body"><a href="assignments/project.html#idea">Project initial idea (Weds); A6 (Fri)</div>
+            <div align="center" class="body"><a href="assignments/project.html#idea">Project initial idea (Weds); A6 (Fri)</a></div>
           </td>
         </tr>
         <tr>
@@ -430,7 +430,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%">
-            <div align="center" class="body"><a href="assignments/project.html#design">Project Designs</div>
+            <div align="center" class="body"><a href="assignments/project.html#design">Project Designs</a></div>
           </td>
         </tr>
         <tr>
@@ -532,7 +532,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%">
-            <div align="center" class="body"><a href="assignments/project.html#checkpoint">Code Checkpoint (Fri)</div>
+            <div align="center" class="body"><a href="assignments/project.html#checkpoint">Code Checkpoint (Fri)</a></div>
           </td>
         </tr>
 	<tr>
@@ -543,7 +543,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Weds/Fri/Weds</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="assignments/project.html#demo">&nbsp;Project Demos (you can choose date)</div>
+            <div align="left" class="body"><a href="assignments/project.html#demo">&nbsp;Project Demos (you can choose date)</a></div>
           </td>
           <td width="30%">
             <div align="center" class="body">&nbsp;</div>
