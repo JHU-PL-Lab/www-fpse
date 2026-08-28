@@ -7,7 +7,7 @@ For the projects you are to conceive, design, and implement your own standalone 
 Here are the high-level requirements for the projects.
 
 * All the code must be in OCaml (excepting small bits of glue code, or explicit exceptions if you petition).
-* You must use the standard course libraries -- ``, `Lwt`, `OUnit2` etc -- as your basis, plus any other libraries you find useful.
+* You must use the standard course libraries -- e.g. `OUnit2` -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 2-4 people.
 * OCaml excels for non-trivial algorithms, and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.
 * You are also **required** to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
@@ -32,18 +32,20 @@ Here is a list of well-maintained libraries we recommend using for the above app
 * All web-based applications may have delayed response or may fail, and so all of the web libraries below are built on an OCaml coroutine library, primarily `Lwt`.
   - See the [coroutines lecture notes](../coroutines.html) for more information on using `Lwt`.
 * We recommend the simple [`Cohttp_lwt_unix`](https://github.com/mirage/ocaml-cohttp) for web client (API reading / crawling) applications.
-* We recommend [`Dream`](https://github.com/camlworks/dream) for web applications.  (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
-* [`Opium`](https://github.com/rgrinberg/opium) is a good alternative to `Dream` to consider as well.  Both are built on `Lwt`.
-* `Cohttp` also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.
-* For the client, it is possible to code your client in "OCaml" using [ReScript](https://rescript-lang.org) which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  Since ReScript is available we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!
+* The community default is [`Dream`](https://github.com/camlworks/dream) for web applications. It supports full web applications.  If you just want to make a simple RESTful server, `Cohttp` (below) is also a good choice.
+  * (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)
+* [`Vif`](https://opam.ocaml.org/packages/vif/) is a new alternative to `Dream`. It is not built on `Lwt`, but instead `Miou`, which uses OCaml 5 effects for concurrency.
+* `Cohttp` also supports lightweight web server development; it is perfectly fine for a RESTful server protocol.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.
+* For the client, you can use [ReScript](https://rescript-lang.org), which is similar to OCaml but with a different looking syntax that compiles to JavaScript and has bindings for React.  Since ReScript is available, we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!
 
 #### Persistence
 
-* For simple persistence you can just read and write from a file with the `Stdio` Jane Street library.  Make sure to use a structured file format such as json or sexp.
+* For simple persistence, you can just read and write from a file with the standard library. Make sure to use a structured file format such as json or s-expressions. For these, use [`Yojson`](https://github.com/ocaml-community/yojson), [`Jsont`](https://erratique.ch/software/jsont), or [`Sexplib`](https://github.com/janestreet/sexplib), and/or any associated ppx libraries.
 * If you are familiar with databases, the [sqlite3-ocaml](https://github.com/mmottl/sqlite3-ocaml) and [postgresql-ocaml](https://mmottl.github.io/postgresql-ocaml/) bindings should work for accessing SQLite or Postgres databases from within OCaml.
 
 #### Data Processing
 There are some good libraries here but they don't have many users and we have had **issues with people being able to install these libraries in the past**.  If you wanted to base your project around one of these libraries **you will be required to** (1) get the library successfully installed on all your team members' computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.
+* [Raven](https://github.com/raven-ml/raven) does everything you need for numerical computing, machine learning, and data science. It is still in its alpha release but is worked on very actively.
 * [Owl](https://ocaml.xyz/) is a very well-documented numerical processing library.
 * [ocaml-torch](https://github.com/janestreet/torch) PyTorch bindings for OCaml.   (Note that the OCaml TensorFlow bindings are old and don't seem to work.)
 * [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.
@@ -59,10 +61,10 @@ There are some good libraries here but they don't have many users and we have ha
 
 You may want to start with a command-line app and add more features later:
 
-  1. Replace the command line with a RESTful web server using [`Dream`](https://aantron.github.io/dream) mentioned below.
+  1. Replace the command line with a RESTful web server using [`Dream`](https://aantron.github.io/dream), mentioned above.
   2. In addition to 1., `Dream` supports html templates and you could "reply" to the `http` queries with html and so you can run your app in the browser.
-  3. Use [ReScript](https://rescript-lang.org) and React to beef it up and make an OCaml front-end in the browser. Rescript is basically OCaml with somewhat different syntax that compiles to JavaScript and can run in the browser.
-  4. Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.
+  3. Use [ReScript](https://rescript-lang.org) and React to beef it up and make an OCaml front-end in the browser. Rescript compiles to JavaScript and can run in the browser.
+  4. Replace a file-based persistence model with a database; see the list of libraries above for Postgres and MySql bindings for OCaml.
   5. Rather than using your own ad-hoc format for data in a file or database, make an s-expression representation and convert back and forth.
     - You should do this from the beginning in fact, it will be easier and more robust.
   6. Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.
@@ -71,6 +73,8 @@ You may want to start with a command-line app and add more features later:
 ### Submissions
 
 * There will be **four** submission points in Gradescope, one ungraded for initial group and idea, one for the design, one for a code checkpoint, and one for the final code.  For each group only one person should submit to Gradescope, as a group submission.
+
+<a name="idea"></a>
 
 #### Initial Group and Idea(s)
 
@@ -88,6 +92,7 @@ This submission will count for very little; its purpose is just to get your grou
 
 After this submission, you will have lab days to have designated time to work together and discuss with your advisor.
 
+<a name="design"></a>
 
 #### Project Design Proposal
 
@@ -98,13 +103,13 @@ You will have created a project on GitHub, and the content of this submission is
 The design submission must include
   1. An overview of the purpose of the project.
   2. A complete mock use of the application.
-    - If you have a graphical user interface, show a mock up of every page and how the user can interact.
-    - ... similarly if you have a command line interface.
-    - If the basis of your project is just some hard algorithm, take this chance to describe the algorithm and how OCaml will work with it. Show example uses and discuss desired performance.
+      - If you have a graphical user interface, show a mock up of every page and how the user can interact.
+      - ... similarly if you have a command line interface.
+      - If the basis of your project is just some hard algorithm, take this chance to describe the algorithm and how OCaml will work with it. Show example uses and discuss desired performance.
   3. A list of libraries you are using or plan to use in your implementation. For all non-standard libraries used in the rest of the course (e.g. if you are using `Dream`), you need to have successfully installed the library on all team member computers and have a small demo working to verify the library really works. We require this because OCaml libraries can be flaky. This will be submitted in `demo/` with a subdirectory for each library.
-  4. Commented module type declarations (`.mli` files) which will provide you with an initial specification to code to.
-    - You can change this later and don't need every single detail filled out, but it should include as many details as you can think of, and you should try to cover the entire project.
-    - Include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.
+  4. Commented module type declarations (`.mli` files) which will be your initial specification.
+      - You can change this later and don't need every single detail filled out, but it should include as many details as you can think of, and you should try to cover the entire project.
+      - Include an initial pass at key types and functions needed and a brief comment.
   5. An implementation plan: a list of the order in which you will implement features and by what date you hope to have them completed.
   6. You may also include any other information that will make it easier to understand your project.
 
@@ -115,6 +120,8 @@ The design submission must include
 * 15% project scope: the project is not too big or too small, has enough algorithmic complexity, and has room to make a general library.
 * 10% plan of implementation: there is a detailed implementation plan that covers all aspects of the project.
 * 30% module declarations: there are reasonable module interfaces for core components that are well thought-through and well designed.
+
+<a name="checkpoint"></a>
 
 #### Code Checkpoint
 
@@ -130,7 +137,7 @@ The code checkpoint is an important opportunity to get feedback from your adviso
 
 Make sure it is clear where your library code is. Consider some specific requirement of the final product, and then abstract it: use functors, parametrized types, all of that.
 
-You should have a well-structured GitHub repository for all of your code that contains no binaries, and you submit to Gradescope with this repository. You should have a `.gitignore` so that you're not submitting binaries or `_opam/` files, or anything else buildable from the source code.
+You should have a well-structured GitHub repository for all of your code that contains no binaries, and you submit to Gradescope with this repository. You should have a `.gitignore` so that you're not submitting binaries or `_opam/` files, or `_build/` or `_coverage/`, or anything else buildable from the source code.
 
 *Grading rubric*
 
@@ -142,6 +149,7 @@ You should have a well-structured GitHub repository for all of your code that co
 * 15% tests: there are tests covering a significant portion of the functionality that is implemented so far.
 
 <a name="demo"></a>
+
 #### Demo and Final Code Submission
 
 For the demo you should prepare a 5-10 minute presentation on your project.
@@ -175,25 +183,28 @@ A few comments on testing:
 * 7% algorithmic complexity: there are significantly challenging underlying algorithms in the project.
 
 #### Making and testing an `.opam` package file
- As was mentioned above you will need to make an `.opam` file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any `opam` dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your `dune-project` file and edit as appropriate.  Make sure to include any `opam` packages you are using in the `depends` section.
-  ```scheme
-  (lang dune 3.24)
-  (generate_opam_files true)
-  (authors "Yours Truly" "Truly Yours")
-  (maintainers "your@email.org")
-  (package
-   (name hello_world) ; put in your own project name here
-   (allow_empty)
-   (synopsis "An OCaml library for Helpful Helloing")
-   (description "A longer description")
-   (depends
-    (ounit2 (>= 2.2.7)) ; for each opam dependency list the version
- ))
- ```
 
-With these lines, `dune build @opam` will build a file `<your_project>.opam`. The promote the opam file with `dune promote`. You can then use command `opam install . --deps-only --working-dir` to install any of the `opam` dependencies if they are not already installed.  We will use this command to install all of your `opam` dependencies.  See [dune opam integration](https://dune.readthedocs.io/en/stable/explanation/opam-integration.html) for details on this dune file format, and [opam packaging](https://opam.ocaml.org/doc/Packaging.html) for details on the `.opam` file format.
+As was mentioned above you will need to make an `.opam` file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any `opam` dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your `dune-project` file and edit as appropriate.  Make sure to include any `opam` packages you are using in the `depends` section.
+```scheme
+(lang dune 3.24)
+(generate_opam_files true)
+(authors "Yours Truly" "Truly Yours")
+(maintainers "your@email.org")
+(package
+ (name hello_world) ; put in your own project name here
+ (allow_empty)
+ (synopsis "An OCaml library for Helpful Helloing")
+ (description "A longer description")
+ (depends ; one for each opam dependency
+  ocamlgraph ; example dependency
+  (ounit2 (>= 2.2.7)) ;  e.g. when you require a specific version
+  (ocaml (>= 5.5.0))
+))
+```
 
-Note that any non-`opam` dependencies you will need to list in your `Readme.md` file. You can also add them to the `.opam` file with `depexts`, but it is not trivial to do, so we will not require it.
+When you have a dune project file like this, `dune build @opam` will build a file `<your_project>.opam`. Then promote the opam file with `dune promote`. You can then use command `opam install . --deps-only --working-dir` to install any of the `opam` dependencies if they are not already installed.  We will use this command to install all of your `opam` dependencies.  See [dune opam integration](https://dune.readthedocs.io/en/stable/explanation/opam-integration.html) for details on this dune file format, and [opam packaging](https://opam.ocaml.org/doc/Packaging.html) for details on the `.opam` file format.
+
+You will need to list any non-`opam` dependencies in your `Readme.md` file (e.g. if you need `Python` as a transitive dependency). You can also add them to the `.opam` file with `depexts`, but it is not trivial to do, so we will not require it.
 
 
 ## The FPSE Project Labs
