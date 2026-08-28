@@ -54,6 +54,8 @@ let _ = !rl (* we have forced '_weak1 to be int with this *)
 let weak_id = (fun () -> Fun.id) ()
 (* val weak_id : '_weak2 -> '_weak2 = <fun> *)
 
+let string_id : string -> string = weak_id
+
 (* Type variables can be PARAMETERS on type-to-type functions *)
 
 type 'a my_option = My_some of 'a | My_none
@@ -175,7 +177,7 @@ module Example_pair = Make_pair(Int)(String)
   Here is the module type for Example_pair above This is the type inferred for
   the resulting module from the functor.
 *)
-module type EPS = sig
+module type EP_TYPE = sig
   type t
   val create : int -> string -> t
   val left : t -> int
