@@ -543,7 +543,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Weds/Fri/Weds</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="assignments/project.html#demo">&nbsp;<strong>Project Demos (you can choose which date)</strong></div>
+            <div align="left" class="body"><a href="assignments/project.html#demo">&nbsp;Project Demos (you can choose date)</div>
           </td>
           <td width="30%">
             <div align="center" class="body">&nbsp;</div>
