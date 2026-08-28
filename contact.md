@@ -12,14 +12,6 @@ For Course Assistants we are fortunate to have several course alums as well as s
 
 **Head Teaching Assistant** Brandon Stride
 
-**Course Assistant** TBA
-
 ### Office Hours
 
 Office hours will be pinned on Courselore.
-
-
-
-
-
-
