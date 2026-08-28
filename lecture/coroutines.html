@@ -129,7 +129,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Disk read/write, network request, remote API call, internal timer, etc<br />
 In OCaml<br />
        * Concurrency for speed gain is new, its in OCaml 5<br />
-       * Concurrency to support asynchronous waiting via <strong>coroutines</strong>: The <code>Lwt</code> and <code>Async</code> libraries</li>
+       * Concurrency to support asynchronous waiting via <strong>coroutines</strong>: the <code>Lwt</code> library (“light weight threads”).</li>
     </ul>
   </li>
 </ol>
@@ -221,7 +221,7 @@ In OCaml<br />
 <p>Monad-think on the above:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
-<span class="n">bind</span> <span class="c">(* code to issue image request and pause *)</span> 
+<span class="n">bind</span> <span class="c">(* code to issue image request and pause *)</span>
      <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* the continuation: processing code to run after this image loaded *)</span> <span class="p">)</span>
 </code></pre></div></div>
 <p>which is, in <code>let*</code> notation,</p>
@@ -253,7 +253,7 @@ In OCaml<br />
 <span class="c">(* The bind will block if value not there yet: *)</span>
 <span class="k">let</span><span class="o">*</span> <span class="n">load1</span> <span class="o">=</span> <span class="n">p1</span> <span class="k">in</span>
 <span class="k">let</span><span class="o">*</span> <span class="n">load2</span> <span class="o">=</span> <span class="n">p2</span> <span class="k">in</span> <span class="o">...</span>
-<span class="c">(* ... we will get to this line once both loads are finished -- promises fulfulled 
+<span class="c">(* ... we will get to this line once both loads are finished -- promises fulfulled
    If we had other coroutines they can wake up and run while waiting for these loads
    Note we could have instead used Lwt.choose to get the *first* one completed:
      let* a_load = Lwt.choose [ p1; p2 ]
@@ -343,7 +343,7 @@ In OCaml<br />
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">let</span> <span class="n">s</span><span class="o">,</span><span class="n">p</span> <span class="o">=</span> <span class="k">let</span> <span class="n">p0</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> <span class="p">(</span><span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p0</span><span class="o">,</span> <span class="n">p0</span><span class="p">);;</span> <span class="c">(* state is Sleep - input not read yet*)</span>
  <span class="c">(* type something at utop and hit return now - not shown for some reason - this is the input *)</span>
  <span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* returns `Return &lt;the string you typed&gt;` *)</span>
- <span class="c">(* Here we artificially make  a failure state.  It is an exception internal to `Lwt`, 
+ <span class="c">(* Here we artificially make  a failure state.  It is an exception internal to `Lwt`,
     it doesn't get `raise`d in OCaml except at top *)</span>
  <span class="k">let</span> <span class="n">p'</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">fail</span> <span class="nc">Exit</span> <span class="k">in</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p'</span><span class="p">;;</span>
 </code></pre></div></div>

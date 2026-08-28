@@ -127,7 +127,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>All the code must be in OCaml (excepting small bits of glue code, or explicit exceptions if you petition).</li>
-  <li>You must use the standard course libraries – ``, <code>Lwt</code>, <code>OUnit2</code> etc – as your basis, plus any other libraries you find useful.</li>
+  <li>You must use the standard course libraries – e.g. <code>OUnit2</code> – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 2-4 people.</li>
   <li>OCaml excels for non-trivial algorithms, and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.</li>
   <li>You are also <strong>required</strong> to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.</li>
@@ -168,22 +168,27 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>We recommend the simple <a href="https://github.com/mirage/ocaml-cohttp"><code>Cohttp_lwt_unix</code></a> for web client (API reading / crawling) applications.</li>
-  <li>We recommend <a href="https://github.com/camlworks/dream"><code>Dream</code></a> for web applications.  (Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions. on Linux or WSL2 you will probably need to use <code>apt</code> to install similar libraries if you don’t have them already.)  It supports full web applications.  If you just want to make a simple RESTful server, <code>Cohttp</code> (below) is also a good choice.</li>
-  <li><a href="https://github.com/rgrinberg/opium"><code>Opium</code></a> is a good alternative to <code>Dream</code> to consider as well.  Both are built on <code>Lwt</code>.</li>
-  <li><code>Cohttp</code> also supports lightweight web server development, it is perfectly fine for a RESTful server protocol.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
-  <li>For the client, it is possible to code your client in “OCaml” using <a href="https://rescript-lang.org">ReScript</a> which is OCaml but with a  different looking syntax that compiles to JavaScript and which has bindings for React.  Since ReScript is available we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!</li>
+  <li>The community default is <a href="https://github.com/camlworks/dream"><code>Dream</code></a> for web applications. It supports full web applications.  If you just want to make a simple RESTful server, <code>Cohttp</code> (below) is also a good choice.
+    <ul>
+      <li>(Note on Macs with homebrew you will need to  <code>brew install node</code>, <code>brew install openssl</code> and <code>brew install libev</code> along with the other install instructions. on Linux or WSL2 you will probably need to use <code>apt</code> to install similar libraries if you don’t have them already.)</li>
+    </ul>
+  </li>
+  <li><a href="https://opam.ocaml.org/packages/vif/"><code>Vif</code></a> is a new alternative to <code>Dream</code>. It is not built on <code>Lwt</code>, but instead <code>Miou</code>, which uses OCaml 5 effects for concurrency.</li>
+  <li><code>Cohttp</code> also supports lightweight web server development; it is perfectly fine for a RESTful server protocol.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
+  <li>For the client, you can use <a href="https://rescript-lang.org">ReScript</a>, which is similar to OCaml but with a different looking syntax that compiles to JavaScript and has bindings for React.  Since ReScript is available, we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!</li>
 </ul>
 
 <h4 id="persistence">Persistence</h4>
 
 <ul>
-  <li>For simple persistence you can just read and write from a file with the <code>Stdio</code> Jane Street library.  Make sure to use a structured file format such as json or sexp.</li>
+  <li>For simple persistence, you can just read and write from a file with the standard library. Make sure to use a structured file format such as json or s-expressions. For these, use <a href="https://github.com/ocaml-community/yojson"><code>Yojson</code></a>, <a href="https://erratique.ch/software/jsont"><code>Jsont</code></a>, or <a href="https://github.com/janestreet/sexplib"><code>Sexplib</code></a>, and/or any associated ppx libraries.</li>
   <li>If you are familiar with databases, the <a href="https://github.com/mmottl/sqlite3-ocaml">sqlite3-ocaml</a> and <a href="https://mmottl.github.io/postgresql-ocaml/">postgresql-ocaml</a> bindings should work for accessing SQLite or Postgres databases from within OCaml.</li>
 </ul>
 
 <h4 id="data-processing">Data Processing</h4>
 <p>There are some good libraries here but they don’t have many users and we have had <strong>issues with people being able to install these libraries in the past</strong>.  If you wanted to base your project around one of these libraries <strong>you will be required to</strong> (1) get the library successfully installed on all your team members’ computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.</p>
 <ul>
+  <li><a href="https://github.com/raven-ml/raven">Raven</a> does everything you need for numerical computing, machine learning, and data science. It is still in its alpha release but is worked on very actively.</li>
   <li><a href="https://ocaml.xyz/">Owl</a> is a very well-documented numerical processing library.</li>
   <li><a href="https://github.com/janestreet/torch">ocaml-torch</a> PyTorch bindings for OCaml.   (Note that the OCaml TensorFlow bindings are old and don’t seem to work.)</li>
   <li><a href="https://github.com/zshipko/ocaml-bimage">ocaml-bimage</a> is an image processing library.</li>
@@ -206,10 +211,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>You may want to start with a command-line app and add more features later:</p>
 
 <ol>
-  <li>Replace the command line with a RESTful web server using <a href="https://aantron.github.io/dream"><code>Dream</code></a> mentioned below.</li>
+  <li>Replace the command line with a RESTful web server using <a href="https://aantron.github.io/dream"><code>Dream</code></a>, mentioned above.</li>
   <li>In addition to 1., <code>Dream</code> supports html templates and you could “reply” to the <code>http</code> queries with html and so you can run your app in the browser.</li>
-  <li>Use <a href="https://rescript-lang.org">ReScript</a> and React to beef it up and make an OCaml front-end in the browser. Rescript is basically OCaml with somewhat different syntax that compiles to JavaScript and can run in the browser.</li>
-  <li>Replace a file-based persistence model with a database; see the list of libraries below for Postgres and MySql bindings for OCaml.</li>
+  <li>Use <a href="https://rescript-lang.org">ReScript</a> and React to beef it up and make an OCaml front-end in the browser. Rescript compiles to JavaScript and can run in the browser.</li>
+  <li>Replace a file-based persistence model with a database; see the list of libraries above for Postgres and MySql bindings for OCaml.</li>
   <li>Rather than using your own ad-hoc format for data in a file or database, make an s-expression representation and convert back and forth.<br />
     - You should do this from the beginning in fact, it will be easier and more robust.</li>
   <li>Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.</li>
@@ -220,6 +225,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>There will be <strong>four</strong> submission points in Gradescope, one ungraded for initial group and idea, one for the design, one for a code checkpoint, and one for the final code.  For each group only one person should submit to Gradescope, as a group submission.</li>
 </ul>
+
+<p><a name="idea"></a></p>
 
 <h4 id="initial-group-and-ideas">Initial Group and Idea(s)</h4>
 
@@ -239,6 +246,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>After this submission, you will have lab days to have designated time to work together and discuss with your advisor.</p>
 
+<p><a name="design"></a></p>
+
 <h4 id="project-design-proposal">Project Design Proposal</h4>
 
 <p>For this submission and all subsequent submissions, you are required to submit to Gradescope via a GitHub repo. If you have large datasets in files, please put them on Google Drive or similar and provide a link - Gradescope and/or Github may be unhappy otherwise.</p>
@@ -248,14 +257,20 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>The design submission must include</p>
 <ol>
   <li>An overview of the purpose of the project.</li>
-  <li>A complete mock use of the application.<br />
-    - If you have a graphical user interface, show a mock up of every page and how the user can interact.<br />
-    - … similarly if you have a command line interface.<br />
-    - If the basis of your project is just some hard algorithm, take this chance to describe the algorithm and how OCaml will work with it. Show example uses and discuss desired performance.</li>
+  <li>A complete mock use of the application.
+    <ul>
+      <li>If you have a graphical user interface, show a mock up of every page and how the user can interact.</li>
+      <li>… similarly if you have a command line interface.</li>
+      <li>If the basis of your project is just some hard algorithm, take this chance to describe the algorithm and how OCaml will work with it. Show example uses and discuss desired performance.</li>
+    </ul>
+  </li>
   <li>A list of libraries you are using or plan to use in your implementation. For all non-standard libraries used in the rest of the course (e.g. if you are using <code>Dream</code>), you need to have successfully installed the library on all team member computers and have a small demo working to verify the library really works. We require this because OCaml libraries can be flaky. This will be submitted in <code>demo/</code> with a subdirectory for each library.</li>
-  <li>Commented module type declarations (<code>.mli</code> files) which will provide you with an initial specification to code to.<br />
-    - You can change this later and don’t need every single detail filled out, but it should include as many details as you can think of, and you should try to cover the entire project.<br />
-    - Include an initial pass at key types and functions needed and a brief comment if the meaning of a function is not clear.</li>
+  <li>Commented module type declarations (<code>.mli</code> files) which will be your initial specification.
+    <ul>
+      <li>You can change this later and don’t need every single detail filled out, but it should include as many details as you can think of, and you should try to cover the entire project.</li>
+      <li>Include an initial pass at key types and functions needed and a brief comment.</li>
+    </ul>
+  </li>
   <li>An implementation plan: a list of the order in which you will implement features and by what date you hope to have them completed.</li>
   <li>You may also include any other information that will make it easier to understand your project.</li>
 </ol>
@@ -269,6 +284,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>10% plan of implementation: there is a detailed implementation plan that covers all aspects of the project.</li>
   <li>30% module declarations: there are reasonable module interfaces for core components that are well thought-through and well designed.</li>
 </ul>
+
+<p><a name="checkpoint"></a></p>
 
 <h4 id="code-checkpoint">Code Checkpoint</h4>
 
@@ -286,7 +303,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Make sure it is clear where your library code is. Consider some specific requirement of the final product, and then abstract it: use functors, parametrized types, all of that.</p>
 
-<p>You should have a well-structured GitHub repository for all of your code that contains no binaries, and you submit to Gradescope with this repository. You should have a <code>.gitignore</code> so that you’re not submitting binaries or <code>_opam/</code> files, or anything else buildable from the source code.</p>
+<p>You should have a well-structured GitHub repository for all of your code that contains no binaries, and you submit to Gradescope with this repository. You should have a <code>.gitignore</code> so that you’re not submitting binaries or <code>_opam/</code> files, or <code>_build/</code> or <code>_coverage/</code>, or anything else buildable from the source code.</p>
 
 <p><em>Grading rubric</em></p>
 
@@ -300,6 +317,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <p><a name="demo"></a></p>
+
 <h4 id="demo-and-final-code-submission">Demo and Final Code Submission</h4>
 
 <p>For the demo you should prepare a 5-10 minute presentation on your project.</p>
@@ -344,24 +362,27 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h4 id="making-and-testing-an-opam-package-file">Making and testing an <code>.opam</code> package file</h4>
+
 <p>As was mentioned above you will need to make an <code>.opam</code> file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any <code>opam</code> dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your <code>dune-project</code> file and edit as appropriate.  Make sure to include any <code>opam</code> packages you are using in the <code>depends</code> section.</p>
-<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="nf">lang</span> <span class="nv">dune</span> <span class="mf">3.24</span><span class="p">)</span>
-  <span class="p">(</span><span class="nf">generate_opam_files</span> <span class="nv">true</span><span class="p">)</span>
-  <span class="p">(</span><span class="nf">authors</span> <span class="s">"Yours Truly"</span> <span class="s">"Truly Yours"</span><span class="p">)</span>
-  <span class="p">(</span><span class="nf">maintainers</span> <span class="s">"your@email.org"</span><span class="p">)</span>
-  <span class="p">(</span><span class="nf">package</span>
-   <span class="p">(</span><span class="nf">name</span> <span class="nv">hello_world</span><span class="p">)</span> <span class="c1">; put in your own project name here</span>
-   <span class="p">(</span><span class="nf">allow_empty</span><span class="p">)</span>
-   <span class="p">(</span><span class="nf">synopsis</span> <span class="s">"An OCaml library for Helpful Helloing"</span><span class="p">)</span>
-   <span class="p">(</span><span class="nf">description</span> <span class="s">"A longer description"</span><span class="p">)</span>
-   <span class="p">(</span><span class="nf">depends</span>
-    <span class="p">(</span><span class="nf">ounit2</span> <span class="p">(</span><span class="nb">&gt;=</span> <span class="mf">2.2</span><span class="o">.</span><span class="mi">7</span><span class="p">))</span> <span class="c1">; for each opam dependency list the version</span>
- <span class="p">))</span>
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">lang</span> <span class="nv">dune</span> <span class="mf">3.24</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">generate_opam_files</span> <span class="nv">true</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">authors</span> <span class="s">"Yours Truly"</span> <span class="s">"Truly Yours"</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">maintainers</span> <span class="s">"your@email.org"</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">package</span>
+ <span class="p">(</span><span class="nf">name</span> <span class="nv">hello_world</span><span class="p">)</span> <span class="c1">; put in your own project name here</span>
+ <span class="p">(</span><span class="nf">allow_empty</span><span class="p">)</span>
+ <span class="p">(</span><span class="nf">synopsis</span> <span class="s">"An OCaml library for Helpful Helloing"</span><span class="p">)</span>
+ <span class="p">(</span><span class="nf">description</span> <span class="s">"A longer description"</span><span class="p">)</span>
+ <span class="p">(</span><span class="nf">depends</span> <span class="c1">; one for each opam dependency</span>
+  <span class="nv">ocamlgraph</span> <span class="c1">; example dependency</span>
+  <span class="p">(</span><span class="nf">ounit2</span> <span class="p">(</span><span class="nb">&gt;=</span> <span class="mf">2.2</span><span class="o">.</span><span class="mi">7</span><span class="p">))</span> <span class="c1">;  e.g. when you require a specific version</span>
+  <span class="p">(</span><span class="nf">ocaml</span> <span class="p">(</span><span class="nb">&gt;=</span> <span class="mf">5.5</span><span class="o">.</span><span class="mi">0</span><span class="p">))</span>
+<span class="p">))</span>
 </code></pre></div></div>
 
-<p>With these lines, <code>dune build @opam</code> will build a file <code>&lt;your_project&gt;.opam</code>. The promote the opam file with <code>dune promote</code>. You can then use command <code>opam install . --deps-only --working-dir</code> to install any of the <code>opam</code> dependencies if they are not already installed.  We will use this command to install all of your <code>opam</code> dependencies.  See <a href="https://dune.readthedocs.io/en/stable/explanation/opam-integration.html">dune opam integration</a> for details on this dune file format, and <a href="https://opam.ocaml.org/doc/Packaging.html">opam packaging</a> for details on the <code>.opam</code> file format.</p>
+<p>When you have a dune project file like this, <code>dune build @opam</code> will build a file <code>&lt;your_project&gt;.opam</code>. Then promote the opam file with <code>dune promote</code>. You can then use command <code>opam install . --deps-only --working-dir</code> to install any of the <code>opam</code> dependencies if they are not already installed.  We will use this command to install all of your <code>opam</code> dependencies.  See <a href="https://dune.readthedocs.io/en/stable/explanation/opam-integration.html">dune opam integration</a> for details on this dune file format, and <a href="https://opam.ocaml.org/doc/Packaging.html">opam packaging</a> for details on the <code>.opam</code> file format.</p>
 
-<p>Note that any non-<code>opam</code> dependencies you will need to list in your <code>Readme.md</code> file. You can also add them to the <code>.opam</code> file with <code>depexts</code>, but it is not trivial to do, so we will not require it.</p>
+<p>You will need to list any non-<code>opam</code> dependencies in your <code>Readme.md</code> file (e.g. if you need <code>Python</code> as a transitive dependency). You can also add them to the <code>.opam</code> file with <code>depexts</code>, but it is not trivial to do, so we will not require it.</p>
 
 <h2 id="the-fpse-project-labs">The FPSE Project Labs</h2>
 <p><a name="labs"></a></p>

@@ -124,6 +124,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>It matters that your code is easy to read, and this means following conventions. These are not all hard rules: code style involves judgment. But consistency is important, and you should have a good reason to depart from the conventions below.</p>
 
+<p>Remember that on assignments, you may never use any mutation.</p>
+
 <h2 id="naming-and-documentation">Naming and documentation</h2>
 
 <p><strong>Casing conventions.</strong></p>
@@ -167,9 +169,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p><strong>Use meaningful names for values.</strong> A name should say what a value is or computes: if a value is bound with <code>let</code>/<code>in</code>, then it should have a descriptive name. Avoid single letters and unclear abbreviations, except for common conventions like <code>f</code> for an arbitrary function argument, <code>hd</code>/<code>tl</code> for list patterns, <code>t</code> for type names, etc.</p>
 
-<p>For example, prefer <code>last_elt</code> over <code>x</code>, and <code>total_cost</code> over <code>tc</code>. Some common abbreviations for long words are fine, like <code>desc</code> instead of <code>description</code>.</p>
+<p>For example, prefer <code>last_elt</code> over <code>x</code>, and <code>total_cost</code> over <code>tc</code>. Some common abbreviations for long words are fine, like <code>elt</code> instead of <code>element</code> or <code>desc</code> instead of <code>description</code>.</p>
 
-<p><strong>Write odoc comments.</strong> Document your <code>.mli</code> files with <code>(** ... *)</code> comments below each value, type, and module. A short description of purpose and behavior is usually enough. Mention important edge cases, assumptions, exceptions, or effects. Remember that when a function is purely functional, it usually just returns something or <em>is</em> something. It does not <em>do</em>, so choose your words to reflect this.</p>
+<p><strong>Write odoc comments.</strong> Document your <code>.mli</code> files with <code>(** ... *)</code> comments below each value, type, and (maybe) module. A short description of purpose and behavior is usually enough. Mention important edge cases, assumptions, exceptions, or effects. Remember that when a function is purely functional, it usually just returns something or <em>is</em> something. It does not <em>do</em>, so choose your words to reflect this.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">val</span> <span class="n">normalize_opt</span> <span class="o">:</span> <span class="n">vector</span> <span class="o">-&gt;</span> <span class="n">vector</span> <span class="n">option</span>
 <span class="c">(** [normalize_opt v] is [Some u], where [u] is the unit vector in the
@@ -197,7 +199,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p><strong>Keep lines short.</strong> Most lines can and should be 80 characters or fewer, but this is not a hard rule. Sometimes code is more readable with a longer line (often because of long, descriptive names). Use 80 characters as a soft cutoff and consider 100 as a hard cutoff.</p>
 
-<p><strong>Indent with meaning.</strong> Indentation should reflect the structure of the code: a token is more indented than another exactly when it more deeply nested. Consistent indentation lets a reader infer structure at a glance without having to match up keywords. If your code becomes <em>too</em> indented because of this, then it may be a sign that the structure is too deep, and you need to extract out some logic.</p>
+<p><strong>Indent with meaning.</strong> Indentation should reflect the structure of the code: a token is more indented than another exactly when it more deeply nested. <strong>Well thought out indentation is much more important than you think.</strong> Consistent indentation lets a reader infer structure at a glance without having to match up keywords. If your code becomes <em>too</em> indented because of this, then it may be a sign that the structure is too deep, and you need to extract out some logic.</p>
 
 <p><strong>Align delimiters.</strong> Matching delimiters (<code>let</code>/<code>in</code>, <code>begin</code>/<code>end</code>, <code>(</code>/<code>)</code> etc.) should either be on the same line or aligned in the same column, so a reader only has to scan in one direction to find the end of a block (right only or down only). If a <code>let ... in</code> does not fit on one line, break it like this:</p>
 
@@ -233,7 +235,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">|</span> <span class="nc">D</span> <span class="o">-&gt;</span> <span class="mi">3</span>
 </code></pre></div></div>
 
-<p>Otherwise, use parentheses for ordinary grouping, function arguments, tuples, and operator precedence–everything that is <em>not</em> control flow.</p>
+<p>Otherwise, use parentheses for ordinary grouping, function arguments, tuples, and operator precedence–everything that is <em>not</em> control flow. And remember to align them!</p>
 
 <p><strong>Use blank lines to separate ideas.</strong> Put blank lines between top-level definitions unless they are very closely related and are short. Avoid large unbroken blocks of definitions.</p>
 
@@ -257,8 +259,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <p><strong>Use record punning.</strong> When a field name and the variable it binds/matches/creates share the same name, use punning instead of writing it twice.</p>
-
-<p><code>{ x = x ; y = y }</code> becomes <code>{ x ; y }</code>; <code>match p with { x = x ; y = y } -&gt; ...</code> becomes <code>match p with { x ; y } -&gt; ...</code>; and <code>{ p with x = x }</code> becomes <code>{ p with x }</code>.</p>
+<ul>
+  <li><code>{ x = x ; y = y }</code> becomes <code>{ x ; y }</code></li>
+  <li><code>match p with { x = x ; y = y } -&gt; ...</code> becomes <code>match p with { x ; y } -&gt; ...</code></li>
+  <li><code>{ p with x = x }</code> becomes <code>{ p with x }</code></li>
+</ul>
 
 <h2 id="small-details">Small details</h2>
 
@@ -268,7 +273,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p><strong>Avoid many arguments.</strong> Functions with many positional arguments of the same type are easy to call incorrectly, and they can be hard to read. Prefer fewer arguments, and use labels when a function needs several. Lots of arguments can also be a sign that conceptually related data is floating around loosely and should be put into a record or other data structure and then passed as one argument.</p>
 
-<p><strong>Use <code>@@</code> occasionally.</strong> Use <code>@@</code> to avoid a pile of closing parentheses, especially for a final function argument.</p>
+<p><strong>Try using <code>@@</code>.</strong> The infix <code>@@</code> can help you avoid a pile of closing parentheses, especially for a final function argument.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print_string</span> <span class="p">(</span><span class="nn">String</span><span class="p">.</span><span class="n">concat</span> <span class="s2">", "</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">string_of_int</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">append</span> <span class="n">xs</span> <span class="n">ys</span><span class="p">)))</span>
 <span class="c">(* has more parentheses and requires more visual parsing than *)</span>

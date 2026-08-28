@@ -755,7 +755,6 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
 </ul>
 
 <h3 id="bisect-for-ocaml-code-coverage">Bisect for OCaml code coverage</h3>
-<p>TODO: not in 5.5.1 now</p>
 
 <ul>
   <li>The <code>bisect_ppx</code> preprocessor can decorate your code with one hit-bit per line
@@ -763,28 +762,54 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
       <li>it can then show which lines are “hit” upon running your test suite</li>
     </ul>
   </li>
-  <li>Add <code>(preprocess (pps bisect_ppx))</code> to library or executable declaration in <code>dune</code> to decorate
+  <li>It is a pre-process extension (ppx), meant to work as backend instrumentation, not for macro programming like most other ppx.
     <ul>
-      <li><em>don’t</em> add to your <code>(test ... )</code> dune declaration, you want to count lines hit in your code not in your test code!</li>
+      <li>e.g. <code>ppx_deriving</code> produces code you actually use. <code>bisect_ppx</code> just affects what happens when your program runs (it counts the lines hit).</li>
     </ul>
   </li>
-  <li>Then do a <code>dune test</code> which will generate the low-level hit-lines data in a file.
+  <li>Add it as instrumentation with the <code>(instrumentation (backend bisect_ppx_ng))</code> line to the library or executable declaration in <code>dune</code>.
     <ul>
-      <li>or <code>dune exe</code> and run your app if you want to see coverage there</li>
+      <li>Do <em>not</em> add it to your <code>(test ...)</code> declaration because that would count which lines are hit in your testing code, not your actual code!</li>
+      <li>Then, because <code>Bisect</code> outputs files with the coverage report, you have to tell <code>dune</code> and <code>Bisect</code> where to put those. E.g.
+        <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">rule</span>
+<span class="p">(</span><span class="nf">target</span> <span class="p">(</span><span class="nf">dir</span> <span class="s">"_bisect"</span><span class="p">))</span> <span class="c1">; tell dune about the output directory with the bisect files</span>
+<span class="p">(</span><span class="nf">alias</span> <span class="nv">runtest</span><span class="p">)</span> <span class="c1">; how to run this: `dune test --instrument-with bisect_ppx_ng`</span>
+<span class="p">(</span><span class="nf">action</span>
+  <span class="p">(</span><span class="nf">setenv</span> <span class="nv">BISECT_FILE</span> <span class="s">"_bisect/bisect"</span> <span class="c1">; now tell bisect where to put the files</span>
+    <span class="p">(</span><span class="nf">progn</span>
+    <span class="p">(</span><span class="nf">run</span> <span class="nv">mkdir</span> <span class="nv">-p</span> <span class="nv">_bisect</span><span class="p">)</span> <span class="c1">; create the output directory so that bisect can put them there</span>
+    <span class="p">(</span><span class="nf">run</span> <span class="nv">touch</span> <span class="nv">_bisect/dummy</span><span class="p">)</span> <span class="c1">; put a file there so dune does not complain if you test without running coverage</span>
+    <span class="p">(</span><span class="nf">run</span> <span class="nv">%</span><span class="err">{</span><span class="nv">exe:tests</span><span class="o">.</span><span class="nv">exe</span><span class="err">}</span><span class="p">)</span> <span class="c1">; run the tests executable, which does all the work</span>
+<span class="p">))))</span>
+</code></pre></div>        </div>
+      </li>
+      <li>This requires that your tests are actually declared as an executable, not with dune’s <code>(test ...)</code> stanza. Declare your tests like this:
+        <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span> <span class="c1">; executable! Not test!</span>
+<span class="p">(</span><span class="nf">name</span> <span class="nv">tests</span><span class="p">)</span> <span class="c1">; provided you have a file called `tests.ml` defining your tests</span>
+<span class="p">(</span><span class="nf">modules</span> <span class="nv">tests</span><span class="p">)</span>
+<span class="p">(</span><span class="nf">libraries</span> <span class="nv">lib</span><span class="p">)</span> <span class="c1">; where lib is the library you are testing</span>
+<span class="p">)</span>
+</code></pre></div>        </div>
+      </li>
     </ul>
   </li>
-  <li>Shell command <code>bisect-ppx-report html</code> generates a pretty report showing which lines hit in latest execution
-    <ul>
-      <li>open <code>_coverage/index.html</code> in your browser to see the report</li>
-      <li>if this command is not working make sure you did the <code>opam install bisect-ppx</code> in the course required installs</li>
-    </ul>
+  <li>Now test your code while telling dune to instrument:
+    <pre><code>dune test --instrument-with bisect_ppx_ng
+</code></pre>
   </li>
-  <li>Alternatively, <code>bisect-ppx-report summary</code> prints you a very small report, in case you do not need details.</li>
-  <li>See <a href="https://github.com/aantron/bisect_ppx">Bisect docs</a> for more details</li>
-  <li>Note that if you have single lines of code that you know should not be run (e.g. invariants that should not fail) you can put <code>[@coverage off]</code> at the end of those lines.  To turn coverage off on a single <code>let</code> definition, put <code>[@@coverage off]</code> immediately after the end of definition. To turn coverage off on an arbitrary range of lines in the file, put <code>[@@@coverage off]</code> to turn it off and then <code>[@@@coverage on]</code> to turn it back on.  See <a href="https://github.com/aantron/bisect_ppx?tab=readme-ov-file#controlling-coverage-with-coverage-off">the docs</a> for details.</li>
+  <li>Then print the coverage summary:
+    <pre><code>bisect-ppx-report summary
+</code></pre>
+    <p>or</p>
+    <pre><code>bisect-ppx-report html
+</code></pre>
+    <p>for a pretty report, found in <code>_coverage/index.html</code>, which you should open with your browser.</p>
+  </li>
+  <li>See <a href="https://github.com/Kakadu/bisect_ppx_ng">Bisect docs</a> for more details</li>
+  <li>Note that if you have single lines of code that you know should not be run (e.g. invariants that should not fail) you can put <code>[@coverage off]</code> at the end of those lines.  To turn coverage off on a single <code>let</code> definition, put <code>[@@coverage off]</code> immediately after the end of definition. To turn coverage off on an arbitrary range of lines in the file, put <code>[@@@coverage off]</code> to turn it off and then <code>[@@@coverage on]</code> to turn it back on.  See <a href="https://github.com/Kakadu/bisect_ppx_ng#Exclusion">the docs</a> for details.</li>
 </ul>
 
-<p>We will check how well my tests of the <a href="../examples/set-example.zip">simple set example</a> covered the code using Bisect.  The only addition to code is the <code>(preprocess (pps bisect_ppx))</code> added to <code>src/dune</code> for the library.</p>
+<p>We will check how well my tests of the <a href="../examples/set-example.zip">simple set example</a> covered the code using Bisect.</p>
 
 <p><a name="quickcheck"></a></p>
 

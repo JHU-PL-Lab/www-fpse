@@ -125,53 +125,150 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h2 id="general-guidelines">General guidelines</h2>
 
-<p><strong>Functional first.</strong> Functional code makes effects and data flow explicit. Meaningful outcomes are expressed in the return type. Imperative code, on the other hand, has side effects and state that you must know about and keep in mind; the returned value, if any, is not the only outcome of calling the function. Keep the scope small and prefer functional solutions. But remember: this is “functional first”, not “functional only”. Use imperative style where it is the least cumbersome.</p>
+<h3 id="functional-first">Functional first</h3>
+<ul>
+  <li>Functional code makes effects and data flow explicit because <strong>meaningful outcomes are expressed in the return type</strong> (referential transparency). Imperative code, on the other hand, has side effects and state that you must know about and keep in mind; the returned value, if any, is not the only outcome of calling the function.</li>
+  <li>Keep the scope small and prefer functional solutions, but remember: this is “functional first”, not “functional only”. Use imperative style where it is the least cumbersome.</li>
+</ul>
 
-<p><strong>Encapsulate with modules.</strong> Your code should be grouped into meaningful, coherent modules. Modules should have a single purpose, and that purpose is often to contain a single type and several functions that work mainly on that type. Writing code in this way separates responsibilities and creates appropriate abstraction boundaries. Then, <strong>document with interface files</strong>. Interfaces are a great place to comment and to think critically about the purpose of your module.</p>
+<h3 id="encapsulate-with-modules">Encapsulate with modules</h3>
+<ul>
+  <li>Your code should be grouped into meaningful, coherent modules. Those <strong>modules should have a single purpose</strong>, and that purpose is often to contain a single type and several functions that work mainly on that type.</li>
+  <li>Writing code in this way separates responsibilities and creates appropriate abstraction boundaries.</li>
+  <li>Then, <strong>document with interface files</strong>. Interfaces are a great place to comment and to think critically about the purpose of your module.</li>
+</ul>
 
-<p><strong>Hide representations.</strong> Modules should expose operations, not representations. Hide implementation details behind interfaces whenever practical so that users depend on the semantics of the module rather than its implementation. This prevents misuse and enhances maintainability. However, hiding is not always the best choice. For example, if you are writing getters and setters for every field of a record type, you should instead just expose the type.</p>
+<h3 id="hide-representations">Hide representations</h3>
+<ul>
+  <li>Modules should expose operations but not representations. Hide implementation details behind interfaces whenever practical so that users depend on the semantics of the module, not its implementation. This prevents misuse and enhances maintainability.</li>
+  <li>However, hiding is not always the best choice. For example, if you are writing getters and setters for every field of a record type, you should instead just expose that type.</li>
+</ul>
 
-<p><strong>Know your standard library.</strong> It is not too big (and that is a good thing), so you should know what it provides. It will solve many simple problems for you. Never reimplement anything that is in the standard library, and always reach for the standard library when it expresses your intent. If you find that your code is a library function, then use the library function. If you find that your code is essentially a composition of two library functions, then use those two libraries functions. That said…</p>
+<h3 id="know-your-standard-library">Know your standard library</h3>
+<ul>
+  <li>It is not too big (and that is a good thing), so you should know <a href="https://ocaml.org/manual/5.5/stdlib.html">what it provides</a>. It will solve many simple problems for you.</li>
+  <li>Never reimplement anything that is in the standard library, and always reach for the standard library when it expresses your intent.</li>
+  <li>If you find that your code is just a library function, then use the library function. If you find that your code is essentially a composition of two library functions, then use those two libraries functions. That said…</li>
+</ul>
 
-<p><strong>Think structurally.</strong> Using too many combinators clouds the structure of the problem and leads to indirect solutions. You should not be asking yourself how you can assemble a solution from existing library functions but instead how you can best solve the problem with OCaml. If you think primarily in terms of library functions, then you are missing out on the power that the language itself provides. Moreover, combinator-heavy code is likely to have many nested function calls without explanatory variable names.</p>
+<h3 id="think-structurally">Think structurally</h3>
+<ul>
+  <li>Using too many combinators clouds the structure of the problem and leads to indirect solutions. <strong>You should not be asking yourself how you can assemble a solution from existing library functions but instead how you can best solve the problem with OCaml.</strong></li>
+  <li>
+    <p>If you think primarily in terms of library functions, then you are missing out on the power that the language itself provides. Moreover, combinator-heavy code is likely to have many nested function calls without explanatory variable names.</p>
 
-<blockquote>
-  <p>For example, something like <code>List.map (Fun.flip List.cons ls) xs</code> is over-using combinators. Just write <code>List.map (fun x -&gt; x :: ls) xs</code>.</p>
-</blockquote>
+    <blockquote>
+      <p>For example, something like <code>List.map (Fun.flip List.cons ls) xs</code> is over-using combinators. Just write <code>List.map (fun x -&gt; x :: ls) xs</code>.</p>
+    </blockquote>
+  </li>
+  <li>See <a href="https://ocaml.org/docs/guidelines#iterators">iterators</a> in the official OCaml Guidelines for an extra terrible example.</li>
+</ul>
 
-<p><strong>Don’t be too clever.</strong> The most elegant solution is not always the best one. Readability is about more than just concision. Write the shorter code if doing so does not drastically increase complexity. Point-free programming (especially excessive function composition and partial application) is often clever but unreadable. Be explicit and simple without being overly verbose.</p>
+<h3 id="dont-be-too-clever">Don’t be too clever</h3>
+<ul>
+  <li>The most elegant solution is not always the best one. <strong>Readability is about more than just concision.</strong></li>
+  <li>Write the shorter code if doing so does not drastically increase complexity.</li>
+  <li>Point-free programming (especially excessive function composition and partial application) is often clever but unreadable. Be explicit and simple without being overly verbose.</li>
+</ul>
 
-<p><strong>Use the weakest feature.</strong> Prefer the simplest feature that expresses your intent. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist. Every additional capability imposes a cost on the reader because they must be prepared for you to use it; introduce mechanisms only when they buy you something. Search for the simplest type or feature that solves your problem.</p>
+<h3 id="use-the-weakest-feature">Use the weakest feature</h3>
+<ul>
+  <li><strong>Use the simplest feature that expresses your intent</strong>. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist.</li>
+  <li>Every additional capability in the feature you use imposes a cost on the reader because they must be prepared for you to use it!</li>
+  <li>
+    <p>Search for the simplest type or feature that solves your problem, and then introduce mechanisms only when they buy you something.</p>
 
-<blockquote>
-  <p>For example, do not use a list where a tuple works, or a first class module when you only need a higher order function, or objects when records and variants suffice.</p>
-</blockquote>
+    <blockquote>
+      <p>For example, do not use a list where a tuple suffices, or a first class module when you only need a higher order function, or object polymorphism when records and variants get the job done clearly.</p>
+    </blockquote>
+  </li>
+</ul>
 
-<p><strong>Use the appropriate data structure.</strong> Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are. Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution. When an advanced data structure is required, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.</p>
+<h3 id="use-the-appropriate-data-structure">Use the appropriate data structure</h3>
+<ul>
+  <li>Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are.</li>
+  <li>Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution.</li>
+  <li>When an advanced data structure is required, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.</li>
+</ul>
 
-<p><strong>Libraries, not frameworks.</strong> Frameworks are opinionated and invite conflicts. They are large dependencies that massively influence the structure of your program. Good luck using more than one of them at a time. Adopt frameworks sparingly, and only when they are fundamental to your project. A good library, on the other hand, is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you. In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. Dependencies can be heavy, and they should be worth their weight.</p>
+<h3 id="frameworks-no-libraries-yes">Frameworks: No, Libraries: Yes.</h3>
+<ul>
+  <li>Frameworks are opinionated and invite conflicts. They are large dependencies that massively influence the structure of your program. Good luck using more than one of them at a time. Adopt frameworks sparingly, and only when they are fundamental to your project.</li>
+  <li>A good library, on the other hand, is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you.</li>
+  <li>
+    <p>In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. <strong>Dependencies can be heavy, and they should be worth their weight.</strong></p>
 
-<blockquote>
-  <p>An example framework is <code>Lwt</code> for concurrency. It will take over your code with monads, and you cannot nest its use, so you cannot depend on other libraries that use it themselves.</p>
-</blockquote>
+    <blockquote>
+      <p>An example framework is <code>Lwt</code> for concurrency. It will take over your code with monads, and you cannot always nest its use, so you may struggle to work with other libraries that use it themselves.</p>
+    </blockquote>
 
-<blockquote>
-  <p>Some example libaries are the timing library <code>Mtime</code> or the data structure <code>Psq</code>. These define a few types and functions that are tightly contained and are unopinionated.</p>
-</blockquote>
+    <blockquote>
+      <p>Some example libraries are the monotonic timing library <a href="https://erratique.ch/software/mtime"><code>Mtime</code></a>, and the priority search queue data structure <a href="https://github.com/pqwy/psq"><code>Psq</code></a>. These define a few types and functions that are tightly contained and are unopinionated.</p>
+    </blockquote>
+  </li>
+  <li><a href="https://watch.ocaml.org/w/arLEkYE7NC4fdCcWz2LBLt">Source</a> (Malcolm Matalka at FUN Ocaml 2025)</li>
+</ul>
 
-<p><strong>Abstract appropriately.</strong> Use abstraction to avoid duplication and to avoid hardcoding. Abstraction should enhance readability by allowing the reader to focus on the fundamental problem the code at hand is solving. It should not hinder readability by being too implicit or clever, so choose the smallest abstraction that captures the common idea. A piece of code lacks abstraction when the same idea is repeated in several places or when the main idea is buried under irrelevant detail.</p>
+<h3 id="abstract-appropriately">Abstract appropriately</h3>
+<ul>
+  <li>Use abstraction to avoid duplication and to avoid hardcoding.</li>
+  <li>Abstraction should enhance readability by allowing the reader to focus on the fundamental problem the code at hand is solving.</li>
+  <li><strong>A piece of code lacks abstraction when the main idea is buried under irrelevant detail</strong> or just when the same idea is repeated in several places.</li>
+  <li>It should not hinder readability by being too implicit or clever, so choose the smallest abstraction that captures the common idea (See “Use the weakest feature”).</li>
+</ul>
 
-<p><strong>Parse, don’t validate.</strong> Use new types to parse your data into always-valid forms where illegal states are unrepresentable. Avoid implicit invariants or frequent re-validation. Effective use of types can often uphold those invariants by themselves and will aid in readability.</p>
+<h3 id="parse-dont-validate">Parse, don’t validate</h3>
+<ul>
+  <li>Use new types to <strong>parse your data into always-valid forms</strong> where illegal states are unrepresentable.</li>
+  <li>
+    <p>Avoid implicit invariants or frequent re-validation. Effective use of types can often uphold those invariants by themselves and will aid in readability.</p>
 
-<blockquote>
-  <p>For example, parse a string into an abstract <code>email</code> type exactly once instead of checking at every use that it is a valid email string.</p>
-</blockquote>
+    <blockquote>
+      <p>For example, parse a string into an abstract <code>email</code> type exactly once instead of checking at every use that it is a valid email string.</p>
+    </blockquote>
+  </li>
+  <li><a href="https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/">Source</a> (Alexis King, Nov 5 2019)</li>
+</ul>
+
+<h3 id="put-big-ideas-first">Put big ideas first</h3>
+<ul>
+  <li>Use expression structure to emphasize the main idea. <strong>The semantic center of an expression should draw the reader’s eyes.</strong></li>
+  <li>Use pipelines with <code>|&gt;</code> when the sequence of transformations is itself the important idea.</li>
+  <li>Pipelines are a poor fit for code with branching, shared intermediates, or one dominant operation. If the reader has to ride the pipeline until the last stop in order to discover the destination, then the expression is probably backwards.</li>
+  <li>A <code>let</code>-binding can separate data preparation from the important operation; <code>@@</code> can help put that operation front and center. Small pipelines are often still useful for preparing arguments.</li>
+</ul>
 
 <h2 id="specific-suggestions">Specific suggestions</h2>
 
+<p><strong>DRY</strong>. Don’t Repeat Yourself. An oldie but goodie. Repeat yourself maybe once, but only if you did not have to copy/paste code to do so. Higher order functions (functions as arguments to other functions) make it especially easy to avoid repeating yourself.</p>
+
 <p><strong>Pattern match and destructure.</strong> Pattern matching and <code>let</code>-destructuring (e.g. <code>let a, b = ... in ...</code>) are some of OCaml’s clearest tools, and they express intent very explicitly. Use them liberally.</p>
 
-<p><strong>Avoid programming with indices.</strong> An index in a list is most often not the right idea. Using indices invites off-by-one errors that are not possible in a structural approach to the problem. Lean into pattern matching and forming your solution with structure rather than numbers because structure can be better visualized and verified.</p>
+<p><strong>Do not write long anonymous functions.</strong> Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous. This frequently applies to function arguments to mapping and folding; if the argument is long and inlined, the behavior is mysterious.</p>
+
+<p><strong>Monomorphic, not polymorphic, comparison.</strong> Performance aside, monomorphic comparison (e.g. <code>String.equal</code>) is defined specifically for the type at hand, while polymorphic comparison may not behave as intended. Polymorphic comparison is too structure-sensitive (e.g. on sets), may fail at runtime (e.g. on functions), and may be unsound in the presence of existential types (e.g. in GADTs). Further, type-specific comparison documents the type you actually intend to compare.</p>
+
+<p><strong>Options over exceptions.</strong> Exceptions for recoverable failures require the programmer to <em>remember</em> to catch them. Options <em>force</em> the programmer to handle them. Don’t leave anything up to chance, and favor options in your interfaces. Results allow you to express reasons for failure and can be a good alternative to options.</p>
+
+<blockquote>
+  <p>For example, to normalize a vector to a unit vector, you may prefer <code>val normalize_opt : vector -&gt; vector option</code> instead of <code>val normalize : vector -&gt; vector</code> because normalization is not total: it is not defined on the zero vector, so the second can fail.</p>
+</blockquote>
+
+<p><strong>New types, not abbreviations.</strong> New types force structure and separation, while abbreviations may accidentally cross data because they do not create distinct types. New types also document themselves in interfaces.</p>
+
+<blockquote>
+  <p>For example, for a 2D integer point, prefer <code>type t = { x : int ; y : int }</code>, a new record type, instead of <code>type t = int * int</code>.</p>
+</blockquote>
+
+<p><strong>Prefer records over tuples.</strong> Tuples are useful for transiently packing data together, but they should not be used for meaningful, long-lived groupings of data. When defining types, choose to make a new record instead of abbreviating a tuple type, like the 2D point above.</p>
+
+<p><strong>Label function arguments of the same type.</strong> If any two arguments have the same type, you invite the caller to confuse them, or you require them to read a documenting comment. Instead, use labeled arguments to distinguish them, or, even better, use new types so that it is impossible to mess up.</p>
+
+<blockquote>
+  <p>For example, the standard library function <code>String.split_first : sep:string -&gt; string -&gt; (string * string) option</code> uses labels to distinguish its arguments, yet <code>String.concat : string -&gt; string list -&gt; string</code> does not because the types are different.</p>
+</blockquote>
+
+<p><strong>Avoid programming with indices.</strong> An index in a list is most often <em>not</em> the right idea. Using indices invites off-by-one errors that are not possible in a structural approach to the problem. Lean into pattern matching and forming your solution with structure rather than numbers because structure can be better visualized and verified.</p>
 
 <blockquote>
   <p>For example, to get the element in a list before the first one satisfying <code>p</code>, this:</p>
@@ -187,32 +284,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">in</span>
 <span class="n">find</span> <span class="n">xs</span>
 </code></pre></div>  </div>
-  <p>especially because the first raises an exception in the singleton list case satisfying <code>p</code>.</p>
+  <p>to a seasoned functional programmer, especially because the first raises an exception in the singleton list case satisfying <code>p</code>!</p>
 </blockquote>
-
-<p><strong>New types, not aliases.</strong> New types force structure and separation, while aliases may accidentally cross data because they do not create distinct types. New types also document themselves in interfaces.</p>
-
-<blockquote>
-  <p>For example, for a 2D integer point, prefer <code>type t = { x : int ; y : int }</code>, a new record type, instead of <code>type t = int * int</code>.</p>
-</blockquote>
-
-<p><strong>Options over exceptions.</strong> Exceptions for recoverable failures require the programmer to <em>remember</em> to catch them. Options <em>force</em> the programmer to handle them. Don’t leave anything up to chance, and favor options in your interfaces. Results allow you to express reasons for failure and are a good alternative to options.</p>
-
-<blockquote>
-  <p>For example, to normalize a vector to a unit vector, you may prefer <code>val normalize_opt : vector -&gt; vector option</code> instead of <code>val normalize : vector -&gt; vector</code> because normalization is not total: it is not defined on the zero vector, so the second can fail.</p>
-</blockquote>
-
-<p><strong>Prefer records over tuples.</strong> Tuples are useful for transiently packing data together, but they should not be used for meaningful, long-lived groupings of data. When defining types, choose to make a new record instead of aliasing a tuple type.</p>
-
-<p><strong>Label function arguments of the same type.</strong> If any two arguments have the same type, you invite the caller to confuse them, or you require them to read a documenting comment. Instead, use labeled arguments to distinguish them, or, even better, use new types so that it is impossible to mess up.</p>
-
-<blockquote>
-  <p>For example, the standard library function <code>String.split_first : sep:string -&gt; string -&gt; (string * string) option</code> uses labels to distinguish its arguments, yet <code>String.concat : string -&gt; string list -&gt; string</code> does not because the types are different.</p>
-</blockquote>
-
-<p><strong>Monomorphic, not polymorphic, comparison.</strong> Performance aside, monomorphic comparison (e.g. <code>String.equal</code>) is defined specifically for the type at hand, while polymorphic comparison may not behave as intended. Polymorphic comparison is too structure-sensitive (e.g. on sets), may fail at runtime (e.g. on functions), and may be unsound in the presence of existential types (e.g. in GADTs). Further, type-specific comparison documents the type you intend to compare.</p>
-
-<p><strong>Do not write long anonymous functions.</strong> Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous. This frequently applies to function arguments to mapping and folding; if the argument is long and inlined, the behavior is mysterious.</p>
 
 <p><strong>Align delimiters.</strong> Matching delimiters (e.g. <code>begin</code> and <code>end</code>, or <code>let</code> and <code>in</code>) should appear on the same line or be aligned in the same column. This helps the reader find the end of an expression by scanning in only one direction (either to the right or down).</p>
 
@@ -227,9 +300,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="o">...</span>
 </code></pre></div></div>
 
-<h2 id="design-patterns">Design patterns</h2>
+<h2 id="common-patterns">Common patterns</h2>
 
-<p><strong>Name your types <code>t</code>.</strong> Most types should be named <code>t</code>. This naturally encourages each type to live in its own module, where the module name describes that type <code>t</code>. This keeps modules focused and small, and it separates responsibilities by type. For example, <code>List.t</code> is the type of lists, and the <code>List</code> module is limited to only operations on lists.</p>
+<p><strong>Name your types <code>t</code>.</strong> Most types should be named <code>t</code>. This naturally encourages each type to live in its own module, where the module name describes that type <code>t</code>. This keeps modules focused and small, and it separates responsibilities by type. For example, <code>List.t</code> is the type of lists, and the <code>List</code> module is limited to only operations on lists. It also helps composability with functors.</p>
 
 <p><strong><code>module T</code>/<code>include T</code></strong>. When defining a type that will be passed to a functor, it is common practice to wrap the type and its operations in a module called <code>T</code>. Suppose you intend to implement this interface:</p>
 
@@ -250,9 +323,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">module</span> <span class="nc">Set</span> <span class="o">=</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="nc">T</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><strong><code>module type S</code></strong>. When a module type is implemented by a functor, it is typical to call that module type <code>S</code>. While not descriptive by itself, the enclosing module provides the context. For example, <code>Set.S</code> is the module type of sets, and <code>Set.Make</code> is a functor that produces modules with type <code>Set.S</code>. Like naming your types <code>t</code>, this keeps modules focused–the <code>Set</code> module contains little more than <code>S</code> and <code>Make</code>.</p>
+<p><strong><code>module type S</code></strong>. When a module type is implemented by a functor, it is typical to call that module type <code>S</code>. While not descriptive by itself, the enclosing module provides the context, just like types named <code>t</code>. For example, <code>Set.S</code> is the module type of sets, and <code>Set.Make</code> is a functor that produces modules with type <code>Set.S</code>. This helps to keep modules focused–the <code>Set</code> module in the standard library contains little more than <code>S</code> and <code>Make</code>.</p>
 
-<p><strong>Contain syntax in submodules</strong>. Sugar does have its place in your code, and that place is in submodules. If you define custom operators or <code>let</code>-syntax, then put them in submodules such as <code>Infix</code> and <code>Syntax</code> respectively, rather than in the top level. This keeps the default interface uncluttered and requires users to explicitly opt into the additional syntax. For example, with a monad,</p>
+<p><strong>Contain syntax in submodules</strong>. Sugar does indeed have its place in your code, and that place is in submodules. If you define custom operators or <code>let</code>-syntax, then put them in submodules such as <code>Infix</code> and <code>Syntax</code> respectively, rather than in the top level. This keeps the default interface uncluttered and requires users to explicitly opt into the additional syntax. The <a href="https://ocaml.org/manual/5.5/api/Option.Syntax.html">Option</a> module in the standard library does this. For example, with a monad,</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* monad.ml *)</span>
 <span class="k">module</span> <span class="k">type</span> <span class="nc">S</span> <span class="o">=</span> <span class="k">sig</span>
@@ -270,7 +343,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p>The user must make it clear they are using sugar for a monad <code>M</code> by writing <code>open M.Syntax</code> or <code>let open M.Syntax in ...</code>. This tells the reader both what the sugar means and where it comes from.</p>
+<p>The user must make it clear they are using sugar for a monad <code>M : Monad.S</code> by writing <code>open M.Syntax</code> or <code>let open M.Syntax in ...</code>. This tells the reader both what the sugar means and where it comes from.</p>
       
           </section>
         </div>

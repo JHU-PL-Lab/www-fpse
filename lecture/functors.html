@@ -341,34 +341,27 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h3 id="using-functors-with-our-own-custom-type">Using functors with our own custom type</h3>
 
-<!-- Brandon: we have not covered ppx yet, so this example is not so good anymore. We should probably do the pair example from below instead. -->
+<p>Here is how we could apply the <code>Make_set</code> functor with some new data type for elements.</p>
 
-<p>Here is how we could apply the <code>Make_set</code> functor with our own data type. We’ll do it on nucleotides in the top loop.</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">module</span> <span class="nc">AB</span> <span class="o">=</span> <span class="k">struct</span>
+  <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">B</span>
+  <span class="k">let</span> <span class="n">equal</span> <span class="n">x</span> <span class="n">y</span> <span class="o">=</span>
+    <span class="k">match</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span> <span class="k">with</span>
+    <span class="o">|</span> <span class="nc">A</span><span class="o">,</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">B</span><span class="o">,</span> <span class="nc">B</span> <span class="o">-&gt;</span> <span class="bp">true</span>
+    <span class="o">|</span> <span class="nc">A</span><span class="o">,</span> <span class="nc">B</span> <span class="o">|</span> <span class="nc">B</span><span class="o">,</span> <span class="nc">A</span> <span class="o">-&gt;</span> <span class="bp">false</span>
+<span class="k">end</span><span class="p">;;</span>
+<span class="k">module</span> <span class="nc">AB</span> <span class="o">:</span> <span class="k">sig</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">B</span> <span class="k">val</span> <span class="n">equal</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="k">end</span>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_deriving.eq"</span><span class="p">;;</span>
-
-<span class="o">#</span> <span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">=</span> <span class="k">struct</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="p">[</span><span class="o">@@</span><span class="n">deriving</span> <span class="n">eq</span><span class="p">]</span> <span class="k">end</span><span class="p">;;</span>
-<span class="k">module</span> <span class="nc">Nucleotide</span> <span class="o">:</span> <span class="k">sig</span> <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="o">|</span> <span class="nc">C</span> <span class="o">|</span> <span class="nc">G</span> <span class="o">|</span> <span class="nc">T</span> <span class="k">val</span> <span class="n">equal</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="k">end</span>
-
-<span class="o">#</span> <span class="k">module</span> <span class="nc">Nuc_set</span> <span class="o">=</span> <span class="nc">Make_set</span> <span class="p">(</span><span class="nc">Nucleotide</span><span class="p">);;</span>
-<span class="k">module</span> <span class="nc">Nuc_set</span> <span class="o">:</span>
+<span class="o">#</span> <span class="k">module</span> <span class="nc">AB_set</span> <span class="o">=</span> <span class="nc">Make_set</span> <span class="p">(</span><span class="nc">AB</span><span class="p">);;</span>
+<span class="k">module</span> <span class="nc">AB_set</span> <span class="o">:</span>
   <span class="k">sig</span>
-    <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
+    <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nn">AB</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
     <span class="k">val</span> <span class="n">empty</span> <span class="o">:</span> <span class="n">t</span>
-    <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
-    <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="kt">list</span>
-    <span class="k">val</span> <span class="n">contains</span> <span class="o">:</span> <span class="nn">Nucleotide</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+    <span class="k">val</span> <span class="n">add</span> <span class="o">:</span> <span class="nn">AB</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+    <span class="k">val</span> <span class="n">remove</span> <span class="o">:</span> <span class="nn">AB</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>
+    <span class="k">val</span> <span class="n">contains</span> <span class="o">:</span> <span class="nn">AB</span><span class="p">.</span><span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
   <span class="k">end</span>
 </code></pre></div></div>
-
-<ul>
-  <li>Note this requires us to make a module out of our type.</li>
-  <li>also note that we used <code>[@@deriving eq]</code> to make the <code>equal</code> for free
-    <ul>
-      <li>and note it is given the name <code>Nucleotide.equal</code> and not <code>Nucleotide.equal_nucleotide</code>, since it is in a module and is the type <code>t</code> there</li>
-    </ul>
-  </li>
-</ul>
 
 <h3 id="types-of-functors">Types of functors</h3>
 
