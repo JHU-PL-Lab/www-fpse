@@ -4,6 +4,8 @@ Here are the FPSE guidelines for writing well-formatted, good-looking OCaml code
 
 It matters that your code is easy to read, and this means following conventions. These are not all hard rules: code style involves judgment. But consistency is important, and you should have a good reason to depart from the conventions below.
 
+Remember that on assignments, you may never use any mutation.
+
 ## Naming and documentation
 
 **Casing conventions.**

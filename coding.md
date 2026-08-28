@@ -150,6 +150,11 @@ The above tools will be our "bread and butter", and we will be using them on man
 * [`sexplib`](https://github.com/janestreet/sexplib) is a library for s-expression conversions, which we will use to serialize and deserialize data.
 * [`cmdliner`](https://erratique.ch/software/cmdliner) is a useful tool for reading command line arguments from your OCaml programs.
 
+### Coding Style
+
+* The [FPSE Style Guide](/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 3 and onward.
+* Mutation of any form is strictly disallowed on all assignments. This is a hard rule.
+
 ### Development Environments for OCaml
 
 We recommend VSCode since it has OCaml-specific features such as syntax highlighting, auto-indent, and lint analysis to make the coding process much smoother.
@@ -174,10 +179,6 @@ VSCode has very good OCaml support and is the "officially recommended editor".
 * [Cornell cs3110 book](https://cs3110.github.io/textbook/cover.html) is the online text for a somewhat-related course at Cornell.  They have recently added many videos if you like watching videos to learn.
 * [OCaml from the very beginning](https://johnwhitington.net/ocamlfromtheverybeginning/) is a free online book.
 * [Learn Programming with OCaml](https://usr.lmf.cnrs.fr/lpo/) has an introduction to OCaml and several neat algorithms and data structures, but it does not emphasize learning _functional_ programming with OCaml. It is nevertheless an excellent resource.
-
-### Coding Style
-
-* The [FPSE Style Guide](/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 3 and onward.
 
 ### Example Worked Exercises
 One of the best ways to learn to write elegant OCaml is to study well-written OCaml code.
