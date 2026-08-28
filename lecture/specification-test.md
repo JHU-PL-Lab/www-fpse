@@ -491,22 +491,51 @@ OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
   ```
 
 ### Bisect for OCaml code coverage
-TODO: not in 5.5.1 now
 
 * The `bisect_ppx` preprocessor can decorate your code with one hit-bit per line
   - it can then show which lines are "hit" upon running your test suite
-* Add `(preprocess (pps bisect_ppx))` to library or executable declaration in `dune` to decorate
-  - *don't* add to your `(test ... )` dune declaration, you want to count lines hit in your code not in your test code!
-* Then do a `dune test` which will generate the low-level hit-lines data in a file.
-  - or `dune exe` and run your app if you want to see coverage there
-* Shell command `bisect-ppx-report html` generates a pretty report showing which lines hit in latest execution
-  - open `_coverage/index.html` in your browser to see the report
-  - if this command is not working make sure you did the `opam install bisect-ppx` in the course required installs
-* Alternatively, `bisect-ppx-report summary` prints you a very small report, in case you do not need details.
-* See [Bisect docs](https://github.com/aantron/bisect_ppx) for more details
-* Note that if you have single lines of code that you know should not be run (e.g. invariants that should not fail) you can put `[@coverage off]` at the end of those lines.  To turn coverage off on a single `let` definition, put `[@@coverage off]` immediately after the end of definition. To turn coverage off on an arbitrary range of lines in the file, put `[@@@coverage off]` to turn it off and then `[@@@coverage on]` to turn it back on.  See [the docs](https://github.com/aantron/bisect_ppx?tab=readme-ov-file#controlling-coverage-with-coverage-off) for details.
+* It is a pre-process extension (ppx), meant to work as backend instrumentation, not for macro programming like most other ppx.
+  - e.g. `ppx_deriving` produces code you actually use. `bisect_ppx` just affects what happens when your program runs (it counts the lines hit).
+* Add it as instrumentation with the `(instrumentation (backend bisect_ppx_ng))` line to the library or executable declaration in `dune`.
+  * Do _not_ add it to your `(test ...)` declaration because that would count which lines are hit in your testing code, not your actual code!
+  * Then, because `Bisect` outputs files with the coverage report, you have to tell `dune` and `Bisect` where to put those. E.g.
+  ```scheme
+  (rule
+    (target (dir "_bisect")) ; tell dune about the output directory with the bisect files
+    (alias runtest) ; how to run this: `dune test --instrument-with bisect_ppx_ng`
+    (action
+      (setenv BISECT_FILE "_bisect/bisect" ; now tell bisect where to put the files
+        (progn
+        (run mkdir -p _bisect) ; create the output directory so that bisect can put them there
+        (run touch _bisect/dummy) ; put a file there so dune does not complain if you test without running coverage
+        (run %{exe:tests.exe}) ; run the tests executable, which does all the work
+  ))))
+  ```
+  * This requires that your tests are actually declared as an executable, not with dune's `(test ...)` stanza. Declare your tests like this:
+  ```scheme
+  (executable ; executable! Not test!
+    (name tests) ; provided you have a file called `tests.ml` defining your tests
+    (modules tests)
+    (libraries lib) ; where lib is the library you are testing
+  )
+  ```
+* Now test your code while telling dune to instrument:
+  ```
+  dune test --instrument-with bisect_ppx_ng
+  ```
+* Then print the coverage summary:
+  ```
+  bisect-ppx-report summary
+  ```
+  or
+  ```
+  bisect-ppx-report html
+  ```
+  for a pretty report, found in `_coverage/index.html`, which you should open with your browser.
+* See [Bisect docs](https://github.com/Kakadu/bisect_ppx_ng) for more details
+* Note that if you have single lines of code that you know should not be run (e.g. invariants that should not fail) you can put `[@coverage off]` at the end of those lines.  To turn coverage off on a single `let` definition, put `[@@coverage off]` immediately after the end of definition. To turn coverage off on an arbitrary range of lines in the file, put `[@@@coverage off]` to turn it off and then `[@@@coverage on]` to turn it back on.  See [the docs](https://github.com/Kakadu/bisect_ppx_ng#Exclusion) for details.
 
-We will check how well my tests of the [simple set example](../examples/set-example.zip) covered the code using Bisect.  The only addition to code is the `(preprocess (pps bisect_ppx))` added to `src/dune` for the library.
+We will check how well my tests of the [simple set example](../examples/set-example.zip) covered the code using Bisect.
 
 
 <a name = "quickcheck"></a>

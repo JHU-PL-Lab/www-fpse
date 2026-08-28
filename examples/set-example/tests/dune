@@ -1,8 +1,19 @@
 ; This dune file configures and runs the tests.
 
-(test
+(executable
   (name tests)
   (libraries
     ounit2
-    string_set
-  ))
+    string_set))
+
+; run tests with `dune test`
+; run coverage with `dune test --instrument-with bisect_ppx_ng`
+(rule
+  (target (dir "_bisect"))
+  (alias runtest)
+  (action
+    (setenv BISECT_FILE "_bisect/bisect"
+      (progn
+      (run mkdir -p _bisect)
+      (run touch _bisect/dummy)
+      (run %{exe:tests.exe})))))

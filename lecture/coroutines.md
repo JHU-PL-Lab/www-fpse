@@ -7,7 +7,7 @@ Concurrency is needed for two main reasons
      - Disk read/write, network request, remote API call, internal timer, etc
 In OCaml
   * Concurrency for speed gain is new, its in OCaml 5
-  * Concurrency to support asynchronous waiting via **coroutines**: The `Lwt` and `Async` libraries
+  * Concurrency to support asynchronous waiting via **coroutines**: the `Lwt` library ("light weight threads").
 
 #### Threads
  * Concurrency for speed is usually done via *threads*
@@ -66,7 +66,7 @@ Monad-think on the above:
 
 ```ocaml
 let img_load url =
-bind (* code to issue image request and pause *) 
+bind (* code to issue image request and pause *)
      (fun img -> (* the continuation: processing code to run after this image loaded *) )
 ```
 which is, in `let*` notation,
@@ -96,7 +96,7 @@ let p2 = img_load url2 in
 (* The bind will block if value not there yet: *)
 let* load1 = p1 in
 let* load2 = p2 in ...
-(* ... we will get to this line once both loads are finished -- promises fulfulled 
+(* ... we will get to this line once both loads are finished -- promises fulfulled
    If we had other coroutines they can wake up and run while waiting for these loads
    Note we could have instead used Lwt.choose to get the *first* one completed:
      let* a_load = Lwt.choose [ p1; p2 ]
@@ -172,12 +172,12 @@ Here is a top-loop example showing some of these promise states; code is a bit c
  let s,p = let p0 = Lwt_io.read_line Lwt_io.stdin in (Lwt.state p0, p0);; (* state is Sleep - input not read yet*)
  (* type something at utop and hit return now - not shown for some reason - this is the input *)
  Lwt.state p;; (* returns `Return <the string you typed>` *)
- (* Here we artificially make  a failure state.  It is an exception internal to `Lwt`, 
+ (* Here we artificially make  a failure state.  It is an exception internal to `Lwt`,
     it doesn't get `raise`d in OCaml except at top *)
  let p' = Lwt.fail Exit in Lwt.state p';;
 ```
 
-## Making our own promises 
+## Making our own promises
 We can make (and directly resolve) our own promises; this also shows what `Lwt_io.read_line` *et al* are doing under the hood
 
 ```ocaml

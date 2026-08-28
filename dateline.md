@@ -237,7 +237,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="lecture/idiomatic-fp.html">Idiomatic Functional Programming</a></div>
+            <div align="left" class="body"><a href="coding_guidelines.html">FP Coding Guidelines</a></div>
           </td>
           <td width="30%">
             <div align="center" class="body">&nbsp;</div>
@@ -254,7 +254,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Wed</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="lecture/idiomatic-fp.html#examples">Idiomatic Functional Programming Examples</a></div>
+            <div align="left" class="body"><a href="lecture/idiomatic-fp.html">Idiomatic Functional Programming Examples</a></div>
           </td>
           <td width="30%">
             <div align="center" class="body"><a href="assignments/assignment6.html">A6</a></div>
@@ -328,7 +328,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%">
-            <div align="center" class="body">Project initial idea (Weds); A6 (Fri)</div>
+            <div align="center" class="body"><a href="assignments/project.html#idea">Project initial idea (Weds); A6 (Fri)</div>
           </td>
         </tr>
         <tr>
@@ -430,7 +430,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%">
-            <div align="center" class="body">Project Designs</div>
+            <div align="center" class="body"><a href="assignments/project.html#design">Project Designs</div>
           </td>
         </tr>
         <tr>
@@ -532,7 +532,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%">
-            <div align="center" class="body">Code Checkpoint (Fri)</div>
+            <div align="center" class="body"><a href="assignments/project.html#checkpoint">Code Checkpoint (Fri)</div>
           </td>
         </tr>
 	<tr>
@@ -543,7 +543,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Weds/Fri/Weds</div>
           </td>
           <td width="30%">
-            <div align="left" class="body">&nbsp;<strong>Project Demos (you can choose which date)</strong></div>
+            <div align="left" class="body"><a href="assignments/project.html#demo">&nbsp;<strong>Project Demos (you can choose which date)</strong></div>
           </td>
           <td width="30%">
             <div align="center" class="body">&nbsp;</div>

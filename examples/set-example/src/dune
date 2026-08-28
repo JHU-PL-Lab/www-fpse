@@ -1,8 +1,8 @@
 
 (library
  (name string_set)
- (modules string_set) 
-; (preprocess (pps bisect_ppx))
+ (modules string_set)
+ (instrumentation (backend bisect_ppx_ng))
 )
 
 ; To load libraries in a fresh utop top loop use command line
