@@ -6,29 +6,27 @@ We are using [OCaml](https://ocaml.org) version 5.5.0. Please follow all instruc
 
 We require that you use the [opam packaging system](https://opam.ocaml.org) for installing OCaml and its extensions.  Once you get `opam` installed and working, everything else should be easy to install.
 
-To get `opam`, please follow the following instructions for your operating system exactly to avoid any issues.
+To get `opam`, follow the instructions for your operating system below.  Detailed instructions that you should not need are found on [the OPAM install page](https://opam.ocaml.org/doc/Install.html).
 
 ### Linux
 
-At the time of writing, you only need to run
+To install `opam` just copy/paste this line into your shell:
 
 ```
 bash -c "sh <(curl -fsSL https://opam.ocaml.org/install.sh)"
 ```
 
-See [the OPAM install page](https://opam.ocaml.org/doc/Install.html) for further installation instructions. We suggest curling the shell script like above because most system's packager managers do not support the latest version of `opam`.
-
 ### Mac
 
 For Mac users it requires [Homebrew](https://brew.sh), a package manager for Linux-ish libraries.  If you don't have homebrew installed yet type the shell command
 
-```
+```sh
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
 to install it.  Once you have it installed, type
 
-```
+```sh
 brew update; brew install gpatch; brew install opam
 ```
 
@@ -40,7 +38,7 @@ Windows users should use WSL2 because Windows is not fully supported by OCaml. W
 
 You can follow the installation instructions [here](https://learn.microsoft.com/en-us/windows/wsl/install). They are as simple as running the following command from PowerShell as administrator:
 
-```
+```sh
 wsl --install
 ```
 
@@ -48,11 +46,15 @@ Now start up WSL: you can just run `ubuntu` from inside PowerShell, or you may r
 
 From inside the WSL box, you need a few basic tools (e.g. a C compiler) before installing `opam`. Get them with this:
 
-```
+```sh
 sudo apt install make m4 gcc zip unzip bubblewrap
 ```
 
-Now you may follow the Linux instructions above to install `opam`.
+Now follow the Linux instructions above to install `opam`:
+```sh
+bash -c "sh <(curl -fsSL https://opam.ocaml.org/install.sh)"
+```
+
 
 ## Initial setup of `opam`
 
@@ -72,15 +74,15 @@ Now run
 opam update
 ```
 
-to make sure your `opam` is aware of all the latest versions of OCaml and its packages. Then you will install the latest version of the OCaml compiler:
+to make sure your `opam` is aware of all the latest versions of OCaml and its packages. Next you need install the latest version of the OCaml compiler:
 
 ```
 opam switch create 5.5.0
 ```
 
-You may now be asked to reset your path with some instructions like "Run `eval $(opam env --switch=5.5.0)` to update the current shell environment". If you get that message, then follow those instructions and copy/paste the command into the shell (if you are on a Mac you may be using `zsh`; replace the `$(...)` with back-quotes `` `...` ``).
+You may now be asked to reset your path with some instructions like "Run `eval $(opam env --switch=5.5.0)` to update the current shell environment". If you get that message, follow those instructions and copy/paste the command into the shell (if you are on a Mac you may be using `zsh`; replace the `$(...)` with back-quotes `` `...` ``).
 
-If you already have an earlier version of OCaml installed via `opam`, then start at `opam switch create 5.5.0`.
+If you already have an earlier version of OCaml installed via `opam`, start at the `opam update` command above.
 
 ### Required `opam` packages
 
@@ -90,16 +92,6 @@ Once you have `opam` and `ocaml` 5.5.0 installed, run the following `opam` comma
 opam install ocaml-lsp-server ocamlformat utop dune ounit2 ppx_deriving cmdliner sexplib ppx_deriving_yojson qcheck ppx_deriving_qcheck bisect_ppx_ng
 ```
 
-<!--
-   TODO:
-      We may want some of these:
-         async?
-
-   Old install was this:
-      opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 base \
-      base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_ppx
- -->
-
 Lastly, in order for the OCaml top loop to work properly, create or edit the file `~/.ocamlinit` to contain the line below.  All lines in this file are input to the top loop when it first starts.
 
 This line goes in your `~/.ocamlinit`:
@@ -108,7 +100,7 @@ This line goes in your `~/.ocamlinit`:
 #use "topfind";;
 ```
 
-Here is a shell command that you can run to make the above file for you:
+Here is a shell command you can copy/paste to make the above file for you:
 
 ```sh
 (echo '#use "topfind";;') >~/.ocamlinit
@@ -142,17 +134,17 @@ Here are all the tools we will be using.  You are required to have a build for w
 
 All of the above packages have documentation, but you may also want to try [sherlodoc](https://doc.sherlocode.com/) where you can find documentation on all opam packages in one spot.  For example typing `Sexplib.Conv` into the search will give all the documentation for the `Conv` module in `Sexplib`.
 
-The above tools will be our "bread and butter", and we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.
+The above tools will be our "bread and butter", and we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments or discussd in lecture.
 
 * [Bisect](https://github.com/Kakadu/bisect_ppx_ng) will be used for code coverage.
-<!-- * [Lwt](https://ocsigen.org/lwt/latest/api/Lwt) is a non-preempting asychronous threads library. -->
+* [Lwt](https://ocsigen.org/lwt/latest/api/Lwt) is a non-preempting asychronous threads library.
 * [QCheck](https://ocaml.org/p/qcheck-core/0.91) is a fuzz tester / automated test generator for OCaml.
 * [`sexplib`](https://github.com/janestreet/sexplib) is a library for s-expression conversions, which we will use to serialize and deserialize data.
 * [`cmdliner`](https://erratique.ch/software/cmdliner) is a useful tool for reading command line arguments from your OCaml programs.
 
 ### Coding Style
 
-* The [FPSE Style Guide](/fpse/style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 3 and onward.
+* The [FPSE Style Guide](style-guide.html) is the standard we will adhere to in the class; it follows general best practices for modern OCaml.  It will be expected of your code from Assignment 3 and onward.
 * Mutation of any form is strictly disallowed on all assignments. This is a hard rule.
 
 ### Development Environments for OCaml
@@ -175,8 +167,8 @@ VSCode has very good OCaml support and is the "officially recommended editor".
 
 ### Books
 
-* The [Real World OCaml](https://dev.realworldocaml.org/index.html) book has a fairly good overlap with what we will cover and can be used as a supplementary resource. Note that it uses the `Core` standard library overlow, so its library functions may look different from yours.
-* [Cornell cs3110 book](https://cs3110.github.io/textbook/cover.html) is the online text for a somewhat-related course at Cornell.  They have recently added many videos if you like watching videos to learn.
+* The [Real World OCaml](https://dev.realworldocaml.org/index.html) book has some overlap with what we will cover and can be used as a supplementary resource. Note that it uses the `Core` standard library, so its library functions may look different from yours.
+* [Cornell cs3110 book](https://cs3110.github.io/textbook/cover.html) is the online text for a somewhat-related course at Cornell.  They also have videos if you like watching videos to learn.
 * [OCaml from the very beginning](https://johnwhitington.net/ocamlfromtheverybeginning/) is a free online book.
 * [Learn Programming with OCaml](https://usr.lmf.cnrs.fr/lpo/) has an introduction to OCaml and several neat algorithms and data structures, but it does not emphasize learning _functional_ programming with OCaml. It is nevertheless an excellent resource.
 

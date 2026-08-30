@@ -11,10 +11,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
  <meta name="description" content="" />
  <meta name="keywords" content="" />
  <!--[if lte IE 8]><script src="/pl/css/ie/html5shiv.js"></script><![endif]-->
- <script src="js/jquery.min.js"></script>
- <script src="js/jquery.dropotron.min.js"></script>
- <script src="js/skel.min.js"></script>
- <script src="js/skel-layers.min.js"></script>
+ <script src="../js/jquery.min.js"></script>
+ <script src="../js/jquery.dropotron.min.js"></script>
+ <script src="../js/skel.min.js"></script>
+ <script src="../js/skel-layers.min.js"></script>
  <!-- Redid header in 5/2026 so its all relative URLS, all the /fpse/ are re-written.
       For this had to hoist stuff that had URLs in it up to the top here.  And the
       bash scripts for making the pages are also now doing rewriting of these.
@@ -25,18 +25,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       and put the skel.init back in to init.js, and remove sed's from bashrc.  -->
  <style>.wrapper.style1 {
 			padding: 0em;
-			background: #222222 url(images/banner.jpg) no-repeat;
+			background: #222222 url(../images/banner.jpg) no-repeat;
 			background-size: cover;
 		}</style>
  <script>skel.init({
 		reset: 'full',
 		breakpoints: {
-			global:		{ range: '*', href: 'css/style.css', containers: 1400, grid: { gutters: 50 } },
-			wide:		{ range: '-1680', href: 'css/style-wide.css', containers: 1200, grid: { gutters: 40 } },
-			normal:		{ range: '-1280', href: 'css/style-normal.css', containers: 960, lockViewport: true },
-			narrow:		{ range: '-980', href: 'css/style-narrow.css', containers: '95%', grid: { gutters: 25 } },
-			narrower:	{ range: '-840', href: 'css/style-narrower.css', grid: { collapse: true } },
-			mobile:		{ range: '-640', href: 'css/style-mobile.css', containers: '90%', grid: { gutters: 15 } }
+			global:		{ range: '*', href: '../css/style.css', containers: 1400, grid: { gutters: 50 } },
+			wide:		{ range: '-1680', href: '../css/style-wide.css', containers: 1200, grid: { gutters: 40 } },
+			normal:		{ range: '-1280', href: '../css/style-normal.css', containers: 960, lockViewport: true },
+			narrow:		{ range: '-980', href: '../css/style-narrow.css', containers: '95%', grid: { gutters: 25 } },
+			narrower:	{ range: '-840', href: '../css/style-narrower.css', grid: { collapse: true } },
+			mobile:		{ range: '-640', href: '../css/style-mobile.css', containers: '90%', grid: { gutters: 15 } }
 		}
 	}, {
 		layers: {
@@ -65,10 +65,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 		}
 	});
   </script>
- <script src="js/init.js"></script>
+ <script src="../js/init.js"></script>
  <noscript>
-  <link rel="stylesheet" href="css/skel.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="../css/skel.css" />
+  <link rel="stylesheet" href="../css/style.css" />
  </noscript>
  <!--[if lte IE 8]><link rel="stylesheet" href="css/ie/v8.css" /><![endif]-->
 </head>
@@ -82,26 +82,26 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <div class="container">
       
      <!-- Logo -->
-      <h1><a href="index.html" id="logo">FPSE</a></h1>
+      <h1><a href="../index.html" id="logo">FPSE</a></h1>
      
      <!-- Nav -->
       <nav id="nav">
        <ul>
-          <li><a href="logistics.html">Logistics</a></li>
-          <li><a href="dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
-          <li><a href="coding.html">Coding</a>
+          <li><a href="../logistics.html">Logistics</a></li>
+          <li><a href="../dateline.html">Dateline</a></li> <!-- converted; don't edit .html edit .md -->
+          <li><a href="../coding.html">Coding</a>
             <li><a href="">Assignments</a>
                 <ul class="menu">
-                <li><a href="assignments/assignment1.html">Assignment 1</a></li>
-                <li><a href="assignments/assignment2.html">Assignment 2</a></li>
-                <li><a href="assignments/assignment3.html">Assignment 3</a></li>
-                <li><a href="assignments/assignment4.html">Assignment 4</a></li>
-                <li><a href="assignments/assignment5.html">Assignment 5</a></li>
-                <li><a href="assignments/assignment6.html">Assignment 6</a></li>
-                <li><a href="assignments/assignment7.html">Assignment 7</a></li>
-                <li><a href="assignments/project.html">Project</a></li>
+                <li><a href="../assignments/assignment1.html">Assignment 1</a></li>
+                <li><a href="../assignments/assignment2.html">Assignment 2</a></li>
+                <li><a href="../assignments/assignment3.html">Assignment 3</a></li>
+                <li><a href="../assignments/assignment4.html">Assignment 4</a></li>
+                <li><a href="../assignments/assignment5.html">Assignment 5</a></li>
+                <li><a href="../assignments/assignment6.html">Assignment 6</a></li>
+                <li><a href="../assignments/assignment7.html">Assignment 7</a></li>
+                <li><a href="../assignments/project.html">Project</a></li>
               </ul></li>          <li><a href="https://courselore.org/courses/2026049765">Q&A</a></li>
-          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="../contact.html">Contact Us</a></li>
       </ul>
 </nav>
 </div>
@@ -116,10 +116,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div id="content" class="container">
 <section>
 
-<link rel="stylesheet" href="css/friendly.css" />
+<link rel="stylesheet" href="../css/friendly.css" />
 <meta charset="utf-8" />
     
-<h1 id="coding-guidelines-for-fpse">Coding Guidelines for FPSE</h1>
+<h2 id="coding-guidelines-for-fpse">Coding Guidelines for FPSE</h2>
 
 <p><strong>Be explicit.</strong> Don’t make the reader solve a puzzle; tell them what is happening by being explicit. Implicit behavior requires lots of hard thinking to understand, whereas explicit behavior can be read straight off the page. This guide here is all about how to be explicit in your code so that you are clear in your intent and so that others can review, understand, and extend your code easily and correctly.</p>
 
@@ -234,7 +234,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Use expression structure to emphasize the main idea. <strong>The semantic center of an expression should draw the reader’s eyes.</strong></li>
   <li>Use pipelines with <code>|&gt;</code> when the sequence of transformations is itself the important idea.</li>
-  <li>Pipelines are a poor fit for code with branching, shared intermediates, or one dominant operation. If the reader has to ride the pipeline until the last stop in order to discover the destination, then the expression is probably backwards.</li>
+  <li>Pipelines are a poor fit for code with branching, shared intermediates, or one dominant operation.</li>
   <li>A <code>let</code>-binding can separate data preparation from the important operation; <code>@@</code> can help put that operation front and center. Small pipelines are often still useful for preparing arguments.</li>
 </ul>
 
@@ -245,8 +245,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p><strong>Pattern match and destructure.</strong> Pattern matching and <code>let</code>-destructuring (e.g. <code>let a, b = ... in ...</code>) are some of OCaml’s clearest tools, and they express intent very explicitly. Use them liberally.</p>
 
 <p><strong>Do not write long anonymous functions.</strong> Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous. This frequently applies to function arguments to mapping and folding; if the argument is long and inlined, the behavior is mysterious.</p>
-
-<p><strong>Monomorphic, not polymorphic, comparison.</strong> Performance aside, monomorphic comparison (e.g. <code>String.equal</code>) is defined specifically for the type at hand, while polymorphic comparison may not behave as intended. Polymorphic comparison is too structure-sensitive (e.g. on sets), may fail at runtime (e.g. on functions), and may be unsound in the presence of existential types (e.g. in GADTs). Further, type-specific comparison documents the type you actually intend to compare.</p>
 
 <p><strong>Options over exceptions.</strong> Exceptions for recoverable failures require the programmer to <em>remember</em> to catch them. Options <em>force</em> the programmer to handle them. Don’t leave anything up to chance, and favor options in your interfaces. Results allow you to express reasons for failure and can be a good alternative to options.</p>
 

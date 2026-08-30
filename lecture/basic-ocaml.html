@@ -172,7 +172,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="nn">Printf</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"the string is %s</span><span class="se">\n</span><span class="s2">"</span> <span class="n">hw</span>
 </code></pre></div>    </div>
   </li>
-  <li>(The actual compiler is <code>ocamlc</code> or <code>ocamlopt</code>, but we will never be directly invoking it)</li>
+  <li>The actual compiler is <code>ocamlc</code> or <code>ocamlopt</code>, but we will never be directly invoking it</li>
   <li>Instead we will operate at a higher level and use build tool <code>dune</code> to invoke the compiler</li>
   <li><code>dune</code> is a modern <code>make</code>/<code>Makefile</code> equivalent for OCaml which is very powerful.</li>
   <li>So, in same directory, there should be a <code>dune</code> file with the following contents:
@@ -267,7 +267,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Nested conditionals as above are generally avoided in OCaml since they are not very readable.</li>
-  <li>Here is an easier to read <code>fib</code> using pattern <code>match</code> notation similar to Java/C <code>switch</code> (we will cover <code>match</code> in detail later):</li>
+  <li>Here is an easier-to-read <code>fib</code> using pattern <code>match</code> notation similar to Java/C <code>switch</code> (we will cover <code>match</code> in detail later):</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="n">x</span> <span class="o">=</span>
@@ -322,7 +322,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Conclusion: <code>add</code> is a function taking an integer, and returning a <strong>function</strong> which takes ints to ints.</li>
   <li>So, add is a <strong>higher-order function</strong>: it returns a function as result.</li>
-  <li>Other forms of higher-order function take functions as arguments (e.g. the math compose example <code>o</code>)</li>
+  <li>Other higher-order functions can take functions as arguments (e.g. the math compose example <code>o</code>)</li>
 </ul>
 
 <p>Observe <code>int -&gt; int -&gt; int</code> is parenthesized as <code>int -&gt; (int -&gt; int)</code> – <strong>right</strong> associativity which is opposite of arithmetic operators</p>

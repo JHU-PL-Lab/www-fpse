@@ -126,28 +126,26 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>We require that you use the <a href="https://opam.ocaml.org">opam packaging system</a> for installing OCaml and its extensions.  Once you get <code>opam</code> installed and working, everything else should be easy to install.</p>
 
-<p>To get <code>opam</code>, please follow the following instructions for your operating system exactly to avoid any issues.</p>
+<p>To get <code>opam</code>, follow the instructions for your operating system below.  Detailed instructions that you should not need are found on <a href="https://opam.ocaml.org/doc/Install.html">the OPAM install page</a>.</p>
 
 <h3 id="linux">Linux</h3>
 
-<p>At the time of writing, you only need to run</p>
+<p>To install <code>opam</code> just copy/paste this line into your shell:</p>
 
 <pre><code>bash -c "sh &lt;(curl -fsSL https://opam.ocaml.org/install.sh)"
 </code></pre>
-
-<p>See <a href="https://opam.ocaml.org/doc/Install.html">the OPAM install page</a> for further installation instructions. We suggest curling the shell script like above because most system’s packager managers do not support the latest version of <code>opam</code>.</p>
 
 <h3 id="mac">Mac</h3>
 
 <p>For Mac users it requires <a href="https://brew.sh">Homebrew</a>, a package manager for Linux-ish libraries.  If you don’t have homebrew installed yet type the shell command</p>
 
-<pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-</code></pre>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/bin/bash <span class="nt">-c</span> <span class="s2">"</span><span class="si">$(</span>curl <span class="nt">-fsSL</span> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh<span class="si">)</span><span class="s2">"</span>
+</code></pre></div></div>
 
 <p>to install it.  Once you have it installed, type</p>
 
-<pre><code>brew update; brew install gpatch; brew install opam
-</code></pre>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>brew update<span class="p">;</span> brew <span class="nb">install </span>gpatch<span class="p">;</span> brew <span class="nb">install </span>opam
+</code></pre></div></div>
 
 <p>to install opam using homebrew.</p>
 
@@ -157,17 +155,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>You can follow the installation instructions <a href="https://learn.microsoft.com/en-us/windows/wsl/install">here</a>. They are as simple as running the following command from PowerShell as administrator:</p>
 
-<pre><code>wsl --install
-</code></pre>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wsl <span class="nt">--install</span>
+</code></pre></div></div>
 
 <p>Now start up WSL: you can just run <code>ubuntu</code> from inside PowerShell, or you may run the WSL app that is now on your PC.</p>
 
 <p>From inside the WSL box, you need a few basic tools (e.g. a C compiler) before installing <code>opam</code>. Get them with this:</p>
 
-<pre><code>sudo apt install make m4 gcc zip unzip bubblewrap
-</code></pre>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>make m4 gcc zip unzip bubblewrap
+</code></pre></div></div>
 
-<p>Now you may follow the Linux instructions above to install <code>opam</code>.</p>
+<p>Now follow the Linux instructions above to install <code>opam</code>:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash <span class="nt">-c</span> <span class="s2">"sh &lt;(curl -fsSL https://opam.ocaml.org/install.sh)"</span>
+</code></pre></div></div>
 
 <h2 id="initial-setup-of-opam">Initial setup of <code>opam</code></h2>
 
@@ -185,14 +185,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <pre><code>opam update
 </code></pre>
 
-<p>to make sure your <code>opam</code> is aware of all the latest versions of OCaml and its packages. Then you will install the latest version of the OCaml compiler:</p>
+<p>to make sure your <code>opam</code> is aware of all the latest versions of OCaml and its packages. Next you need install the latest version of the OCaml compiler:</p>
 
 <pre><code>opam switch create 5.5.0
 </code></pre>
 
-<p>You may now be asked to reset your path with some instructions like “Run <code>eval $(opam env --switch=5.5.0)</code> to update the current shell environment”. If you get that message, then follow those instructions and copy/paste the command into the shell (if you are on a Mac you may be using <code>zsh</code>; replace the <code>$(...)</code> with back-quotes <code>`...`</code>).</p>
+<p>You may now be asked to reset your path with some instructions like “Run <code>eval $(opam env --switch=5.5.0)</code> to update the current shell environment”. If you get that message, follow those instructions and copy/paste the command into the shell (if you are on a Mac you may be using <code>zsh</code>; replace the <code>$(...)</code> with back-quotes <code>`...`</code>).</p>
 
-<p>If you already have an earlier version of OCaml installed via <code>opam</code>, then start at <code>opam switch create 5.5.0</code>.</p>
+<p>If you already have an earlier version of OCaml installed via <code>opam</code>, start at the <code>opam update</code> command above.</p>
 
 <h3 id="required-opam-packages">Required <code>opam</code> packages</h3>
 
@@ -201,16 +201,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>opam <span class="nb">install </span>ocaml-lsp-server ocamlformat utop dune ounit2 ppx_deriving cmdliner sexplib ppx_deriving_yojson qcheck ppx_deriving_qcheck bisect_ppx_ng
 </code></pre></div></div>
 
-<!--
-   TODO:
-      We may want some of these:
-         async?
-
-   Old install was this:
-      opam install ocaml-lsp-server ocamlformat ocamlformat-rpc utop ounit2 base \
-      base_quickcheck core async lwt ppx_jane ppx_deriving ppx_deriving_yojson bisect_ppx
- -->
-
 <p>Lastly, in order for the OCaml top loop to work properly, create or edit the file <code>~/.ocamlinit</code> to contain the line below.  All lines in this file are input to the top loop when it first starts.</p>
 
 <p>This line goes in your <code>~/.ocamlinit</code>:</p>
@@ -218,7 +208,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <pre><code>#use "topfind";;
 </code></pre>
 
-<p>Here is a shell command that you can run to make the above file for you:</p>
+<p>Here is a shell command you can copy/paste to make the above file for you:</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="nb">echo</span> <span class="s1">'#use "topfind";;'</span><span class="o">)</span> <span class="o">&gt;</span>~/.ocamlinit
 </code></pre></div></div>
@@ -258,11 +248,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>All of the above packages have documentation, but you may also want to try <a href="https://doc.sherlocode.com/">sherlodoc</a> where you can find documentation on all opam packages in one spot.  For example typing <code>Sexplib.Conv</code> into the search will give all the documentation for the <code>Conv</code> module in <code>Sexplib</code>.</p>
 
-<p>The above tools will be our “bread and butter”, and we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments.</p>
+<p>The above tools will be our “bread and butter”, and we will be using them on many assignments.  There are also a few specialized tools used on some specific assignments or discussd in lecture.</p>
 
 <ul>
-  <li><a href="https://github.com/Kakadu/bisect_ppx_ng">Bisect</a> will be used for code coverage.<br />
-<!-- * [Lwt](https://ocsigen.org/lwt/latest/api/Lwt) is a non-preempting asychronous threads library. --></li>
+  <li><a href="https://github.com/Kakadu/bisect_ppx_ng">Bisect</a> will be used for code coverage.</li>
+  <li><a href="https://ocsigen.org/lwt/latest/api/Lwt">Lwt</a> is a non-preempting asychronous threads library.</li>
   <li><a href="https://ocaml.org/p/qcheck-core/0.91">QCheck</a> is a fuzz tester / automated test generator for OCaml.</li>
   <li><a href="https://github.com/janestreet/sexplib"><code>sexplib</code></a> is a library for s-expression conversions, which we will use to serialize and deserialize data.</li>
   <li><a href="https://erratique.ch/software/cmdliner"><code>cmdliner</code></a> is a useful tool for reading command line arguments from your OCaml programs.</li>
@@ -302,8 +292,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="books">Books</h3>
 
 <ul>
-  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book has a fairly good overlap with what we will cover and can be used as a supplementary resource. Note that it uses the <code>Core</code> standard library overlow, so its library functions may look different from yours.</li>
-  <li><a href="https://cs3110.github.io/textbook/cover.html">Cornell cs3110 book</a> is the online text for a somewhat-related course at Cornell.  They have recently added many videos if you like watching videos to learn.</li>
+  <li>The <a href="https://dev.realworldocaml.org/index.html">Real World OCaml</a> book has some overlap with what we will cover and can be used as a supplementary resource. Note that it uses the <code>Core</code> standard library, so its library functions may look different from yours.</li>
+  <li><a href="https://cs3110.github.io/textbook/cover.html">Cornell cs3110 book</a> is the online text for a somewhat-related course at Cornell.  They also have videos if you like watching videos to learn.</li>
   <li><a href="https://johnwhitington.net/ocamlfromtheverybeginning/">OCaml from the very beginning</a> is a free online book.</li>
   <li><a href="https://usr.lmf.cnrs.fr/lpo/">Learn Programming with OCaml</a> has an introduction to OCaml and several neat algorithms and data structures, but it does not emphasize learning <em>functional</em> programming with OCaml. It is nevertheless an excellent resource.</li>
 </ul>

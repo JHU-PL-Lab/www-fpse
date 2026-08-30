@@ -1,5 +1,5 @@
 
-# Coding Guidelines for FPSE
+## Coding Guidelines for FPSE
 
 **Be explicit.** Don't make the reader solve a puzzle; tell them what is happening by being explicit. Implicit behavior requires lots of hard thinking to understand, whereas explicit behavior can be read straight off the page. This guide here is all about how to be explicit in your code so that you are clear in your intent and so that others can review, understand, and extend your code easily and correctly.
 
@@ -76,7 +76,7 @@
 ### Put big ideas first
 * Use expression structure to emphasize the main idea. **The semantic center of an expression should draw the reader's eyes.**
 * Use pipelines with `|>` when the sequence of transformations is itself the important idea.
-* Pipelines are a poor fit for code with branching, shared intermediates, or one dominant operation. If the reader has to ride the pipeline until the last stop in order to discover the destination, then the expression is probably backwards.
+* Pipelines are a poor fit for code with branching, shared intermediates, or one dominant operation.
 * A `let`-binding can separate data preparation from the important operation; `@@` can help put that operation front and center. Small pipelines are often still useful for preparing arguments.
 
 ## Specific suggestions
@@ -86,8 +86,6 @@
 **Pattern match and destructure.** Pattern matching and `let`-destructuring (e.g. `let a, b = ... in ...`) are some of OCaml's clearest tools, and they express intent very explicitly. Use them liberally.
 
 **Do not write long anonymous functions.** Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous. This frequently applies to function arguments to mapping and folding; if the argument is long and inlined, the behavior is mysterious.
-
-**Monomorphic, not polymorphic, comparison.** Performance aside, monomorphic comparison (e.g. `String.equal`) is defined specifically for the type at hand, while polymorphic comparison may not behave as intended. Polymorphic comparison is too structure-sensitive (e.g. on sets), may fail at runtime (e.g. on functions), and may be unsound in the presence of existential types (e.g. in GADTs). Further, type-specific comparison documents the type you actually intend to compare.
 
 **Options over exceptions.** Exceptions for recoverable failures require the programmer to _remember_ to catch them. Options _force_ the programmer to handle them. Don’t leave anything up to chance, and favor options in your interfaces. Results allow you to express reasons for failure and can be a good alternative to options.
 

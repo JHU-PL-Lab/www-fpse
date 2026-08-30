@@ -12,6 +12,7 @@ Here are the high-level requirements for the projects.
 * OCaml excels for non-trivial algorithms, and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end (shopping cart, To Do list, etc) OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.
 * You are also **required** to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
 * A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.
+* While you can use LLMs to aid coding in your project you must have a thorough understanding of what every line of code and how every feature of your project is working.  We will be evaluating this throughout the project.
 
 ### Project Topic Thrusts
 
@@ -182,6 +183,8 @@ A few comments on testing:
 * 8% library: the project is written with abstraction and a general library.
 * 7% algorithmic complexity: there are significantly challenging underlying algorithms in the project.
 
+You will also be required to demonstrate that you have a thorough understanding of your project in all dimensions from architecture to code, and will lose points in any of the above categories where that is not demonstrated.
+
 #### Making and testing an `.opam` package file
 
 As was mentioned above you will need to make an `.opam` file for your project to package it up for potential distribution.  The main reason for this is both to learn a bit about how opam packages are made, and for us to easily install any `opam` dependencies of your project.  To do so, the easiest way is to copy and paste the below at the end of your `dune-project` file and edit as appropriate.  Make sure to include any `opam` packages you are using in the `depends` section.
@@ -216,9 +219,10 @@ Here are some defining features of the labs.
 
 1. There will be seven labs.  Your group will be required to attend the first lab in-person on Oct 28th.
 2. Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework. You won't get credit for a lab if you show up and choose to work on something other than your FPSE project.
+3. Course stall will be there to assist you in all aspects of coding your project.  We will also be asking you to explain the code you have written and will be doling out "dings" if you don't demonstrate a thorough understanding of your own code.
 3. Attendance will be taken at all labs and will be a part of your final grade.
-4. Your group is required to attend **seven** labs total.  Conveniently, there are seven class periods which are project labs, but you may alternatively select a CA office hour (the whole hour and it should be your group advisor if at all possible) to be a "lab".  If you wish to do that, show up in-person at the start of the office hour and notify the CA that you are doing a lab, and they will mark you down for attendance.  At most two in-class labs can made up in this way.
-5. All labs must be attended in-person, but you may petition for an exception.
+4. Your group is required to attend **seven** labs total.  Conveniently, there are seven class periods which are project labs, but you may alternatively select an office hour (the whole hour and it should be your group advisor if at all possible) to be a "lab".  If you wish to do that, show up in-person at the start of the office hour and notify the advisor that you are doing a lab, and they will mark you down for attendance.  At most two in-class labs can made up in this way.
+5. All labs must be attended in-person and not on Zoom, but you may petition your project advisor for an exception if you are sick etc.
 6. **Attendance is all or none for a group** -- for a lab to count, **all** group members must be present.  Group work is group work.
 
 ## Sample projects

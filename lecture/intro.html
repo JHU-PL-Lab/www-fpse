@@ -120,10 +120,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h1 id="introduction-and-background">Introduction and Background</h1>
 
-<h2 id="course-outline">Course Outline</h2>
-
-<p>See the <a href="../dateline.html">Dateline</a></p>
-
 <h2 id="what-is-functional-programming-fp">What is Functional Programming (FP)?</h2>
 
 <ul>
@@ -134,21 +130,21 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="lack-of-side-effects">Lack of Side Effects</h3>
 <ul>
   <li>FP emphasizes <em>immutability</em>: data structures that cannot be changed after being created</li>
-  <li>More generally, functions <em>only</em> return data, they have no other behaviors on the side (no “side effects”)
+  <li>More generally, functions often <em>only</em> accept and return data, they have no other behaviors on the side (no “side effects”)
     <ul>
       <li>No printing, I/O, mutating, raising exceptions, etc.</li>
     </ul>
   </li>
   <li>Lack of side effects is called “referential transparency”
     <ul>
-      <li>Variable values don’t change out from under you (follows how math behaves).</li>
+      <li>Variable values don’t change out from under you like in math</li>
       <li>To understand what a function does, you <em>only</em> need to look at what you pass and what gets returned, a much narrower interface</li>
     </ul>
   </li>
-  <li>There exist functional data structures analogous to imperative ones: dictionaries, lists, etc, but <em>immutable</em>
+  <li>There exist immutable data structure analogues: immutable dictionaries, lists, etc
     <ul>
       <li>Instead of mutating, make a fresh copy.</li>
-      <li>Sounds like it will be inefficient but cost is reasonable in most cases.</li>
+      <li>Sounds like it will be very inefficient but cost is reasonable in most cases.</li>
     </ul>
   </li>
 </ul>
@@ -158,12 +154,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Mathematical functions are implicitly immutable (think about it - no assignment/exception/.. in math!) so FP aligns closely with math
     <ul>
       <li>Think about functional programming as creating an <em>algebra</em> for the domain you are coding over</li>
-      <li>It is much easier to write completely correct programs in an FP style for this reason</li>
+      <li>It is much easier to write completely correct programs in an FP style</li>
     </ul>
   </li>
   <li>Additionally, FP allows for powerful new programming paradigms using functions as data.
     <ul>
-      <li>A well-known example from math is composition: <code>g o f (x) = g(f(x))</code>: <code>o</code> takes two functions and returns a new function, their composition.</li>
+      <li>A simple example from math is composition: <code>g o f (x) = g(f(x))</code>: <code>o</code> takes two functions and returns a new function, their composition.</li>
     </ul>
   </li>
 </ul>
@@ -173,9 +169,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>λ-calculus, 1930’s - developed by logicians (Church, Turing, Kleene, Curry, etc)
     <ul>
-      <li>Logic proofs are formal constructions, expressed as programs in the λ-calculus</li>
-      <li>The 1930’s λ-calculus is the core of a modern functional programming language</li>
-      <li>All of these ideas arose before computers even existed - !!</li>
+      <li>First, realize that no computers even existed in the 1930s - !  Ahead of its time</li>
+      <li>Q: Why make it then? A: Logic proofs are constructions, expressed as programs in the λ-calculus</li>
+      <li>The λ-calculus is the core of a modern functional programming language</li>
     </ul>
   </li>
   <li>Lisp, late 1950’s, McCarthy
@@ -203,10 +199,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li>Often once all the type errors are fixed the code .. works!</li>
         </ul>
       </li>
-      <li>The downside is types can get in the way both in terms of code maintenance (more work) and in terms of expressiveness (programs with no runtime type errors won’t pass the typechecker).</li>
+      <li>The downside is types can get in the way both in terms of code maintenance (more work) and in terms of expressiveness (a few programs with no runtime type errors still won’t pass the typechecker).</li>
     </ul>
   </li>
 </ul>
+
+<h2 id="course-outline">Course Outline</h2>
+
+<p>See the <a href="../dateline.html">Dateline</a> for our schedule, we will make a quick pass over it.</p>
       
           </section>
         </div>

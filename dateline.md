@@ -237,7 +237,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">Mon</div>
           </td>
           <td width="30%">
-            <div align="left" class="body"><a href="coding_guidelines.html">FP Coding Guidelines</a></div>
+            <div align="left" class="body"><a href="lecture/coding_guidelines.html">FP Coding Guidelines</a></div>
           </td>
           <td width="30%">
             <div align="center" class="body">&nbsp;</div>

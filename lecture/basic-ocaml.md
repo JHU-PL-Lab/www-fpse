@@ -37,7 +37,7 @@ let hw = "hello" ^ "world";;
 Printf.printf "the string is %s\n" hw
 ```
 
-* (The actual compiler is `ocamlc` or `ocamlopt`, but we will never be directly invoking it)
+* The actual compiler is `ocamlc` or `ocamlopt`, but we will never be directly invoking it
 * Instead we will operate at a higher level and use build tool `dune` to invoke the compiler
 * `dune` is a modern `make`/`Makefile` equivalent for OCaml which is very powerful.
 * So, in same directory, there should be a `dune` file with the following contents:
@@ -131,7 +131,7 @@ fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too bi
 ```
 
 * Nested conditionals as above are generally avoided in OCaml since they are not very readable.
-* Here is an easier to read `fib` using pattern `match` notation similar to Java/C `switch` (we will cover `match` in detail later):
+* Here is an easier-to-read `fib` using pattern `match` notation similar to Java/C `switch` (we will cover `match` in detail later):
 
 ```ocaml
 let rec fib x =
@@ -183,7 +183,7 @@ add3 20;;
 
 * Conclusion: `add` is a function taking an integer, and returning a **function** which takes ints to ints.
 * So, add is a **higher-order function**: it returns a function as result.
-* Other forms of higher-order function take functions as arguments (e.g. the math compose example `o`)
+* Other higher-order functions can take functions as arguments (e.g. the math compose example `o`)
 
 Observe `int -> int -> int` is parenthesized as `int -> (int -> int)` -- **right** associativity which is opposite of arithmetic operators
 
