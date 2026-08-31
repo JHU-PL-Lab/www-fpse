@@ -7,9 +7,6 @@
 * `struct` stands for structure, modules used to be called that in OCaml; view a `struct` as a synonym of a module.
 * Here is a string set example put in top-loop syntax:
 
-<!-- Brandon: Using `String.equal` here instead of polymorphic equality because with polymorphic equality, it is not so obvious why we would need a functor. -->
-<!-- Scott: Maybe we need a better example here now, its fake however we slice it -->
-
 ```ocaml
 # module String_set = struct
   type t = string list

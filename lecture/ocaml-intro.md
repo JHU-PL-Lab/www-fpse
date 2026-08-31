@@ -1,6 +1,6 @@
 ## Introduction to OCaml
 
-(see the file [basic-ocaml.ml](basic-ocaml.ml) if you want all of the ml examples in this file extracted out.  See [basic-ocaml.md](basic-ocaml.md) for the Markdown which you can Preview in VSCode like I am doing in lecture)
+(see the file [ocaml-intro.ml](ocaml-intro.ml) if you want all of the ml examples in this file extracted out.  See [ocaml-intro.md](ocaml-intro.md) for the Markdown which you can Preview in VSCode like I am doing in lecture)
 ### Installing
 
 * See [the Coding page](../coding.html) for install instructions and lots of other information.

@@ -11,7 +11,7 @@ Side effects of OCaml include
   - Plus many libraries: `Stack`, `Queue`, `Hashtbl`, etc
   - Faster because rebuilding avoided, but slower due to impossibility of sharing sub-components
 * Exceptions (we saw a bit of this already, `failwith "ill-formed"` etc)
-* Input/output (in basic modules lecture we looked at file input and results printing for example)
+* Input/output (in the modules lecture we looked at file input and results printing for example)
 * Concurrency and parallelism (will cover later)
 
 ### State
