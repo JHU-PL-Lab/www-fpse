@@ -121,7 +121,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <h2 id="introduction-to-ocaml">Introduction to OCaml</h2>
 
 <p>(see the file <a href="ocaml-intro.ml">ocaml-intro.ml</a> if you want all of the ml examples in this file extracted out.  See <a href="ocaml-intro.md">ocaml-intro.md</a> for the Markdown which you can Preview in VSCode like I am doing in lecture)</p>
-<h3 id="installing">Installing</h3>
+<h3 id="installing-ocaml">Installing OCaml</h3>
 
 <ul>
   <li>See <a href="../coding.html">the Coding page</a> for install instructions and lots of other information.</li>
@@ -147,7 +147,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li>The OCaml top loop is started with the shell command <code>utop</code>.</li>
-  <li>We will run the OCaml top loop and show you you can enter expressions such as <code>3+4</code>, follow with <code>;;</code> to indicate end of input (<code>;;</code> is <strong>required</strong>), and hit return to get the result</li>
+  <li>Here is an example of typing an expression <code>3+4</code> into the top loop and running it.  You <strong>must</strong> follow your input with <code>;;</code>, <strong>and</strong> then hit return, to indicate end of input</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">utop</span> <span class="o">#</span> <span class="mi">3</span><span class="o">+</span><span class="mi">4</span><span class="p">;;</span>
@@ -175,20 +175,25 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>The actual compiler is <code>ocamlc</code> or <code>ocamlopt</code>, but we will never be directly invoking it</li>
   <li>Instead we will operate at a higher level and use build tool <code>dune</code> to invoke the compiler</li>
   <li><code>dune</code> is a modern <code>make</code>/<code>Makefile</code> equivalent for OCaml which is very powerful.</li>
-  <li>So, in same directory, there should be a <code>dune</code> file with the following contents:
+</ul>
+
+<p>We have made a little project with all the right files in the right places, see <a href="../examples/helloworld.zip">helloworld.zip</a>.  We will review these files in lecture, here is an overview.</p>
+
+<ul>
+  <li>In the top directory there should be a <code>dune</code> file with the following contents:
     <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span>             <span class="c1">; create an executable</span>
 <span class="p">(</span><span class="nf">name</span> <span class="nv">helloworld</span><span class="p">)</span>     <span class="c1">; need to give it a name</span>
 <span class="p">(</span><span class="nf">modules</span> <span class="nv">helloworld</span><span class="p">)</span>  <span class="c1">; it consists of just one module, helloworld.ml</span>
 <span class="p">)</span>
 </code></pre></div>    </div>
   </li>
-  <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.  The notation is S-expressions.</li>
+  <li>This is the <strong>build file</strong>, specifying how to compile/test/run the program.</li>
+  <li>The notation is <em>S-expressions</em>, a very old textual format from Lisp that is an alternative to JSON.</li>
   <li>Also a file <code>dune-project</code> is needed with only <code>(lang dune 3.24)</code> in it.</li>
   <li>Now, type <code>dune build</code> to compile this <code>helloworld.ml</code> code as an executable.</li>
   <li>All of the results are placed in a new <code>_build/</code> sub-directory</li>
   <li>Then, run with <code>dune exec ./helloworld.exe</code> - same as typing <code>_build/default/helloworld.exe</code></li>
-  <li>We will be using <code>dune</code> to build libraries and binaries, and <code>utop</code> to play with them.</li>
-  <li>If you want to try these commands yourself the above <code>helloworld.ml</code> and dune files are in <a href="../examples/helloworld.zip">this zip</a>, just unzip and the <code>dune</code> commands above should work from within the <code>helloworld</code> directory.</li>
+  <li>We will use <code>dune</code> to build libraries and binaries, and <code>utop</code> to play with them.</li>
 </ul>
 
 <h3 id="ocaml-language-basics-in-utop">OCaml Language Basics in <code>utop</code></h3>
@@ -203,7 +208,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <span class="k">let</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* outputs `val x : int = 7` - give the result value a name, via let. *)</span>
 
-<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* the above defines `x` so can use it subsequently *)</span>
+<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;;</span> <span class="c">(* the above defines `x`, so can use it subsequently *)</span>
 
 <span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">5</span> <span class="k">in</span> <span class="n">z</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* let .. in defines a local variable z *)</span>
 <span class="c">(* z is not defined after the `in` is over: z + 1 ;; will give an error. *)</span>
@@ -225,7 +230,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="other-basic-data--see-documentation-for-details">Other basic data – see documentation for details</h4>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">4</span><span class="o">.</span><span class="mi">5</span><span class="p">;;</span> <span class="c">(* floats *)</span>
 
-<span class="mi">4</span><span class="o">.</span><span class="mi">5</span> <span class="o">+.</span> <span class="mi">4</span><span class="o">.</span><span class="mi">3</span><span class="p">;;</span> <span class="c">(* operations are +. etc not just + which is for ints only *)</span>
+<span class="mi">4</span><span class="o">.</span><span class="mi">5</span> <span class="o">+.</span> <span class="mi">4</span><span class="o">.</span><span class="mi">3</span><span class="p">;;</span> <span class="c">(* float operations are +. etc not just + which is for ints only.  Why? type inference! *)</span>
 
 <span class="mi">30980314323422</span><span class="nc">L</span><span class="p">;;</span> <span class="c">(* 64-bit integers *)</span>
 
@@ -240,7 +245,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">squared</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">;;</span> <span class="c">(* outputs `val squared : int -&gt; int = &lt;fun&gt;` *)</span>
 
-<span class="n">squared</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* to call a function -- separate arguments with S P A C E S - ! *)</span>
+<span class="n">squared</span> <span class="mi">4</span><span class="p">;;</span> <span class="c">(* this calls the function -- separate arguments with S P A C E S - ! *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -255,11 +260,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fib</span> <span class="n">n</span> <span class="o">=</span> <span class="c">(* the "rec" keyword needs to be added to allow recursion *)</span>
   <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="k">then</span>
-    <span class="mi">0</span>
+    <span class="mi">0</span> <span class="c">(* e.g. just write `0` to return `0`, not `return(0)` *)</span>
   <span class="k">else</span> <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">then</span>
     <span class="mi">1</span>
   <span class="k">else</span>
-    <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="c">(* notice again everything is an expression, no "return" *)</span>
+    <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
 <span class="p">;;</span>
 
 <span class="n">fib</span> <span class="mi">10</span><span class="p">;;</span> <span class="c">(* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)</span>

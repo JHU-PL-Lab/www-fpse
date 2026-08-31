@@ -1,4 +1,4 @@
-# Functors
+## Functors
 
 ## Defining Modules in the top loop or nesting them in a file
 

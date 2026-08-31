@@ -1,4 +1,4 @@
-# Modules Basics
+## Modules
 
 We've been using modules without thinking too much about them: `List.map`, etc is the `map` function in the `List` library module.
 

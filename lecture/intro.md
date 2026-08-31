@@ -1,4 +1,4 @@
-# Introduction and Background
+## Introduction and Background
 
 ## What is Functional Programming (FP)?
 

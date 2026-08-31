@@ -1,7 +1,7 @@
 ## Introduction to OCaml
 
 (see the file [ocaml-intro.ml](ocaml-intro.ml) if you want all of the ml examples in this file extracted out.  See [ocaml-intro.md](ocaml-intro.md) for the Markdown which you can Preview in VSCode like I am doing in lecture)
-### Installing
+### Installing OCaml
 
 * See [the Coding page](../coding.html) for install instructions and lots of other information.
 * Make sure to use the required version of OCaml, 5.5.0, install all the libraries listed via `opam`, and change your `.ocamlinit` file as mentioned on that page.
@@ -16,7 +16,7 @@
 * Top loops allow you to type in small snippets of code which will run and produce a result.
   - e.g. shells like `bash`, Python's `python3`, JavaScript `node`, etc.
 * The OCaml top loop is started with the shell command `utop`.
-* We will run the OCaml top loop and show you you can enter expressions such as `3+4`, follow with `;;` to indicate end of input (`;;` is **required**), and hit return to get the result
+* Here is an example of typing an expression `3+4` into the top loop and running it.  You **must** follow your input with `;;`, **and** then hit return, to indicate end of input
 
 ```ocaml
 utop # 3+4;;
@@ -40,20 +40,23 @@ Printf.printf "the string is %s\n" hw
 * The actual compiler is `ocamlc` or `ocamlopt`, but we will never be directly invoking it
 * Instead we will operate at a higher level and use build tool `dune` to invoke the compiler
 * `dune` is a modern `make`/`Makefile` equivalent for OCaml which is very powerful.
-* So, in same directory, there should be a `dune` file with the following contents:
+
+We have made a little project with all the right files in the right places, see [helloworld.zip](../examples/helloworld.zip).  We will review these files in lecture, here is an overview.
+
+* In the top directory there should be a `dune` file with the following contents:
 ```scheme
 (executable             ; create an executable
   (name helloworld)     ; need to give it a name
   (modules helloworld)  ; it consists of just one module, helloworld.ml
 )
 ```
-* This is the **build file**, specifying how to compile/test/run the program.  The notation is S-expressions.
+* This is the **build file**, specifying how to compile/test/run the program.  
+* The notation is *S-expressions*, a very old textual format from Lisp that is an alternative to JSON.
 * Also a file `dune-project` is needed with only `(lang dune 3.24)` in it.
 * Now, type `dune build` to compile this `helloworld.ml` code as an executable.
 * All of the results are placed in a new `_build/` sub-directory
 * Then, run with `dune exec ./helloworld.exe` - same as typing `_build/default/helloworld.exe`
-* We will be using `dune` to build libraries and binaries, and `utop` to play with them.
-* If you want to try these commands yourself the above `helloworld.ml` and dune files are in [this zip](../examples/helloworld.zip), just unzip and the `dune` commands above should work from within the `helloworld` directory.
+* We will use `dune` to build libraries and binaries, and `utop` to play with them.
 
 ### OCaml Language Basics in `utop`
 
@@ -66,7 +69,7 @@ Printf.printf "the string is %s\n" hw
 
 let x = 3 + 4;; (* outputs `val x : int = 7` - give the result value a name, via let. *)
 
-let y = x + 5;; (* the above defines `x` so can use it subsequently *)
+let y = x + 5;; (* the above defines `x`, so can use it subsequently *)
 
 let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
 (* z is not defined after the `in` is over: z + 1 ;; will give an error. *)
@@ -90,7 +93,7 @@ true || false;;
 ```ocaml
 4.5;; (* floats *)
 
-4.5 +. 4.3;; (* operations are +. etc not just + which is for ints only *)
+4.5 +. 4.3;; (* float operations are +. etc not just + which is for ints only.  Why? type inference! *)
 
 30980314323422L;; (* 64-bit integers *)
 
@@ -106,7 +109,7 @@ Let's declare a function `squared` with `x` as its one parameter.  `return` is  
 ```ocaml
 let squared x = x * x;; (* outputs `val squared : int -> int = <fun>` *)
 
-squared 4;; (* to call a function -- separate arguments with S P A C E S - ! *)
+squared 4;; (* this calls the function -- separate arguments with S P A C E S - ! *)
 ```
 
 * OCaml has no `return` statement; value of the whole body-expression is what gets returned
@@ -120,11 +123,11 @@ Let's write a well-known function with recursion and if-then-else syntax
 ```ocaml
 let rec fib n = (* the "rec" keyword needs to be added to allow recursion *)
   if n <= 0 then
-    0
+    0 (* e.g. just write `0` to return `0`, not `return(0)` *)
   else if n = 1 then
     1
   else
-    fib (n - 1) + fib (n - 2) (* notice again everything is an expression, no "return" *)
+    fib (n - 1) + fib (n - 2)
 ;;
 
 fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)

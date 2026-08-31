@@ -1,10 +1,8 @@
-### Variants
+## Variants
 
 * Variants build or-data (this-or-this-or-this); records build and-data (this-and-this-and-this)
 * All data combination is fundamentally either *and* or *or*, similar to the fundamental operators of boolean logic.
 * We start with variants (or), and then do records (and) next.
-
-### Variants
 
 * The `option` and `result` types we have been using are simple forms of *variant types*
 * Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the specific form
