@@ -8,7 +8,7 @@ Printf.printf "the string is %s\n" hw
 
 let x = 3 + 4;; (* outputs `val x : int = 7` - give the result value a name, via let. *)
 
-let y = x + 5;; (* the above defines `x` so can use it subsequently *)
+let y = x + 5;; (* the above defines `x`, so can use it subsequently *)
 
 let z = x + 5 in z - 1;; (* let .. in defines a local variable z *)
 (* z is not defined after the `in` is over: z + 1 ;; will give an error. *)
@@ -25,7 +25,7 @@ true || false;;
 
 4.5;; (* floats *)
 
-4.5 +. 4.3;; (* operations are +. etc not just + which is for ints only *)
+4.5 +. 4.3;; (* float operations are +. etc not just + which is for ints only.  Why? type inference! *)
 
 30980314323422L;; (* 64-bit integers *)
 
@@ -35,15 +35,15 @@ true || false;;
 
 let squared x = x * x;; (* outputs `val squared : int -> int = <fun>` *)
 
-squared 4;; (* to call a function -- separate arguments with S P A C E S - ! *)
+squared 4;; (* this calls the function -- separate arguments with S P A C E S - ! *)
 
 let rec fib n = (* the "rec" keyword needs to be added to allow recursion *)
   if n <= 0 then
-    0
+    0 (* e.g. just write `0` to return `0`, not `return(0)` *)
   else if n = 1 then
     1
   else
-    fib (n - 1) + fib (n - 2) (* notice again everything is an expression, no "return" *)
+    fib (n - 1) + fib (n - 2)
 ;;
 
 fib 10;; (* get the 10th Fibonacci number; 2^10 steps so don't make input too big! *)
