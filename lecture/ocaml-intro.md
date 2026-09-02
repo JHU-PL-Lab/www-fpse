@@ -84,10 +84,11 @@ b && false;;
 
 true || false;;
 
-1 = 2;; (* = not == for equality comparison - ! Can compare at any type with = *)
+1 = 2;; (* equality comparison, not ==; can compare at any type with = *)
 
 1 <> 2;;  (* <>, not !=, for not equal *)
 ```
+**Don't** use `!=` or `==`, those ask if its an identical object in memory and that is basically *never* what you want in OCaml
 
 #### Other basic data -- see documentation for details
 ```ocaml
@@ -344,68 +345,60 @@ div_exn 3 4;;
 * Lists are the most common data structure in OCaml, similar to dictionaries/objects for Python/JavaScript.
 * They are **immutable** so while they look something like arrays or vectors they most certainly are not
 
-```ocaml
-let l1 = [1; 2; 3];; (* notice the type here is `int list` a list of integers *)
-
-let l2 = ["a"; "b"; "c"];;
-
-let l3 = [1; "a"];; (* error - All elements must have same type *)
-
-let l5 = [];; (* the empty list *)
-```
-
 #### Building lists
 
-Lists are represented internally as **binary trees** with left child always a leaf.
+Lists are represented internally as **binary trees** with left children always leaves.
 
 ```ocaml
+let l1 = [1; 2; 3];; (* notice the type here is `int list` a list of integers *)
 let l0 = 0 :: l1;; (* "::" is 'consing' 0 to the top of the tree - fast *)
-
-0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to more concise [0;1;2;3] *)
-
-[1; 2; 3] @ [4; 5];; (* appending lists - slower than a single `::`, needs to cons 3/2/1 on front of [4;5] *)
-
-let z = [2; 4; 6];;
-
-let y = 0 :: z;; (* in y, 0 is the *head* (first elt) of the list and z is the *tail* (rest of list) *)
-
-z;; (* Observe z itself did not change -- recall that lists are immutable *)
+l1;; (* observe that l1 didn't change, its data is just shared with l0 *)
 ```
 
-Recall from above
-```ocaml
-let l1 = [1; 2; 3];;
-let l0 = 0 :: l1;;
-```
-Here is a picture of the trees used to internally represent `l1` and `l0` above:
+Here is a picture of the trees used to internally represent `l1` and `l0`:
 
 <img src = "../images/list-eg.png" width = 500>
 
 Notice how they *share* the `l1` portion, this is one way functional programming is faster.
  - Data that you know will *never* change can be freely shared behind the scenes.
 
-#### Destructing Lists with pattern matching
+Some more features of lists via some examples
+```ocaml
+let l1' = 1 :: (2 :: (3 :: [])) in l1 = l1' ;; (* [1;2;3] is just sugar for serial consing *)
 
-* Here is a very simple example of how a list can be analyzed
+let l2 = ["a"; "b"; "c"];; (* list elements can be of any type *)
+
+let l3 = [1; "a"];; (* error - all elements must have same type *)
+
+let l5 = [];; (* the empty list *)
+
+[1; 2; 3] @ [4; 5];; (* `@` appends lists - slower than `::`, needs to cons 3/2/1 on front of [4;5] *)
+```
+
+#### Destructing Lists with Pattern Matching
+
+* Here is a simple example of how a list can be analyzed
 * This function gets the tail, the list without the first element
+  - which is the right subtree of the tree representation of the list
 * Key to analyzing lists is pattern matching via `match`, breaking list into head and tail portions
+  - aka left and right subtrees
 
 ```ocaml
 let tl l =
   match l with
   |  [] -> invalid_arg "empty lists have no tail"
-  |  h :: t -> t  (* the pattern h :: t  binds h to the first elt (left subtree), t to ALL the others (right subtree) *)
+  |  h :: t -> t  (* the pattern h :: t  binds h to the first elt (left subtree), t to rest (right subtree) *)
 ;;
 
 let l = [1;2;3];;
 
 let l' = tl l;;
 
-l;; (* Note: lists are immutable, so l didn't change *)
+l;; (* lists are immutable, so l didn't change *)
 
-let l'' =  tl l' (* To get tail of tail, take tail of l' ..  THREAD the state! *)
+let l'' =  tl l' (* To get tail of tail, take tail of l' .. build on value returned from previous op *)
 
-tl [];; (* Raises an `invalid_arg` exception if the list had no tail *)
+tl [];; (* Raises `invalid_arg` exception if the list had no tail *)
 ```
 
 Note that an alternative to avoid the exception effect is to return `Ok/Error` (or, `Some`/`None`):
@@ -423,19 +416,20 @@ let l' = tl' l;;
 
 tl' [];;
 
-let l'' = tl' l' (* Oops this fails!  As in the div example above need to case on `Ok/Error` *)
+let l'' = tl' l' (* Oops this fails!  As in the div example above need to match on `Ok/Error` *)
 ```
 
 ### Recursive Functions on Lists
 
-* For the first homework many of the programs you need to write work on list inputs.
-* There is no `for` or `while` for iterating down the list, you will need to use recursion instead.
+* For the first homework many of the functions you need to write work on list inputs.
+* There is no `for` or `while` for iterating down the list; you will need to use *recursion*.
   - (Recall that no mutation is allowed on any of the homeworks.)
-* Here is an example of how to get the nth element of a list
 * Recall the keys to programming with recursion:
   - Recurse on smaller data
-  - Assume it will "work" (return the expected result) on that smaller data
+  - Assume your function will "work" (return the expected result) on that smaller data
   - Its just the coding version of the principle of induction in math
+
+Here is an example of how to get the nth element of a list
 
 ```ocaml
 let rec nth l n =

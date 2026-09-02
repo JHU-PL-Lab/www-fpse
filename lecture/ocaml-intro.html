@@ -222,10 +222,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <span class="bp">true</span> <span class="o">||</span> <span class="bp">false</span><span class="p">;;</span>
 
-<span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* = not == for equality comparison - ! Can compare at any type with = *)</span>
+<span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* equality comparison, not ==; can compare at any type with = *)</span>
 
 <span class="mi">1</span> <span class="o">&lt;&gt;</span> <span class="mi">2</span><span class="p">;;</span>  <span class="c">(* &lt;&gt;, not !=, for not equal *)</span>
 </code></pre></div></div>
+<p><strong>Don’t</strong> use <code>!=</code> or <code>==</code>, those ask if its an identical object in memory and that is basically <em>never</em> what you want in OCaml</p>
 
 <h4 id="other-basic-data--see-documentation-for-details">Other basic data – see documentation for details</h4>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">4</span><span class="o">.</span><span class="mi">5</span><span class="p">;;</span> <span class="c">(* floats *)</span>
@@ -510,37 +511,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>They are <strong>immutable</strong> so while they look something like arrays or vectors they most certainly are not</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span> <span class="c">(* notice the type here is `int list` a list of integers *)</span>
-
-<span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">;</span> <span class="s2">"b"</span><span class="p">;</span> <span class="s2">"c"</span><span class="p">];;</span>
-
-<span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="s2">"a"</span><span class="p">];;</span> <span class="c">(* error - All elements must have same type *)</span>
-
-<span class="k">let</span> <span class="n">l5</span> <span class="o">=</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* the empty list *)</span>
-</code></pre></div></div>
-
 <h4 id="building-lists">Building lists</h4>
 
-<p>Lists are represented internally as <strong>binary trees</strong> with left child always a leaf.</p>
+<p>Lists are represented internally as <strong>binary trees</strong> with left children always leaves.</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l0</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">::</span> <span class="n">l1</span><span class="p">;;</span> <span class="c">(* "::" is 'consing' 0 to the top of the tree - fast *)</span>
-
-<span class="mi">0</span> <span class="o">::</span> <span class="p">(</span><span class="mi">1</span> <span class="o">::</span> <span class="p">(</span><span class="mi">2</span> <span class="o">::</span> <span class="p">(</span><span class="mi">3</span> <span class="o">::</span> <span class="bp">[]</span><span class="p">)));;</span> <span class="c">(* equivalent to more concise [0;1;2;3] *)</span>
-
-<span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">]</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span> <span class="mi">5</span><span class="p">];;</span> <span class="c">(* appending lists - slower than a single `::`, needs to cons 3/2/1 on front of [4;5] *)</span>
-
-<span class="k">let</span> <span class="n">z</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">;</span> <span class="mi">4</span><span class="p">;</span> <span class="mi">6</span><span class="p">];;</span>
-
-<span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">::</span> <span class="n">z</span><span class="p">;;</span> <span class="c">(* in y, 0 is the *head* (first elt) of the list and z is the *tail* (rest of list) *)</span>
-
-<span class="n">z</span><span class="p">;;</span> <span class="c">(* Observe z itself did not change -- recall that lists are immutable *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span> <span class="c">(* notice the type here is `int list` a list of integers *)</span>
+<span class="k">let</span> <span class="n">l0</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">::</span> <span class="n">l1</span><span class="p">;;</span> <span class="c">(* "::" is 'consing' 0 to the top of the tree - fast *)</span>
+<span class="n">l1</span><span class="p">;;</span> <span class="c">(* observe that l1 didn't change, its data is just shared with l0 *)</span>
 </code></pre></div></div>
 
-<p>Recall from above</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
-<span class="k">let</span> <span class="n">l0</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">::</span> <span class="n">l1</span><span class="p">;;</span>
-</code></pre></div></div>
-<p>Here is a picture of the trees used to internally represent <code>l1</code> and <code>l0</code> above:</p>
+<p>Here is a picture of the trees used to internally represent <code>l1</code> and <code>l0</code>:</p>
 
 <p><img src="../images/list-eg.png" width="500" /></p>
 
@@ -549,29 +529,49 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Data that you know will <em>never</em> change can be freely shared behind the scenes.</li>
 </ul>
 
-<h4 id="destructing-lists-with-pattern-matching">Destructing Lists with pattern matching</h4>
+<p>Some more features of lists via some examples</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1'</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">::</span> <span class="p">(</span><span class="mi">2</span> <span class="o">::</span> <span class="p">(</span><span class="mi">3</span> <span class="o">::</span> <span class="bp">[]</span><span class="p">))</span> <span class="k">in</span> <span class="n">l1</span> <span class="o">=</span> <span class="n">l1'</span> <span class="p">;;</span> <span class="c">(* [1;2;3] is just sugar for serial consing *)</span>
+
+<span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">;</span> <span class="s2">"b"</span><span class="p">;</span> <span class="s2">"c"</span><span class="p">];;</span> <span class="c">(* list elements can be of any type *)</span>
+
+<span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="s2">"a"</span><span class="p">];;</span> <span class="c">(* error - all elements must have same type *)</span>
+
+<span class="k">let</span> <span class="n">l5</span> <span class="o">=</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* the empty list *)</span>
+
+<span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">]</span> <span class="o">@</span> <span class="p">[</span><span class="mi">4</span><span class="p">;</span> <span class="mi">5</span><span class="p">];;</span> <span class="c">(* `@` appends lists - slower than `::`, needs to cons 3/2/1 on front of [4;5] *)</span>
+</code></pre></div></div>
+
+<h4 id="destructing-lists-with-pattern-matching">Destructing Lists with Pattern Matching</h4>
 
 <ul>
-  <li>Here is a very simple example of how a list can be analyzed</li>
-  <li>This function gets the tail, the list without the first element</li>
-  <li>Key to analyzing lists is pattern matching via <code>match</code>, breaking list into head and tail portions</li>
+  <li>Here is a simple example of how a list can be analyzed</li>
+  <li>This function gets the tail, the list without the first element
+    <ul>
+      <li>which is the right subtree of the tree representation of the list</li>
+    </ul>
+  </li>
+  <li>Key to analyzing lists is pattern matching via <code>match</code>, breaking list into head and tail portions
+    <ul>
+      <li>aka left and right subtrees</li>
+    </ul>
+  </li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span>  <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">invalid_arg</span> <span class="s2">"empty lists have no tail"</span>
-  <span class="o">|</span>  <span class="n">h</span> <span class="o">::</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>  <span class="c">(* the pattern h :: t  binds h to the first elt (left subtree), t to ALL the others (right subtree) *)</span>
+  <span class="o">|</span>  <span class="n">h</span> <span class="o">::</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span>  <span class="c">(* the pattern h :: t  binds h to the first elt (left subtree), t to rest (right subtree) *)</span>
 <span class="p">;;</span>
 
 <span class="k">let</span> <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span>
 
 <span class="k">let</span> <span class="n">l'</span> <span class="o">=</span> <span class="n">tl</span> <span class="n">l</span><span class="p">;;</span>
 
-<span class="n">l</span><span class="p">;;</span> <span class="c">(* Note: lists are immutable, so l didn't change *)</span>
+<span class="n">l</span><span class="p">;;</span> <span class="c">(* lists are immutable, so l didn't change *)</span>
 
-<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span>  <span class="n">tl</span> <span class="n">l'</span> <span class="c">(* To get tail of tail, take tail of l' ..  THREAD the state! *)</span>
+<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span>  <span class="n">tl</span> <span class="n">l'</span> <span class="c">(* To get tail of tail, take tail of l' .. build on value returned from previous op *)</span>
 
-<span class="n">tl</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* Raises an `invalid_arg` exception if the list had no tail *)</span>
+<span class="n">tl</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* Raises `invalid_arg` exception if the list had no tail *)</span>
 </code></pre></div></div>
 
 <p>Note that an alternative to avoid the exception effect is to return <code>Ok/Error</code> (or, <code>Some</code>/<code>None</code>):</p>
@@ -588,27 +588,28 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <span class="n">tl'</span> <span class="bp">[]</span><span class="p">;;</span>
 
-<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span> <span class="n">tl'</span> <span class="n">l'</span> <span class="c">(* Oops this fails!  As in the div example above need to case on `Ok/Error` *)</span>
+<span class="k">let</span> <span class="n">l''</span> <span class="o">=</span> <span class="n">tl'</span> <span class="n">l'</span> <span class="c">(* Oops this fails!  As in the div example above need to match on `Ok/Error` *)</span>
 </code></pre></div></div>
 
 <h3 id="recursive-functions-on-lists">Recursive Functions on Lists</h3>
 
 <ul>
-  <li>For the first homework many of the programs you need to write work on list inputs.</li>
-  <li>There is no <code>for</code> or <code>while</code> for iterating down the list, you will need to use recursion instead.
+  <li>For the first homework many of the functions you need to write work on list inputs.</li>
+  <li>There is no <code>for</code> or <code>while</code> for iterating down the list; you will need to use <em>recursion</em>.
     <ul>
       <li>(Recall that no mutation is allowed on any of the homeworks.)</li>
     </ul>
   </li>
-  <li>Here is an example of how to get the nth element of a list</li>
   <li>Recall the keys to programming with recursion:
     <ul>
       <li>Recurse on smaller data</li>
-      <li>Assume it will “work” (return the expected result) on that smaller data</li>
+      <li>Assume your function will “work” (return the expected result) on that smaller data</li>
       <li>Its just the coding version of the principle of induction in math</li>
     </ul>
   </li>
 </ul>
+
+<p>Here is an example of how to get the nth element of a list</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">nth</span> <span class="n">l</span> <span class="n">n</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>

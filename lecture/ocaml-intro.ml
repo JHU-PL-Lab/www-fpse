@@ -19,7 +19,7 @@ b && false;;
 
 true || false;;
 
-1 = 2;; (* = not == for equality comparison - ! Can compare at any type with = *)
+1 = 2;; (* equality comparison, not ==; can compare at any type with = *)
 
 1 <> 2;;  (* <>, not !=, for not equal *)
 
@@ -120,43 +120,34 @@ let div_exn m n =
 div_exn 3 4;;
 
 let l1 = [1; 2; 3];; (* notice the type here is `int list` a list of integers *)
+let l0 = 0 :: l1;; (* "::" is 'consing' 0 to the top of the tree - fast *)
+l1;; (* observe that l1 didn't change, its data is just shared with l0 *)
 
-let l2 = ["a"; "b"; "c"];;
+let l1' = 1 :: (2 :: (3 :: [])) in l1 = l1' ;; (* [1;2;3] is just sugar for serial consing *)
 
-let l3 = [1; "a"];; (* error - All elements must have same type *)
+let l2 = ["a"; "b"; "c"];; (* list elements can be of any type *)
+
+let l3 = [1; "a"];; (* error - all elements must have same type *)
 
 let l5 = [];; (* the empty list *)
 
-let l0 = 0 :: l1;; (* "::" is 'consing' 0 to the top of the tree - fast *)
-
-0 :: (1 :: (2 :: (3 :: [])));; (* equivalent to more concise [0;1;2;3] *)
-
-[1; 2; 3] @ [4; 5];; (* appending lists - slower than a single `::`, needs to cons 3/2/1 on front of [4;5] *)
-
-let z = [2; 4; 6];;
-
-let y = 0 :: z;; (* in y, 0 is the *head* (first elt) of the list and z is the *tail* (rest of list) *)
-
-z;; (* Observe z itself did not change -- recall that lists are immutable *)
-
-let l1 = [1; 2; 3];;
-let l0 = 0 :: l1;;
+[1; 2; 3] @ [4; 5];; (* `@` appends lists - slower than `::`, needs to cons 3/2/1 on front of [4;5] *)
 
 let tl l =
   match l with
   |  [] -> invalid_arg "empty lists have no tail"
-  |  h :: t -> t  (* the pattern h :: t  binds h to the first elt (left subtree), t to ALL the others (right subtree) *)
+  |  h :: t -> t  (* the pattern h :: t  binds h to the first elt (left subtree), t to rest (right subtree) *)
 ;;
 
 let l = [1;2;3];;
 
 let l' = tl l;;
 
-l;; (* Note: lists are immutable, so l didn't change *)
+l;; (* lists are immutable, so l didn't change *)
 
-let l'' =  tl l' (* To get tail of tail, take tail of l' ..  THREAD the state! *)
+let l'' =  tl l' (* To get tail of tail, take tail of l' .. build on value returned from previous op *)
 
-tl [];; (* Raises an `invalid_arg` exception if the list had no tail *)
+tl [];; (* Raises `invalid_arg` exception if the list had no tail *)
 
 let tl' l =
   match l with
@@ -170,7 +161,7 @@ let l' = tl' l;;
 
 tl' [];;
 
-let l'' = tl' l' (* Oops this fails!  As in the div example above need to case on `Ok/Error` *)
+let l'' = tl' l' (* Oops this fails!  As in the div example above need to match on `Ok/Error` *)
 
 let rec nth l n =
   match l with
