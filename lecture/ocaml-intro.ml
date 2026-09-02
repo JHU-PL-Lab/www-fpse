@@ -139,6 +139,9 @@ let y = 0 :: z;; (* in y, 0 is the *head* (first elt) of the list and z is the *
 
 z;; (* Observe z itself did not change -- recall that lists are immutable *)
 
+let l1 = [1; 2; 3];;
+let l0 = 0 :: l1;;
+
 let tl l =
   match l with
   |  [] -> invalid_arg "empty lists have no tail"

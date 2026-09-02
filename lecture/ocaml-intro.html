@@ -536,15 +536,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">z</span><span class="p">;;</span> <span class="c">(* Observe z itself did not change -- recall that lists are immutable *)</span>
 </code></pre></div></div>
 
+<p>Recall from above</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
+<span class="k">let</span> <span class="n">l0</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">::</span> <span class="n">l1</span><span class="p">;;</span>
+</code></pre></div></div>
 <p>Here is a picture of the trees used to internally represent <code>l1</code> and <code>l0</code> above:</p>
 
-<p><img src="https://pl.cs.jhu.edu../images/list-eg.png" width="500" /></p>
+<p><img src="../images/list-eg.png" width="500" /></p>
+
+<p>Notice how they <em>share</em> the <code>l1</code> portion, this is one way functional programming is faster.</p>
+<ul>
+  <li>Data that you know will <em>never</em> change can be freely shared behind the scenes.</li>
+</ul>
 
 <h4 id="destructing-lists-with-pattern-matching">Destructing Lists with pattern matching</h4>
 
 <ul>
-  <li>Here is a very simple example of how a list can be analyzed.</li>
-  <li>This function gets the tail, the list without the first element.</li>
+  <li>Here is a very simple example of how a list can be analyzed</li>
+  <li>This function gets the tail, the list without the first element</li>
   <li>Key to analyzing lists is pattern matching via <code>match</code>, breaking list into head and tail portions</li>
 </ul>
 

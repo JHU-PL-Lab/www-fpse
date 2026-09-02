@@ -372,14 +372,22 @@ let y = 0 :: z;; (* in y, 0 is the *head* (first elt) of the list and z is the *
 z;; (* Observe z itself did not change -- recall that lists are immutable *)
 ```
 
+Recall from above
+```ocaml
+let l1 = [1; 2; 3];;
+let l0 = 0 :: l1;;
+```
 Here is a picture of the trees used to internally represent `l1` and `l0` above:
 
-<img src = "https://pl.cs.jhu.edu/fpse/images/list-eg.png" width = 500>
+<img src = "../images/list-eg.png" width = 500>
+
+Notice how they *share* the `l1` portion, this is one way functional programming is faster.
+ - Data that you know will *never* change can be freely shared behind the scenes.
 
 #### Destructing Lists with pattern matching
 
-* Here is a very simple example of how a list can be analyzed.
-* This function gets the tail, the list without the first element.
+* Here is a very simple example of how a list can be analyzed
+* This function gets the tail, the list without the first element
 * Key to analyzing lists is pattern matching via `match`, breaking list into head and tail portions
 
 ```ocaml
