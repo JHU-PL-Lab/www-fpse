@@ -89,6 +89,8 @@ add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - applicatio
 
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like " " for application BUT binds LOOSER than all other ops *)
 
+let add (x : int) (y : int) : int = x + y;;
+
 Some 5;;
 - : int option = Some 5
 
@@ -97,7 +99,7 @@ None;;
 
 # let nicer_div m n =
   if n = 0 then
-    Error "Divide by zero"
+    Error "Divide by zero" (* main difference of `result`: can return information about the error *)
   else
     Ok (m / n)
 ;;
@@ -117,7 +119,7 @@ let div_exn m n =
 
 div_exn 3 4;;
 
-let l1 = [1; 2; 3];;
+let l1 = [1; 2; 3];; (* notice the type here is `int list` a list of integers *)
 
 let l2 = ["a"; "b"; "c"];;
 
@@ -135,7 +137,7 @@ let z = [2; 4; 6];;
 
 let y = 0 :: z;; (* in y, 0 is the *head* (first elt) of the list and z is the *tail* (rest of list) *)
 
-z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
+z;; (* Observe z itself did not change -- recall that lists are immutable *)
 
 let tl l =
   match l with
@@ -174,7 +176,7 @@ let rec nth l n =
     if n = 0 then
       hd
     else
-      nth_exn tl (n-1) (* "the nth element of l is the (n-1)-th element of tl" *)
+      nth tl (n-1) (* "the nth element of l is the (n-1)-th element of tl" *)
 ;;
 
 nth [33;22;11] 1;;
@@ -190,13 +192,13 @@ Exception: Failure "nth".
 # List.nth_opt [1;2;3] 5;;
 - : int option = None
 
-# List.nth_opt [1;2;3]1;;
+# List.nth_opt [1;2;3] 1;;
 - : int option = Some 2
 
 let rec zero_negs l =
   match l with
   | [] -> []
-  | hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl (* can assume by induction that zero_negs tl will properly zero tl *)
+  | hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl (* assume by induction that zero_negs tl will properly zero tl *)
 ;;
 
 zero_negs [1;-2;3];;

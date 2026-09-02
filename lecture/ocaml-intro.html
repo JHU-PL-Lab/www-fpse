@@ -341,6 +341,28 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">add3</span> <span class="o">@@</span> <span class="mi">3</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* LIKE the original - @@ is like " " for application BUT binds LOOSER than all other ops *)</span>
 </code></pre></div></div>
 
+<h3 id="declaring-types">Declaring Types</h3>
+
+<p>If you want to declare a type instead of letting it be inferred:</p>
+
+<ul>
+  <li>Replace parameter like ` x ` with ` (x : int) `</li>
+  <li>Put a final ` : int ` at the end for the return type of a function:</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">add</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="n">y</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">;;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>We give you the types in the headers in the HW to help you start</li>
+  <li>In writing your own code you can initially leave them out but then paste in what was inferred</li>
+  <li>Generally for all but simple one-off code you want types declared in function headers
+    <ul>
+      <li>You can see the types for inferred things by hovering over but it gets annoying after awhile</li>
+    </ul>
+  </li>
+</ul>
+
 <h3 id="simple-structured-data-types-option-and-result">Simple Structured Data Types: Option and Result</h3>
 
 <ul>
@@ -412,7 +434,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">9</span>
 </code></pre></div></div>
 <ul>
-  <li>This shows how OCaml lets us <em>destruct</em> option values, via the <code>match</code> syntax.</li>
+  <li>The big picture here is we don’t know if a <code>Some</code> or a <code>None</code> will return so we must case on that</li>
+  <li><code>match</code> is how we <em>destruct</em> option values in OCaml</li>
   <li><code>match</code> is similar to <code>switch</code> in C/Java/.. but is much more flexible in OCaml</li>
   <li>The LHS in OCaml can be a general pattern which binds variables (the <code>i</code> here), etc</li>
 </ul>
@@ -425,11 +448,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h4 id="result">Result</h4>
 
-<p>A similar approach to the above is to use the <code>result</code> type, which like <code>option</code> but is specialized for error handling.</p>
+<p>A very similar approach to the above is to use the <code>result</code> type</p>
+<ul>
+  <li><code>result</code> is like <code>option</code> but is specialized for error handling.</li>
+  <li>(We will very quickly go through this since it is so similar to <code>option</code>)</li>
+</ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">nicer_div</span> <span class="n">m</span> <span class="n">n</span> <span class="o">=</span>
   <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span>
-    <span class="nc">Error</span> <span class="s2">"Divide by zero"</span>
+    <span class="nc">Error</span> <span class="s2">"Divide by zero"</span> <span class="c">(* main difference of `result`: can return information about the error *)</span>
   <span class="k">else</span>
     <span class="nc">Ok</span> <span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
 <span class="p">;;</span>
@@ -438,7 +465,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>The <code>result</code> type is explicitly intended for this case of failure-result
     <ul>
-      <li><code>Ok</code> means the normal result</li>
+      <li><code>Ok</code> means the normal result, same purpose as <code>Some</code></li>
       <li><code>Error</code> is the error case, which unlike <code>None</code> can include failure data, usually a string.</li>
     </ul>
   </li>
@@ -465,10 +492,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>This has the positive property of not needing a match on the result.</li>
   <li>(Note that the built-in <code>/</code> also raises an exception.)</li>
-  <li>But, exceptions are side effects though and we want to minimize their usage to avoid error-at-a-distance.</li>
+  <li>But, exceptions are <em>side effects</em> and we want to minimize their usage to avoid error-at-a-distance.</li>
   <li>The above examples show how exceptional conditions can either be handled via exceptions or in the return value;
     <ul>
-      <li>A key dimension of this course is this side effect vs direct passing trade-off</li>
+      <li>A key dimension of this course is minimizing side effects such as exceptions</li>
       <li>Many bugs, security leaks, etc are due to ignorance of side effects; the <code>Error/Ok</code> approach keeps them “in your face” by being in the return type</li>
       <li>Also recall <code>Error/Ok</code> keeps us completely in math-land, the return result tells everything.  Exceptions are not math.</li>
     </ul>
@@ -478,12 +505,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="lists">Lists</h3>
 
 <ul>
-  <li>Finally we can use a real data structure to write some real programs</li>
+  <li>Let’s use a real data structure to write some real programs</li>
   <li>Lists are the most common data structure in OCaml, similar to dictionaries/objects for Python/JavaScript.</li>
-  <li>They are <strong>immutable</strong> so while they look something like arrays or vectors they most certainly are <strong>not</strong></li>
+  <li>They are <strong>immutable</strong> so while they look something like arrays or vectors they most certainly are not</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span> <span class="mi">2</span><span class="p">;</span> <span class="mi">3</span><span class="p">];;</span> <span class="c">(* notice the type here is `int list` a list of integers *)</span>
 
 <span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">;</span> <span class="s2">"b"</span><span class="p">;</span> <span class="s2">"c"</span><span class="p">];;</span>
 
@@ -506,12 +533,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <span class="k">let</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">::</span> <span class="n">z</span><span class="p">;;</span> <span class="c">(* in y, 0 is the *head* (first elt) of the list and z is the *tail* (rest of list) *)</span>
 
-<span class="n">z</span><span class="p">;;</span> <span class="c">(* Observe z itself did not change -- recall lists are immutable in OCaml *)</span>
+<span class="n">z</span><span class="p">;;</span> <span class="c">(* Observe z itself did not change -- recall that lists are immutable *)</span>
 </code></pre></div></div>
 
 <p>Here is a picture of the trees used to internally represent <code>l1</code> and <code>l0</code> above:</p>
 
-<p><img src="https://pl.cs.jhu.edu/pl/ocaml/List.png" width="500" /></p>
+<p><img src="https://pl.cs.jhu.edu../images/list-eg.png" width="500" /></p>
 
 <h4 id="destructing-lists-with-pattern-matching">Destructing Lists with pattern matching</h4>
 
@@ -538,7 +565,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="n">tl</span> <span class="bp">[]</span><span class="p">;;</span> <span class="c">(* Raises an `invalid_arg` exception if the list had no tail *)</span>
 </code></pre></div></div>
 
-<p>Note that an alternative to avoid the exception effect is to return <code>Ok/Error</code>:</p>
+<p>Note that an alternative to avoid the exception effect is to return <code>Ok/Error</code> (or, <code>Some</code>/<code>None</code>):</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">tl'</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
@@ -559,8 +586,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>For the first homework many of the programs you need to write work on list inputs.</li>
-  <li>Recursion is the key here.</li>
-  <li>Here is an example of how to get the nth element of a list, by walking along the list with recursion:</li>
+  <li>There is no <code>for</code> or <code>while</code> for iterating down the list, you will need to use recursion instead.
+    <ul>
+      <li>(Recall that no mutation is allowed on any of the homeworks.)</li>
+    </ul>
+  </li>
+  <li>Here is an example of how to get the nth element of a list</li>
+  <li>Recall the keys to programming with recursion:
+    <ul>
+      <li>Recurse on smaller data</li>
+      <li>Assume it will “work” (return the expected result) on that smaller data</li>
+      <li>Its just the coding version of the principle of induction in math</li>
+    </ul>
+  </li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">nth</span> <span class="n">l</span> <span class="n">n</span> <span class="o">=</span>
@@ -570,7 +608,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span>
       <span class="n">hd</span>
     <span class="k">else</span>
-      <span class="n">nth_exn</span> <span class="n">tl</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c">(* "the nth element of l is the (n-1)-th element of tl" *)</span>
+      <span class="n">nth</span> <span class="n">tl</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c">(* "the nth element of l is the (n-1)-th element of tl" *)</span>
 <span class="p">;;</span>
 
 <span class="n">nth</span> <span class="p">[</span><span class="mi">33</span><span class="p">;</span><span class="mi">22</span><span class="p">;</span><span class="mi">11</span><span class="p">]</span> <span class="mi">1</span><span class="p">;;</span>
@@ -581,18 +619,22 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Key points</p>
 
 <ol>
-  <li>Pattern match on the list input: its either empty or is a head/tail pair</li>
-  <li>Recursively call the function on the tail of the list (plus other arguments): it <strong>should work for shorter lists by induction</strong></li>
+  <li>Pattern match on the list input: its either empty or is a head/tail pair (take the tree view)</li>
+  <li>Recursively call the function on the tail of the list (plus other arguments)
+    <ul>
+      <li>It should work for shorter lists by induction</li>
+    </ul>
+  </li>
 </ol>
 
-<p>Fortunately many common operations are already in the <code>List</code> module:</p>
+<p>Fortunately many common operations are already in the built-in <code>List</code> module:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="mi">2</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">3</span>
 </code></pre></div></div>
 
 <ul>
-  <li>On Assignment 1 you <strong>cannot</strong> use <code>List</code> library, you first need to practice using <code>let rec</code>.
+  <li>On Assignment 1 you <strong>cannot</strong> use <code>List</code>, you first need to practice using <code>let rec</code>.
     <ul>
       <li>On Assignment 2 you will start using the <code>List</code> library.</li>
     </ul>
@@ -605,12 +647,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="nc">Exception</span><span class="o">:</span> <span class="nc">Failure</span> <span class="s2">"nth"</span><span class="o">.</span>
 </code></pre></div></div>
 
-<p>But there is a version which returns an <code>option</code> type for this:</p>
+<p>But there is a version in the library which returns an <code>option</code> type for this:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth_opt</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="mi">5</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">None</span>
 
-<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth_opt</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span><span class="mi">1</span><span class="p">;;</span>
+<span class="o">#</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth_opt</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="mi">1</span><span class="p">;;</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span> <span class="o">=</span> <span class="nc">Some</span> <span class="mi">2</span>
 </code></pre></div></div>
 
@@ -618,14 +660,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Goal: write a function to zero out all the negative elements in a list of integers</li>
-  <li>C solution: <code>for</code>-loop over it and <strong>mutate</strong> all negatives to 0</li>
+  <li>C etc solution: <code>for</code>-loop over it and <strong>mutate</strong> all negatives to 0</li>
   <li>OCaml immutable list solution: recurse on list structure, construct a completely <strong>new</strong> list with the negative elements zeroed</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">zero_negs</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
   <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="bp">[]</span>
-  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">if</span> <span class="n">hd</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">hd</span><span class="p">)</span> <span class="o">::</span> <span class="n">zero_negs</span> <span class="n">tl</span> <span class="c">(* can assume by induction that zero_negs tl will properly zero tl *)</span>
+  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="k">if</span> <span class="n">hd</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">then</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">hd</span><span class="p">)</span> <span class="o">::</span> <span class="n">zero_negs</span> <span class="n">tl</span> <span class="c">(* assume by induction that zero_negs tl will properly zero tl *)</span>
 <span class="p">;;</span>
 
 <span class="n">zero_negs</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="o">-</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">];;</span>

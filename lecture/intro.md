@@ -15,6 +15,8 @@
 * There exist immutable data structure analogues: immutable dictionaries, lists, etc
   - Instead of mutating, make a fresh copy.
   - Sounds like it will be very inefficient but cost is reasonable in most cases.
+* `for` and `while` loops are useless since the variable being looped on needs to mutate for them to work
+  - Solution: do everything with recursion.  It works much better than you might first expect.
 
 ### FP and Math
 * Mathematical functions are implicitly immutable (think about it - no assignment/exception/.. in math!) so FP aligns closely with math

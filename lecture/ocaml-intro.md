@@ -200,6 +200,21 @@ add3 3 * 2;; (* NOT the previous - this is the same as (add3 3) * 2 - applicatio
 add3 @@ 3 * 2;; (* LIKE the original - @@ is like " " for application BUT binds LOOSER than all other ops *)
 ```
 
+### Declaring Types
+
+If you want to declare a type instead of letting it be inferred:
+
+* Replace parameter like ` x ` with ` (x : int) `
+* Put a final ` : int ` at the end for the return type of a function:
+
+```ocaml
+let add (x : int) (y : int) : int = x + y;;
+```
+
+* We give you the types in the headers in the HW to help you start
+* In writing your own code you can initially leave them out but then paste in what was inferred
+* Generally for all but simple one-off code you want types declared in function headers
+  - You can see the types for inferred things by hovering over but it gets annoying after awhile
 
 ### Simple Structured Data Types: Option and Result
 
@@ -267,7 +282,8 @@ Here is how we can in fact use `nice_div`:
   | None -> failwith "This should never happen, we divided by 2";;
 - : int = 9
 ```
-* This shows how OCaml lets us *destruct* option values, via the `match` syntax.
+* The big picture here is we don't know if a `Some` or a `None` will return so we must case on that
+* `match` is how we *destruct* option values in OCaml
 * `match` is similar to `switch` in C/Java/.. but is much more flexible in OCaml
 * The LHS in OCaml can be a general pattern which binds variables (the `i` here), etc
 
@@ -277,19 +293,21 @@ Moral from the above example
 
 #### Result
 
-A similar approach to the above is to use the `result` type, which like `option` but is specialized for error handling.
+A very similar approach to the above is to use the `result` type
+* `result` is like `option` but is specialized for error handling.
+* (We will very quickly go through this since it is so similar to `option`)
 
 ```ocaml
 # let nicer_div m n =
   if n = 0 then
-    Error "Divide by zero"
+    Error "Divide by zero" (* main difference of `result`: can return information about the error *)
   else
     Ok (m / n)
 ;;
 val nicer_div : int -> int -> (int, string) result = <fun>
 ```
 * The `result` type is explicitly intended for this case of failure-result
-  - `Ok` means the normal result
+  - `Ok` means the normal result, same purpose as `Some`
   - `Error` is the error case, which unlike `None` can include failure data, usually a string.
 
 ```ocaml
@@ -314,20 +332,20 @@ div_exn 3 4;;
 
 * This has the positive property of not needing a match on the result.
 * (Note that the built-in `/` also raises an exception.)
-* But, exceptions are side effects though and we want to minimize their usage to avoid error-at-a-distance.
+* But, exceptions are *side effects* and we want to minimize their usage to avoid error-at-a-distance.
 * The above examples show how exceptional conditions can either be handled via exceptions or in the return value;
-   - A key dimension of this course is this side effect vs direct passing trade-off
+   - A key dimension of this course is minimizing side effects such as exceptions
    - Many bugs, security leaks, etc are due to ignorance of side effects; the `Error/Ok` approach keeps them "in your face" by being in the return type
    - Also recall `Error/Ok` keeps us completely in math-land, the return result tells everything.  Exceptions are not math.
 
 ### Lists
 
-* Finally we can use a real data structure to write some real programs
+* Let's use a real data structure to write some real programs
 * Lists are the most common data structure in OCaml, similar to dictionaries/objects for Python/JavaScript.
-* They are **immutable** so while they look something like arrays or vectors they most certainly are **not**
+* They are **immutable** so while they look something like arrays or vectors they most certainly are not
 
 ```ocaml
-let l1 = [1; 2; 3];;
+let l1 = [1; 2; 3];; (* notice the type here is `int list` a list of integers *)
 
 let l2 = ["a"; "b"; "c"];;
 
@@ -351,12 +369,12 @@ let z = [2; 4; 6];;
 
 let y = 0 :: z;; (* in y, 0 is the *head* (first elt) of the list and z is the *tail* (rest of list) *)
 
-z;; (* Observe z itself did not change -- recall lists are immutable in OCaml *)
+z;; (* Observe z itself did not change -- recall that lists are immutable *)
 ```
 
 Here is a picture of the trees used to internally represent `l1` and `l0` above:
 
-<img src = "https://pl.cs.jhu.edu/pl/ocaml/List.png" width = 500>
+<img src = "https://pl.cs.jhu.edu/fpse/images/list-eg.png" width = 500>
 
 #### Destructing Lists with pattern matching
 
@@ -382,7 +400,7 @@ let l'' =  tl l' (* To get tail of tail, take tail of l' ..  THREAD the state! *
 tl [];; (* Raises an `invalid_arg` exception if the list had no tail *)
 ```
 
-Note that an alternative to avoid the exception effect is to return `Ok/Error`:
+Note that an alternative to avoid the exception effect is to return `Ok/Error` (or, `Some`/`None`):
 
 ```ocaml
 let tl' l =
@@ -403,8 +421,13 @@ let l'' = tl' l' (* Oops this fails!  As in the div example above need to case o
 ### Recursive Functions on Lists
 
 * For the first homework many of the programs you need to write work on list inputs.
-* Recursion is the key here.
-* Here is an example of how to get the nth element of a list, by walking along the list with recursion:
+* There is no `for` or `while` for iterating down the list, you will need to use recursion instead.
+  - (Recall that no mutation is allowed on any of the homeworks.)
+* Here is an example of how to get the nth element of a list
+* Recall the keys to programming with recursion:
+  - Recurse on smaller data
+  - Assume it will "work" (return the expected result) on that smaller data
+  - Its just the coding version of the principle of induction in math
 
 ```ocaml
 let rec nth l n =
@@ -414,7 +437,7 @@ let rec nth l n =
     if n = 0 then
       hd
     else
-      nth_exn tl (n-1) (* "the nth element of l is the (n-1)-th element of tl" *)
+      nth tl (n-1) (* "the nth element of l is the (n-1)-th element of tl" *)
 ;;
 
 nth [33;22;11] 1;;
@@ -424,17 +447,18 @@ nth [33;22;11] 3;;
 
 Key points
 
-1. Pattern match on the list input: its either empty or is a head/tail pair
-2. Recursively call the function on the tail of the list (plus other arguments): it **should work for shorter lists by induction**
+1. Pattern match on the list input: its either empty or is a head/tail pair (take the tree view)
+2. Recursively call the function on the tail of the list (plus other arguments)
+  - It should work for shorter lists by induction
 
-Fortunately many common operations are already in the `List` module:
+Fortunately many common operations are already in the built-in `List` module:
 
 ```ocaml
 # List.nth [1;2;3] 2;;
 - : int = 3
 ```
 
-* On Assignment 1 you **cannot** use `List` library, you first need to practice using `let rec`.
+* On Assignment 1 you **cannot** use `List`, you first need to practice using `let rec`.
   - On Assignment 2 you will start using the `List` library.
 
 Note that like our implementation `List.nth` will not be happy if there is no nth element:
@@ -444,27 +468,27 @@ Note that like our implementation `List.nth` will not be happy if there is no nt
 Exception: Failure "nth".
 ```
 
-But there is a version which returns an `option` type for this:
+But there is a version in the library which returns an `option` type for this:
 
 ```ocaml
 # List.nth_opt [1;2;3] 5;;
 - : int option = None
 
-# List.nth_opt [1;2;3]1;;
+# List.nth_opt [1;2;3] 1;;
 - : int option = Some 2
 ```
 
 ### An Example of a function both taking and returning a list
 
 * Goal: write a function to zero out all the negative elements in a list of integers
-* C solution: `for`-loop over it and **mutate** all negatives to 0
+* C etc solution: `for`-loop over it and **mutate** all negatives to 0
 * OCaml immutable list solution: recurse on list structure, construct a completely **new** list with the negative elements zeroed
 
 ```ocaml
 let rec zero_negs l =
   match l with
   | [] -> []
-  | hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl (* can assume by induction that zero_negs tl will properly zero tl *)
+  | hd :: tl -> (if hd < 0 then 0 else hd) :: zero_negs tl (* assume by induction that zero_negs tl will properly zero tl *)
 ;;
 
 zero_negs [1;-2;3];;
