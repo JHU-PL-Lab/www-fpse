@@ -15,7 +15,7 @@ List.is_empty [];;
 
 List.concat [[1;2]; [1;2;3]];; (* joins all elements in a list of lists into one list *)
 
-List.append [1;2] [3;4];; (* Note you should use the more convenient infix @ syntax for listappend *)
+List.append [1;2] [3;4];; (* Note you should use @ shorthand for append, `[1;2] @ [3;4]` *)
 
 # List.length;;
 - : 'a list -> int = <fun> (* "for ANY type 'a, List.length will take a list of 'a and return an integer" *)
@@ -29,7 +29,7 @@ List.append [1;2] [3;4];; (* Note you should use the more convenient infix @ syn
 # List.append;;
 - : 'a list -> 'a list -> 'a list = <fun>
 
-# List.map;;  (* Foreshadowing; we will review this function below *)
+# List.map;;  (* Foreshadowing; we will review this function below but the type alone is a hint *)
 - : ('a -> 'b) -> 'a list -> 'b list = <fun> (* takes in a function! *)
 
 let rec concat (l : 'a list list) =
@@ -40,8 +40,11 @@ let rec concat (l : 'a list list) =
 # (1,2.,"3");;
 - : int * float * string = (1, 2., "3")
 
-# [1,2,3];; (* a common error, parens not always needed so this is a singleton list of a 3-tuple, not a list of ints *)
-- : (int * int * int) list = [(1, 2, 3)]
+# let tup = 1,2.,"3";; (* parens only needed when its otherwise ambiguous *)
+val tup : int * float * string = (1, 2., "3")
+
+# [1,2,3];; (* This is a common error -- use `;` for separator for lists or you will get a tuple *)
+- : (int * int * int) list = [(1, 2, 3)] (* a list consisting of the single element `(1,2,3)`)
 
 let divide_in_half (l : 'a list) : 'a list * 'a list =
   let half = List.length l / 2 in
@@ -52,14 +55,26 @@ divide_in_half [2;3;4;5;99;6];;
 
 # List.combine;;
 - : 'a list -> 'b list -> ('a * 'b) list = <fun>
+# List.combine [1;2;3] [9;8;7];;
+- : (int * int) list = [(1, 9); (2, 8); (3, 7)]
 
-let combine_pair (l1, l2) = List.combine l1 l2;;
+let pairlist = List.split [(1, 4); (2, 5); (3, 6)] in List.combine pairlist;;
+Error: The value pairlist has type int list * int list
+       but an expression was expected of type 'a list
 
-combine_pair @@ divide_in_half [1;2;3;4;5;6];; (* returns a list-of-pairs *)
+let combine_pair (l1, l2) = List.combine l1 l2;; (* This is an "uncurrying" of List.combine *)
 
-[(1, 3); (2, 4)] |> List.split |> combine_pair ;;  (* no-op! *)
+let pairlist = List.split [(1, 4); (2, 5); (3, 6)] in combine_pair pairlist;;
+- : (int * int) list = [(1, 4); (2, 5); (3, 6)]
 
-([1; 2; 3], [4; 5; 6]) |> combine_pair |> List.split;; (* another no-op! *)
+let listpairs = combine_pair ([1; 2; 3], [4; 5; 6]) in List.split listpairs;;
+- : int list * int list = ([1; 2; 3], [4; 5; 6])
+
+List.split (combine_pair ([1; 2; 3], [4; 5; 6]))
+
+List.split @@ combine_pair ([1; 2; 3], [4; 5; 6])
+
+([1; 2; 3], [4; 5; 6]) |> combine_pair |> List.split
 
 let curry f = fun x -> fun y -> f (x, y);;
 
@@ -69,7 +84,7 @@ curry : ('a * 'b -> 'c) -> 'a -> 'b -> 'c
 
 uncurry : ('a -> 'b -> 'c) -> 'a * 'b -> 'c
 
-let combine_pair = Pair.fold List.combine;; (* Pair.fold is uncurry *)
+let combine_pair = Pair.fold List.combine;; (* recall Pair.fold is uncurry *)
 
 let compose g f = fun x -> g (f x);;
 
@@ -79,9 +94,15 @@ let compose g f x =  g (f x);;
 
 let compose g f = (fun x -> g (f x));; (* this equivalent form reads more how you think of the "o" operation in math *)
 
-let compose = fun g -> (fun f -> (fun x -> g (f x)));;
+let compose = fun g -> (fun f -> (fun x -> g (f x)));; (* shift all args from = lhs to rhs *)
 
-let compose g f x =  x |> f |> g;; (* This is the readability winner: feed x into f and f's result into g *)
+let f x y z p d q = blah
+
+let f x y z p d = fun q -> blah
+
+let f x y z p = fun d -> fun q -> blah
+
+let compose g f x =  x |> f |> g;; (* feed x into f and f's result into g *)
 
 # (compose combine_pair List.split) [(1, 3); (2, 4)];;
 - : (int * int) list = [(1, 3); (2, 4)]
@@ -107,8 +128,10 @@ let has_negs l = List.exists (fun x -> x < 0) l;;
 - : bool list = [true; false; true; false; true]
 
 List.map (fun (x, y) -> x + y) [(1,2);(3,4)];; (* turns list of number pairs into list of their sums *)
+(* For this function note that the input and output lists are different types - no problem! *)
 
 List.map (uncurry (+)) [(1,2);(3,4)];; (* equivalent: its an uncurried add function that is needed *)
+ (* Probably don't write this second version, its just a side remark on uncurrying *)
 
 let rec char_list_to_string l =
   match l with
@@ -140,16 +163,16 @@ List.fold_right (fun elt acc -> elt + acc) [3; 5; 7] 0;; (* this computes 3 + (5
 
 List.fold_right (+) [3; 5; 7] 0;;
 
-List.fold_left (fun accum elt -> accum + elt) 0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
+List.fold_left (fun acc elt -> acc + elt) 0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
 
-let rec char_list_to_string l accum = (* invariant: accum is the accumulated result thus far *)
+let rec char_list_to_string l acc = (* invariant: acc is the accumulated result thus far *)
   match l with
-  | [] -> accum (* we are totally done at this point, `accum` is the final result and just pop back out *)
+  | [] -> acc (* we are ALL DONE, `acc` is the final result and just pop-pop-pop back out to top *)
   | elt :: elts ->
-    char_list_to_string elts (accum ^ String.of_char elt) (* we are computing the `f` to accumulate result on the way *down* the recursion *)
+    char_list_to_string elts (acc ^ String.of_char elt) (* we are eagerly accumulating the result *down* the recursion *)
 ;;
 
-char_list_to_string ['a';'d'] "";; (* we need to prime the accum pump with "" here *)
+char_list_to_string ['a';'d'] "";; (* we need to prime the acc pump with "" here *)
 
 let rec fold_left f init l =
   match l with

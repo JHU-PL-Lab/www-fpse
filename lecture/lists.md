@@ -2,11 +2,11 @@
 
 Let's warm up by writing a few more recursive functions on lists.
 
-#### Reversing a list
+#### Reversing the elements in a list
 
 * Since lists are immutable, reverse will create a completely new list.
-* This style of programming is called "Data structure corresponds to control flow" - the program needs to touch and reconstruct the whole data structure as it runs.
-* (If you have not heard of the term "control flow" its how the program counter is moving through memory -- the flow of the focus of execution)
+* This style of programming is called "Data structure corresponds to control flow" - the program needs to touch and reconstruct the data structure as it runs.
+* (If you have not heard of the term "control flow" its how the program counter is moving through program memory -- the flow of the focus of execution)
 
 ```ocaml
 let rec rev l =
@@ -35,7 +35,7 @@ rev [1;2;3];; (* recall this list is 1 :: [2;3] which is the tree 1 :: ( 2 :: ( 
 ### List library functions
 
 * We already saw a few of these previously, e.g. `List.rev` and `List.nth`.
-* `List` is a **module**, think fancy package.  It contains functions *plus* values *plus* types *plus* even other modules
+* `List` is a **module**, think fancy package.  It contains functions *plus* values *plus* types *plus* other modules
 * (Note that `List.hd/List.tl` are also available, but you should nearly always be pattern matching to take apart lists; don't use `List.hd/List.tl` on the homework.)
 * (Also, read the homeworks carefully, on A1 you *cannot* use `List...` functions and on some questions of A2 you *must* use the `List...` functions.)
 * Let us peek at the documentation [`List`](https://ocaml.org/manual/5.5/api/List.html) to see what is available; we will cover a few of them now.
@@ -49,12 +49,12 @@ List.is_empty [];;
 
 List.concat [[1;2]; [1;2;3]];; (* joins all elements in a list of lists into one list *)
 
-List.append [1;2] [3;4];; (* Note you should use the more convenient infix @ syntax for listappend *)
+List.append [1;2] [3;4];; (* Note you should use @ shorthand for append, `[1;2] @ [3;4]` *)
 ```
 #### ... And their types
 
-* Types of functions are additional hints to their purpose, get used to reading them
-* Much of the time when you mis-use a function you will get a type error
+* Types of functions are additional hints to their purpose, read them!
+* Much of the time when you mis-use a function you will get a type error ("type-directed programming")
 * Recall that `'a list` etc is a polymorphic aka generic type, `'a` can be *any* type
 
 ```ocaml
@@ -70,7 +70,7 @@ List.append [1;2] [3;4];; (* Note you should use the more convenient infix @ syn
 # List.append;;
 - : 'a list -> 'a list -> 'a list = <fun>
 
-# List.map;;  (* Foreshadowing; we will review this function below *)
+# List.map;;  (* Foreshadowing; we will review this function below but the type alone is a hint *)
 - : ('a -> 'b) -> 'a list -> 'b list = <fun> (* takes in a function! *)
 ```
 
@@ -87,19 +87,23 @@ let rec concat (l : 'a list list) =
 
 * Along with lists `[1;2;3]` OCaml has tuples, `(1,2.,"3")`
 * It is like a fixed-length list, but tuple elements **can have different types**
-* You can also pattern match on tuples
+* You can of course also pattern match on tuples
 
 ```ocaml
 # (1,2.,"3");;
 - : int * float * string = (1, 2., "3")
 
-# [1,2,3];; (* a common error, parens not always needed so this is a singleton list of a 3-tuple, not a list of ints *)
-- : (int * int * int) list = [(1, 2, 3)]
+# let tup = 1,2.,"3";; (* parens only needed when its otherwise ambiguous *)
+val tup : int * float * string = (1, 2., "3")
+
+# [1,2,3];; (* This is a common error -- use `;` for separator for lists or you will get a tuple *)
+- : (int * int * int) list = [(1, 2, 3)] (* a list consisting of the single element `(1,2,3)`)
 ```
 
 * Here is a simple function to break a list in half, returning a pair of lists
   - uses `List.take` (take the front part of the list up to the nth position) and
   - uses `List.drop` (list after nth position).
+  - (notice how returning a pair here is the way to support multiple value return from functions)
 
 ```ocaml
 let divide_in_half (l : 'a list) : 'a list * 'a list =
@@ -109,76 +113,103 @@ let divide_in_half (l : 'a list) : 'a list * 'a list =
 
 divide_in_half [2;3;4;5;99;6];;
 ```
-
 * Fact: pairs-of-lists are isomorphic to lists-of-pairs (of the same length)
 * combining and splitting library functions can convert between these two equivalent forms.
 
 #### combine/split and Currying
 
-The library function for combining two lists into a single list of pairs is `List.combine`:
+The library function `List.combine` takes two lists and makes a list of pairs:
 
 ```ocaml
 # List.combine;;
 - : 'a list -> 'b list -> ('a * 'b) list = <fun>
+# List.combine [1;2;3] [9;8;7];;
+- : (int * int) list = [(1, 9); (2, 8); (3, 7)]
 ```
 
-* Recall this function of two arguments is in Curried form so if we try the following it fails:
+* Fact: if the two lists are of equal length these two representations are isomorphic
+  - same structure just different layout
+  - we can in fact "prove" the isomorphism by converting back and forth, lets do it!
 
-  ```ocaml
-  List.combine ([1;2;3], [4;5;6]);;
-  ```
-
-* What happened here?  It was wanting us to instead write `List.combine [1;2;3] [4;5;6]`
-* `List.combine` takes two curried arguments, lists to combine (its type is `'a list -> 'b list -> ('a * 'b) list `).
-* No worries, we can write a wrapper (an *adapter*) turning `List.combine` into a version taking a pair of lists:
-
-```ocaml
-let combine_pair (l1, l2) = List.combine l1 l2;;
-```
-
-Now we can use our function to combine two lists into a list of pairs:
-
-```ocaml
-combine_pair @@ divide_in_half [1;2;3;4;5;6];; (* returns a list-of-pairs *)
-```
-
-* Note the use of `@@` here, recall it is function application but with "loosest binding", avoids need for parens
-* Here is a cooler way to write the same thing, with pipe operation `|>` (based on shell pipe `|`):
-
-  ```ocaml
-  [1;2;3;4;5;6] |> divide_in_half |> combine_pair;;
-  ```
-
-* In a series of pipes, the leftmost argument is data, and all the others are functions
-* The data is fed into first function, output of first function fed as input to second, etc
-  - it is like an *assembly line* for building the result
-* This is exactly what the shell `|` does with standard input / standard output.
-* Please use pipes *as much as possible* on Assignment 2 - it will make the code more readable
-
-* `List.split` is the opposite of combine: take a list of pairs and make a pair of lists:
+* `List.combine` has a natural inverse, `List.split`, which takes a list of pairs and makes a pair of lists:
 
   ```ocaml
   # List.split [(1, 4); (2, 5); (3, 6)];;
   - : int list * int list = ([1; 2; 3], [4; 5; 6])
   ```
 
-We can now show how combining and splitting is a no-op:
+So it seems like we can take a list of pairs, `List.split` it, and then re-combine with `List.combine` as a no-op, right?
 
 ```ocaml
-[(1, 3); (2, 4)] |> List.split |> combine_pair ;;  (* no-op! *)
-
-([1; 2; 3], [4; 5; 6]) |> combine_pair |> List.split;; (* another no-op! *)
+let pairlist = List.split [(1, 4); (2, 5); (3, 6)] in List.combine pairlist;;
+Error: The value pairlist has type int list * int list
+       but an expression was expected of type 'a list
 ```
 
-* Congratulations, we just wrote a fancy no-op function 😁
-* The general principle here is a *curried* 2-argument function like `int -> int -> int` is **isomorphic** to `int * int -> int`
-* The latter form looks more like a standard function taking multiple arguments and is the **uncurried** form.
-* And we sometimes need to interconvert between the two representations
-* This conversion is called *uncurrying* (curried to pair/triple/etc form) or *currying* (putting it into curried form)
+
+* What happened here?  `List.combine` takes two curried arguments, the lists to combine
+  -  (its type is `'a list -> 'b list -> ('a * 'b) list `).
+* But, we passed it *one* argument, a pair of lists - close but not the same thing!
+* So the interface to `combine` doesn't quite match to take the inverse
+* No worries, we can write a wrapper (an *adapter*) turning `List.combine` into a version taking a pair of lists:
+
+```ocaml
+let combine_pair (l1, l2) = List.combine l1 l2;; (* This is an "uncurrying" of List.combine *)
+```
+
+Now that we have the correct interface we can take the inverse:
+
+```ocaml
+let pairlist = List.split [(1, 4); (2, 5); (3, 6)] in combine_pair pairlist;;
+- : (int * int) list = [(1, 4); (2, 5); (3, 6)]
+```
+
+And to show something is an isomorphism recall we also need to show that first combining then splitting is also a no-op:
+
+```ocaml
+let listpairs = combine_pair ([1; 2; 3], [4; 5; 6]) in List.split listpairs;;
+- : int list * int list = ([1; 2; 3], [4; 5; 6])
+```
+
+* Back-and-forth and forth-and-back are both no-ops, isomorphism!
+
+#### Pipes
+
+* Lets now consider some potentially cleaner ways to code these simple operations.
+* First lets inline the `let`:
+
+```ocaml
+List.split (combine_pair ([1; 2; 3], [4; 5; 6]))
+```
+
+* Thats OK but the parens are a bit annoying
+* But recall we can use `@@` when an application binds loosely:
+```ocaml
+List.split @@ combine_pair ([1; 2; 3], [4; 5; 6])
+```
+
+* OK thats better.  But the order of operations is still a bit backwards
+ - first we make the list, then feed to `combine_pair` then feed to `List.split`
+* Solution: use *pipes* which let us code in execution order:
+
+```ocaml
+([1; 2; 3], [4; 5; 6]) |> combine_pair |> List.split
+```
+
+* In a series of pipes, the leftmost argument is data, and all the others are functions
+* The data is fed into first function, output of first function fed as input to second, etc
+  - it is like an *assembly line* for building the result
+* This is exactly what the shell pipe `|` does with standard input / standard output.
+* Please use pipes *as much as possible* on Assignment 2 - it will make the code more readable
+
 
 #### Curry/Uncurry are themselves functions
 
-* We can even write combinators which generically convert between these two forms - !
+* There is a tension between wanting Curried vs unCurried arguments 
+   - Recall the default in OCaml is Curried, it allows partial application
+   - But as we saw above sometimes your data is a pair and you want uncurried form.
+* So, its not uncommon to need to convert like we did above.
+* We can even write generic combinators which convert between these two forms for any functions - !
 * `curry`   - takes in uncurried 2-arg function and returns a curried version
 * `uncurry` - takes in curried 2-arg function and returns an non-curried version
 
@@ -196,12 +227,12 @@ curry : ('a * 'b -> 'c) -> 'a -> 'b -> 'c
 uncurry : ('a -> 'b -> 'c) -> 'a * 'b -> 'c
 ```
 
-Note that the built-in `Pair.fold` is the same as `uncurry` (there is oddly no `curry` in the library).
+Note that the built-in `Pair.fold` is the same as `uncurry` (but oddly no `curry` in the standard library).
 
-We can now use our uncurrying combinator to build `combine_pair` directly:
+We can use the uncurrying combinator to build `combine_pair` directly:
 
 ```ocaml
-let combine_pair = Pair.fold List.combine;; (* Pair.fold is uncurry *)
+let combine_pair = Pair.fold List.combine;; (* recall Pair.fold is uncurry *)
 ```
 
 #### One last higher-order function: compose
@@ -215,19 +246,41 @@ compose (fun x -> x + 3) (fun x -> x * 2) 10;;
 ```
 
 * The type says it all again, `('a -> 'b) -> ('c -> 'a) -> 'c -> 'b`
-* Equivalent ways to code `compose` in OCaml:
+* To understand OCaml notation lets write many equivalent ways to code `compose` in OCaml:
 
 ```ocaml
 let compose g f x =  g (f x);;
 
 let compose g f = (fun x -> g (f x));; (* this equivalent form reads more how you think of the "o" operation in math *)
 
-let compose = fun g -> (fun f -> (fun x -> g (f x)));;
-
-let compose g f x =  x |> f |> g;; (* This is the readability winner: feed x into f and f's result into g *)
+let compose = fun g -> (fun f -> (fun x -> g (f x)));; (* shift all args from = lhs to rhs *)
 ```
 
-* We can express the no-op split/combine composition with `compose`:
+The general pattern above is
+
+```ocaml
+let f x y z p d q = blah
+```
+is the same as 
+
+```ocaml
+let f x y z p d = fun q -> blah
+```
+
+which is the same as 
+
+```ocaml
+let f x y z p = fun d -> fun q -> blah
+```
+etc.  Generally use the first form but sometimes the other ones can be more clear.
+
+Now lets use pipes for another equivalent form which expresses execution order the best:
+
+```ocaml
+let compose g f x =  x |> f |> g;; (* feed x into f and f's result into g *)
+```
+
+* Back on `compose`, we can use it to cleanly express the no-op split/combine composition:
 
 ```ocaml
 # (compose combine_pair List.split) [(1, 3); (2, 4)];;
@@ -247,7 +300,7 @@ List.filter (fun x -> x >= 0) [1;-1;2;-2;0];;
 ```
 
 * Cool, we can "glue in" any checking function (boolean-returning, i.e. a *predicate*) and `List.filter` will do the rest
-* We can also just supply the function, this often makes us a desirable new function:
+* We can also just supply the function argument (partially apply), this often makes us a desirable new function:
 
 ```ocaml
 let remove_negatives = List.filter (fun x -> x >= 0);;
@@ -278,11 +331,11 @@ let has_negs l = l |> List.filter (fun x -> x < 0) |> List.is_empty |> not;;
 let has_negs l = List.exists (fun x -> x < 0) l;;
 ```
 
-Similarly, `List.for_all` checks if it holds for *all* elements.
+Similarly, `List.for_all` checks if a predicate holds for *all* elements.
 
 #### List.map
 
-* `List.map` is very powerful, apply some operation we supply to every element of a list making a new list:
+* `List.map` is powerful, apply some operation we supply to every element of a list making a new list:
 
 ```ocaml
 # List.map (fun x -> x + 1) [1;-1;2;-2;0];;
@@ -292,11 +345,11 @@ Similarly, `List.for_all` checks if it holds for *all* elements.
 - : bool list = [true; false; true; false; true]
 
 List.map (fun (x, y) -> x + y) [(1,2);(3,4)];; (* turns list of number pairs into list of their sums *)
+(* For this function note that the input and output lists are different types - no problem! *)
 
 List.map (uncurry (+)) [(1,2);(3,4)];; (* equivalent: its an uncurried add function that is needed *)
+ (* Probably don't write this second version, its just a side remark on uncurrying *)
 ```
-
-This last version requires some mental parsing; the previous version is much easier to read.
 
 ### Folding
 
@@ -311,11 +364,11 @@ This last version requires some mental parsing; the previous version is much eas
   List.fold_right (fun elt acc ->
     String.of_char elt ^ acc
   ) ['a';'b';'c'] ""
-  ;; (* computes "a"^("b"^("c"^"")), i.e. "abc *)
+  ;; (* computes "a"^("b"^("c"^"")), i.e. "abc" *)
   ```
 
 * The base case is argument `""`
-* the function is how we plug in the code for the recursive call
+* the function is the code for the recursive call
   - `elt` is the current element of the list
   - `acc` is going to be the result of recursing on the tail of the list (a string here)
 
@@ -330,8 +383,10 @@ let rec char_list_to_string l =
     String.of_char elt ^ acc (* same as the body of f above, the calculation done on acc and elt *)
 ```
 
-* OK now let's code `fold_right` by taking the above code and making the `""` and `String.of_char elt ^ acc` explicit parameters `init` and `f` respectively.
-* (since the code `String.of_char elt ^ acc` refers to `elt` and `acc` we also need to make them parameters, `f` will be `fun elt acc -> String.of_char elt ^ acc`)
+* This is the skeleton for what `fold_right` is doing so to make it from the above code
+  - pull out the `""` as the base case parameter, lets call it `init`
+  - take the body `String.of_char elt ^ acc` out and pass in as the folding function `f`
+* (since the code `String.of_char elt ^ acc` refers to `elt` and `acc` we also need to make them parameters, the `f` passed in will be `fun elt acc -> String.of_char elt ^ acc`)
 
 ```ocaml
 let rec fold_right f l init =
@@ -362,13 +417,13 @@ let fold_right f l init =
   folder_aux l
 ```
 
-Here is another simple right fold to summate an integer list,
+Here is another simple use of right fold to summate an integer list:
 
 ```ocaml
 List.fold_right (fun elt acc -> elt + acc) [3; 5; 7] 0;; (* this computes 3 + (5 + (7 + 0))  *)
 ```
 
-which is equivalent to
+which is equivalent to the simpler
 
 ```ocaml
 List.fold_right (+) [3; 5; 7] 0;;
@@ -377,35 +432,35 @@ List.fold_right (+) [3; 5; 7] 0;;
 #### Left folding
 
 * There is another way to fold: left fold!
-* Notice in the above summate example the zero is on the right; that is why that is a right fold
+* Notice in the above summate example the zero is on the right; that is why that is a "right fold"
 * We could have instead summated as `((0 + 3) + 5) + 7`, with the zero on the *left* which is a fold left.
 
 ```ocaml
-List.fold_left (fun accum elt -> accum + elt) 0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
+List.fold_left (fun acc elt -> acc + elt) 0 [3; 5; 7];; (* this is ((0 + 3) + 5) + 7 *)
 ```
 
-* Here since it is a fold left the accumulator is on the *left* (compare with folding right above).
+* Here since it is a fold left the acculator is on the *left* (compare with folding right above).
   - The arguments to `f` are swapped to make that more clear.
 * Note that for `f` being addition, folding left or right gives the same answer;
   - But, that is only because `+` happens to be *commutative and associative*.
 * For example, `List.fold_left (-) 0 [1;2]` is `(0 - 1) - 2` is `-3` and `List.fold_right (-) [1;2] 0` is `1 - (2 - 0)` is `-1`
   - The swapped argument order means you get a type error if you switch between `fold_left` and `fold_right`, forcing you to think about whether they are equivalent for your use case.
 
-Let us understand how left folding differs by again looking at an implementation for the char list to string function.
+Let us understand how left folding differs by again looking at an implementation for the char list to string function, this time in "fold left style".
 
 ```ocaml
-let rec char_list_to_string l accum = (* invariant: accum is the accumulated result thus far *)
+let rec char_list_to_string l acc = (* invariant: acc is the accumulated result thus far *)
   match l with
-  | [] -> accum (* we are totally done at this point, `accum` is the final result and just pop back out *)
+  | [] -> acc (* we are ALL DONE, `acc` is the final result and just pop-pop-pop back out to top *)
   | elt :: elts ->
-    char_list_to_string elts (accum ^ String.of_char elt) (* we are computing the `f` to accumulate result on the way *down* the recursion *)
+    char_list_to_string elts (acc ^ String.of_char elt) (* we are eagerly accumulating the result *down* the recursion *)
 ;;
 
-char_list_to_string ['a';'d'] "";; (* we need to prime the accum pump with "" here *)
+char_list_to_string ['a';'d'] "";; (* we need to prime the acc pump with "" here *)
 ```
 
 Here is the general `fold_left`, pulling out the `f` in the above as a parameter.
-Note that the `accum` we call `init` here since that is the exterior interface.
+Note that the `acc` we call `init` here since that is the exterior interface.
 
 ```ocaml
 let rec fold_left f init l =

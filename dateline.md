@@ -503,7 +503,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
         <tr>
           <td width="8%">
-            <div align="center" class="body">Dec 1</div>
+            <div align="center" class="body">Dec 7</div>
           </td>
           <td width="8%">
             <div align="center" class="body">Mon</div>
@@ -520,7 +520,7 @@ Note that lecture material will be updated as topics are covered so consider the
         </tr>
                 <tr>
           <td width="8%">
-            <div align="center" class="body">Dec 3</div>
+            <div align="center" class="body">Dec 9</div>
           </td>
           <td width="8%">
             <div align="center" class="body">Weds</div>
@@ -532,7 +532,7 @@ Note that lecture material will be updated as topics are covered so consider the
             <div align="center" class="body">&nbsp;</div>
           </td>
           <td width="15%">
-            <div align="center" class="body"><a href="assignments/project.html#checkpoint">Code Checkpoint (Fri)</a></div>
+            <div align="center" class="body"><a href="assignments/project.html#checkpoint">Code Checkpoint</a></div>
           </td>
         </tr>
 	<tr>
