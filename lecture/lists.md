@@ -511,7 +511,7 @@ let map f l = List.fold_left (fun accum elt -> accum @ [f elt]) [] l
 If you wanted to use `fold_right` to build map it would be similar:
 
 ```ocaml
-let map_right f l = List.fold_right (fun elt accum -> (f elt) :: accum) [] l;;
+let map_right f l = List.fold_right (fun elt accum -> (f elt) :: accum) l [];;
 ```
 
 Note that `map_right` is much more efficient, `::` takes unit time and `@` is linear in size of left list.

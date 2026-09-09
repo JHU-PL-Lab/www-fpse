@@ -688,7 +688,7 @@ Note that the <code>acc</code> we call <code>init</code> here since that is the 
 
 <p>If you wanted to use <code>fold_right</code> to build map it would be similar:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">map_right</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span><span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">map_right</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="n">l</span> <span class="bp">[]</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <p>Note that <code>map_right</code> is much more efficient, <code>::</code> takes unit time and <code>@</code> is linear in size of left list.</p>

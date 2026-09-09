@@ -196,7 +196,7 @@ let exists f l =
 
 let map f l = List.fold_left (fun accum elt -> accum @ [f elt]) [] l
 
-let map_right f l = List.fold_right (fun elt accum -> (f elt) :: accum) [] l;;
+let map_right f l = List.fold_right (fun elt accum -> (f elt) :: accum) l [];;
 
 let rec fold_right f l init =
   match l with
