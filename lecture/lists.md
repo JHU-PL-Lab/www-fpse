@@ -361,18 +361,19 @@ List.map (uncurry (+)) [(1,2);(3,4)];; (* equivalent: its an uncurried add funct
 * Here for example is how we can turn a list of characters into a string with `fold_right`
 
   ```ocaml
+  let char_list_to_string l =
   List.fold_right (fun elt acc ->
     String.of_char elt ^ acc
-  ) ['a';'b';'c'] ""
-  ;; (* computes "a"^("b"^("c"^"")), i.e. "abc" *)
+  ) l "";; 
+  char_list_to_string ['a';'b';'c'];; (* computes "a"^("b"^("c"^"")), i.e. "abc" *)
   ```
 
-* The base case is argument `""`
-* the function is the code for the recursive call
+* The base case is fold argument `""`
+* the function argument is the code for the recursive call
   - `elt` is the current element of the list
   - `acc` is going to be the result of recursing on the tail of the list (a string here)
 
-Before showing potential code for `List.fold_right` let's manually implement `char_list_to_string` with `let rec` to compare.
+Before showing potential code for `List.fold_right` let's re-implement `char_list_to_string` with `let rec` to compare.
 
 ```ocaml
 let rec char_list_to_string l =
@@ -411,8 +412,8 @@ let fold_right f l init =
     match l with
     | [] -> init
     | elt :: elts ->
-      let accum = folder_aux elts in
-      f elt accum
+      let acc = folder_aux elts in
+      f elt acc
   in
   folder_aux l
 ```
@@ -423,7 +424,7 @@ Here is another simple use of right fold to summate an integer list:
 List.fold_right (fun elt acc -> elt + acc) [3; 5; 7] 0;; (* this computes 3 + (5 + (7 + 0))  *)
 ```
 
-which is equivalent to the simpler
+which is equivalent to the more concise
 
 ```ocaml
 List.fold_right (+) [3; 5; 7] 0;;
@@ -476,6 +477,7 @@ let rec fold_left f init l =
   - The `'acc` is the type of the result being accumulated
 * The type of `List.fold_right` is `('a -> 'acc -> 'acc) -> 'a list -> 'acc -> 'acc`
   - (Notice that the arguments to `f` are swapped here compared to the `fold_left` version)
+  - (Also notice that the list and base-case arguments are swapped)
 
 #### More fold examples
 
@@ -495,23 +497,24 @@ let exists f l =
 - : bool = true
 ```
 
-In fact we can do this in one pass with just a fold:
+In fact we can do this in one pass with just a `fold_left`.  The invariant is we start with accumulating `false` and switch to `true` if the predicate holds.
+
 
 ```ocaml
 let exists f l =
-  List.fold_left (fun accum elt -> accum || f elt) false l;;
+  List.fold_left (fun acc elt -> acc || f elt) false l;;
 ```
 
-Which hints that `map` itself is definable with a `fold`; we accumulate a new *list* here:
+This code hints that `map` itself is definable with a `fold_left`; we accumulate a new *list* here:
 
 ```ocaml
-let map f l = List.fold_left (fun accum elt -> accum @ [f elt]) [] l
+let map f l = List.fold_left (fun acc elt -> acc @ [f elt]) [] l
 ```
 
 If you wanted to use `fold_right` to build map it would be similar:
 
 ```ocaml
-let map_right f l = List.fold_right (fun elt accum -> (f elt) :: accum) l [];;
+let map_right f l = List.fold_right (fun elt acc -> (f elt) :: acc) l [];;
 ```
 
 Note that `map_right` is much more efficient, `::` takes unit time and `@` is linear in size of left list.
@@ -541,7 +544,7 @@ let rec fold_left f init l =
 * Fold left/right are good example contrasts of how you can accumulate a value up (`fold_right`) vs down (`fold_left`) the recursion
 
 `fold_left` is in fact more efficient than `fold_right` so it is preferred all things being equal:
-  - Observe how the value of the `fold_left` function above is what is directly returned from the base case, it bubbles all the way out
+  - Observe how the value of the `fold_left` function above is what is directly returned from the base case, it bubbles **all the way out**
   - Such a function is *tail recursive*: there is *no work to do* after the (sole) recursive call finishes
   - The compiler doesn't need to use a call stack for such functions since nothing happens upon return
     - there is nothing it needs to mark as a point to go back to
@@ -553,15 +556,15 @@ let rec fold_left f init l =
 
 * OCaml sometimes uses *named arguments* in libraries.
 * Named arguments allow you to switch around the order of arguments
-* They also make the code easier to follow when there are multiple args (e.g. folds)
-* For lists there is a parallel library `ListLabels` which has the same functions but with named arguments.
+* They also make the code easier to follow when there are multiple arguments
+* For `List` there is a parallel library `ListLabels` which has the same functions but with named arguments.
 
   ```ocaml
   ListLabels.map ~f:(fun x -> x * x) [1;5;3;45];;
 
-  ListLabels.fold_left ~f:(fun accum _ -> accum + 1) ~init:0 [1;2;2345;43];;
+  ListLabels.fold_left ~f:(fun acc _ -> acc + 1) ~init:0 [1;2;2345;43];;
 
-  ListLabels.fold_left [1;2;2345;43] ~init:0 ~f:(fun accum _ -> accum + 1);; (* can swap order *)
+  ListLabels.fold_left [1;2;2345;43] ~init:0 ~f:(fun acc _ -> acc + 1);; (* can swap order *)
 
   (* writing your own functions with named arguments: *)
   let rec fold_left ~f ~init l =
@@ -570,12 +573,13 @@ let rec fold_left f init l =
     | hd :: tl -> fold_left ~f ~init:(f init hd) tl
   ;;
 
+  (* Named arguments declared with types puts the tidle outside parens: *)
   let swap ~(x : int) ~(y : int) : int * int = (y, x);;
 
   swap ~x:5 ~y:4;;
   ```
 
-* Other parallel libraries are StdLabels, StringLabels, UnixLabels, MoreLabels, etc.
+* Other labeled-arguments libraries include `StdLabels`, `StringLabels`, `UnixLabels`, `MoreLabels`, etc.
 
 ### Aside: Optional arguments
 
@@ -585,7 +589,7 @@ let rec fold_left f init l =
 * e.g. in `UnixLabels.symlink : ?to_dir:bool -> src:string -> dst:string -> unit`, `?to_dir` is an optional boolean argument
   - To use it just add `~to_dir: true` (since its optional and we want the default false we left it off)
   - If you write a function with an optional argument it will show up to you as an `option`-typed object: `Some` (given) or `None` (not given).
-* Many languages now support optional arguments
+* Many languages support optional arguments but as null-or-value so can have escaping nulls issue.
 * Example of writing a function with an optional argument:
 
 ```ocaml
@@ -597,6 +601,10 @@ val f : ?x:int -> int -> int = <fun>
 
 # f 2;; (* implicitly not giving it here so x is None in the body. *)
 - : int = 2
+
+(* declared types version - need to call x an option since thats the internal view *)
+# let f ?(x : int option) (y : int) : int = match x with Some z -> z + y | None -> y;;
+val f : ?x:int -> int -> int = <fun>
 ```
 
-* They can help reduce clutter for an argument that is usually not needed.
+* They can help reduce clutter when calling a function which has an argument that is usually not needed.

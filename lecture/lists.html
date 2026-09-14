@@ -515,14 +515,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>
     <p>Here for example is how we can turn a list of characters into a string with <code>fold_right</code></p>
 
-    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">acc</span> <span class="o">-&gt;</span>
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">char_list_to_string</span> <span class="n">l</span> <span class="o">=</span>
+<span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">acc</span> <span class="o">-&gt;</span>
   <span class="nn">String</span><span class="p">.</span><span class="n">of_char</span> <span class="n">elt</span> <span class="o">^</span> <span class="n">acc</span>
-<span class="p">)</span> <span class="p">[</span><span class="k">'</span><span class="n">a'</span><span class="p">;</span><span class="k">'</span><span class="n">b'</span><span class="p">;</span><span class="k">'</span><span class="n">c'</span><span class="p">]</span> <span class="s2">""</span>
-<span class="p">;;</span> <span class="c">(* computes "a"^("b"^("c"^"")), i.e. "abc" *)</span>
+<span class="p">)</span> <span class="n">l</span> <span class="s2">""</span><span class="p">;;</span> 
+<span class="n">char_list_to_string</span> <span class="p">[</span><span class="k">'</span><span class="n">a'</span><span class="p">;</span><span class="k">'</span><span class="n">b'</span><span class="p">;</span><span class="k">'</span><span class="n">c'</span><span class="p">];;</span> <span class="c">(* computes "a"^("b"^("c"^"")), i.e. "abc" *)</span>
 </code></pre></div>    </div>
   </li>
-  <li>The base case is argument <code>""</code></li>
-  <li>the function is the code for the recursive call
+  <li>The base case is fold argument <code>""</code></li>
+  <li>the function argument is the code for the recursive call
     <ul>
       <li><code>elt</code> is the current element of the list</li>
       <li><code>acc</code> is going to be the result of recursing on the tail of the list (a string here)</li>
@@ -530,7 +531,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<p>Before showing potential code for <code>List.fold_right</code> let’s manually implement <code>char_list_to_string</code> with <code>let rec</code> to compare.</p>
+<p>Before showing potential code for <code>List.fold_right</code> let’s re-implement <code>char_list_to_string</code> with <code>let rec</code> to compare.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">char_list_to_string</span> <span class="n">l</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
@@ -574,8 +575,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <span class="k">match</span> <span class="n">l</span> <span class="k">with</span>
     <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">init</span>
     <span class="o">|</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">elts</span> <span class="o">-&gt;</span>
-      <span class="k">let</span> <span class="n">accum</span> <span class="o">=</span> <span class="n">folder_aux</span> <span class="n">elts</span> <span class="k">in</span>
-      <span class="n">f</span> <span class="n">elt</span> <span class="n">accum</span>
+      <span class="k">let</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">folder_aux</span> <span class="n">elts</span> <span class="k">in</span>
+      <span class="n">f</span> <span class="n">elt</span> <span class="n">acc</span>
   <span class="k">in</span>
   <span class="n">folder_aux</span> <span class="n">l</span>
 </code></pre></div></div>
@@ -585,7 +586,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">acc</span> <span class="o">-&gt;</span> <span class="n">elt</span> <span class="o">+</span> <span class="n">acc</span><span class="p">)</span> <span class="p">[</span><span class="mi">3</span><span class="p">;</span> <span class="mi">5</span><span class="p">;</span> <span class="mi">7</span><span class="p">]</span> <span class="mi">0</span><span class="p">;;</span> <span class="c">(* this computes 3 + (5 + (7 + 0))  *)</span>
 </code></pre></div></div>
 
-<p>which is equivalent to the simpler</p>
+<p>which is equivalent to the more concise</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="p">[</span><span class="mi">3</span><span class="p">;</span> <span class="mi">5</span><span class="p">;</span> <span class="mi">7</span><span class="p">]</span> <span class="mi">0</span><span class="p">;;</span>
 </code></pre></div></div>
@@ -652,6 +653,7 @@ Note that the <code>acc</code> we call <code>init</code> here since that is the 
   <li>The type of <code>List.fold_right</code> is <code>('a -&gt; 'acc -&gt; 'acc) -&gt; 'a list -&gt; 'acc -&gt; 'acc</code>
     <ul>
       <li>(Notice that the arguments to <code>f</code> are swapped here compared to the <code>fold_left</code> version)</li>
+      <li>(Also notice that the list and base-case arguments are swapped)</li>
     </ul>
   </li>
 </ul>
@@ -675,20 +677,20 @@ Note that the <code>acc</code> we call <code>init</code> here since that is the 
 <span class="o">-</span> <span class="o">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="bp">true</span>
 </code></pre></div></div>
 
-<p>In fact we can do this in one pass with just a fold:</p>
+<p>In fact we can do this in one pass with just a <code>fold_left</code>.  The invariant is we start with accumulating <code>false</code> and switch to <code>true</code> if the predicate holds.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">exists</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span>
-  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">||</span> <span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="bp">false</span> <span class="n">l</span><span class="p">;;</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">||</span> <span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="bp">false</span> <span class="n">l</span><span class="p">;;</span>
 </code></pre></div></div>
 
-<p>Which hints that <code>map</code> itself is definable with a <code>fold</code>; we accumulate a new <em>list</em> here:</p>
+<p>This code hints that <code>map</code> itself is definable with a <code>fold_left</code>; we accumulate a new <em>list</em> here:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">map</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">@</span> <span class="p">[</span><span class="n">f</span> <span class="n">elt</span><span class="p">])</span> <span class="bp">[]</span> <span class="n">l</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">map</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">@</span> <span class="p">[</span><span class="n">f</span> <span class="n">elt</span><span class="p">])</span> <span class="bp">[]</span> <span class="n">l</span>
 </code></pre></div></div>
 
 <p>If you wanted to use <code>fold_right</code> to build map it would be similar:</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">map_right</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="n">l</span> <span class="bp">[]</span><span class="p">;;</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">map_right</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">acc</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">f</span> <span class="n">elt</span><span class="p">)</span> <span class="o">::</span> <span class="n">acc</span><span class="p">)</span> <span class="n">l</span> <span class="bp">[]</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <p>Note that <code>map_right</code> is much more efficient, <code>::</code> takes unit time and <code>@</code> is linear in size of left list.</p>
@@ -719,7 +721,7 @@ Note that the <code>acc</code> we call <code>init</code> here since that is the 
 
 <p><code>fold_left</code> is in fact more efficient than <code>fold_right</code> so it is preferred all things being equal:</p>
 <ul>
-  <li>Observe how the value of the <code>fold_left</code> function above is what is directly returned from the base case, it bubbles all the way out</li>
+  <li>Observe how the value of the <code>fold_left</code> function above is what is directly returned from the base case, it bubbles <strong>all the way out</strong></li>
   <li>Such a function is <em>tail recursive</em>: there is <em>no work to do</em> after the (sole) recursive call finishes</li>
   <li>The compiler doesn’t need to use a call stack for such functions since nothing happens upon return
     <ul>
@@ -736,15 +738,15 @@ Note that the <code>acc</code> we call <code>init</code> here since that is the 
 <ul>
   <li>OCaml sometimes uses <em>named arguments</em> in libraries.</li>
   <li>Named arguments allow you to switch around the order of arguments</li>
-  <li>They also make the code easier to follow when there are multiple args (e.g. folds)</li>
+  <li>They also make the code easier to follow when there are multiple arguments</li>
   <li>
-    <p>For lists there is a parallel library <code>ListLabels</code> which has the same functions but with named arguments.</p>
+    <p>For <code>List</code> there is a parallel library <code>ListLabels</code> which has the same functions but with named arguments.</p>
 
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">ListLabels</span><span class="p">.</span><span class="n">map</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">5</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="mi">45</span><span class="p">];;</span>
 
-<span class="nn">ListLabels</span><span class="p">.</span><span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">2345</span><span class="p">;</span><span class="mi">43</span><span class="p">];;</span>
+<span class="nn">ListLabels</span><span class="p">.</span><span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">2345</span><span class="p">;</span><span class="mi">43</span><span class="p">];;</span>
 
-<span class="nn">ListLabels</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">2345</span><span class="p">;</span><span class="mi">43</span><span class="p">]</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* can swap order *)</span>
+<span class="nn">ListLabels</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">2345</span><span class="p">;</span><span class="mi">43</span><span class="p">]</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="mi">0</span> <span class="o">~</span><span class="n">f</span><span class="o">:</span><span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);;</span> <span class="c">(* can swap order *)</span>
 
 <span class="c">(* writing your own functions with named arguments: *)</span>
 <span class="k">let</span> <span class="k">rec</span> <span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span> <span class="n">l</span> <span class="o">=</span>
@@ -753,12 +755,13 @@ Note that the <code>acc</code> we call <code>init</code> here since that is the 
   <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">fold_left</span> <span class="o">~</span><span class="n">f</span> <span class="o">~</span><span class="n">init</span><span class="o">:</span><span class="p">(</span><span class="n">f</span> <span class="n">init</span> <span class="n">hd</span><span class="p">)</span> <span class="n">tl</span>
 <span class="p">;;</span>
 
+<span class="c">(* Named arguments declared with types puts the tidle outside parens: *)</span>
 <span class="k">let</span> <span class="n">swap</span> <span class="o">~</span><span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">~</span><span class="p">(</span><span class="n">y</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">*</span> <span class="kt">int</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="o">,</span> <span class="n">x</span><span class="p">);;</span>
 
 <span class="n">swap</span> <span class="o">~</span><span class="n">x</span><span class="o">:</span><span class="mi">5</span> <span class="o">~</span><span class="n">y</span><span class="o">:</span><span class="mi">4</span><span class="p">;;</span>
 </code></pre></div>    </div>
   </li>
-  <li>Other parallel libraries are StdLabels, StringLabels, UnixLabels, MoreLabels, etc.</li>
+  <li>Other labeled-arguments libraries include <code>StdLabels</code>, <code>StringLabels</code>, <code>UnixLabels</code>, <code>MoreLabels</code>, etc.</li>
 </ul>
 
 <h3 id="aside-optional-arguments">Aside: Optional arguments</h3>
@@ -773,7 +776,7 @@ Note that the <code>acc</code> we call <code>init</code> here since that is the 
       <li>If you write a function with an optional argument it will show up to you as an <code>option</code>-typed object: <code>Some</code> (given) or <code>None</code> (not given).</li>
     </ul>
   </li>
-  <li>Many languages now support optional arguments</li>
+  <li>Many languages support optional arguments but as null-or-value so can have escaping nulls issue.</li>
   <li>Example of writing a function with an optional argument:</li>
 </ul>
 
@@ -785,10 +788,14 @@ Note that the <code>acc</code> we call <code>init</code> here since that is the 
 
 <span class="o">#</span> <span class="n">f</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* implicitly not giving it here so x is None in the body. *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c">(* declared types version - need to call x an option since thats the internal view *)</span>
+<span class="o">#</span> <span class="k">let</span> <span class="n">f</span> <span class="o">?</span><span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="n">option</span><span class="p">)</span> <span class="p">(</span><span class="n">y</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="k">match</span> <span class="n">x</span> <span class="k">with</span> <span class="nc">Some</span> <span class="n">z</span> <span class="o">-&gt;</span> <span class="n">z</span> <span class="o">+</span> <span class="n">y</span> <span class="o">|</span> <span class="nc">None</span> <span class="o">-&gt;</span> <span class="n">y</span><span class="p">;;</span>
+<span class="k">val</span> <span class="n">f</span> <span class="o">:</span> <span class="o">?</span><span class="n">x</span><span class="o">:</span><span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">-&gt;</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">&lt;</span><span class="k">fun</span><span class="o">&gt;</span>
 </code></pre></div></div>
 
 <ul>
-  <li>They can help reduce clutter for an argument that is usually not needed.</li>
+  <li>They can help reduce clutter when calling a function which has an argument that is usually not needed.</li>
 </ul>
       
           </section>

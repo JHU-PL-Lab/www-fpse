@@ -184,7 +184,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <ol>
-  <li>Punning by reusing the field name as a variable</li>
+  <li>Punning by reusing the field name as a variable in the pattern</li>
 </ol>
 
 <p>The following pun binds the <em>fields</em> <code>num</code> and <code>denom</code> from <code>r</code> straight into those same names as <em>variables</em>:</p>
@@ -203,7 +203,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat_to_int</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="n">n</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="n">d</span> <span class="p">}</span> <span class="o">=</span> <span class="c">(* pattern as a function parameter *)</span>
   <span class="n">n</span> <span class="o">/</span> <span class="n">d</span>
 
-<span class="k">let</span> <span class="n">rat_to_int</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="p">}</span> <span class="o">=</span> <span class="c">(* pattern parameter plus punning on labels/variables *)</span>
+<span class="k">let</span> <span class="n">rat_to_int</span> <span class="p">{</span> <span class="n">num</span> <span class="p">;</span> <span class="n">denom</span> <span class="p">}</span> <span class="o">=</span> <span class="c">(* pattern parameter plus punning on labels/variables - this is the cleanest one *)</span>
   <span class="n">num</span> <span class="o">/</span> <span class="n">denom</span>
 
 <span class="k">let</span> <span class="n">rat_to_int</span> <span class="n">r</span> <span class="o">=</span>

@@ -154,8 +154,8 @@ let fold_right f l init =
     match l with
     | [] -> init
     | elt :: elts ->
-      let accum = folder_aux elts in
-      f elt accum
+      let acc = folder_aux elts in
+      f elt acc
   in
   folder_aux l
 
@@ -192,11 +192,11 @@ let exists f l =
 - : bool = true
 
 let exists f l =
-  List.fold_left (fun accum elt -> accum || f elt) false l;;
+  List.fold_left (fun acc elt -> acc || f elt) false l;;
 
-let map f l = List.fold_left (fun accum elt -> accum @ [f elt]) [] l
+let map f l = List.fold_left (fun acc elt -> acc @ [f elt]) [] l
 
-let map_right f l = List.fold_right (fun elt accum -> (f elt) :: accum) l [];;
+let map_right f l = List.fold_right (fun elt acc -> (f elt) :: acc) l [];;
 
 let rec fold_right f l init =
   match l with
@@ -216,4 +216,8 @@ val f : ?x:int -> int -> int = <fun>
 
 # f 2;; (* implicitly not giving it here so x is None in the body. *)
 - : int = 2
+
+(* declared types version - need to call x an option since thats the internal view *)
+# let f ?(x : int option) (y : int) : int = match x with Some z -> z + y | None -> y;;
+val f : ?x:int -> int -> int = <fun>
 

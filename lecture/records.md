@@ -50,7 +50,7 @@ let rat_to_int r =
 ```
 - Note that `num =` and `denom =` are the **labels**, and `n` and `d` are **variables**. This is just like an object or struct field name vs a variable name in Java/C/C++/etc.
 
-3. Punning by reusing the field name as a variable
+3. Punning by reusing the field name as a variable in the pattern
 
 The following pun binds the *fields* `num` and `denom` from `r` straight into those same names as *variables*:
 
@@ -68,7 +68,7 @@ Pattern `match`ing on only one pattern is too verbose, don't do it.  Like with p
 let rat_to_int { num = n ; denom = d } = (* pattern as a function parameter *)
   n / d
 
-let rat_to_int { num ; denom } = (* pattern parameter plus punning on labels/variables *)
+let rat_to_int { num ; denom } = (* pattern parameter plus punning on labels/variables - this is the cleanest one *)
   num / denom
 
 let rat_to_int r =

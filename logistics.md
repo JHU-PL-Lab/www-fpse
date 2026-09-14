@@ -26,9 +26,9 @@ Lectures will be recorded and posted on Panopto [here](https://jh.hosted.panopto
 
 All assignments are linked from the [dateline](dateline.html). They will all be programming exercises, primarily in OCaml.
 
-### In-Class Exercises
+### In-Class Learning Experiences
 
-There will be around half a dozen graded in-class exercises to test your OCaml abilities. They cannot be made up so you will need to be attending in-person to get credit.  You will be able to drop your lowest score in case you miss one. Any honest attempt will earn a score of 100%.
+There will be around half a dozen graded in-class learning experiences to help you gain facility in  OCaml programming. They cannot be made up and you will need to be attending class in-person to get credit.  You will be able to drop your lowest score in case you miss one. Any honest attempt will earn a score of 100%.
 
 
 ### Exams

@@ -18,7 +18,7 @@ let rat_to_int r =
 let rat_to_int { num = n ; denom = d } = (* pattern as a function parameter *)
   n / d
 
-let rat_to_int { num ; denom } = (* pattern parameter plus punning on labels/variables *)
+let rat_to_int { num ; denom } = (* pattern parameter plus punning on labels/variables - this is the cleanest one *)
   num / denom
 
 let rat_to_int r =

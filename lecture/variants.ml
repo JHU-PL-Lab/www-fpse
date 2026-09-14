@@ -1,6 +1,6 @@
 type ff_num = Fixed of int | Floating of float;; (* read "|" as "or" *)
 
-Fixed 5;; (* tag 5 as a Fixed *)
+Fixed 5;; (* tag 5 as a Fixed aka integer *)
 
 Floating 4.0;; (* tag 4.0 as a Floating *)
 
@@ -24,23 +24,20 @@ ff_add (Fixed 123) (Floating 3.14159);;
 
 type complex = CZero | Nonzero of float * float;;
 
-let com = Nonzero (3.2, 11.2);;
+let compl_eg = Nonzero (3.2, 11.2);;
 
-let zer = CZero;;
+let zer_eg = CZero;;
 
-let parsing = Fun.id Nonzero (3.2, 11.2);; (* this is a typing error, it views as (Fun.id Nonzero) (3.2, 11.2) *)
+let parsing_bad = Fun.id Nonzero (3.2, 11.2);; (* type error, parses as (Fun.id Nonzero) (3.2, 11.2) *)
 
-let parsing = Fun.id @@ Nonzero (3.2, 11.2);; (* so use @@ instead of " " *)
+let parsing_good = Fun.id @@ Nonzero (3.2, 11.2);; (* so use @@ instead of " " *)
 
-(* Example derived from
-   https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
-*)
+type nucleotide = A | C | G | T (* a DNA strand is then a nucleotide list *)
 
-type nucleotide = A | C | G | T
-
+(* Make a version of List.combine which returns None if the lists not equal length *)
 let combine_opt l r =
   try Some (List.combine l r) with
-  | _ -> None
+  | _ -> None (* returns None if List.combine raised an exception *)
 
 let count f l =
   List.fold_left (fun acc x ->
@@ -68,16 +65,16 @@ type 'a option = None | Some of 'a
 # #show_type result;;
 type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
 
-type 'a lizt = Mt | Cons of 'a * 'a lizt;; (* the recursive "'a lizt" on the rhs is a lizt of 'a *)
+type 'a lizt = Mt | Conz of 'a * 'a lizt;; (* the recursive "'a lizt" on the rhs is a lizt of 'a *)
 
-let lizt_eg = Cons (3, Cons (5, Cons (7, Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
+let lizt_eg = Conz (3, Conz (5, Conz (7, Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
 
 let rec lizt_map (f : 'a -> 'b) (ml : 'a lizt) : 'b lizt =
   match ml with
   | Mt -> Mt
-  | Cons (hd, tl) -> Cons (f hd, lizt_map f tl)
+  | Conz (hd, tl) -> Conz (f hd, lizt_map f tl)
 
-let map_eg = lizt_map (fun x -> x - 1) (Cons (3, Cons (5, Cons (7, Mt))))
+let map_eg = lizt_map (fun x -> x - 1) (Conz (3, Conz (5, Conz (7, Mt))))
 
 # #show_type list;;
 type 'a list = [] | (::) of 'a * 'a list
@@ -96,7 +93,7 @@ let bt1 =
     )
 ;;
 
-(* Type error, like list, must have uniform type: *)
+(* Type error -- like list, must have uniform type: *)
 Node ("fiddly", Node (0, Leaf, Leaf), Leaf);;
 
 let rec add_gobble string_bintree =
@@ -121,7 +118,7 @@ let rec reduce (f : 'a -> 'acc -> 'acc -> 'acc) (tree : 'a bin_tree) (leaf : 'ac
     f y (reduce f left leaf) (reduce f right leaf)
 
 (* using tree reduce *)
-let int_summate tree = reduce (fun elt laccum raccum -> elt + laccum + raccum) tree 0;;
+let int_summate tree = reduce (fun elt lacc racc -> elt + lacc + racc) tree 0;;
 
 int_summate @@ Node (3, Node (1, Leaf, Node (2, Leaf, Leaf)), Leaf);;
 
@@ -172,8 +169,10 @@ let s1 =  S.empty |> S.add 1 |> S.add 2;; (* the set {1, 2} *)
 let s2 =  S.empty |> S.add 2 |> S.add 1;; (* the set {1, 2} again *)
 
 let _ = s1 = s2;; (* returns false, but they represent the same set - ! *)
+let _ = S.equal s1 s2;; (* Here is the correct equality. *)
 
-let _ = compare m1 m2;; (* the second one is considered "greater" due to internal rep'n *)
+let _ = compare s1 s2;; (* the second one is considered "greater" due to internal rep'n *)
+let _ = S.compare s1 s2;; (* The correct one again *)
 
 #require "ppx_deriving.eq";; (* loads the extension into utop *)
 #require "ppx_deriving.ord";; (* ditto *)

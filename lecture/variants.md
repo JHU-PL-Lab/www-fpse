@@ -1,20 +1,20 @@
 ## Variants
 
-* Variants build or-data (this-or-this-or-this); records build and-data (this-and-this-and-this)
+* Variants build or-data (this-or-this-or-this); records or tuples build and-data (this-and-this-and-this)
 * All data combination is fundamentally either *and* or *or*, similar to the fundamental operators of boolean logic.
 * We start with variants (or), and then do records (and) next.
 
-* The `option` and `result` types we have been using are simple forms of *variant types*
+* The `option` and `result` types we have been using are simple forms of variant types
 * Variants let your data be one of several forms (either-or), with a label wrapping the data indicating the specific form
 * They are related to `union` types in C or `enums` in Java, but are more safe than C and more general than Java
 * Like lists and tuples they are by default immutable
 
-Example variant type for doing mixed arithmetic (integers and floats)
+Example variant type for doing mixed arithmetic (mixing integers and floats)
 
 ```ocaml
 type ff_num = Fixed of int | Floating of float;; (* read "|" as "or" *)
 
-Fixed 5;; (* tag 5 as a Fixed *)
+Fixed 5;; (* tag 5 as a Fixed aka integer *)
 
 Floating 4.0;; (* tag 4.0 as a Floating *)
 ```
@@ -57,31 +57,28 @@ ff_add (Fixed 123) (Floating 3.14159);;
 ```ocaml
 type complex = CZero | Nonzero of float * float;;
 
-let com = Nonzero (3.2, 11.2);;
+let compl_eg = Nonzero (3.2, 11.2);;
 
-let zer = CZero;;
+let zer_eg = CZero;;
 
-let parsing = Fun.id Nonzero (3.2, 11.2);; (* this is a typing error, it views as (Fun.id Nonzero) (3.2, 11.2) *)
+let parsing_bad = Fun.id Nonzero (3.2, 11.2);; (* type error, parses as (Fun.id Nonzero) (3.2, 11.2) *)
 
-let parsing = Fun.id @@ Nonzero (3.2, 11.2);; (* so use @@ instead of " " *)
+let parsing_good = Fun.id @@ Nonzero (3.2, 11.2);; (* so use @@ instead of " " *)
 ```
 
 #### An Example of Variants plus List. libraries
 
-* Lets write Hamming distance calculator for DNA
+* Lets write a Hamming distance calculator for DNA
 * Goal beyond using variants is to cover some useful OCaml programming patterns.
 
 
 ```ocaml
-(* Example derived from
-   https://exercism.io/tracks/ocaml/exercises/hamming/solutions/afce117bfacb41cebe5c6ebb5e07e7ca
-*)
+type nucleotide = A | C | G | T (* a DNA strand is then a nucleotide list *)
 
-type nucleotide = A | C | G | T
-
+(* Make a version of List.combine which returns None if the lists not equal length *)
 let combine_opt l r =
   try Some (List.combine l r) with
-  | _ -> None
+  | _ -> None (* returns None if List.combine raised an exception *)
 
 let count f l =
   List.fold_left (fun acc x ->
@@ -98,14 +95,15 @@ let hamm_example = hamming_distance [A;A;C;A;T;T] [A;A;G;A;C;T]
 
 If you are extensively using `Some/None` to bubble up exceptional conditions you may want to use special syntax designed for this since you would otherwise need to do many `match`es.
 
-First there is a library function `Option.bind` which you pass a computation and a function and it only runs the function if the first computation returns a `Some`, *and* if so it automatically removes the `Some` before running the function:
+* There is a library function `Option.bind` which you pass a computation and a function and it only runs the function if the first computation returns a `Some`,
+* *and* if it returns a `Some` it automatically removes the `Some` before running the function:
 
 ```ocaml
 let hamming_distance' (left : nucleotide list) (right : nucleotide list) : int option =
   Option.bind (combine_opt left right) (fun l -> Some (count (fun (a, b) -> a <> b) l))
 ```
 
-And there is even some fancy syntax for that which makes it look more like normal code:
+We can make this even more readable with `let*`, you don't have to make a `fun` for the second argument:
 
 ```ocaml
 let (let*) = Option.bind
@@ -147,28 +145,29 @@ type ('a, 'b) result = ('a, 'b) result = Ok of 'a | Error of 'b
 
 - A common use of variant types is to build recursive data structures (trees)
 - Functional programming is fantastic for computing over tree-structured data
+  - Lists, maps, and sets are all in fact implemented as a form of tree under the hood
 - Recursive types can refer to themselves in their own definition
   - similar in spirit to how C structs can be recursive (but, no pointers needed here)
-- Unlike with functions, no need for `rec`
+- Unlike with functions, no need for `rec` in the types
 
 - Homebrew lists `lizt` as a warm-up - the built-in `list` type is in fact not needed
   - Note this example is just for understanding, use the built-in lists if you just want lists.
 
 ```ocaml
-type 'a lizt = Mt | Cons of 'a * 'a lizt;; (* the recursive "'a lizt" on the rhs is a lizt of 'a *)
+type 'a lizt = Mt | Conz of 'a * 'a lizt;; (* the recursive "'a lizt" on the rhs is a lizt of 'a *)
 
-let lizt_eg = Cons (3, Cons (5, Cons (7, Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
+let lizt_eg = Conz (3, Conz (5, Conz (7, Mt)));; (* analogous to 3 :: 5 :: 7 :: [] = [3;5;7] *)
 ```
 
-Coding over lizts is nearly identical to built-in lists; here is mapping:
+Coding over lizts is nearly identical to built-in lists; here is `map` for example:
 
 ```ocaml
 let rec lizt_map (f : 'a -> 'b) (ml : 'a lizt) : 'b lizt =
   match ml with
   | Mt -> Mt
-  | Cons (hd, tl) -> Cons (f hd, lizt_map f tl)
+  | Conz (hd, tl) -> Conz (f hd, lizt_map f tl)
 
-let map_eg = lizt_map (fun x -> x - 1) (Cons (3, Cons (5, Cons (7, Mt))))
+let map_eg = lizt_map (fun x -> x - 1) (Conz (3, Conz (5, Conz (7, Mt))))
 ```
 
 Let's look at the built-in `list` type:
@@ -206,15 +205,14 @@ let bt1 =
     )
 ;;
 
-(* Type error, like list, must have uniform type: *)
+(* Type error -- like list, must have uniform type: *)
 Node ("fiddly", Node (0, Leaf, Leaf), Leaf);;
 ```
 
 #### Combinators for Binary Trees
 
 * Since lists are built-in we get a library of functions on them.
-* For these binary trees (and in general for whatever variant types you roll yourself) there is no such luxury.
-  - This is because there is no single canonical form of tree, there are many different kinds of trees used
+* For trees there is no such luxury since each use requires a slightly different tree form.
 * **Still**, that doesn't mean you should just code everything by recursing over the tree. Instead
   1. Define the combinators you need (maps, folds, node counts, etc.) using `let rec`.
   2. Use your combinators without needing `let rec` most of the time.
@@ -245,7 +243,7 @@ let add_gobble tree = map (fun s -> s ^ " gobble") tree
 
 * It is also natural to fold and collapse binary trees.
   - Fold left (in order): fold on the left, then apply the operation on the current node, then fold on the right.
-  - Reduce (post process): reduce each subtree, then apply the operation to the current node.
+  - Reduce (post order): reduce each subtree, then apply the operation to the current node.
 
 ```ocaml
 let rec reduce (f : 'a -> 'acc -> 'acc -> 'acc) (tree : 'a bin_tree) (leaf : 'acc) : 'acc =
@@ -255,7 +253,7 @@ let rec reduce (f : 'a -> 'acc -> 'acc -> 'acc) (tree : 'a bin_tree) (leaf : 'ac
     f y (reduce f left leaf) (reduce f right leaf)
 
 (* using tree reduce *)
-let int_summate tree = reduce (fun elt laccum raccum -> elt + laccum + raccum) tree 0;;
+let int_summate tree = reduce (fun elt lacc racc -> elt + lacc + racc) tree 0;;
 
 int_summate @@ Node (3, Node (1, Leaf, Node (2, Leaf, Leaf)), Leaf);;
 
@@ -266,9 +264,7 @@ let inc_nodes tree = reduce (fun elt la ra -> Node (elt+1, la, ra)) tree Leaf;;
 * Many of the other `List` functions have analogues on binary trees and recursive variants in general
   - `length` (`size` or `depth` for a tree), `forall`, `exists`, `filter` (filter out a subtree), etc etc.
 
-* For some operations we need to know how to compare the tree elements
-  - we will use the built-in `<=`, which is fine on simple types but not on Maps etc.
-  - Beware!
+* A common functional data structure is a binary search tree.  Here is `insert` on such a tree:
 
 ```ocaml
 let rec insert (x : 'a) (bt : 'a bin_tree) : ('a bin_tree) =
@@ -282,8 +278,7 @@ let rec insert (x : 'a) (bt : 'a bin_tree) : ('a bin_tree) =
 ;;
 ```
 
-(Note that this inserts duplicate elements instead of overwriting them)
-
+* (Note that this inserts duplicate elements instead of overwriting them)
 * Like list operations this is not mutating -- it returns a whole new tree.
 * **But**, recall for lists that if we have a list `l` then `0 :: l` can share the `l` due to immutability
 * So, for here, only one path through tree is not shared: on average only log n new nodes need to be made.  [More later in lecture on efficiency](efficiency.html).
@@ -296,11 +291,12 @@ let bt'' = insert 0 bt';; (* thread in the most recent tree into subsequent inse
 
 #### Comparisons
 
-* Always be careful about what the meaning of `=`, `<`, `<=` etc are
+* For the `insert` operation above we used the built-in ordering operation `<=`
+* But, you need to be careful about what the meaning of `=`, `<`, `<=` etc are
 * For lists, variants, integers, strings, floats, chars the built-in meaning is fine
 * But for types list `Map`s, hashtables, etc the default equality can be not what you mean
 * So, library functions needing to compare reliably will in fact take a comparision operation as argument
-* For example in the `List` library, the [`List.sort` function](https://ocaml.org/manual/5.5/api/List.html#VALsort)
+* For example in the `List` library, the [`List.sort` function](https://ocaml.org/manual/5.5/api/List.html#VALsort) takes a comparator as argument
 * Here is an example of how to sort a string list with `List.sort`:
 
 ```ocaml
@@ -317,7 +313,7 @@ List.sort String.compare ["Zoo";"Hey";"Abba"];; (* pass string's comparison func
 - : int = 1
 ```
 
-So, our more general tree insert should follow the lead of `List.sort`:
+So, a more general tree insert should follow the lead of `List.sort`:
 
 ```ocaml
 let rec insert compare x bt  =
@@ -337,9 +333,8 @@ let bt' = insert (Int.compare) 4 bt ;;
 * All of the data types we have used thus far, e.g. our `bin_tree` they compare well on.
 * But they don't accurately compare `Map`, `Set`, `Hashtbl`, `Queue`, `Stack` and others.
 * Its dangerous because they don't give an exception; they give a perhaps incorrect answer.
-* Also it raises an exception when trying to compare functions.
 
-Here is an example of how `Set` comparison is not what you want:
+Here is an example of how `=` on `Set` elements is not what you want:
 
 ```ocaml
 module S = Set.Make(Int);; (* This is how you set up an int set; covered later *)
@@ -348,18 +343,19 @@ let s1 =  S.empty |> S.add 1 |> S.add 2;; (* the set {1, 2} *)
 let s2 =  S.empty |> S.add 2 |> S.add 1;; (* the set {1, 2} again *)
 
 let _ = s1 = s2;; (* returns false, but they represent the same set - ! *)
+let _ = S.equal s1 s2;; (* Here is the correct equality. *)
 
-let _ = compare m1 m2;; (* the second one is considered "greater" due to internal rep'n *)
+let _ = compare s1 s2;; (* the second one is considered "greater" due to internal rep'n *)
+let _ = S.compare s1 s2;; (* The correct one again *)
 ```
 
 The reason is sets are implemented as binary search trees and the order of addition affects the tree structure, which is what `=` compares.
 
 #### Solution if you want to properly compare Set etc
 
-* For sets in particular, there is a better one built-in: `S.equal s1 s2` returns `true`.
-  - (why doesn't `=` invoke that?  Good question: because types can be hidden, `=` does not know which notion of equality you actually want)
-* You cane make you own definition of `compare`/`equal`.
-* To define equality more easily you can also use a ppx extension, a form of macro for OCaml
+* For many of the more complex data structures its built in, as we saw above for `Set`.
+* You can also make your own definition of `compare`/`equal`.
+* To define comparisons more easily you can also use a ppx extension, a form of macro for OCaml
  - Use library `ppx_deriving.eq` and append `[@@deriving eq]` to automatically define function `equal_mytype` for your type `mytype`
  - Use library `ppx_deriving.ord` and append `[@@deriving ord]` will define function `compare_mytype`.
  - Appending `[@@deriving eq, ord]` will get you both
@@ -384,7 +380,7 @@ val equal_tree : ('a -> 'a -> bool) -> 'a tree -> 'a tree -> bool = <fun>
 * This defines these functions for you that will compare trees.
 * For example, `compare_tree compare (Node (4, Leaf, Leaf)) (Leaf)` returns 1, it considers the left tree smaller since `Leaf` was listed first in the variant.
 * Notice that we need to pass in a comparison function for the underlying data in the tree (integers); here we just pass in the default comparison.
-* Note that `compare (Node (4, Leaf, Leaf)) (Leaf)` also returns 1 since this is a simple type.
+* Note that `compare (Node (4, Leaf, Leaf)) (Leaf)` also returns 1 since this is a simple type - no real need in this case.
 * To use these macros in a dune project add `(preprocess (pps ppx_deriving.eq))` or `(preprocess (pps ppx_deriving.ord))` to your dune file.
 
 ### Polymorphic Variants Very Briefly
