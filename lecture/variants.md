@@ -241,9 +241,8 @@ let rec map (f : 'a -> 'b) (tree : 'a bin_tree) : 'b bin_tree =
 let add_gobble tree = map (fun s -> s ^ " gobble") tree
 ```
 
-* It is also natural to fold and collapse binary trees.
-  - Fold left (in order): fold on the left, then apply the operation on the current node, then fold on the right.
-  - Reduce (post order): reduce each subtree, then apply the operation to the current node.
+* It is also natural to reduce binary trees: reduce each subtree, then apply the operation to the current node.
+  - This is post-order like `fold_right` on lists but with two accumulated values to put together not one.
 
 ```ocaml
 let rec reduce (f : 'a -> 'acc -> 'acc -> 'acc) (tree : 'a bin_tree) (leaf : 'acc) : 'acc =
@@ -257,14 +256,15 @@ let int_summate tree = reduce (fun elt lacc racc -> elt + lacc + racc) tree 0;;
 
 int_summate @@ Node (3, Node (1, Leaf, Node (2, Leaf, Leaf)), Leaf);;
 
-(* reduce can also do map-like operations - the reduction can return a tree *)
+(* reduce can also express a map - the reduction can return a tree *)
 let inc_nodes tree = reduce (fun elt la ra -> Node (elt+1, la, ra)) tree Leaf;;
 ```
 
+*  There is also an in-order notion of folding: fold on the left, then apply the operation on the current node, then fold on the right.  See Assignment 3.
 * Many of the other `List` functions have analogues on binary trees and recursive variants in general
   - `length` (`size` or `depth` for a tree), `forall`, `exists`, `filter` (filter out a subtree), etc etc.
 
-* A common functional data structure is a binary search tree.  Here is `insert` on such a tree:
+* A common functional data structure is a binary search tree (BST).  Here is `insert` on such a tree:
 
 ```ocaml
 let rec insert (x : 'a) (bt : 'a bin_tree) : ('a bin_tree) =
@@ -279,8 +279,8 @@ let rec insert (x : 'a) (bt : 'a bin_tree) : ('a bin_tree) =
 ```
 
 * (Note that this inserts duplicate elements instead of overwriting them)
-* Like list operations this is not mutating -- it returns a whole new tree.
-* **But**, recall for lists that if we have a list `l` then `0 :: l` can share the `l` due to immutability
+* Like list operations this is not mutating -- it returns a "whole new tree".
+* **But**, recall for lists that if we have a list `l` then `let l' = 0 :: l` can share the `l` due to immutability
 * So, for here, only one path through tree is not shared: on average only log n new nodes need to be made.  [More later in lecture on efficiency](efficiency.html).
 
 ```ocaml
@@ -289,12 +289,12 @@ let bt' = insert 4 bt;;
 let bt'' = insert 0 bt';; (* thread in the most recent tree into subsequent insert *)
 ```
 
-#### Comparisons
+#### Comparisons in OCaml
 
 * For the `insert` operation above we used the built-in ordering operation `<=`
 * But, you need to be careful about what the meaning of `=`, `<`, `<=` etc are
 * For lists, variants, integers, strings, floats, chars the built-in meaning is fine
-* But for types list `Map`s, hashtables, etc the default equality can be not what you mean
+* But for some types you haven't seen yet (`Set`s, `Map`s, `Hashtbl`s, etc) the default equality is be not what you mean
 * So, library functions needing to compare reliably will in fact take a comparision operation as argument
 * For example in the `List` library, the [`List.sort` function](https://ocaml.org/manual/5.5/api/List.html#VALsort) takes a comparator as argument
 * Here is an example of how to sort a string list with `List.sort`:
@@ -310,6 +310,9 @@ List.sort String.compare ["Zoo";"Hey";"Abba"];; (* pass string's comparison func
 - : int = -1
 
 # String.compare "Ahh" "Ack";; (* > returns 1 : greater *)
+- : int = 1
+
+# compare "Ahh" "Ack";; (* there is in fact a generic `compare` just like `=` which "usually is accurate" *)
 - : int = 1
 ```
 
@@ -329,12 +332,8 @@ let rec insert compare x bt  =
 let bt' = insert (Int.compare) 4 bt ;;
 ```
 
-* The built-in equality `(=)` and built-in compare, `compare` in fact work fine on all standard types and their compositions.
-* All of the data types we have used thus far, e.g. our `bin_tree` they compare well on.
-* But they don't accurately compare `Map`, `Set`, `Hashtbl`, `Queue`, `Stack` and others.
-* Its dangerous because they don't give an exception; they give a perhaps incorrect answer.
-
-Here is an example of how `=` on `Set` elements is not what you want:
+* Q: Whats the problem with `Set` etc exactly?
+* A: Here is an example of how `=` on `Set` elements is not what you want:
 
 ```ocaml
 module S = Set.Make(Int);; (* This is how you set up an int set; covered later *)
@@ -342,7 +341,7 @@ module S = Set.Make(Int);; (* This is how you set up an int set; covered later *
 let s1 =  S.empty |> S.add 1 |> S.add 2;; (* the set {1, 2} *)
 let s2 =  S.empty |> S.add 2 |> S.add 1;; (* the set {1, 2} again *)
 
-let _ = s1 = s2;; (* returns false, but they represent the same set - ! *)
+let _ = s1 = s2;; (* returns false BUT they represent the same set - OOPS! *)
 let _ = S.equal s1 s2;; (* Here is the correct equality. *)
 
 let _ = compare s1 s2;; (* the second one is considered "greater" due to internal rep'n *)
@@ -354,8 +353,11 @@ The reason is sets are implemented as binary search trees and the order of addit
 #### Solution if you want to properly compare Set etc
 
 * For many of the more complex data structures its built in, as we saw above for `Set`.
+  - Notice when we set up the set by making module `S` (more later on this) we had to pass in `Int`
+  - Thats because the `S` can then use `Int.compare`
+  - We'll learn all about how this works soooon
 * You can also make your own definition of `compare`/`equal`.
-* To define comparisons more easily you can also use a ppx extension, a form of macro for OCaml
+* To define comparisons more easily on your own types you can also use a ppx extension, a form of macro for OCaml
  - Use library `ppx_deriving.eq` and append `[@@deriving eq]` to automatically define function `equal_mytype` for your type `mytype`
  - Use library `ppx_deriving.ord` and append `[@@deriving ord]` will define function `compare_mytype`.
  - Appending `[@@deriving eq, ord]` will get you both
@@ -386,7 +388,7 @@ val equal_tree : ('a -> 'a -> bool) -> 'a tree -> 'a tree -> bool = <fun>
 ### Polymorphic Variants Very Briefly
 
 * OCaml has an additional form of variant which has different syntax and is overlapping in uses: *polymorphic variants*
-* A better term would be "inferred variants" - you don't need to declare them via `type`.
+* A better term might be "inferred variants" - you don't need to declare them via `type`.
 
 ```ocaml
 # `Zinger 3;; (* prefix constructors with a backtick for the inferred variants *)
@@ -394,7 +396,7 @@ val equal_tree : ('a -> 'a -> bool) -> 'a tree -> 'a tree -> bool = <fun>
 ```
 
 * This looks a bit useless, it inferred a 1-ary variant type
-* But the "`>`" in the type means *there could be other variants showing up in the future*.
+* But the "`>`" in the type means *at least a `Zinger` but maybe other variants*
 
 ```ocaml
 # let f b = if b then `Zinger 3 else `Zanger "hi";;

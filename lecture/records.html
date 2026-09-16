@@ -140,7 +140,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>similar to variants, but not like inferred variants or tuples</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">rat</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">5</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">7</span> <span class="p">}</span> <span class="c">(* doesn't work! Its type isn't defined yet *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">q</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">53</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">6</span> <span class="p">}</span> <span class="c">(* doesn't work! Its type isn't defined yet *)</span>
 </code></pre></div></div>
 
 <p>So let’s define the type:</p>
@@ -154,7 +154,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><code>denom</code> is a label with an <code>int</code> value, too.</li>
 </ul>
 
-<p>To make a value of a type, simply replace the <code>:</code> with <code>=</code>:</p>
+<p>Now we can make record values of this type:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">q</span> <span class="o">=</span> <span class="p">{</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">53</span> <span class="p">;</span> <span class="n">denom</span> <span class="o">=</span> <span class="mi">6</span> <span class="p">}</span>
 </code></pre></div></div>
@@ -263,11 +263,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">gbu</span> <span class="o">=</span>
   <span class="o">|</span> <span class="nc">Good</span> <span class="k">of</span> <span class="p">{</span> <span class="n">sugar</span> <span class="o">:</span> <span class="kt">string</span> <span class="p">;</span> <span class="n">units</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">}</span>
-  <span class="o">|</span> <span class="nc">Bad</span> <span class="k">of</span> <span class="p">{</span> <span class="n">spice</span> <span class="o">:</span> <span class="kt">string</span> <span class="p">;</span> <span class="n">units</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">}</span>
+  <span class="o">|</span> <span class="nc">Bad</span> <span class="k">of</span> <span class="p">{</span> <span class="n">snails</span> <span class="o">:</span> <span class="kt">string</span> <span class="p">;</span> <span class="n">units</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">}</span>
   <span class="o">|</span> <span class="nc">Ugly</span>
 </code></pre></div></div>
 
-<p>The inner records (<code>{ sugar : string ; units : int }</code> and <code>{ spice : string ; units : int }</code>) don’t need to be defined on their own. The downside is they cannot be returned or typed on their own. They are only internal to the variant constructor.</p>
+<p>The inner records (<code>{ sugar : string ; units : int }</code> and <code>{ snails : string ; units : int }</code>) don’t need to be defined on their own. The downside is they cannot be returned or typed on their own. They are only internal to the variant constructor.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">good_units_exn</span> <span class="n">v</span> <span class="o">=</span>
   <span class="k">match</span> <span class="n">v</span> <span class="k">with</span>

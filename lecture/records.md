@@ -11,7 +11,7 @@ Note that a record type must be declared before you make any values with that ty
  - similar to variants, but not like inferred variants or tuples
 
 ```ocaml
-let rat = { num = 5 ; denom = 7 } (* doesn't work! Its type isn't defined yet *)
+let q = { num = 53 ; denom = 6 } (* doesn't work! Its type isn't defined yet *)
 ```
 
 So let's define the type:
@@ -24,7 +24,7 @@ This defined the `ratio` type, a record type with two labels:
 - `num` is label with an `int` value.
 - `denom` is a label with an `int` value, too.
 
-To make a value of a type, simply replace the `:` with `=`:
+Now we can make record values of this type:
 
 ```ocaml
 let q = { num = 53 ; denom = 6 }
@@ -131,11 +131,11 @@ When a variant constructor has many components to its payload, name them with re
 ```ocaml
 type gbu =
   | Good of { sugar : string ; units : int }
-  | Bad of { spice : string ; units : int }
+  | Bad of { snails : string ; units : int }
   | Ugly
 ```
 
-The inner records (`{ sugar : string ; units : int }` and `{ spice : string ; units : int }`) don't need to be defined on their own. The downside is they cannot be returned or typed on their own. They are only internal to the variant constructor.
+The inner records (`{ sugar : string ; units : int }` and `{ snails : string ; units : int }`) don't need to be defined on their own. The downside is they cannot be returned or typed on their own. They are only internal to the variant constructor.
 
 ```ocaml
 let good_units_exn v =

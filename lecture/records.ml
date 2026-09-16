@@ -1,4 +1,4 @@
-let rat = { num = 5 ; denom = 7 } (* doesn't work! Its type isn't defined yet *)
+let q = { num = 53 ; denom = 6 } (* doesn't work! Its type isn't defined yet *)
 
 type ratio = { num : int ; denom : int }
 
@@ -57,7 +57,7 @@ let r3 = { r1 with b = 2 ; c } (* combining puns, `c = c` can again shorten to `
 
 type gbu =
   | Good of { sugar : string ; units : int }
-  | Bad of { spice : string ; units : int }
+  | Bad of { snails : string ; units : int }
   | Ugly
 
 let good_units_exn v =

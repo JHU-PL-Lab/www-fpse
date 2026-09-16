@@ -122,7 +122,7 @@ let int_summate tree = reduce (fun elt lacc racc -> elt + lacc + racc) tree 0;;
 
 int_summate @@ Node (3, Node (1, Leaf, Node (2, Leaf, Leaf)), Leaf);;
 
-(* reduce can also do map-like operations - the reduction can return a tree *)
+(* reduce can also express a map - the reduction can return a tree *)
 let inc_nodes tree = reduce (fun elt la ra -> Node (elt+1, la, ra)) tree Leaf;;
 
 let rec insert (x : 'a) (bt : 'a bin_tree) : ('a bin_tree) =
@@ -151,6 +151,9 @@ List.sort String.compare ["Zoo";"Hey";"Abba"];; (* pass string's comparison func
 # String.compare "Ahh" "Ack";; (* > returns 1 : greater *)
 - : int = 1
 
+# compare "Ahh" "Ack";; (* there is in fact a generic `compare` just like `=` which "usually is accurate" *)
+- : int = 1
+
 let rec insert compare x bt  =
   match bt with
   | Leaf -> Node (x, Leaf, Leaf)
@@ -168,7 +171,7 @@ module S = Set.Make(Int);; (* This is how you set up an int set; covered later *
 let s1 =  S.empty |> S.add 1 |> S.add 2;; (* the set {1, 2} *)
 let s2 =  S.empty |> S.add 2 |> S.add 1;; (* the set {1, 2} again *)
 
-let _ = s1 = s2;; (* returns false, but they represent the same set - ! *)
+let _ = s1 = s2;; (* returns false BUT they represent the same set - OOPS! *)
 let _ = S.equal s1 s2;; (* Here is the correct equality. *)
 
 let _ = compare s1 s2;; (* the second one is considered "greater" due to internal rep'n *)

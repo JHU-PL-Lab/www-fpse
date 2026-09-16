@@ -386,10 +386,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>It is also natural to fold and collapse binary trees.
+  <li>It is also natural to reduce binary trees: reduce each subtree, then apply the operation to the current node.
     <ul>
-      <li>Fold left (in order): fold on the left, then apply the operation on the current node, then fold on the right.</li>
-      <li>Reduce (post order): reduce each subtree, then apply the operation to the current node.</li>
+      <li>This is post-order like <code>fold_right</code> on lists but with two accumulated values to put together not one.</li>
     </ul>
   </li>
 </ul>
@@ -405,17 +404,18 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <span class="n">int_summate</span> <span class="o">@@</span> <span class="nc">Node</span> <span class="p">(</span><span class="mi">3</span><span class="o">,</span> <span class="nc">Node</span> <span class="p">(</span><span class="mi">1</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Node</span> <span class="p">(</span><span class="mi">2</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">))</span><span class="o">,</span> <span class="nc">Leaf</span><span class="p">);;</span>
 
-<span class="c">(* reduce can also do map-like operations - the reduction can return a tree *)</span>
+<span class="c">(* reduce can also express a map - the reduction can return a tree *)</span>
 <span class="k">let</span> <span class="n">inc_nodes</span> <span class="n">tree</span> <span class="o">=</span> <span class="n">reduce</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">la</span> <span class="n">ra</span> <span class="o">-&gt;</span> <span class="nc">Node</span> <span class="p">(</span><span class="n">elt</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">la</span><span class="o">,</span> <span class="n">ra</span><span class="p">))</span> <span class="n">tree</span> <span class="nc">Leaf</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <ul>
+  <li>There is also an in-order notion of folding: fold on the left, then apply the operation on the current node, then fold on the right.  See Assignment 3.</li>
   <li>Many of the other <code>List</code> functions have analogues on binary trees and recursive variants in general
     <ul>
       <li><code>length</code> (<code>size</code> or <code>depth</code> for a tree), <code>forall</code>, <code>exists</code>, <code>filter</code> (filter out a subtree), etc etc.</li>
     </ul>
   </li>
-  <li>A common functional data structure is a binary search tree.  Here is <code>insert</code> on such a tree:</li>
+  <li>A common functional data structure is a binary search tree (BST).  Here is <code>insert</code> on such a tree:</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">insert</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="p">(</span><span class="n">bt</span> <span class="o">:</span> <span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">:</span> <span class="p">(</span><span class="k">'</span><span class="n">a</span> <span class="n">bin_tree</span><span class="p">)</span> <span class="o">=</span>
@@ -431,8 +431,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>(Note that this inserts duplicate elements instead of overwriting them)</li>
-  <li>Like list operations this is not mutating – it returns a whole new tree.</li>
-  <li><strong>But</strong>, recall for lists that if we have a list <code>l</code> then <code>0 :: l</code> can share the <code>l</code> due to immutability</li>
+  <li>Like list operations this is not mutating – it returns a “whole new tree”.</li>
+  <li><strong>But</strong>, recall for lists that if we have a list <code>l</code> then <code>let l' = 0 :: l</code> can share the <code>l</code> due to immutability</li>
   <li>So, for here, only one path through tree is not shared: on average only log n new nodes need to be made.  <a href="efficiency.html">More later in lecture on efficiency</a>.</li>
 </ul>
 
@@ -441,13 +441,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">let</span> <span class="n">bt''</span> <span class="o">=</span> <span class="n">insert</span> <span class="mi">0</span> <span class="n">bt'</span><span class="p">;;</span> <span class="c">(* thread in the most recent tree into subsequent insert *)</span>
 </code></pre></div></div>
 
-<h4 id="comparisons">Comparisons</h4>
+<h4 id="comparisons-in-ocaml">Comparisons in OCaml</h4>
 
 <ul>
   <li>For the <code>insert</code> operation above we used the built-in ordering operation <code>&lt;=</code></li>
   <li>But, you need to be careful about what the meaning of <code>=</code>, <code>&lt;</code>, <code>&lt;=</code> etc are</li>
   <li>For lists, variants, integers, strings, floats, chars the built-in meaning is fine</li>
-  <li>But for types list <code>Map</code>s, hashtables, etc the default equality can be not what you mean</li>
+  <li>But for some types you haven’t seen yet (<code>Set</code>s, <code>Map</code>s, <code>Hashtbl</code>s, etc) the default equality is be not what you mean</li>
   <li>So, library functions needing to compare reliably will in fact take a comparision operation as argument</li>
   <li>For example in the <code>List</code> library, the <a href="https://ocaml.org/manual/5.5/api/List.html#VALsort"><code>List.sort</code> function</a> takes a comparator as argument</li>
   <li>Here is an example of how to sort a string list with <code>List.sort</code>:</li>
@@ -463,6 +463,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
 <span class="o">#</span> <span class="nn">String</span><span class="p">.</span><span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Ack"</span><span class="p">;;</span> <span class="c">(* &gt; returns 1 : greater *)</span>
+<span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="o">#</span> <span class="n">compare</span> <span class="s2">"Ahh"</span> <span class="s2">"Ack"</span><span class="p">;;</span> <span class="c">(* there is in fact a generic `compare` just like `=` which "usually is accurate" *)</span>
 <span class="o">-</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div></div>
 
@@ -482,20 +485,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>The built-in equality <code>(=)</code> and built-in compare, <code>compare</code> in fact work fine on all standard types and their compositions.</li>
-  <li>All of the data types we have used thus far, e.g. our <code>bin_tree</code> they compare well on.</li>
-  <li>But they don’t accurately compare <code>Map</code>, <code>Set</code>, <code>Hashtbl</code>, <code>Queue</code>, <code>Stack</code> and others.</li>
-  <li>Its dangerous because they don’t give an exception; they give a perhaps incorrect answer.</li>
+  <li>Q: Whats the problem with <code>Set</code> etc exactly?</li>
+  <li>A: Here is an example of how <code>=</code> on <code>Set</code> elements is not what you want:</li>
 </ul>
-
-<p>Here is an example of how <code>=</code> on <code>Set</code> elements is not what you want:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nc">S</span> <span class="o">=</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">Make</span><span class="p">(</span><span class="nc">Int</span><span class="p">);;</span> <span class="c">(* This is how you set up an int set; covered later *)</span>
 
 <span class="k">let</span> <span class="n">s1</span> <span class="o">=</span>  <span class="nn">S</span><span class="p">.</span><span class="n">empty</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">1</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">2</span><span class="p">;;</span> <span class="c">(* the set {1, 2} *)</span>
 <span class="k">let</span> <span class="n">s2</span> <span class="o">=</span>  <span class="nn">S</span><span class="p">.</span><span class="n">empty</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">2</span> <span class="o">|&gt;</span> <span class="nn">S</span><span class="p">.</span><span class="n">add</span> <span class="mi">1</span><span class="p">;;</span> <span class="c">(* the set {1, 2} again *)</span>
 
-<span class="k">let</span> <span class="n">_</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">s2</span><span class="p">;;</span> <span class="c">(* returns false, but they represent the same set - ! *)</span>
+<span class="k">let</span> <span class="n">_</span> <span class="o">=</span> <span class="n">s1</span> <span class="o">=</span> <span class="n">s2</span><span class="p">;;</span> <span class="c">(* returns false BUT they represent the same set - OOPS! *)</span>
 <span class="k">let</span> <span class="n">_</span> <span class="o">=</span> <span class="nn">S</span><span class="p">.</span><span class="n">equal</span> <span class="n">s1</span> <span class="n">s2</span><span class="p">;;</span> <span class="c">(* Here is the correct equality. *)</span>
 
 <span class="k">let</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compare</span> <span class="n">s1</span> <span class="n">s2</span><span class="p">;;</span> <span class="c">(* the second one is considered "greater" due to internal rep'n *)</span>
@@ -507,9 +506,15 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h4 id="solution-if-you-want-to-properly-compare-set-etc">Solution if you want to properly compare Set etc</h4>
 
 <ul>
-  <li>For many of the more complex data structures its built in, as we saw above for <code>Set</code>.</li>
+  <li>For many of the more complex data structures its built in, as we saw above for <code>Set</code>.
+    <ul>
+      <li>Notice when we set up the set by making module <code>S</code> (more later on this) we had to pass in <code>Int</code></li>
+      <li>Thats because the <code>S</code> can then use <code>Int.compare</code></li>
+      <li>We’ll learn all about how this works soooon</li>
+    </ul>
+  </li>
   <li>You can also make your own definition of <code>compare</code>/<code>equal</code>.</li>
-  <li>To define comparisons more easily you can also use a ppx extension, a form of macro for OCaml</li>
+  <li>To define comparisons more easily on your own types you can also use a ppx extension, a form of macro for OCaml</li>
   <li>Use library <code>ppx_deriving.eq</code> and append <code>[@@deriving eq]</code> to automatically define function <code>equal_mytype</code> for your type <code>mytype</code></li>
   <li>Use library <code>ppx_deriving.ord</code> and append <code>[@@deriving ord]</code> will define function <code>compare_mytype</code>.</li>
   <li>Appending <code>[@@deriving eq, ord]</code> will get you both</li>
@@ -542,7 +547,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>OCaml has an additional form of variant which has different syntax and is overlapping in uses: <em>polymorphic variants</em></li>
-  <li>A better term would be “inferred variants” - you don’t need to declare them via <code>type</code>.</li>
+  <li>A better term might be “inferred variants” - you don’t need to declare them via <code>type</code>.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="nt">`Zinger</span> <span class="mi">3</span><span class="p">;;</span> <span class="c">(* prefix constructors with a backtick for the inferred variants *)</span>
@@ -551,7 +556,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>This looks a bit useless, it inferred a 1-ary variant type</li>
-  <li>But the “<code>&gt;</code>” in the type means <em>there could be other variants showing up in the future</em>.</li>
+  <li>But the “<code>&gt;</code>” in the type means <em>at least a <code>Zinger</code> but maybe other variants</em></li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">f</span> <span class="n">b</span> <span class="o">=</span> <span class="k">if</span> <span class="n">b</span> <span class="k">then</span> <span class="nt">`Zinger</span> <span class="mi">3</span> <span class="k">else</span> <span class="nt">`Zanger</span> <span class="s2">"hi"</span><span class="p">;;</span>
