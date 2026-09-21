@@ -39,7 +39,8 @@ val contains : string -> t -> bool
 # String_set.add "hello" String_set.empty ;;
 - : String_set.t = <abstr>
 
-(* Just a helper function. Does not run until it's given arguments in `let () = ...` *)
+(** [do_search search_string filename] searches for a string line in file.
+  Only matches on the whole line, a very simple search. *)
 let do_search search_string filename =
   let lines = In_channel.with_open_bin filename In_channel.input_lines in
   let my_set =
@@ -50,31 +51,36 @@ let do_search search_string filename =
   else
     print_string @@ "\"" ^ search_string ^ "\" not found\n"
 
-(* This statement has some printing side effects that we observe when running the executable *)
+(*
+  The main program.
+*)
+
 let () =
   match Array.to_list Sys.argv with
   | _ :: search_string :: filename :: _ -> do_search search_string filename
   | _ -> failwith "Invalid arguments: requires two parameters, search string and file name"
 
+
+
 module A = struct
   type t = { x : int ; y : bool }
 end
 
-let ra = A.{ x = 0 ; y = true } (* Need to write `A.` here to make the type `A.t` visible *)
+let ra = let open A in { x = 0 ; y = true } (* Need open A here to make the type `A.t` visible *)
 
 module B = struct
   type t = { x : int ; z : float }
 end
 
-let rb = B.{ x = 0 ; z = 1.1 }
+let rb = B.{ x = 0 ; z = 1.1 } (* `B.(...)` is shorthand for `let open B in ...` *)
 
 open A
 open B
 
-let f r = r.x (* type inferred for r is B.t, just like with newratio from the records lecture *)
+let f r = r.x (* type inferred for `r` is `B.t`, just like with newratio from the records lecture *)
 
 (* A type annotation will disambiguate: *)
 let f (r : A.t) : int = r.x
 
-let f' r = r.A.x (* this works too )
+let f' r = r.A.x (* this works too - the label `x` is the one from `A` *)
 

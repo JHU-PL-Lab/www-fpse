@@ -1,20 +1,21 @@
 ## Modules
 
-We've been using modules without thinking too much about them: `List.map`, etc is the `map` function in the `List` library module.
+We've been using modules without thinking too much about them: `List.map` for example is the `map` function in the `List` library module.
 
 Now we will look at how to define our own modules to make our own libraries and code components.
 
-## What is a module?
+### What is a module?
 
 A module is a collection of OCaml definitions:
 * `let`-defined entities, i.e. functions and values
 * types
 * other modules
 
+What modules are and are not:
 * Modules are something like records, but they can also hold other things, like types, which makes them much more powerful.
 * But, modules are not first class values like records -- for example, they can't directly be passed as arguments to functions.
 
-## `.ml` files are modules
+### `.ml` files are modules
 
 OCaml has a simple rule:
 * The contents of a file `foo.ml` define the module `Foo`.
@@ -72,10 +73,10 @@ Or open the module with `open String_set` to put everything from inside it into 
 - : t = ["hello"]
 ```
 
-- Here, the fact that we used a `list` to implement the set is exposed to library users.
 - Naming the type `t` is standard for "the" underlying type in a module (if there is one).
   - Built-in libraries also use this: for example, `Int.t` is an alias for `int`, etc.
 - Then, `String_set.t` is read as "string set's underlying type`.
+- Notice that the fact that we used a `list` to implement the set is exposed to library users.
 
 ## Hiding details with module types
 
@@ -96,10 +97,11 @@ val remove : string -> t -> t
 val contains : string -> t -> bool
 ```
 
-* See how we repeat the `type t =` alias declaration in this `.mli` file
+* See how we repeat the `type t = string list` alias declaration in this `.mli` file
 * But, there is an alterative way to write that declaration: remove `= string list`
   - comment the first line and uncomment the second to get that version
 * By doing this, the type `t` has been made *abstract*: users no longer can see `t` is a list
+  - (Note that we still need keep the full `type t = string list` in the `.ml` file)
 
 Now if we save that change and type `dune utop`:
 
@@ -120,10 +122,10 @@ Why do this?
   - It's hard to see what's going on in `utop`.
   - It can be harder to test our module.
 
-Further, anything define in the `.ml` that is not declared in the `.mli` is not accessible to users.
+Additionally, anything defined in the `.ml` that is not declared in the `.mli` is not accessible to users.
 - It's like those types/values are `private`.
 - If there is nothing to hide, then you don't need an `.mli` file at all. The type of the module will be inferred.
-- All assignments come with an `.mli` file so you get used to the format
+- All assignments come with an `.mli` file so you can get used to the format
    - Also the documentation specifying what a function does should go in the `.mli` file by convention
    - We have followed that pattern for Assignment 3
 
@@ -150,7 +152,8 @@ Let's make an actual executable program to do something, not just a library.
 * Typically, the main work in an executable is put under a `let () = ...` statement. The `...` evaluates to `() : unit`, and the side effects it performs are what we see.
 
 ```ocaml
-(* Just a helper function. Does not run until it's given arguments in `let () = ...` *)
+(** [do_search search_string filename] searches for a string line in file.
+  Only matches on the whole line, a very simple search. *)
 let do_search search_string filename =
   let lines = In_channel.with_open_bin filename In_channel.input_lines in
   let my_set =
@@ -161,11 +164,16 @@ let do_search search_string filename =
   else
     print_string @@ "\"" ^ search_string ^ "\" not found\n"
 
-(* This statement has some printing side effects that we observe when running the executable *)
+(*
+  The main program.
+*)
+
 let () =
   match Array.to_list Sys.argv with
   | _ :: search_string :: filename :: _ -> do_search search_string filename
   | _ -> failwith "Invalid arguments: requires two parameters, search string and file name"
+
+
 ```
 
 ### Building executables
@@ -177,7 +185,7 @@ To build our executable, the `dune` file has a stanza for an `executable`:
 (executable
   (name set_main)
   (modules set_main)
-  (libraries string_set) ; uses the String_set module we made
+  (libraries string_set) ; set_main uses the String_set module we made, need to declare that
 )
 ```
 
@@ -187,7 +195,7 @@ This makes an executable out of the `set_main.ml` file.
 
 * If you declared an executable in `dune` as above, it will make a file `set_main.exe`
 * To run it, you can do `dune exec -- ./src/set_main.exe "type t = string list" src/string_set.ml`
-* Which is really just `_build/default/src/set_main.exe "type t = string list" src/string_set.ml` after building
+* Which is just an alias for `_build/default/src/set_main.exe "type t = string list" src/string_set.ml`
 
 ### Aside: the `In_channel` library used in this executable
 
@@ -228,26 +236,25 @@ module A = struct
   type t = { x : int ; y : bool }
 end
 
-let ra = A.{ x = 0 ; y = true } (* Need to write `A.` here to make the type `A.t` visible *)
+let ra = let open A in { x = 0 ; y = true } (* Need open A here to make the type `A.t` visible *)
 
 module B = struct
   type t = { x : int ; z : float }
 end
 
-let rb = B.{ x = 0 ; z = 1.1 }
+let rb = B.{ x = 0 ; z = 1.1 } (* `B.(...)` is shorthand for `let open B in ...` *)
 ```
 
-* Recall that `open` makes the contents of a module directly available.
-* Now if `A` and `B` are both opened, the most recently opened `t` will win.
+* If `A` and `B` are both opened, the most recently opened `t` will win.
 
 ```ocaml
 open A
 open B
 
-let f r = r.x (* type inferred for r is B.t, just like with newratio from the records lecture *)
+let f r = r.x (* type inferred for `r` is `B.t`, just like with newratio from the records lecture *)
 
 (* A type annotation will disambiguate: *)
 let f (r : A.t) : int = r.x
 
-let f' r = r.A.x (* this works too )
+let f' r = r.A.x (* this works too - the label `x` is the one from `A` *)
 ```

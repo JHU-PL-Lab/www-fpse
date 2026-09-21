@@ -120,7 +120,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h1 id="ocaml-style-guide-for-fpse">OCaml Style Guide for FPSE</h1>
 
-<p>Here are the FPSE guidelines for writing well-formatted, good-looking OCaml code. <a href="lecture/coding-guidelines.html">Here</a> are the guidelines for writing <em>good</em> code, not just <em>good-looking</em> code, which we will cover later in lecture.</p>
+<p>Here are the FPSE guidelines for writing well-formatted, good-looking OCaml code.</p>
+
+<p>Note that later in lecture we will cover the <a href="lecture/coding-guidelines.html">coding guidelines</a> for writing <em>good</em> code, not just <em>good-looking</em> code.</p>
 
 <p>It matters that your code is easy to read, and this means following conventions. These are not all hard rules: code style involves judgment. But consistency is important, and you should have a good reason to depart from the conventions below.</p>
 
@@ -193,6 +195,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="mi">10</span> <span class="o">*</span> <span class="n">ms</span>
 </code></pre></div></div>
 
+<p>For such highly transient use the even shorter form is often preferred:</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">ten_ms</span> <span class="o">=</span> <span class="nn">Mtime</span><span class="p">.</span><span class="nn">Span</span><span class="p">.(</span><span class="mi">10</span> <span class="o">*</span> <span class="n">ms</span><span class="p">)</span>
+</code></pre></div></div>
+
 <p>Long module paths can also be shortened with a module alias.</p>
 
 <h2 id="code-shape">Code shape</h2>
@@ -224,7 +230,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">end</span>
 </code></pre></div></div>
 
-<p><strong>Use <code>begin</code>/<code>end</code> for control flow.</strong> Prefer <code>begin</code>/<code>end</code> over parentheses to delimit control-flow constructs like <code>match</code>, <code>if</code>, and <code>try</code>, especially when nested.</p>
+<p><strong>Use VSCode Formatting to satify the above.</strong> The option/alt - shift - F “Format Document” command in VSCode will format your sode to satisfy the above guidelines.</p>
+
+<p><strong>Use <code>begin</code>/<code>end</code> for larger control flow blocks.</strong> Prefer <code>begin</code>/<code>end</code> over parentheses to delimit control-flow constructs like <code>match</code>, <code>if</code>, and <code>try</code>, especially when nested.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">match</span> <span class="n">x</span> <span class="k">with</span>
 <span class="o">|</span> <span class="nc">A</span> <span class="o">-&gt;</span>
@@ -234,8 +242,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="k">end</span>
 <span class="o">|</span> <span class="nc">D</span> <span class="o">-&gt;</span> <span class="mi">3</span>
 </code></pre></div></div>
-
-<p>Otherwise, use parentheses for ordinary grouping, function arguments, tuples, and operator precedence–everything that is <em>not</em> control flow. And remember to align them!</p>
 
 <p><strong>Use blank lines to separate ideas.</strong> Put blank lines between top-level definitions unless they are very closely related and are short. Avoid large unbroken blocks of definitions.</p>
 
@@ -273,7 +279,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p><strong>Avoid many arguments.</strong> Functions with many positional arguments of the same type are easy to call incorrectly, and they can be hard to read. Prefer fewer arguments, and use labels when a function needs several. Lots of arguments can also be a sign that conceptually related data is floating around loosely and should be put into a record or other data structure and then passed as one argument.</p>
 
-<p><strong>Try using <code>@@</code>.</strong> The infix <code>@@</code> can help you avoid a pile of closing parentheses, especially for a final function argument.</p>
+<p><strong>Use <code>@@</code>.</strong> The infix <code>@@</code> can help you avoid a pile of closing parentheses, especially for a final function argument.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print_string</span> <span class="p">(</span><span class="nn">String</span><span class="p">.</span><span class="n">concat</span> <span class="s2">", "</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">string_of_int</span> <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">append</span> <span class="n">xs</span> <span class="n">ys</span><span class="p">)))</span>
 <span class="c">(* has more parentheses and requires more visual parsing than *)</span>
@@ -287,7 +293,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>In this case, a pipeline with <code>|&gt;</code>, an intermediate name, or a combination of <code>@@</code> and parentheses is often much clearer; do not get carried away with just <code>@@</code>.</p>
 
-<p><strong>Do not overparenthesize.</strong> Use only as many parentheses as necessary for function calls or when operator precedence is unclear. When in doubt about precedence, use parentheses for clarity.</p>
+<p><strong>Do not overparenthesize.</strong> Use only as many parentheses as necessary for function calls or when operator precedence is unclear; prefer <code>@@</code> over parentheses if it simplifies.</p>
       
           </section>
         </div>

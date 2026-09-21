@@ -120,24 +120,26 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <meta charset="utf-8" />
     <h2 id="modules">Modules</h2>
 
-<p>We’ve been using modules without thinking too much about them: <code>List.map</code>, etc is the <code>map</code> function in the <code>List</code> library module.</p>
+<p>We’ve been using modules without thinking too much about them: <code>List.map</code> for example is the <code>map</code> function in the <code>List</code> library module.</p>
 
 <p>Now we will look at how to define our own modules to make our own libraries and code components.</p>
 
-<h2 id="what-is-a-module">What is a module?</h2>
+<h3 id="what-is-a-module">What is a module?</h3>
 
 <p>A module is a collection of OCaml definitions:</p>
 <ul>
   <li><code>let</code>-defined entities, i.e. functions and values</li>
   <li>types</li>
-  <li>
-    <p>other modules</p>
-  </li>
+  <li>other modules</li>
+</ul>
+
+<p>What modules are and are not:</p>
+<ul>
   <li>Modules are something like records, but they can also hold other things, like types, which makes them much more powerful.</li>
   <li>But, modules are not first class values like records – for example, they can’t directly be passed as arguments to functions.</li>
 </ul>
 
-<h2 id="ml-files-are-modules"><code>.ml</code> files are modules</h2>
+<h3 id="ml-files-are-modules"><code>.ml</code> files are modules</h3>
 
 <p>OCaml has a simple rule:</p>
 <ul>
@@ -196,13 +198,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Here, the fact that we used a <code>list</code> to implement the set is exposed to library users.</li>
   <li>Naming the type <code>t</code> is standard for “the” underlying type in a module (if there is one).
     <ul>
       <li>Built-in libraries also use this: for example, <code>Int.t</code> is an alias for <code>int</code>, etc.</li>
     </ul>
   </li>
   <li>Then, <code>String_set.t</code> is read as “string set’s underlying type`.</li>
+  <li>Notice that the fact that we used a <code>list</code> to implement the set is exposed to library users.</li>
 </ul>
 
 <h2 id="hiding-details-with-module-types">Hiding details with module types</h2>
@@ -229,13 +231,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>See how we repeat the <code>type t =</code> alias declaration in this <code>.mli</code> file</li>
+  <li>See how we repeat the <code>type t = string list</code> alias declaration in this <code>.mli</code> file</li>
   <li>But, there is an alterative way to write that declaration: remove <code>= string list</code>
     <ul>
       <li>comment the first line and uncomment the second to get that version</li>
     </ul>
   </li>
-  <li>By doing this, the type <code>t</code> has been made <em>abstract</em>: users no longer can see <code>t</code> is a list</li>
+  <li>By doing this, the type <code>t</code> has been made <em>abstract</em>: users no longer can see <code>t</code> is a list
+    <ul>
+      <li>(Note that we still need keep the full <code>type t = string list</code> in the <code>.ml</code> file)</li>
+    </ul>
+  </li>
 </ul>
 
 <p>Now if we save that change and type <code>dune utop</code>:</p>
@@ -266,11 +272,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
 </ul>
 
-<p>Further, anything define in the <code>.ml</code> that is not declared in the <code>.mli</code> is not accessible to users.</p>
+<p>Additionally, anything defined in the <code>.ml</code> that is not declared in the <code>.mli</code> is not accessible to users.</p>
 <ul>
   <li>It’s like those types/values are <code>private</code>.</li>
   <li>If there is nothing to hide, then you don’t need an <code>.mli</code> file at all. The type of the module will be inferred.</li>
-  <li>All assignments come with an <code>.mli</code> file so you get used to the format
+  <li>All assignments come with an <code>.mli</code> file so you can get used to the format
     <ul>
       <li>Also the documentation specifying what a function does should go in the <code>.mli</code> file by convention</li>
       <li>We have followed that pattern for Assignment 3</li>
@@ -301,7 +307,8 @@ To make a library module from the <code>string_set.ml</code> file, we include th
   <li>Typically, the main work in an executable is put under a <code>let () = ...</code> statement. The <code>...</code> evaluates to <code>() : unit</code>, and the side effects it performs are what we see.</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* Just a helper function. Does not run until it's given arguments in `let () = ...` *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(** [do_search search_string filename] searches for a string line in file.
+  Only matches on the whole line, a very simple search. *)</span>
 <span class="k">let</span> <span class="n">do_search</span> <span class="n">search_string</span> <span class="n">filename</span> <span class="o">=</span>
   <span class="k">let</span> <span class="n">lines</span> <span class="o">=</span> <span class="nn">In_channel</span><span class="p">.</span><span class="n">with_open_bin</span> <span class="n">filename</span> <span class="nn">In_channel</span><span class="p">.</span><span class="n">input_lines</span> <span class="k">in</span>
   <span class="k">let</span> <span class="n">my_set</span> <span class="o">=</span>
@@ -312,11 +319,16 @@ To make a library module from the <code>string_set.ml</code> file, we include th
   <span class="k">else</span>
     <span class="n">print_string</span> <span class="o">@@</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">"</span> <span class="o">^</span> <span class="n">search_string</span> <span class="o">^</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> not found</span><span class="se">\n</span><span class="s2">"</span>
 
-<span class="c">(* This statement has some printing side effects that we observe when running the executable *)</span>
+<span class="c">(*
+  The main program.
+*)</span>
+
 <span class="k">let</span> <span class="bp">()</span> <span class="o">=</span>
   <span class="k">match</span> <span class="nn">Array</span><span class="p">.</span><span class="n">to_list</span> <span class="nn">Sys</span><span class="p">.</span><span class="n">argv</span> <span class="k">with</span>
   <span class="o">|</span> <span class="n">_</span> <span class="o">::</span> <span class="n">search_string</span> <span class="o">::</span> <span class="n">filename</span> <span class="o">::</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">do_search</span> <span class="n">search_string</span> <span class="n">filename</span>
   <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s2">"Invalid arguments: requires two parameters, search string and file name"</span>
+
+
 </code></pre></div></div>
 
 <h3 id="building-executables">Building executables</h3>
@@ -327,7 +339,7 @@ To make a library module from the <code>string_set.ml</code> file, we include th
 <span class="p">(</span><span class="nf">executable</span>
   <span class="p">(</span><span class="nf">name</span> <span class="nv">set_main</span><span class="p">)</span>
   <span class="p">(</span><span class="nf">modules</span> <span class="nv">set_main</span><span class="p">)</span>
-  <span class="p">(</span><span class="nf">libraries</span> <span class="nv">string_set</span><span class="p">)</span> <span class="c1">; uses the String_set module we made</span>
+  <span class="p">(</span><span class="nf">libraries</span> <span class="nv">string_set</span><span class="p">)</span> <span class="c1">; set_main uses the String_set module we made, need to declare that</span>
 <span class="p">)</span>
 </code></pre></div></div>
 
@@ -338,7 +350,7 @@ To make a library module from the <code>string_set.ml</code> file, we include th
 <ul>
   <li>If you declared an executable in <code>dune</code> as above, it will make a file <code>set_main.exe</code></li>
   <li>To run it, you can do <code>dune exec -- ./src/set_main.exe "type t = string list" src/string_set.ml</code></li>
-  <li>Which is really just <code>_build/default/src/set_main.exe "type t = string list" src/string_set.ml</code> after building</li>
+  <li>Which is just an alias for <code>_build/default/src/set_main.exe "type t = string list" src/string_set.ml</code></li>
 </ul>
 
 <h3 id="aside-the-in_channel-library-used-in-this-executable">Aside: the <code>In_channel</code> library used in this executable</h3>
@@ -392,30 +404,29 @@ To make a library module from the <code>string_set.ml</code> file, we include th
   <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">bool</span> <span class="p">}</span>
 <span class="k">end</span>
 
-<span class="k">let</span> <span class="n">ra</span> <span class="o">=</span> <span class="nn">A</span><span class="p">.{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* Need to write `A.` here to make the type `A.t` visible *)</span>
+<span class="k">let</span> <span class="n">ra</span> <span class="o">=</span> <span class="k">let</span> <span class="k">open</span> <span class="nc">A</span> <span class="k">in</span> <span class="p">{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">true</span> <span class="p">}</span> <span class="c">(* Need open A here to make the type `A.t` visible *)</span>
 
 <span class="k">module</span> <span class="nc">B</span> <span class="o">=</span> <span class="k">struct</span>
   <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="p">{</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">int</span> <span class="p">;</span> <span class="n">z</span> <span class="o">:</span> <span class="kt">float</span> <span class="p">}</span>
 <span class="k">end</span>
 
-<span class="k">let</span> <span class="n">rb</span> <span class="o">=</span> <span class="nn">B</span><span class="p">.{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">1</span><span class="o">.</span><span class="mi">1</span> <span class="p">}</span>
+<span class="k">let</span> <span class="n">rb</span> <span class="o">=</span> <span class="nn">B</span><span class="p">.{</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">z</span> <span class="o">=</span> <span class="mi">1</span><span class="o">.</span><span class="mi">1</span> <span class="p">}</span> <span class="c">(* `B.(...)` is shorthand for `let open B in ...` *)</span>
 </code></pre></div></div>
 
 <ul>
-  <li>Recall that <code>open</code> makes the contents of a module directly available.</li>
-  <li>Now if <code>A</code> and <code>B</code> are both opened, the most recently opened <code>t</code> will win.</li>
+  <li>If <code>A</code> and <code>B</code> are both opened, the most recently opened <code>t</code> will win.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">A</span>
 <span class="k">open</span> <span class="nc">B</span>
 
-<span class="k">let</span> <span class="n">f</span> <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="c">(* type inferred for r is B.t, just like with newratio from the records lecture *)</span>
+<span class="k">let</span> <span class="n">f</span> <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span> <span class="c">(* type inferred for `r` is `B.t`, just like with newratio from the records lecture *)</span>
 
 <span class="c">(* A type annotation will disambiguate: *)</span>
 <span class="k">let</span> <span class="n">f</span> <span class="p">(</span><span class="n">r</span> <span class="o">:</span> <span class="nn">A</span><span class="p">.</span><span class="n">t</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">x</span>
 
-<span class="k">let</span> <span class="n">f'</span> <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="nn">A</span><span class="p">.</span><span class="n">x</span> <span class="c">(* this works too )
-</span></code></pre></div></div>
+<span class="k">let</span> <span class="n">f'</span> <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="nn">A</span><span class="p">.</span><span class="n">x</span> <span class="c">(* this works too - the label `x` is the one from `A` *)</span>
+</code></pre></div></div>
       
           </section>
         </div>

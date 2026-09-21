@@ -244,7 +244,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p><strong>Pattern match and destructure.</strong> Pattern matching and <code>let</code>-destructuring (e.g. <code>let a, b = ... in ...</code>) are some of OCaml’s clearest tools, and they express intent very explicitly. Use them liberally.</p>
 
-<p><strong>Do not write long anonymous functions.</strong> Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous. This frequently applies to function arguments to mapping and folding; if the argument is long and inlined, the behavior is mysterious.</p>
+<p><strong>Do not write long anonymous functions.</strong> Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous.</p>
 
 <p><strong>Options over exceptions.</strong> Exceptions for recoverable failures require the programmer to <em>remember</em> to catch them. Options <em>force</em> the programmer to handle them. Don’t leave anything up to chance, and favor options in your interfaces. Results allow you to express reasons for failure and can be a good alternative to options.</p>
 

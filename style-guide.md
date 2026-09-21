@@ -1,6 +1,8 @@
 # OCaml Style Guide for FPSE
 
-Here are the FPSE guidelines for writing well-formatted, good-looking OCaml code. [Here](lecture/coding-guidelines.html) are the guidelines for writing _good_ code, not just _good-looking_ code, which we will cover later in lecture.
+Here are the FPSE guidelines for writing well-formatted, good-looking OCaml code. 
+
+Note that later in lecture we will cover the [coding guidelines](lecture/coding-guidelines.html) for writing _good_ code, not just _good-looking_ code.
 
 It matters that your code is easy to read, and this means following conventions. These are not all hard rules: code style involves judgment. But consistency is important, and you should have a good reason to depart from the conventions below.
 
@@ -49,6 +51,11 @@ let ten_ms =
   10 * ms
 ```
 
+For such highly transient use the even shorter form is often preferred:
+```ocaml
+let ten_ms = Mtime.Span.(10 * ms)
+```
+
 Long module paths can also be shortened with a module alias.
 
 ## Code shape
@@ -83,7 +90,9 @@ module My_module = struct
 end
 ```
 
-**Use `begin`/`end` for control flow.** Prefer `begin`/`end` over parentheses to delimit control-flow constructs like `match`, `if`, and `try`, especially when nested.
+**Use VSCode Formatting to satify the above.** The option/alt - shift - F "Format Document" command in VSCode will format your sode to satisfy the above guidelines.
+
+**Use `begin`/`end` for larger control flow blocks.** Prefer `begin`/`end` over parentheses to delimit control-flow constructs like `match`, `if`, and `try`, especially when nested.
 
 ```ocaml
 match x with
@@ -94,8 +103,6 @@ match x with
   end
 | D -> 3
 ```
-
-Otherwise, use parentheses for ordinary grouping, function arguments, tuples, and operator precedence--everything that is _not_ control flow. And remember to align them!
 
 **Use blank lines to separate ideas.** Put blank lines between top-level definitions unless they are very closely related and are short. Avoid large unbroken blocks of definitions.
 
@@ -133,7 +140,7 @@ match x with
 
 **Avoid many arguments.** Functions with many positional arguments of the same type are easy to call incorrectly, and they can be hard to read. Prefer fewer arguments, and use labels when a function needs several. Lots of arguments can also be a sign that conceptually related data is floating around loosely and should be put into a record or other data structure and then passed as one argument.
 
-**Try using `@@`.** The infix `@@` can help you avoid a pile of closing parentheses, especially for a final function argument.
+**Use `@@`.** The infix `@@` can help you avoid a pile of closing parentheses, especially for a final function argument.
 
 ```ocaml
 print_string (String.concat ", " (List.map string_of_int (List.append xs ys)))
@@ -149,4 +156,4 @@ print_string @@ String.concat ", " @@ List.map string_of_int @@ List.append xs y
 
 In this case, a pipeline with `|>`, an intermediate name, or a combination of `@@` and parentheses is often much clearer; do not get carried away with just `@@`.
 
-**Do not overparenthesize.** Use only as many parentheses as necessary for function calls or when operator precedence is unclear. When in doubt about precedence, use parentheses for clarity.
+**Do not overparenthesize.** Use only as many parentheses as necessary for function calls or when operator precedence is unclear; prefer `@@` over parentheses if it simplifies.
