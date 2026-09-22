@@ -2,8 +2,8 @@
 
 ## Defining Modules in the top loop or nesting them in a file
 
-* Modules can be defined in the top loop just like how we had defined nested modules in a `my_module.ml` file
-* Basic idea to input a module in top-loop: write `module My_module = struct ... end` with `my_module.ml` file contents inserted into the "..." part
+* Modules can be defined in the top loop just like how we had defined nested modules at the end of the last lecture.
+* Basic idea to input a module in top-loop: write `module Foo = struct ... end` with `foo.ml` file contents inserted into the "..." part
 * `struct` stands for structure, modules used to be called that in OCaml; view a `struct` as a synonym of a module.
 * Here is a string set example put in top-loop syntax:
 
@@ -33,6 +33,7 @@
       else
         contains x tl
 end
+;;
 module String_set :
   sig
     type t = string list
@@ -139,9 +140,9 @@ Here is the similarity to types and values as we've seen before, just to demonst
 
 ```ocaml
 type eq = ...
-module type EQ = sig ... end
-
 let make_set (m : eq) = ...
+
+module type EQ = sig ... end
 module Make_set (M : EQ) = struct ... end
 ```
 
@@ -167,10 +168,10 @@ module Int_set :
   end
 ```
 
-* Note that we passed in a `Int` module where the parameter had the `EQ` module type - why did this work?
+* We passed in the `Int` module where the parameter had the `EQ` module type - why did this work?
 * Answer: `Int.t` is just `int`, and `Int.equal` exists as an equality operation on ints, so `Int` matches the `EQ` module type
    - (`utop` command `#show_module Int` will dump the full module if you want to verify `t` and `equal` are there)
-* Note `Int` also has a whole **ton** of other functions, types, etc
+* Note `Int` also has a whole **ton** of other functions,
   - but like with subclasses or Java interfaces you match a `sig` if you have "at least" the stuff needed.
 * Here is one way you can test if a module matches a module type:
 
@@ -185,6 +186,7 @@ module Int2 : EQ
 - This declares a new module `Int2` which is `Int` matched against the `EQ` type.
 - Note that `Int2` is restricted to *only* have `t`/`equal` with this declaration.
   - Everything else has been chopped off.
+  - And `t` has been hidden! We can no longer tell that it is defined as `int`!
 
 ### Using functors with our own custom type
 
@@ -273,7 +275,7 @@ module Int_set_hidden = Make_set_hidden (Int)
 * Code the `Make_set` functor above by putting it in the file, say file `simple_set.ml`
   - *and*, rename it `Make` so `Simple_set.Make (Float)`, for example, will make a `Simple_set`.
   - This reads better, we are "making a simple set"; libraries also use this naming standard.
-  - An `.mli` file cannot be a functor itself, so you have to do this if you want functors with file-based modules.
+  - An `.ml` file cannot be a functor itself, so you have to do this if you want functors with file-based modules.
 * To hide information, make a `simple_set.mli` file which lists the types of everything.
   - There is a specific naming convention on how to do this which is subtle.
   - We will review [set-example-functor.zip](../examples/set-example-functor.zip) which is our old set example redone as a functor.
@@ -338,7 +340,7 @@ Error: Signature mismatch:
        ...
 ```
 
-* The "different arities" means one has a type parameter (`list`) and the other doesn't (`t`).
+* The "different arities" means one has a type parameter (`'a list`) and the other doesn't (`t`).
 * Simple solution: explictly make a module for the list type you care about.
   * Say we want to make maps where keys are string lists.
 
@@ -360,7 +362,7 @@ module SL_map :
 
 * The above is a map where the *keys* are lists of strings.
 * The above examples show how non-trivial data structures can be map keys.
-* Here is the opposite, how we can make e.g. a variant with maps in it.
+* Here is a change of pace, how we can make e.g. a variant with maps in it.
 * This assumes the keys are integer pairs, and the values can be any type (`'a`).
 
 ```ocaml

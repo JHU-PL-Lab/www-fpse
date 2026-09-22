@@ -5,7 +5,7 @@
 
 (*
   The Make functor in the Map module specializes maps to Ints in this case
-  See https://ocaml.org/manual/5.5/api/Map.S.html for the Map module API.
+  See https://ocaml.org/manual/api/Map.S.html for the Map module API.
 *)
 
 module Grade = struct
@@ -55,22 +55,21 @@ let add (grade : Grade.t) (stud : string) (school : t) : t =
   Grade_map.add_to_list grade stud school
 
 (**
-  Sorting using a fold over the map.
-  [sort] below will alphabetically sort the students in each grade. Folding
-  over a map is like folding over a list but the folding function uses both key
-  and value.
+  Sort the school by alphabetically sorting the students within each grade.
+  We map each grade to the sorted grade.
 *)
 let sort (school : t) : t =
+  Grade_map.map (fun data -> List.sort String.compare data) school
+
+(**
+  Sorting using a fold over the map.
+  This will alphabetically sort the students in each grade. Folding over a map
+  is like folding over a list but the folding function uses both key and value.
+*)
+let sort_with_fold (school : t) : t =
   Grade_map.fold (fun key data scl ->
     Grade_map.add key (List.sort String.compare data) scl
   ) school empty
-
-(**
-  Note that [Grade_map.map] is a better way; it maps over the values only,
-  keeping the key structure intact.
-*)
-let sort_better_with_map (school : t) : t =
-  Grade_map.map (fun data -> List.sort String.compare data) school
 
 (** Auxiliary function to dump data structure *)
 let dump (school : t) = school |> Grade_map.to_list
