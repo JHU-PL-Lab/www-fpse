@@ -123,8 +123,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h2 id="defining-modules-in-the-top-loop-or-nesting-them-in-a-file">Defining Modules in the top loop or nesting them in a file</h2>
 
 <ul>
-  <li>Modules can be defined in the top loop just like how we had defined nested modules in a <code>my_module.ml</code> file</li>
-  <li>Basic idea to input a module in top-loop: write <code>module My_module = struct ... end</code> with <code>my_module.ml</code> file contents inserted into the “…” part</li>
+  <li>Modules can be defined in the top loop just like how we had defined nested modules at the end of the last lecture.</li>
+  <li>Basic idea to input a module in top-loop: write <code>module Foo = struct ... end</code> with <code>foo.ml</code> file contents inserted into the “…” part</li>
   <li><code>struct</code> stands for structure, modules used to be called that in OCaml; view a <code>struct</code> as a synonym of a module.</li>
   <li>Here is a string set example put in top-loop syntax:</li>
 </ul>
@@ -154,6 +154,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <span class="k">else</span>
         <span class="n">contains</span> <span class="n">x</span> <span class="n">tl</span>
 <span class="k">end</span>
+<span class="p">;;</span>
 <span class="k">module</span> <span class="nc">String_set</span> <span class="o">:</span>
   <span class="k">sig</span>
     <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="kt">string</span> <span class="kt">list</span>
@@ -268,9 +269,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Here is the similarity to types and values as we’ve seen before, just to demonstrate syntactic similarity.</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">eq</span> <span class="o">=</span> <span class="o">...</span>
-<span class="k">module</span> <span class="k">type</span> <span class="nc">EQ</span> <span class="o">=</span> <span class="k">sig</span> <span class="o">...</span> <span class="k">end</span>
-
 <span class="k">let</span> <span class="n">make_set</span> <span class="p">(</span><span class="n">m</span> <span class="o">:</span> <span class="n">eq</span><span class="p">)</span> <span class="o">=</span> <span class="o">...</span>
+
+<span class="k">module</span> <span class="k">type</span> <span class="nc">EQ</span> <span class="o">=</span> <span class="k">sig</span> <span class="o">...</span> <span class="k">end</span>
 <span class="k">module</span> <span class="nc">Make_set</span> <span class="p">(</span><span class="nc">M</span> <span class="o">:</span> <span class="nc">EQ</span><span class="p">)</span> <span class="o">=</span> <span class="k">struct</span> <span class="o">...</span> <span class="k">end</span>
 </code></pre></div></div>
 
@@ -306,13 +307,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Note that we passed in a <code>Int</code> module where the parameter had the <code>EQ</code> module type - why did this work?</li>
+  <li>We passed in the <code>Int</code> module where the parameter had the <code>EQ</code> module type - why did this work?</li>
   <li>Answer: <code>Int.t</code> is just <code>int</code>, and <code>Int.equal</code> exists as an equality operation on ints, so <code>Int</code> matches the <code>EQ</code> module type
     <ul>
       <li>(<code>utop</code> command <code>#show_module Int</code> will dump the full module if you want to verify <code>t</code> and <code>equal</code> are there)</li>
     </ul>
   </li>
-  <li>Note <code>Int</code> also has a whole <strong>ton</strong> of other functions, types, etc
+  <li>Note <code>Int</code> also has a whole <strong>ton</strong> of other functions,
     <ul>
       <li>but like with subclasses or Java interfaces you match a <code>sig</code> if you have “at least” the stuff needed.</li>
     </ul>
@@ -332,6 +333,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Note that <code>Int2</code> is restricted to <em>only</em> have <code>t</code>/<code>equal</code> with this declaration.
     <ul>
       <li>Everything else has been chopped off.</li>
+      <li>And <code>t</code> has been hidden! We can no longer tell that it is defined as <code>int</code>!</li>
     </ul>
   </li>
 </ul>
@@ -436,7 +438,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li><em>and</em>, rename it <code>Make</code> so <code>Simple_set.Make (Float)</code>, for example, will make a <code>Simple_set</code>.</li>
       <li>This reads better, we are “making a simple set”; libraries also use this naming standard.</li>
-      <li>An <code>.mli</code> file cannot be a functor itself, so you have to do this if you want functors with file-based modules.</li>
+      <li>An <code>.ml</code> file cannot be a functor itself, so you have to do this if you want functors with file-based modules.</li>
     </ul>
   </li>
   <li>To hide information, make a <code>simple_set.mli</code> file which lists the types of everything.
@@ -505,7 +507,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>The “different arities” means one has a type parameter (<code>list</code>) and the other doesn’t (<code>t</code>).</li>
+  <li>The “different arities” means one has a type parameter (<code>'a list</code>) and the other doesn’t (<code>t</code>).</li>
   <li>Simple solution: explictly make a module for the list type you care about.
     <ul>
       <li>Say we want to make maps where keys are string lists.</li>
@@ -531,7 +533,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>The above is a map where the <em>keys</em> are lists of strings.</li>
   <li>The above examples show how non-trivial data structures can be map keys.</li>
-  <li>Here is the opposite, how we can make e.g. a variant with maps in it.</li>
+  <li>Here is a change of pace, how we can make e.g. a variant with maps in it.</li>
   <li>This assumes the keys are integer pairs, and the values can be any type (<code>'a</code>).</li>
 </ul>
 
