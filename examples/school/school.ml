@@ -4,7 +4,7 @@
 *)
 
 (*
-  The Make functor in the Map module specializes maps to Ints in this case
+  The Make functor in the Map module specializes maps to Grades in this case
   See https://ocaml.org/manual/api/Map.S.html for the Map module API.
 *)
 
@@ -19,19 +19,19 @@ module Grade_map = Map.Make (Grade)
   The Grade here is the **keys** of the map; we need to use a functor because we
   need an underling compare function for maps to work.
 
-  Here is the module type of Make's argument, the OrderedType module type:
+  Here is the module type of Map.Make's argument, the OrderedType module type:
 
       #show Map.OrderedType;;
       module type OrderedType = sig type t val compare : t -> t -> int end
 
-  So Grade needs to have the underlying type t and compare.
+  So Grade needs to have the underlying type t and compare. It does.
 *)
 
 (*
   We are defining the School module as this file; let us follow convention and
   name "its" underlying data type t.
   Note that Grade_map has one type parameter which is the type of the map's
-  value data -- string list for a School.
+  value data: string list for a School, the roster of students in that grade.
   (The functor only needs the key type since compare is not needed on values,
   so the type of values is parametric.)
 *)
@@ -39,8 +39,8 @@ type t = (string list) Grade_map.t
 
 (*
   Informal shape of a School.t map:
-    { 1 |-> ["Bob"; "Sue"]
-    , 3 |-> ["Yohan"; "Idris"] }
+    { grade:1 |-> ["Bob"; "Sue"]
+    , grade:3 |-> ["Yohan"; "Idris"] }
 *)
 
 (* The empty school *)
@@ -59,7 +59,7 @@ let add (grade : Grade.t) (stud : string) (school : t) : t =
   We map each grade to the sorted grade.
 *)
 let sort (school : t) : t =
-  Grade_map.map (fun data -> List.sort String.compare data) school
+  Grade_map.map (fun roster -> List.sort String.compare roster) school
 
 (**
   Sorting using a fold over the map.
@@ -74,7 +74,7 @@ let sort_with_fold (school : t) : t =
 (** Auxiliary function to dump data structure *)
 let dump (school : t) = school |> Grade_map.to_list
 
-let roster (school : t) = school |> sort |> dump
+let all (school : t) = school |> sort |> dump
 
 (** Simple test *)
 let test_school =
@@ -84,3 +84,4 @@ let test_school =
   |> add { grade = 9 } "Mu"
   |> add { grade = 9 } "Pupu"
   |> add { grade = 9 } "Apu"
+  |> dump

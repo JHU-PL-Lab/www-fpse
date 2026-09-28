@@ -89,10 +89,50 @@ We can take this similarity even further. Just like we have functions on values,
 
 Above, we wrote a module that defined sets of strings.
 - But the same code could be used to define sets of any type with just a small change!
-- To write a set over at type, all we need is a notion of equality on that type.
+- To write a set over a type, all we need is a notion of equality on that type.
 
-We don't have to hard-code for strings. As long as we can pass in a type `t` and an `equal` function, then we can make a set over that type.
-- We define a module type `EQ`, which will be the type of our module argument.
+If we wanted to pack up everything that `String_set` needed to know about its underlying elements, we would put them into the following module because modules are just groups of code:
+```ocaml
+module Elt = struct
+  type t = string
+  let equal = String.equal
+end
+```
+
+- We can use this to abstract `String_set` over the type of its elements.
+- The following has no reference to `string`, just `Elt`:
+
+```ocaml
+module Elt_set = struct
+  type t = Elt.t list
+
+  let empty : t = []
+
+  let add (x : Elt.t) (s : t) : t = x :: s
+
+  let rec remove (x : Elt.t) (s : t) : t =
+    match s with
+    | [] -> failwith "item is not in set"
+    | hd :: tl ->
+      if Elt.equal hd x then
+        tl
+      else
+        hd :: remove x tl
+
+  let rec contains (x : Elt.t) (s : t) : bool =
+    match s with
+    | [] -> false
+    | hd :: tl ->
+      if Elt.equal hd x then
+        true
+      else
+        contains x tl
+end
+```
+
+- Instead of coding a set to a specific `Elt` module, we can do it for a generic one.
+- As long as we can pass in a type `t` and an `equal` function, then we can make a set over that type.
+- We describe such modules as those with the `EQ` module type:
 
 ```ocaml
 (* This module type is "some data type plus equality on it" *)
@@ -105,31 +145,31 @@ end
 Now we can write a module for sets, where the type of elements is passed in an as argument.
 
 ```ocaml
-(* M is the argument to the Make_set functor *)
-module Make_set (M : EQ) = struct
-  (* In here, we can use M, both it's type t and the equal function. *)
+(* Elt is the argument to the Make_set functor *)
+module Make_set (Elt : EQ) = struct
+  (* In here, we can use Elt, both it's type t and the equal function. *)
 
-  (* Use M.t to grab the underlying type from module M *)
-  type t = M.t list (* Sets are lists of M.t *)
+  (* Use Elt.t to grab the underlying type from module Elt *)
+  type t = Elt.t list (* Sets are lists of Elt.t *)
 
   let empty : t = []
 
-  let add (x : M.t) (s : t) : t = (x :: s)
+  let add (x : Elt.t) (s : t) : t = (x :: s)
 
-  let rec remove (x : M.t) (s : t) : t =
+  let rec remove (x : Elt.t) (s : t) : t =
     match s with
     | [] -> failwith "item is not in set"
     | hd :: tl ->
-      if M.equal hd x then (* M.equal is the equal function from M *)
+      if Elt.equal hd x then (* Elt.equal is the equal function from Elt *)
         tl
       else
         hd :: remove x tl
 
-  let rec contains (x : M.t) (s : t) : bool =
+  let rec contains (x : Elt.t) (s : t) : bool =
     match s with
     | [] -> false
     | hd :: tl ->
-      if M.equal x hd then
+      if Elt.equal x hd then
         true
       else
         contains x tl
@@ -140,10 +180,10 @@ Here is the similarity to types and values as we've seen before, just to demonst
 
 ```ocaml
 type eq = ...
-let make_set (m : eq) = ...
+let make_set (elt : eq) = ...
 
 module type EQ = sig ... end
-module Make_set (M : EQ) = struct ... end
+module Make_set (Elt : EQ) = struct ... end
 ```
 
 * The reason we use functors is because we can pass in types _and_ functions on those types.
@@ -219,25 +259,25 @@ module AB_set :
 
 ```ocaml
 module Make_set :
-  functor (M : EQ) ->
+  functor (Elt : EQ) ->
     sig
-      type t = M.t list
+      type t = Elt.t list
       val empty : t
-      val add : M.t -> t -> M.t list
-      val remove : M.t -> t -> M.t list
-      val contains : M.t -> t -> bool
+      val add : Elt.t -> t -> t
+      val remove : Elt.t -> t -> t
+      val contains : Elt.t -> t -> bool
     end
 ```
 
 but we can also declare it:
 
 ```ocaml
-module type MAKE_SET = functor (M : EQ) -> sig
-  type t = M.t list
+module type MAKE_SET = functor (Elt : EQ) -> sig
+  type t = Elt.t list
   val empty : t
-  val add : M.t -> t -> t
-  val remove : M.t -> t -> t
-  val contains : M.t -> t -> bool
+  val add : Elt.t -> t -> t
+  val remove : Elt.t -> t -> t
+  val contains : Elt.t -> t -> bool
 end
 ```
 
@@ -255,12 +295,12 @@ end
 * But, we can again do the same hiding trick we did in the `.mli` file etc: leave that off the type.
 
 ```ocaml
-module type MAKE_SET_HIDDEN = functor (M : EQ) -> sig
+module type MAKE_SET_HIDDEN = functor (Elt : EQ) -> sig
   type t (* Hide the type as we did in STRING_SET *)
   val empty : t
-  val add : M.t -> t -> t
-  val remove : M.t -> t -> t
-  val contains : M.t -> t -> bool
+  val add : Elt.t -> t -> t
+  val remove : Elt.t -> t -> t
+  val contains : Elt.t -> t -> bool
 end
 
 (* The old implementation works. But this just hides the type in the resulting module *)
@@ -380,7 +420,7 @@ type 'a intpairmaptree =
   ```ocaml
   type 'a listtree =
     | Leaf
-    | Node of ('a List.t) * 'a listtree * 'a listtree;;
+    | Node of 'a List.t * 'a listtree * 'a listtree;;
   ```
 
 ### A Small Example Using Map
@@ -414,9 +454,9 @@ module Pair = struct
  type l = int
  type r = string
  type t = l * r
- let left ((l:l), (r:r)) = l
- let right ((l:l), (r:r)) = r
-end;;
+ let left (x, _) = x
+ let right (_, y) = y
+end
 ```
 
 Now the problem is if we put the above signature on the module, we hid too much!
@@ -468,10 +508,9 @@ module type PAIR_INT_STRING =
 `with` is often needed in functors which need to expose a type in a parameter:
 
 ```ocaml
-(* random data with equality *)
+(* any data *)
 module type DATUM = sig
   type t
-  val equal : t -> t -> bool
 end
 
 module Make_pair_too_hidden (Datum1 : DATUM) (Datum2 : DATUM) : PAIR = struct
@@ -480,15 +519,13 @@ module Make_pair_too_hidden (Datum1 : DATUM) (Datum2 : DATUM) : PAIR = struct
   type t = l * r
   let left (p : t) = match p with (a,_) -> a
   let right (p : t) = match p with (_,b) -> b
-  let equal (p1 : t) (p2 : t) =
-    Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
 end
 
 module Example_pair_too_hidden = Make_pair_too_hidden (Int) (String)
 (* Example_pair_too_hidden.left (1,"e") fails, we hid the fact that l/r are int/string *)
 ```
 
-Let us fix this by specializing the `Pair` module type with `with`:
+Let us fix this by specializing the `PAIR` module type with `with`:
 
 ```ocaml
 module Make_pair_unhidden (Datum1 : DATUM) (Datum2 : DATUM)
@@ -498,8 +535,6 @@ module Make_pair_unhidden (Datum1 : DATUM) (Datum2 : DATUM)
   type t = l * r
   let left (p : t) = match p with (a,_) -> a
   let right (p : t) = match p with (_,b) -> b
-  let equal (p1 : t) (p2 : t) =
-    Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
 end
 
 module Example_pair_unhidden = Make_pair_unhidden (Int) (String)
@@ -515,8 +550,6 @@ module Make_pair (Datum1 : DATUM) (Datum2 : DATUM)
   type t = Datum1.t * Datum2.t
   let left (p : t) = match p with (a,_) -> a
   let right (p : t) = match p with (_,b) -> b
-  let equal (p1 : t) (p2 : t) =
-    Datum1.equal (left p1) (left p2) && Datum2.equal (right p1) (right p2)
 end
 
 module Example_pair = Make_pair (Int) (String)
@@ -542,10 +575,10 @@ end
 
 ### Other Data Structures in the standard library
 
-* The standard library has complete implementations of many classic data structures, many of which are built similarly with a functor like `Map.Make`
+* The standard library has complete implementations of some classic data structures, many of which are built similarly with a functor like `Map.Make`
 * Be careful on imperative vs functional, look carefully to see which it is
 * Functional data structures:
-  - `Set`, `Map`, `IArray` (immutable arrays)
+  - `Set`, `Map`, `Iarray` (immutable arrays)
 * Imperative data structures:
   - `Stack`, `Queue` (which don't need `Make`/`compare`), `Hashtbl`, `Pqueue` (priority queue)
 
