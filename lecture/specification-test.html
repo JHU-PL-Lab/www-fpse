@@ -149,9 +149,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </ul>
 
 <h3 id="forms-of-specification">Forms of specification</h3>
-<p>Specifications can range from informal to completely rigorous and unambiguous</p>
-
+<p>Specifications span a big range of detail and completeness</p>
 <ul>
+  <li>From informal descriptions to completely rigorous and unambiguous definitions</li>
+  <li>
+    <p>From just specifying a few aspects to specifying the whole behavior.</p>
+  </li>
   <li>Requirements and Design documents: high-level informal descriptions of what the app should do
     <ul>
       <li>This is the classic form of specification in software engineering; includes description/pictures/etc but is far from code</li>
@@ -160,7 +163,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Types, e.g. writing an <code>.mli</code> file before implementing the code
     <ul>
       <li>Gives a very rigorous, compiler-checked skeleton for the code; we are doing this for you on the assignments</li>
-      <li>Much more precise than design docss in terms of code/spec relationship</li>
+      <li>Much more precise than design docs in terms of code/spec relationship</li>
       <li>But, limited expressiveness since types can express only so much (no “the tree is balanced” in an OCaml type)</li>
     </ul>
   </li>
@@ -173,30 +176,13 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Assertions specifying code behavior in mathematical logic
     <ul>
-      <li>a <em>precondition</em> is a logical constraint on function arguments (before it is called: “pre”)</li>
-      <li>a <em>postcondition</em> is a constraint on the value returned from a function</li>
-      <li>an <em>invariant</em> is a property internal to the function or internal to a data structure that always holds (it “invariably” holds)</li>
-      <li>Some examples
-        <ul>
-          <li><em>precondition</em> on a function that tree parameter is a binary tree (left values &lt; right values)</li>
-          <li><em>precondition</em> on a function that tree parameter is a <em>balanced</em> binary tree</li>
-          <li><em>postcondition</em> that <code>List.sort</code> always returns a sorted list</li>
-          <li><em>precondition</em>/<em>postcondition</em> on tree <code>add</code> function that if the input tree is balanced the output tree will also be.</li>
-          <li><em>invariants</em> on internal data structures such as a <code>Set</code> implementation which uses an underlying always-sorted list.</li>
-          <li><em>inductive invariants</em> on recursive algorithms, e.g. assuming in the body of list <code>reverse</code> that it works on a shorter list.</li>
-        </ul>
-      </li>
-      <li>Logical assertions are more general than tests since they are for <em>all</em> inputs
-        <ul>
-          <li>but not necessarily verified (but, invariants do guide tests - write tests to verify on lots of examples)</li>
-        </ul>
-      </li>
+      <li>Preconditions, postconditions, invariants (more below)</li>
     </ul>
   </li>
   <li>Verified assertions aka formal methods
     <ul>
       <li><em>Verify</em> the code meets preconditions/postconditions/invariants using a tool (Roq/Lean/Dafne/Z3/etc)</li>
-      <li>This is like nuclear fusion: a research topic for 50+ years, very slowly becoming more viable.</li>
+      <li>This is like nuclear fusion: a research topic for 50+ years, slowly becoming more viable.</li>
     </ul>
   </li>
 </ul>
@@ -204,7 +190,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="type-directed-programming">Type-directed programming</h3>
 
 <ul>
-  <li>As mentioned above, types are a very lightweight layer of code specification
+  <li>As mentioned above, types are a very lightweight but precise layer of code specification
     <ul>
       <li>Particularly nice in that they are all quickly checked and can even be inferred.</li>
       <li>Think of types as outlining the “shape” of the code you need to write in terms of the data structures/functions.</li>
@@ -217,12 +203,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>In fact, you have been doing type-directed programming all along
     <ul>
-      <li>We gave you the types for the HW questions, and those types are useful in debugging your code, right??</li>
+      <li>We gave you the types for the HW questions, and those types are useful in writing/debugging your code, right??</li>
     </ul>
   </li>
   <li>That is all the principle is: writing code that matches declared type will get you well on the way to an implementation
     <ul>
-      <li>So, <em>start</em> with the type</li>
+      <li>So, type-directed programming means <em>start</em> with the type</li>
       <li>Type errors are definitely errors, no need to run tests to find them, the editor will yell at you immediately.</li>
       <li>When the last type error drops, the code often will directly work</li>
     </ul>
@@ -230,7 +216,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Type-directed programming is 100% rigorous, but is incomplete: types only express <em>rough shapes</em> of data
     <ul>
       <li>e.g. <code>int list</code> is a rough shape compared to “sorted <code>int list</code>” but the latter isn’t a type in OCaml</li>
-      <li>Our lab (and others) are working on type systems which allow you to state <code>{ l : int list | is_sorted(l) }</code>”</li>
+      <li>Our lab (and others) are working on type systems which allow you to write types like <code>{ l : int list | is_sorted(l) }</code>”</li>
     </ul>
   </li>
 </ul>
@@ -239,13 +225,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <p>Not bubbling up <code>option</code> or other wrapped results properly</p>
 
-<!-- Brandon: this example is very strange. The code doesn't make sense at all. I reformatted it but did not rewrite it -->
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">sum_first_n</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span> <span class="k">let</span> <span class="n">sum_nth_list</span> <span class="p">(</span><span class="n">l</span> <span class="o">:</span> <span class="kt">int</span> <span class="kt">list</span> <span class="kt">list</span><span class="p">)</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="kt">int</span> <span class="o">=</span>
   <span class="nn">List</span><span class="p">.</span><span class="n">nth_opt</span> <span class="n">l</span> <span class="n">n</span>
   <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">elt</span><span class="p">)</span> <span class="mi">0</span>
 <span class="p">;;</span>
-<span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="kt">int</span> <span class="n">option</span>
+<span class="nc">Error</span><span class="o">:</span> <span class="nc">This</span> <span class="n">expression</span> <span class="n">has</span> <span class="k">type</span> <span class="kt">int</span> <span class="kt">list</span> <span class="n">option</span>
        <span class="n">but</span> <span class="n">an</span> <span class="n">expression</span> <span class="n">was</span> <span class="n">expected</span> <span class="k">of</span> <span class="k">type</span> <span class="kt">int</span> <span class="kt">list</span>
 </code></pre></div></div>
 
@@ -328,8 +312,31 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p><a name="specs"></a></p>
 
 <h3 id="preconditions-postconditions-and-data-structure-invariants">Preconditions, Postconditions, and Data Structure Invariants</h3>
+<p>To make more rigorous specs of code use these</p>
+<ul>
+  <li>A <em>precondition</em> is a logical constraint on function arguments (before it is called: “pre”)</li>
+  <li>A <em>postcondition</em> is a constraint on the value returned from a function (after: “post”)</li>
+  <li>
+    <p>An <em>invariant</em> is a property internal to the function or internal to a data structure that always holds (it “invariably” holds except perhaps in the middle of an update)</p>
 
-<p>We covered these above, now lets put them into practice in our OCaml code</p>
+    <ul>
+      <li>Some examples
+        <ul>
+          <li><em>precondition</em> on a function that tree parameter is a binary search tree (left values &lt; right values)</li>
+          <li><em>postcondition</em> that <code>List.sort</code> always returns a sorted list</li>
+          <li><em>precondition</em>/<em>postcondition</em> on a tree <code>add</code> function that if the input tree is a BST the output tree will also be.</li>
+          <li><em>invariants</em> on internal data structures such as a <code>Set</code> implementation which uses an underlying always-sorted list.</li>
+          <li><em>inductive invariants</em> on recursive algorithms, e.g. assuming in the body of list <code>reverse</code> that it works on a shorter list.</li>
+        </ul>
+      </li>
+      <li>Logical assertions are more general than tests since they are for <em>all</em> inputs
+        <ul>
+          <li>but not necessarily verified (but, invariants do guide tests - write tests to verify on lots of examples)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
 
 <p>Let us consider some preconditions and postconditions on the <code>Simple_set.Make</code> functor example <a href="../examples/set-example-functor.zip">(click for zipfile)</a>:</p>
 
@@ -392,15 +399,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
         <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span><span class="o">%</span><span class="n">test</span> <span class="s2">"add adds"</span> <span class="o">=</span> <span class="n">contains</span> <span class="p">(</span><span class="n">add</span> <span class="p">(</span><span class="n">add</span> <span class="mi">5</span> <span class="n">emptyset</span><span class="p">)</span> <span class="mi">22</span><span class="p">)</span> <span class="mi">22</span>
 </code></pre></div>        </div>
       </li>
-      <li>Inline tests both document invariants and serve as tests: two-for-one!</li>
-      <li>They also allow functions and data structures hidden in a module to be tested within that module</li>
-      <li>This also gets around an issue with OCaml’s modules and hidden code that needs to be tested
-        <ul>
-          <li>The tester module needs to be able to see the local-only functions in the library module to test them<br />
-(recall we make local-only things in an <code>.ml</code> file by leaving them out of the <code>.mli</code>)</li>
-          <li>So, they would need to be made non-local for that, defeating the locality</li>
-        </ul>
-      </li>
     </ul>
   </li>
 </ul>
@@ -410,7 +408,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>As discussed above, data structure invariants are useful when not all elements of a type are “good” to have around in a context
     <ul>
-      <li>for example the “ordered tree” and “balanced tree” examples mentioned above</li>
+      <li>for example the BST example mentioned above</li>
     </ul>
   </li>
   <li>Example from <code>simpledict</code> on homework: <code>is_ordered</code> must hold for the <code>Simpletree.t</code>.</li>
@@ -446,36 +444,36 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Folding left (<code>List.fold_left</code>):
     <ul>
       <li>Suppose we are at some arbitrary point processing the fold;</li>
-      <li>assume accumulation <code>accum</code> has “the result of the task” for all elements to the <em>left</em> in the list</li>
+      <li>assume accumulation <code>acc</code> has “the result of the task” for all elements to the <em>left</em> in the list</li>
       <li>require <code>f</code> to then “do the task” to incorporate the current element <code>elt</code></li>
-      <li>also assume <code>accum</code> is initially <code>init</code></li>
+      <li>also assume <code>acc</code> is initially <code>init</code></li>
     </ul>
   </li>
-  <li>Folding right: very similar, but <code>accum</code> is result for all elements to the <em>right</em> in the list</li>
+  <li>Folding right: very similar, but <code>acc</code> is result for all elements to the <em>right</em> in the list</li>
 </ul>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* invariant for length fold: accum is number of elements to the left of the current `elt` we are at *)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* invariant for length via fold_left: acc is number of elements to the left of the current `elt` we are at *)</span>
 <span class="k">let</span> <span class="n">length</span> <span class="n">l</span> <span class="o">=</span>
-  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">accum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">0</span> <span class="n">l</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="mi">0</span> <span class="n">l</span>
 
-<span class="c">(* invariant for rev fold: accum is reverse of list up to here *)</span>
+<span class="c">(* invariant for rev via fold_left: acc is reverse of list up to here *)</span>
 <span class="k">let</span> <span class="n">rev</span> <span class="n">l</span> <span class="o">=</span>
-  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">accum</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="k">fun</span> <span class="n">acc</span> <span class="n">elt</span> <span class="o">-&gt;</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">acc</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
 
-<span class="c">(* invariant for map fold: accum is f applied to each element of list after here *)</span>
+<span class="c">(* invariant for map via fold_right: acc is f applied to each element of list after here *)</span>
 <span class="k">let</span> <span class="n">map</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span>
-  <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">acc</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">acc</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
 
 <span class="c">(* etc *)</span>
 <span class="k">let</span> <span class="n">filter</span> <span class="n">f</span> <span class="n">l</span> <span class="o">=</span>
-  <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">accum</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">f</span> <span class="n">elt</span> <span class="k">then</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">accum</span> <span class="k">else</span> <span class="n">accum</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">fold_right</span> <span class="p">(</span><span class="k">fun</span> <span class="n">elt</span> <span class="n">acc</span> <span class="o">-&gt;</span> <span class="k">if</span> <span class="n">f</span> <span class="n">elt</span> <span class="k">then</span> <span class="n">elt</span> <span class="o">::</span> <span class="n">acc</span> <span class="k">else</span> <span class="n">acc</span><span class="p">)</span> <span class="bp">[]</span> <span class="n">l</span>
 </code></pre></div></div>
 
 <h3 id="specification-and-abstraction">Specification and Abstraction</h3>
 
 <ul>
   <li>The more completely a module is specified, the less the users need to know about the underlying implementation.</li>
-  <li><code>Map</code> is an example where the users need to know very limited information about the implementation.
+  <li>OCaml’s <code>Map</code> module is an example where the users need to know limited information about the implementation.
     <ul>
       <li>They still <em>do</em> need to know it is O(log n) for add/remove/find, which should be in the docs (<code>.mli</code>/odoc)</li>
     </ul>
@@ -525,25 +523,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li><strong>Unit testing</strong>: what you have mainly done – test the small pieces of the app; no I/O testing</li>
   <li><strong>Acceptance testing</strong>: test the bigger pieces including I/O
     <ul>
-      <li>For example testing your <code>keywordcount.exe</code> on a certain fixed directory tree.</li>
+      <li>For example testing your A4 <code>keywordcount.exe</code> on a certain fixed directory tree.</li>
+      <li>We in fact give you an acceptance tester there, <code>exec_tests.ml</code> which tests this executable.</li>
     </ul>
   </li>
   <li><strong>Random testing</strong> of which there are many types: fuzz testing / monkey testing / property-based testing / quickcheck:
     <ul>
       <li>the tests are run on data generated <strong>randomly</strong> from some distribution</li>
       <li>“quickcheck”ing aka property-based testing is running <strong>unit</strong> tests on randomly generated data (random lists of ints, etc)</li>
-      <li>“fuzz testing” is running <strong>acceptance</strong> tests with random input strings supplied.</li>
+      <li>“fuzz testing” is running <strong>acceptance</strong> tests with random input data supplied.</li>
     </ul>
   </li>
-</ul>
-
-<h3 id="testing-and-coverage">Testing and coverage</h3>
-
-<ul>
-  <li>Code coverage is a great <em>glass-box</em> (impl-based) metric of how good your test suite is</li>
-  <li>The simple idea of coverage: are there lines of your code that never get exercised by any of your tests?</li>
-  <li>Coverage tools let you easily check this.</li>
-  <li>We will show how the Bisect coverage tool can be used below</li>
 </ul>
 
 <h2 id="ounit2">OUnit2</h2>
@@ -571,7 +561,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li><code>OUnit2.assert_equal</code> is just the <code>OUnit2</code> version of <code>assert</code>.
     <ul>
-      <li>It uses <code>Repr.equal</code> for simplicity (but be careful because it is equality of runtime representation, which is not necessarily the intended notion of equality)</li>
+      <li>It uses <code>(=)</code> for simplicity (but be careful because as we discussed it is equality of runtime representation, which is usually not the intended notion of equality on <code>Map</code>/<code>Set</code> for example)</li>
     </ul>
   </li>
   <li>The infix <code>&gt;::</code> operator takes a string (test name) and a piece of test code under <code>fun _ -&gt;</code> (to keep it from running right away) and builds a single test of type <code>test</code> (run <code>#require "ounit2"</code> and <code>open OUnit2</code> in the top-loop before playing with this code there):
@@ -717,8 +707,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>We used <code>assert_equal</code> above which is the OUnit function to check things being equal</li>
-  <li><code>assert_bool</code> which is like the <code>assert</code> OCaml command: <code>assert_bool "name that test" (0=0)</code> for example</li>
-  <li>If you want to verify some code raises an exception, use <code>assert_raises</code></li>
+  <li><code>assert_bool</code> is like the <code>assert</code> OCaml command: <code>assert_bool "name that test" (0=0)</code> for example</li>
+  <li><code>OUnit2.assert_raises</code> is also often useful, it verifies that an exception <em>is</em> raised when it should be:
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">atest</span> <span class="o">=</span> <span class="k">fun</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="n">assert_raises</span> <span class="p">(</span><span class="nc">Failure</span> <span class="s2">"nth"</span><span class="p">)</span> <span class="p">(</span><span class="k">fun</span> <span class="bp">()</span> <span class="o">-&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">nth</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">]</span> <span class="mi">4</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
   <li>To perform acceptance testing (I/O), use <code>assert_command</code> to run a shell command and compare against output
     <ul>
       <li>in the A4 <code>exec_tests.ml</code> code we provided, you can see we are using <code>assert_command</code> to test the executable</li>
@@ -730,32 +723,16 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>As always, see the documentation for more details:<br />
 OUnit2 <a href="https://ocaml.org/p/ounit2/latest/doc/index.html">API docs</a></p>
 
-<h3 id="tangent-testing-executables-with-cram">Tangent: Testing executables with cram</h3>
+<h2 id="bisect-for-ocaml-code-coverage">Bisect for OCaml code coverage</h2>
 
 <ul>
-  <li>As mentioned above <code>OUnit</code> can be used to test executables: <code>OUnit2.assert_command</code> can run any shell command (in particular, your OCaml <code>.exe</code> file)</li>
-  <li>This is probably the approach you should use</li>
-  <li><code>dune</code> also contains an extension called <code>cram</code> which allows for output to be compared against expected output for a given input</li>
-  <li>It makes it really easy to write tests for a command-line executable</li>
-  <li>It is very general, you just specify the shell command to run and expected output</li>
-  <li>See the <a href="https://dune.readthedocs.io/en/stable/tests.html#cram-tests"><code>cram</code> docs</a> if you are interested</li>
-  <li>An example in a file <code>cramtest.t</code>.  Non-indented lines are comments, $ is the input and after the input is implicitly the expected output (4 here)
-    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>We first create a <span class="nb">test </span>artifact called <span class="s2">"foo"</span>
-  <span class="nv">$ </span><span class="nb">cat</span> <span class="o">&gt;</span>foo <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh">
-  &gt; foo
-  &gt; bar
-  &gt; baz
-  &gt; EOF
-
-After creating the fixture, we want to verify that ``wc`` gives us the right result:
-  </span><span class="nv">$ </span><span class="sh">wc -l foo | awk '{ print </span><span class="nv">$1</span><span class="sh"> }'
-  4
-</span></code></pre></div>    </div>
-  </li>
+  <li>Code coverage is a great <em>glass-box</em> (implementation-based) metric of how good your test suite is</li>
+  <li>The simple idea of coverage: are there lines of your code that never get exercised by any of your tests?</li>
+  <li>Coverage tools let you easily check this.</li>
+  <li>We will use the Bisect coverage tool for our OCaml code</li>
 </ul>
 
-<h3 id="bisect-for-ocaml-code-coverage">Bisect for OCaml code coverage</h3>
-
+<h4 id="using-bisect">Using Bisect</h4>
 <ul>
   <li>The <code>bisect_ppx</code> preprocessor can decorate your code with one hit-bit per line
     <ul>
@@ -769,31 +746,16 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
   </li>
   <li>Add it as instrumentation with the <code>(instrumentation (backend bisect_ppx_ng))</code> line to the library or executable declaration in <code>dune</code>.
     <ul>
-      <li>Do <em>not</em> add it to your <code>(test ...)</code> declaration because that would count which lines are hit in your testing code, not your actual code!</li>
-      <li>Then, because <code>Bisect</code> outputs files with the coverage report, you have to tell <code>dune</code> and <code>Bisect</code> where to put those. E.g.
-        <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">rule</span>
-<span class="p">(</span><span class="nf">target</span> <span class="p">(</span><span class="nf">dir</span> <span class="s">"_bisect"</span><span class="p">))</span> <span class="c1">; tell dune about the output directory with the bisect files</span>
-<span class="p">(</span><span class="nf">alias</span> <span class="nv">runtest</span><span class="p">)</span> <span class="c1">; how to run this: `dune test --instrument-with bisect_ppx_ng`</span>
-<span class="p">(</span><span class="nf">action</span>
-  <span class="p">(</span><span class="nf">setenv</span> <span class="nv">BISECT_FILE</span> <span class="s">"_bisect/bisect"</span> <span class="c1">; now tell bisect where to put the files</span>
-    <span class="p">(</span><span class="nf">progn</span>
-    <span class="p">(</span><span class="nf">run</span> <span class="nv">mkdir</span> <span class="nv">-p</span> <span class="nv">_bisect</span><span class="p">)</span> <span class="c1">; create the output directory so that bisect can put them there</span>
-    <span class="p">(</span><span class="nf">run</span> <span class="nv">touch</span> <span class="nv">_bisect/dummy</span><span class="p">)</span> <span class="c1">; put a file there so dune does not complain if you test without running coverage</span>
-    <span class="p">(</span><span class="nf">run</span> <span class="nv">%</span><span class="err">{</span><span class="nv">exe:tests</span><span class="o">.</span><span class="nv">exe</span><span class="err">}</span><span class="p">)</span> <span class="c1">; run the tests executable, which does all the work</span>
-<span class="p">))))</span>
-</code></pre></div>        </div>
-      </li>
-      <li>This requires that your tests are actually declared as an executable, not with dune’s <code>(test ...)</code> stanza. Declare your tests like this:
-        <div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nf">executable</span> <span class="c1">; executable! Not test!</span>
-<span class="p">(</span><span class="nf">name</span> <span class="nv">tests</span><span class="p">)</span> <span class="c1">; provided you have a file called `tests.ml` defining your tests</span>
-<span class="p">(</span><span class="nf">modules</span> <span class="nv">tests</span><span class="p">)</span>
-<span class="p">(</span><span class="nf">libraries</span> <span class="nv">lib</span><span class="p">)</span> <span class="c1">; where lib is the library you are testing</span>
-<span class="p">)</span>
-</code></pre></div>        </div>
+      <li>Do <em>not</em> to add it to your <code>(test ...)</code> declaration because that would count which lines are hit in your testing code, not your actual code!</li>
+      <li>Then, due to some obscure issues involving how <code>dune</code> runs tests there is currently some hacking needed to output the files with the coverage results
+        <ul>
+          <li>The <code>tests/dune</code> file needs to be more complex to do this</li>
+          <li>(The reason why is <code>dune</code> now sandboxes test running, they can’t do I/O like writing files without explicit permissions.)</li>
+        </ul>
       </li>
     </ul>
   </li>
-  <li>Now test your code while telling dune to instrument:
+  <li>Now test your code while telling dune to instrument so it can track which lines were hit:
     <pre><code>dune test --instrument-with bisect_ppx_ng
 </code></pre>
   </li>
@@ -811,16 +773,22 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
 
 <p>We will check how well my tests of the <a href="../examples/set-example.zip">simple set example</a> covered the code using Bisect.</p>
 
+<ul>
+  <li>See the <a href="../examples/set-example/tests/dune">set-example/tests/dune</a> file for the fancy boilerplate you need to add bisect to your project test runner.</li>
+</ul>
+
 <p><a name="quickcheck"></a></p>
 
 <h2 id="random-testing-aka-property-based-testing-aka-quickchecking">Random Testing aka Property-Based Testing aka Quickchecking</h2>
 
 <ul>
   <li>Recall that Quickchecking is making up some random data to test our code</li>
-  <li>To use random testing we need to know when the code is working on that random data
+  <li>To use random testing we need to know when the code is “working” on that random data
     <ul>
       <li>e.g. add a bunch of random key-value maps to a dictionary and delete them: should be the original dictionary again</li>
-      <li>e.g. above of reversing a reversed list gives back the original list</li>
+      <li>e.g. above of reversing a reversed list gives back the original (randomly generated) list</li>
+      <li>So, its better for testing invariants on data structures and functions</li>
+      <li>But it can also hit corner cases, e.g. empty list case not properly handled etc.</li>
     </ul>
   </li>
 </ul>
@@ -831,7 +799,7 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
   <li>Given: a function <code>f</code> that we want to test.</li>
   <li>Have a function to generate random data which is the parameters of <code>f</code></li>
   <li>Run <code>f</code> on that random data many times (say 1000 times)</li>
-  <li>Verify whether the test worked on that random data</li>
+  <li>Verify whether the test “worked” on that random data</li>
 </ol>
 
 <h3 id="using-qcheck">Using <code>QCheck</code></h3>
@@ -842,7 +810,7 @@ After creating the fixture, we want to verify that ``wc`` gives us the right res
   <li><code>QCheck</code> contains three key algorithms:
     <ol>
       <li>Gen, <code>QCheck.Gen</code> - make random data of desired distribution in given type</li>
-      <li>Shrinkers, <code>QCheck.Shrink</code> - if a failing case is discovered, try to make random data smaller, e.g. a shorter list (we will not cover these in detail)</li>
+      <li>Shrinkers, <code>QCheck.Shrink</code> - if a failing case is discovered, try to make random data smaller, e.g. a shorter list (note we will not cover shrinkers in detail)</li>
       <li>Maker, <code>QCheck.Test.make</code> which makes a test over the random data</li>
       <li>Runner, <code>QCheck.Test.check_exn</code>, which runs some fixed number of random tests and shrinks failures.</li>
     </ol>

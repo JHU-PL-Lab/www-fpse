@@ -3,6 +3,8 @@
    (libraries qcheck) 
    (preprocess (pps ppx_deriving_qcheck))
    in dune file
+   and, #require "qcheck";; #require "ppx_deriving_qcheck";; 
+   before running the examples below in the top loop.
 *)
 
 [@@@ocaml.warning "-32"]
@@ -23,7 +25,7 @@ let _ = QCheck.Gen.generate ~n:10 int_gen
 
 let _ = QCheck.Gen.generate ~n:10 (QCheck.Gen.int_bound 1000) 
 
-(* Notice that each time we run this it makes new random numbers.  One
+(* Notice that each time we run this it makes new completely random numbers.  One
    downside of this is if you make the same random data each time you can
    repeat the running of the tests on the same data.  To fix the data 
    use the ~rand: optional paramater: *)
@@ -49,13 +51,15 @@ let range_test =
       ~name:"every integer is less than max_int - 100000000000000000" (* optional name *)
       QCheck.int (* the builder for the data, lets use the shorthand *)
       (fun n -> (Printf.printf "DEBUG: test data received, %i\n" n);
-       n < (Int.max_int -100000000000000000)) (* the actual test: will feed 10 random integers in for n *)
+       n < (Int.max_int -1000000000000000000)) (* the actual test: will feed 10 random integers in for n *)
    ;;
 
+(* This line will run the tests and raise an exception if fail.
+   The generator here is rather stupid, it should test max/min and small values
+   more frequently. But it manages to find a failure here. *)
+   
 let _ = QCheck.Test.check_exn range_test
 
-(* The generator here is rather stupid, it should test max/min and small values
-   more frequently. *)
 
 (* Parameterized type generators need a generator for the parameter 
    Similar to how `List.equal` needs an `equal` on list contents *)
@@ -97,7 +101,7 @@ val arb_tree : tree QCheck.arbitrary
 (* OK lets make a few random trees now. *)
 let _ = QCheck.Gen.generate ~n:5 gen_tree
 
-(* Note that @@deriving qcheck doesn't work on polymorphic types *)
+(* Note that @@deriving qcheck unfortunately doesn't work on polymorphic types *)
 
 type 'a btree = Leaf | Node of 'a * 'a btree * 'a btree [@@deriving qcheck]
 
@@ -141,7 +145,7 @@ let () =
   let qcheck_suite = "ounit suite of tests" >:::
      List.map QCheck_ounit.to_ounit2_test
        [ range_test; list_test; set_add_test ] in (* include all the tests we made above *)
-  run_test_tt_main qcheck_suite (* note this crashes top loop *)
+  run_test_tt_main qcheck_suite (* note this crashes top loop if you run this code there *)
 
 (* Shrinking *)
 

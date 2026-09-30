@@ -17,65 +17,54 @@
   - Need to go further down the above list as complexity and mission-critical aspects increase
 
 ### Forms of specification
-Specifications can range from informal to completely rigorous and unambiguous
+Specifications span a big range of detail and completeness
+* From informal descriptions to completely rigorous and unambiguous definitions
+* From just specifying a few aspects to specifying the whole behavior.
 
 * Requirements and Design documents: high-level informal descriptions of what the app should do
   - This is the classic form of specification in software engineering; includes description/pictures/etc but is far from code
 * Types, e.g. writing an `.mli` file before implementing the code
   - Gives a very rigorous, compiler-checked skeleton for the code; we are doing this for you on the assignments
-  - Much more precise than design docss in terms of code/spec relationship
+  - Much more precise than design docs in terms of code/spec relationship
   - But, limited expressiveness since types can express only so much (no "the tree is balanced" in an OCaml type)
 * Tests
   - A test suite constitutes a specification on a finite window of behavior - can't run on the unbounded input possibilities
   - So, 100% accurate on the cases tested, but could miss many important cases if tests are not thoughtfully written.
   - *Coverage* measurements can be used to improve tests: what lines of code were not reached by any test?
 * Assertions specifying code behavior in mathematical logic
-  - a *precondition* is a logical constraint on function arguments (before it is called: "pre")
-  - a *postcondition* is a constraint on the value returned from a function
-  - an *invariant* is a property internal to the function or internal to a data structure that always holds (it "invariably" holds)
-  - Some examples
-    - *precondition* on a function that tree parameter is a binary tree (left values < right values)
-    - *precondition* on a function that tree parameter is a *balanced* binary tree
-    - *postcondition* that `List.sort` always returns a sorted list
-    - *precondition*/*postcondition* on tree `add` function that if the input tree is balanced the output tree will also be.
-    - *invariants* on internal data structures such as a `Set` implementation which uses an underlying always-sorted list.
-    - *inductive invariants* on recursive algorithms, e.g. assuming in the body of list `reverse` that it works on a shorter list.
-  - Logical assertions are more general than tests since they are for *all* inputs
-    - but not necessarily verified (but, invariants do guide tests - write tests to verify on lots of examples)
+  - Preconditions, postconditions, invariants (more below)
 * Verified assertions aka formal methods
   - *Verify* the code meets preconditions/postconditions/invariants using a tool (Roq/Lean/Dafne/Z3/etc)
-  - This is like nuclear fusion: a research topic for 50+ years, very slowly becoming more viable.
+  - This is like nuclear fusion: a research topic for 50+ years, slowly becoming more viable.
 
 ### Type-directed programming
 
-* As mentioned above, types are a very lightweight layer of code specification
+* As mentioned above, types are a very lightweight but precise layer of code specification
   - Particularly nice in that they are all quickly checked and can even be inferred.
   - Think of types as outlining the "shape" of the code you need to write in terms of the data structures/functions.
 
 What is Type-Directed Programming??
 
 * In fact, you have been doing type-directed programming all along
-  - We gave you the types for the HW questions, and those types are useful in debugging your code, right??
+  - We gave you the types for the HW questions, and those types are useful in writing/debugging your code, right??
 * That is all the principle is: writing code that matches declared type will get you well on the way to an implementation
-  - So, *start* with the type
+  - So, type-directed programming means *start* with the type
   - Type errors are definitely errors, no need to run tests to find them, the editor will yell at you immediately.
   - When the last type error drops, the code often will directly work
 * Type-directed programming is 100% rigorous, but is incomplete: types only express *rough shapes* of data
   - e.g. `int list` is a rough shape compared to "sorted `int list`" but the latter isn't a type in OCaml
-  - Our lab (and others) are working on type systems which allow you to state `{ l : int list | is_sorted(l) }`"
+  - Our lab (and others) are working on type systems which allow you to write types like `{ l : int list | is_sorted(l) }`"
 
 #### Simple type-directed programming examples
 
 Not bubbling up `option` or other wrapped results properly
 
-<!-- Brandon: this example is very strange. The code doesn't make sense at all. I reformatted it but did not rewrite it -->
-
 ```ocaml
-# let sum_first_n (l : int list) (n : int) : int =
+# let sum_nth_list (l : int list list) (n : int) : int =
   List.nth_opt l n
   |> List.fold_left (fun acc elt -> acc + elt) 0
 ;;
-Error: This expression has type int option
+Error: This expression has type int list option
        but an expression was expected of type int list
 ```
 
@@ -152,8 +141,19 @@ Conclusion: Do not **wrestle** with OCaml's types, *dance* with them.
 <a name="specs"></a>
 
 ### Preconditions, Postconditions, and Data Structure Invariants
+To make more rigorous specs of code use these
+- A *precondition* is a logical constraint on function arguments (before it is called: "pre")
+- A *postcondition* is a constraint on the value returned from a function (after: "post")
+- An *invariant* is a property internal to the function or internal to a data structure that always holds (it "invariably" holds except perhaps in the middle of an update)
 
-We covered these above, now lets put them into practice in our OCaml code
+  - Some examples
+    - *precondition* on a function that tree parameter is a binary search tree (left values < right values)
+    - *postcondition* that `List.sort` always returns a sorted list
+    - *precondition*/*postcondition* on a tree `add` function that if the input tree is a BST the output tree will also be.
+    - *invariants* on internal data structures such as a `Set` implementation which uses an underlying always-sorted list.
+    - *inductive invariants* on recursive algorithms, e.g. assuming in the body of list `reverse` that it works on a shorter list.
+  - Logical assertions are more general than tests since they are for *all* inputs
+    - but not necessarily verified (but, invariants do guide tests - write tests to verify on lots of examples)
 
 Let us consider some preconditions and postconditions on the `Simple_set.Make` functor example [(click for zipfile)](../examples/set-example-functor.zip):
 
@@ -204,17 +204,11 @@ let add (x : M.t) (s : t) =
   ```ocaml
   let%test "add adds" = contains (add (add 5 emptyset) 22) 22
   ```
-  - Inline tests both document invariants and serve as tests: two-for-one!
-  - They also allow functions and data structures hidden in a module to be tested within that module
-  - This also gets around an issue with OCaml's modules and hidden code that needs to be tested
-    - The tester module needs to be able to see the local-only functions in the library module to test them
-      (recall we make local-only things in an `.ml` file by leaving them out of the `.mli`)
-    - So, they would need to be made non-local for that, defeating the locality
 
 ### Data structure invariants
 
 * As discussed above, data structure invariants are useful when not all elements of a type are "good" to have around in a context
-  - for example the "ordered tree" and "balanced tree" examples mentioned above
+  - for example the BST example mentioned above
 * Example from `simpledict` on homework: `is_ordered` must hold for the `Simpletree.t`.
 
 ### Recursion Invariants
@@ -242,33 +236,33 @@ let rec rev l =
 * In re-implementing some of the common `List` functions with `fold_left`, it helps to think of the invariant.
 * Folding left (`List.fold_left`):
   - Suppose we are at some arbitrary point processing the fold;
-  - assume accumulation `accum` has "the result of the task" for all elements to the *left* in the list
+  - assume accumulation `acc` has "the result of the task" for all elements to the *left* in the list
   - require `f` to then "do the task" to incorporate the current element `elt`
-  - also assume `accum` is initially `init`
-* Folding right: very similar, but `accum` is result for all elements to the *right* in the list
+  - also assume `acc` is initially `init`
+* Folding right: very similar, but `acc` is result for all elements to the *right* in the list
 
 ```ocaml
-(* invariant for length fold: accum is number of elements to the left of the current `elt` we are at *)
+(* invariant for length via fold_left: acc is number of elements to the left of the current `elt` we are at *)
 let length l =
-  List.fold_left (fun accum _ -> accum + 1) 0 l
+  List.fold_left (fun acc _ -> acc + 1) 0 l
 
-(* invariant for rev fold: accum is reverse of list up to here *)
+(* invariant for rev via fold_left: acc is reverse of list up to here *)
 let rev l =
-  List.fold_left (fun accum elt -> elt :: accum) [] l
+  List.fold_left (fun acc elt -> elt :: acc) [] l
 
-(* invariant for map fold: accum is f applied to each element of list after here *)
+(* invariant for map via fold_right: acc is f applied to each element of list after here *)
 let map f l =
-  List.fold_right (fun elt accum -> f elt :: accum) [] l
+  List.fold_right (fun elt acc -> f elt :: acc) [] l
 
 (* etc *)
 let filter f l =
-  List.fold_right (fun elt accum -> if f elt then elt :: accum else accum) [] l
+  List.fold_right (fun elt acc -> if f elt then elt :: acc else acc) [] l
 ```
 
 ### Specification and Abstraction
 
 * The more completely a module is specified, the less the users need to know about the underlying implementation.
-* `Map` is an example where the users need to know very limited information about the implementation.
+* OCaml's `Map` module is an example where the users need to know limited information about the implementation.
   - They still *do* need to know it is O(log n) for add/remove/find, which should be in the docs (`.mli`/odoc)
 * On your own libraries, you will want to document them well.
   - It will make it a lot easier for your users, they can just think about the spec. view.
@@ -293,18 +287,12 @@ let filter f l =
 
 * **Unit testing**: what you have mainly done -- test the small pieces of the app; no I/O testing
 * **Acceptance testing**: test the bigger pieces including I/O
-  - For example testing your `keywordcount.exe` on a certain fixed directory tree.
+  - For example testing your A4 `keywordcount.exe` on a certain fixed directory tree.
+  - We in fact give you an acceptance tester there, `exec_tests.ml` which tests this executable.
 * **Random testing** of which there are many types: fuzz testing / monkey testing / property-based testing / quickcheck:
   - the tests are run on data generated **randomly** from some distribution
   - "quickcheck"ing aka property-based testing is running **unit** tests on randomly generated data (random lists of ints, etc)
-  - "fuzz testing" is running **acceptance** tests with random input strings supplied.
-
-### Testing and coverage
-
-* Code coverage is a great *glass-box* (impl-based) metric of how good your test suite is
-* The simple idea of coverage: are there lines of your code that never get exercised by any of your tests?
-* Coverage tools let you easily check this.
-* We will show how the Bisect coverage tool can be used below
+  - "fuzz testing" is running **acceptance** tests with random input data supplied.
 
 ## OUnit2
 
@@ -327,7 +315,7 @@ let filter f l =
   ```
 
 * `OUnit2.assert_equal` is just the `OUnit2` version of `assert`.
-  - It uses `Repr.equal` for simplicity (but be careful because it is equality of runtime representation, which is not necessarily the intended notion of equality)
+  - It uses `(=)` for simplicity (but be careful because as we discussed it is equality of runtime representation, which is usually not the intended notion of equality on `Map`/`Set` for example)
 * The infix `>::` operator takes a string (test name) and a piece of test code under `fun _ ->` (to keep it from running right away) and builds a single test of type `test` (run `#require "ounit2"` and `open OUnit2` in the top-loop before playing with this code there):
   ```ocaml
   # let test1 = "simple test" >:: fun _ -> assert_equal (2 :: []) [2];;
@@ -459,8 +447,11 @@ val ( ^^ ) : int -> int -> int = <fun>
 ### The different assert_X statements possible in OUnit2
 
 * We used `assert_equal` above which is the OUnit function to check things being equal
-* `assert_bool` which is like the `assert` OCaml command: `assert_bool "name that test" (0=0)` for example
-* If you want to verify some code raises an exception, use `assert_raises`
+* `assert_bool` is like the `assert` OCaml command: `assert_bool "name that test" (0=0)` for example
+* `OUnit2.assert_raises` is also often useful, it verifies that an exception *is* raised when it should be:
+  ```ocaml
+  let atest = fun _ -> assert_raises (Failure "nth") (fun () -> List.nth [1;2;3] 4)
+  ```
 * To perform acceptance testing (I/O), use `assert_command` to run a shell command and compare against output
   - in the A4 `exec_tests.ml` code we provided, you can see we are using `assert_command` to test the executable
 * If you need fixed setup/teardown code bracketing a group of tests to setup e.g. files: `bracket_tmpfile`
@@ -468,58 +459,24 @@ val ( ^^ ) : int -> int -> int = <fun>
 As always, see the documentation for more details:
 OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
 
-### Tangent: Testing executables with cram
+## Bisect for OCaml code coverage
 
-* As mentioned above `OUnit` can be used to test executables: `OUnit2.assert_command` can run any shell command (in particular, your OCaml `.exe` file)
- - This is probably the approach you should use
-* `dune` also contains an extension called `cram` which allows for output to be compared against expected output for a given input
- - It makes it really easy to write tests for a command-line executable
-* It is very general, you just specify the shell command to run and expected output
-* See the [`cram` docs](https://dune.readthedocs.io/en/stable/tests.html#cram-tests) if you are interested
-* An example in a file `cramtest.t`.  Non-indented lines are comments, $ is the input and after the input is implicitly the expected output (4 here)
-   ```sh
-  We first create a test artifact called "foo"
-    $ cat >foo <<EOF
-    > foo
-    > bar
-    > baz
-    > EOF
+* Code coverage is a great *glass-box* (implementation-based) metric of how good your test suite is
+* The simple idea of coverage: are there lines of your code that never get exercised by any of your tests?
+* Coverage tools let you easily check this.
+* We will use the Bisect coverage tool for our OCaml code
 
-  After creating the fixture, we want to verify that ``wc`` gives us the right result:
-    $ wc -l foo | awk '{ print $1 }'
-    4
-  ```
-
-### Bisect for OCaml code coverage
-
+#### Using Bisect
 * The `bisect_ppx` preprocessor can decorate your code with one hit-bit per line
   - it can then show which lines are "hit" upon running your test suite
 * It is a pre-process extension (ppx), meant to work as backend instrumentation, not for macro programming like most other ppx.
   - e.g. `ppx_deriving` produces code you actually use. `bisect_ppx` just affects what happens when your program runs (it counts the lines hit).
 * Add it as instrumentation with the `(instrumentation (backend bisect_ppx_ng))` line to the library or executable declaration in `dune`.
-  * Do _not_ add it to your `(test ...)` declaration because that would count which lines are hit in your testing code, not your actual code!
-  * Then, because `Bisect` outputs files with the coverage report, you have to tell `dune` and `Bisect` where to put those. E.g.
-  ```scheme
-  (rule
-    (target (dir "_bisect")) ; tell dune about the output directory with the bisect files
-    (alias runtest) ; how to run this: `dune test --instrument-with bisect_ppx_ng`
-    (action
-      (setenv BISECT_FILE "_bisect/bisect" ; now tell bisect where to put the files
-        (progn
-        (run mkdir -p _bisect) ; create the output directory so that bisect can put them there
-        (run touch _bisect/dummy) ; put a file there so dune does not complain if you test without running coverage
-        (run %{exe:tests.exe}) ; run the tests executable, which does all the work
-  ))))
-  ```
-  * This requires that your tests are actually declared as an executable, not with dune's `(test ...)` stanza. Declare your tests like this:
-  ```scheme
-  (executable ; executable! Not test!
-    (name tests) ; provided you have a file called `tests.ml` defining your tests
-    (modules tests)
-    (libraries lib) ; where lib is the library you are testing
-  )
-  ```
-* Now test your code while telling dune to instrument:
+  * Do _not_ to add it to your `(test ...)` declaration because that would count which lines are hit in your testing code, not your actual code!
+  * Then, due to some obscure issues involving how `dune` runs tests there is currently some hacking needed to output the files with the coverage results
+    - The `tests/dune` file needs to be more complex to do this
+    - (The reason why is `dune` now sandboxes test running, they can't do I/O like writing files without explicit permissions.)
+* Now test your code while telling dune to instrument so it can track which lines were hit:
   ```
   dune test --instrument-with bisect_ppx_ng
   ```
@@ -535,7 +492,9 @@ OUnit2 [API docs](https://ocaml.org/p/ounit2/latest/doc/index.html)
 * See [Bisect docs](https://github.com/Kakadu/bisect_ppx_ng) for more details
 * Note that if you have single lines of code that you know should not be run (e.g. invariants that should not fail) you can put `[@coverage off]` at the end of those lines.  To turn coverage off on a single `let` definition, put `[@@coverage off]` immediately after the end of definition. To turn coverage off on an arbitrary range of lines in the file, put `[@@@coverage off]` to turn it off and then `[@@@coverage on]` to turn it back on.  See [the docs](https://github.com/Kakadu/bisect_ppx_ng#Exclusion) for details.
 
-We will check how well my tests of the [simple set example](../examples/set-example.zip) covered the code using Bisect.
+We will check how well my tests of the [simple set example](../examples/set-example.zip) covered the code using Bisect.  
+
+* See the [set-example/tests/dune](../examples/set-example/tests/dune) file for the fancy boilerplate you need to add bisect to your project test runner.
 
 
 <a name = "quickcheck"></a>
@@ -543,16 +502,18 @@ We will check how well my tests of the [simple set example](../examples/set-exam
 ## Random Testing aka Property-Based Testing aka Quickchecking
 
 * Recall that Quickchecking is making up some random data to test our code
-* To use random testing we need to know when the code is working on that random data
+* To use random testing we need to know when the code is "working" on that random data
   - e.g. add a bunch of random key-value maps to a dictionary and delete them: should be the original dictionary again
-  - e.g. above of reversing a reversed list gives back the original list
+  - e.g. above of reversing a reversed list gives back the original (randomly generated) list
+  - So, its better for testing invariants on data structures and functions
+  - But it can also hit corner cases, e.g. empty list case not properly handled etc.
 
 Here is the methodology
 
   0. Given: a function `f` that we want to test.
   1. Have a function to generate random data which is the parameters of `f`
   2. Run `f` on that random data many times (say 1000 times)
-  3. Verify whether the test worked on that random data
+  3. Verify whether the test "worked" on that random data
 
 ### Using `QCheck`
 
@@ -560,7 +521,7 @@ Here is the methodology
 * `QCheck` is a library that will do it for us
 * `QCheck` contains three key algorithms:
   1. Gen, `QCheck.Gen` - make random data of desired distribution in given type
-  2. Shrinkers, `QCheck.Shrink` - if a failing case is discovered, try to make random data smaller, e.g. a shorter list (we will not cover these in detail)
+  2. Shrinkers, `QCheck.Shrink` - if a failing case is discovered, try to make random data smaller, e.g. a shorter list (note we will not cover shrinkers in detail)
   3. Maker, `QCheck.Test.make` which makes a test over the random data
   4. Runner, `QCheck.Test.check_exn`, which runs some fixed number of random tests and shrinks failures.
 
