@@ -527,7 +527,7 @@ Here is the methodology
 
 * We will look at several examples of the `QCheck` library in action in [quickcheck_examples.ml](../examples/quickcheck-examples/quickcheck_examples.ml)/[quickcheck_examples.zip](../examples/zips/quickcheck_examples.zip)
 
-* We will look at quickchecking on a `Map` in [school_quickcheck.ml](../examples/school-quickcheck/school_quickcheck.ml)/[school_quickcheck.zip](../examples/zips/school-quickcheck.zip)
+* We will look at quickchecking on a `Map` in [school_qcheck.ml](../examples/school-qcheck/tests/school_qcheck.ml)/[school_qcheck.zip](../examples/zips/school-qcheck.zip)
 
 * [QCheck docs](https://ocaml.org/p/qcheck-core/0.91)
 

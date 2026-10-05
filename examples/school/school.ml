@@ -74,6 +74,14 @@ let sort_with_fold (school : t) : t =
 (** Auxiliary function to dump data structure *)
 let dump (school : t) = school |> Grade_map.to_list
 
+(** Auxiliary function to un-dump: inverse of dump, alist to school *)
+
+let undump (assoc: (int * string list) list) : t = 
+  assoc 
+  |> List.map (fun (i,sl) -> { Grade.grade = i}, sl) 
+  |> List.to_seq 
+  |> Grade_map.of_seq 
+
 let all (school : t) = school |> sort |> dump
 
 (** Simple test *)

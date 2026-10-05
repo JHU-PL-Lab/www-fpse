@@ -26,8 +26,7 @@ let _ = QCheck.Gen.generate ~n:10 int_gen
 let _ = QCheck.Gen.generate ~n:10 (QCheck.Gen.int_bound 1000) 
 
 (* Notice that each time we run this it makes new completely random numbers.  One
-   downside of this is if you make the same random data each time you can
-   repeat the running of the tests on the same data.  To fix the data 
+   downside of this is tests are not repeatable. To fix the data 
    use the ~rand: optional paramater: *)
 
 let _ = QCheck.Gen.generate ~n:10 ~rand:(Random.State.make [| 0 |]) (QCheck.Gen.int_bound 1000)
@@ -56,7 +55,8 @@ let range_test =
 
 (* This line will run the tests and raise an exception if fail.
    The generator here is rather stupid, it should test max/min and small values
-   more frequently. But it manages to find a failure here. *)
+   more frequently. But it manages to find a failure here. 
+   Note that the shrinker then does a bad job of trying to make the failure case smaller. *)
    
 let _ = QCheck.Test.check_exn range_test
 
@@ -65,6 +65,9 @@ let _ = QCheck.Test.check_exn range_test
    Similar to how `List.equal` needs an `equal` on list contents *)
 
 let int_list_gen : (int list) QCheck.Gen.t = QCheck.Gen.list QCheck.Gen.int_pos_small
+
+(* Often you want smaller lists, the above makes some huge ones: *)
+let int_list_gen : (int list) QCheck.Gen.t = QCheck.Gen.list_small QCheck.Gen.int_pos_small
 
 (* Lets check out a few generated lists *)
 
@@ -79,7 +82,7 @@ let list_test =
    QCheck.(list int_pos_small) (* usually just inline the builder for simple tests *)
    (fun l -> List.rev @@ List.rev l = l);;   
 
-(* Run the test *)
+(* Run list_test *)
 let _ = QCheck.Test.check_exn ~long:true list_test
 
 (* Equivalent shorthand ppx notation for making a generator for a declared type *)
@@ -105,12 +108,12 @@ let _ = QCheck.Gen.generate ~n:5 gen_tree
 
 type 'a btree = Leaf | Node of 'a * 'a btree * 'a btree [@@deriving qcheck]
 
-(* The above code is accepted but it is unusable. *)
+(* -- The above code is accepted but it is unusable. *)
 
 (* To generate more complex types such as Maps or Sets its possible to hand-code
    a generator, but in practice the easiest solution is to use a list-based encoding
    
-   * To make a Set just make a list, then add the list elements to a Set
+   * To make a Set just make a random list, then add the list elements to a Set
    * To make a Map make a list of pairs of (key * value) type and add to a Map
    * Here is a set example, maps are similar.
 
@@ -153,6 +156,6 @@ let () =
    The failure that is produced randomly could be huge for example
    Shrinking is the process of shortening lists or making smaller integers or trees etc
    but still preserve the error.
-   Shrinking is built-in to the default generators.  For advanced applications 
-   you can build your own shrinkers, something we will not cover.
+   Shrinking is built-in to the default test maker as we saw above.  For advanced applications 
+   you can build your own shrinkers.
 *)
