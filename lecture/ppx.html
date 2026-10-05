@@ -124,7 +124,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Pre-Processor eXtensions (PPXs) are macros, they write code for us.</li>
   <li>They save us from writing boilerplate code, so our code is shorter and (probably) more correct.</li>
-  <li>We got a peek at some <code>ppx</code> extensions when looking at how to properly define equality in the variants lecture.</li>
+  <li>We have seen several of these earlier, this is just a quick summarization</li>
 </ul>
 
 <p>Some examples of boilerplate code ppx extensions can produce include</p>
@@ -132,6 +132,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Print functions (<code>show</code>)</li>
   <li>Serialization (<code>yojson</code>) (turning arbitrary OCaml data into strings)</li>
   <li>Comparison (<code>compare</code>, <code>eq</code>)</li>
+  <li>quick check data generation (<code>qcheck</code>)</li>
 </ul>
 
 <h2 id="ppx_deriving"><code>ppx_deriving</code></h2>
@@ -213,7 +214,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>JSON is a common standard for data-as-text and may be useful in your project</li>
-  <li>If you need JSON conversion, use <code>ppx_deriving_yojson</code> which works with the <code>yojson</code> library (notice its <code>_yojson</code> not <code>.yojson</code> - its someone elses library)</li>
+  <li>The S-expressions dune and Assignment 4 used are very similar in purpose</li>
+  <li>If you need JSON automatic conversion functions, use <code>ppx_deriving_yojson</code> which works with the <code>yojson</code> library (notice its <code>_yojson</code> not <code>.yojson</code> - its someone elses library)</li>
+  <li>There is a similar ppx for s-expressions.</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">require</span> <span class="s2">"ppx_deriving_yojson"</span><span class="p">;;</span>

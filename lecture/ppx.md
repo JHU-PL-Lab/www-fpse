@@ -3,12 +3,13 @@
 
 * Pre-Processor eXtensions (PPXs) are macros, they write code for us. 
 * They save us from writing boilerplate code, so our code is shorter and (probably) more correct.
-* We got a peek at some `ppx` extensions when looking at how to properly define equality in the variants lecture.
+* We have seen several of these earlier, this is just a quick summarization
 
 Some examples of boilerplate code ppx extensions can produce include
 - Print functions (`show`)
 - Serialization (`yojson`) (turning arbitrary OCaml data into strings)
 - Comparison (`compare`, `eq`)
+- quick check data generation (`qcheck`)
 
 ## `ppx_deriving`
 
@@ -75,7 +76,9 @@ show_n_list [A;C;C];; (* returns the string  "[A; C; C]" *)
 ### JSON format
 
 * JSON is a common standard for data-as-text and may be useful in your project
-* If you need JSON conversion, use `ppx_deriving_yojson` which works with the `yojson` library (notice its `_yojson` not `.yojson` - its someone elses library)
+* The S-expressions dune and Assignment 4 used are very similar in purpose
+* If you need JSON automatic conversion functions, use `ppx_deriving_yojson` which works with the `yojson` library (notice its `_yojson` not `.yojson` - its someone elses library)
+ - There is a similar ppx for s-expressions.
 
 ```ocaml
 #require "ppx_deriving_yojson";;
