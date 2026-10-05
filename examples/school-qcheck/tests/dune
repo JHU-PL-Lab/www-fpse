@@ -1,0 +1,8 @@
+(test
+  (name school_qcheck)
+  (libraries
+    ounit2
+    school
+    qcheck
+  )
+  (preprocess (pps ppx_deriving_qcheck)))
