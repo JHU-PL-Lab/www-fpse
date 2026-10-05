@@ -8,7 +8,7 @@
 
 open School
 
-let school_gen = QCheck.Gen.list_small (QCheck.Gen.pair QCheck.Gen.int (QCheck.Gen.list QCheck.Gen.string_printable))
+let school_gen = QCheck.Gen.list_small (QCheck.Gen.pair QCheck.Gen.int_small (QCheck.Gen.list_small QCheck.Gen.string_small))
 
 (* Test its working by making a random one *)
 let _ = QCheck.Gen.generate ~n:1 school_gen
