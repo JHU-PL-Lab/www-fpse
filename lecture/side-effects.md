@@ -2,8 +2,8 @@
 
 * Side effects are operations which do more than return a result: mutate, I/O, exceptions, threads, etc.
 * So far we have not seen many side effects but a few have snuck in: printing, file input, exceptions
-* Principle of idiomatic OCaml (and style for this class): **avoid effects**, unless they are a real improvement, or a necessity (e.g. I/O).
-* Reminder: don't use mutation on your homeworks, and limit use of other effects as well.
+* Principle of idiomatic OCaml (and style for this class): **avoid effects**, unless they are a real improvement, or a necessity (e.g. I/O, some exceptions).
+* Reminder: **don't** use mutation on your homeworks, and limit use of other effects as well.
 
 Side effects of OCaml include
 * Mutatable state - *changing* the contents of a memory location intead of making a new one
@@ -15,13 +15,13 @@ Side effects of OCaml include
 * Concurrency and parallelism (will cover later)
 
 ### State
-* Variables in OCaml are *never* directly mutable
+* Variables in OCaml are *never* directly mutable as in C etc.
 * But, they can hold a *reference* to memory that can be mutated
 * i.e. it is only indirect mutability - variable itself can't change, but what it points to can.
 
 ### Mutable References
 
-* References, mutable references, refs, reference cells, and cells are all more or less synomyms
+* References, mutable references, refs, reference cells, and mutable state are all more or less synomyms
 * `'a ref` is a type, and `val ref : 'a -> 'a ref` is a function that makes a ref cell.
 
 ```ocaml
@@ -86,6 +86,8 @@ Since `()` is useless, any function that returns it is either useless **or** per
 ```
 
 * `Hashtbl.add` returns `unit`, so it must be a mutable data structure.
+* If you are making an OCaml executable, the main module will usually have a unit-typed entity at the end 
+  - its result returned is thrown away so why make it anything else?
 * On the flip side, functions taking `unit` as argument are often also only performing side effects.
 
 ```ocaml
@@ -159,7 +161,6 @@ let _ = x := Some "hello" (* type error! x is not a string ref *)
   * And `ref` is a just a function to make creation convenient.
   * And `(:=)` is just a function to make assignment convenient.
   * And `(!)` is just a function to make reading convenient and explicit.
-* The keyword `mutable` on a record field means it can mutate.
 
 ```ocaml
 let x = { contents = 4 };; (* 100.0% identical to `let x = ref 4` *)
@@ -171,9 +172,10 @@ x.contents + 1;; (* identical to `!x + 1` *)
 
 ### Declaring Mutable Record Types
 
-* The default on each field is that the value is *immutable*.
-* Put `mutable` qualifier on each field that you want to mutate>
-* Principle of least mutability: you should only put `mutable` on fields you **have** to mutate.
+* The default on each record field is that the value is *immutable*.
+* Put a `mutable` qualifier on each field that you want to mutate
+* Mutable records are treated just like records as far as projection, pattern matching, etc goes
+* Principle of least mutability: you should only put `mutable` on fields you will mutate.
 
 ```ocaml
 type mutable_point = { mutable x : float ; mutable y : float };;
@@ -193,8 +195,8 @@ mypoint;;
 * Here, the `x` and `y` fields of the point are mutable, but the point as a whole you cannot swap in a different point for.
 
 * Note that `;` is the standard sequencing operator.
-  * But in OCaml everything is an expression so it's a bit non-standard.
-  * `e ; e'` is roughly the same as `let () = e in e'`: evaluate `e`, ignore result, then evaluate `e'`.
+  * But in OCaml there are no commands, everything is an expression, so it's a bit non-standard.
+  * `e ; e'` is the same as `let () = e in e'`: evaluate `e`, ignore result, then evaluate `e'`.
   * `(5 + 2); true` will give you a warning since `5` is not of type `unit`
   * The reasoning here is if you are using `;` the left-hand side should have a side effect because you are throwing away the result,
     - and, as we covered above, side-effecting functions will nearly always return `unit`.
@@ -208,7 +210,7 @@ type 'a mtree_ref =
   | MNode of 'a * 'a mtree ref * 'a mtree ref
 ;;
 
-(* But, use this type with mutable records - no `!` needed: *)
+(* But, better to use mutable records here - no `!` needed when accessing: *)
 type 'a mtree =
   | MLeaf
   | MNode of { data : 'a ; mutable left : 'a mtree ; mutable right : 'a mtree }
@@ -228,7 +230,7 @@ val mt : int mtree = MNode {data = 3; left = MLeaf; right = MLeaf}
 
 # match mt with
 | MLeaf -> ()
-| MNode ({ data ; left ; right } as r) -> (* "as" captures it all under one name *)
+| MNode ({ data ; left ; right } as r) -> (* record pattern match as usual; "as" captures it all under one name *)
   r.left <- MNode { data = 5 ; left = MLeaf ; right = MLeaf };;
 - : unit = ()
 
@@ -243,9 +245,9 @@ MNode
 
 ### Physical equality
 
-* Occasionally in imperative programs you need to check for "same pointer".
+* Occasionally in imperative programs you need to check for the "same pointer".
 * It's also useful in functional programming for fast comparison when data is shared.
-* There's no need to compare entire structures if their memory addresses are identical.
+  - There's no need to compare entire structures if their memory addresses are identical.
 
 ```ocaml
 # 2 == 2;; (* memory layout of 2 is always the same *)
@@ -324,7 +326,6 @@ done;;
 
 * Fact: `while` loops are useless without mutation: would either never loop or infinitely loop
 * Same for `e1 ; e2` --  if `e1` has no side effects, you may as well delete it. It is dead code!
-* Remember that `e1; e2` is exactly the same as writing `let () = e1 in e2`
 
 ### Arrays
 
@@ -341,29 +342,44 @@ let arrhi = Array.init 10 (fun _ -> "hi");; (* length and initial value maker *)
 
 let arr = [| 4; 3; 2 |];; (* make a literal array *)
 
-arr.(0);; (* access *)
+arr.(2);; (* access - takes constant time, unlike List.nth *)
 
-arr.(0) <- 55;; (* update cell, like with mutable record fields *)
+arr.(2) <- 55;; (* update cell, like with mutable record fields *)
 
 arr;; (* see that arr has changed *)
 
 Array.map (fun x -> x + 1) arr;; (* standard map - produces a new array *)
 
-Array.map_inplace (fun x -> x + 1) arr;; (* This *changes* the array using the map function and returns unit *)
+Array.map_inplace (fun x -> x + 1) arr;; (* This *changes* the array elts in place using the function and returns unit *)
 
 (* Here are some conversions *)
 let a = Array.of_list [1;2;3];;
 let l = Array.to_list a;;
+
+(* Sometimes you want the constant access time and don't need to mutate grow or shrink like a list *)
+(* Solution: use `Iarray` !  Just replace Array with IArray and don't use `<-` *)
+
+let iarrhi = Iarray.init 10 (fun _ -> "hi");;
+
+let iarr : int iarray = [| 4; 3; 2 |];; (* make a literal iarray; type needed to know its immutable *)
+
+iarr.(2);; (* Unfortunately this doesn't work even though it "should" *)
+
+Iarray.get iarr 2;; (* .. so use the longhand version *)
+
+iarr.(2) <- 55;; (* This doesn't work since there is no mutuation allowed on iarrays *)
+
 ```
 
 ### Exceptions
+OCaml exceptions largely follow other languages: you raise them, and you (may) catch them.
 
 * As mentioned earlier, exceptions are powerful but dangerous
   - They are OK if they are always handled close to when they are raised
   - If the handler is far away it can lead to buggy code
   - We will aim for idiomatic use of OCaml exceptions in FPSE: local necessary ones only.
 
-There are a few simple built-in exceptions which we used some already:
+There are a few simple built-in exceptions which we have used already:
 
 ```ocaml
 failwith "Oops";; (* Generic code failure - exception is named Failure *)
@@ -380,25 +396,29 @@ Exception: Invalid_argument "List.combine".
 ### OCaml syntax for defining raising and handling exceptions
 
 * New exception names need to be declared via `exception` like `type`s needs to be declared
+  ```ocaml
+  exception Boom of string;;
+  ```
+* The value bubbled up by an exception is in fact an element of a built-in variant type called `exn`.
+  - OCaml lets you (mutably) add clauses to an existing variant with `+=` instead of just `=` 
+  - So, the above `exception` syntax is in fact just sugar for adding another clause to `exn` variant
+  ```ocaml
+  type exn += Boom of string;; (* 100% equivalent version of the above *)
+  ```
 * Unfortunately, OCaml types do not include what exceptions a function may raise
   - an outdated aspect of OCaml; even Java has this with `raises` on method declarations
-* The value returned by an exception is very similar in looks to a variant.
-  - (tangent: under the hood, the `exn` type is an extensible variant!)
-
-Extend the `exn` type with your exception using the `exception` keyword.
-- Everything following the `exception` keyword is just like a variant constructor declaration.
-- There is no need for `of` if you don't want data in your exception, just like a variant with no payload (e.g. `None`).
+* Here is the full syntax summary in one example: define an exception, raise it, handle it
 
 ```ocaml
 exception Boom of string;;
 
-let f _ = raise @@ Boom "keyboard on fire";; (* raise is ultimately how all exceptions are raised *)
+let f _ = raise @@ Boom "keyboard on fire";;
 
-f ();; (* this raises the exception *)
+f ();; (* this raises the exception Boom *)
 
 let g () =
   try f () with
-  | Boom s -> printf "exception Boom raised with payload string \"%s\"\n" s
+  | Boom s -> Printf.printf "exception Boom raised with payload string \"%s\"\n" s
 ;;
 
 g ();;
@@ -406,10 +426,10 @@ g ();;
 
 ### Mutating data structures in the standard libraries
 
-* The `Stack` and `Queue` modules are *mutable* data structures.
-* (There are no immutable stack/queue libraries - but just use `list`s most of the time)
-* (There is also `Hashtbl` which is a mutable hash table)
-* Here is a simple example of playing around with a `Stack`.
+* The `Stack` and `Queue` modules are *mutable* stack/queue data structures.
+* (There are no immutable stack/queue libraries - just use `list`s)
+* There is also `Hashtbl` which is a mutable hash table
+* Here is a simple example of playing around with a `Stack`, no big surprises here.
 
 ```ocaml
 # let s = Stack.create();;

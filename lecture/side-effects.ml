@@ -85,7 +85,7 @@ type 'a mtree_ref =
   | MNode of 'a * 'a mtree ref * 'a mtree ref
 ;;
 
-(* But, use this type with mutable records - no `!` needed: *)
+(* But, better to use mutable records here - no `!` needed when accessing: *)
 type 'a mtree =
   | MLeaf
   | MNode of { data : 'a ; mutable left : 'a mtree ; mutable right : 'a mtree }
@@ -96,7 +96,7 @@ val mt : int mtree = MNode {data = 3; left = MLeaf; right = MLeaf}
 
 # match mt with
 | MLeaf -> ()
-| MNode ({ data ; left ; right } as r) -> (* "as" captures it all under one name *)
+| MNode ({ data ; left ; right } as r) -> (* record pattern match as usual; "as" captures it all under one name *)
   r.left <- MNode { data = 5 ; left = MLeaf ; right = MLeaf };;
 - : unit = ()
 
@@ -163,19 +163,33 @@ let arrhi = Array.init 10 (fun _ -> "hi");; (* length and initial value maker *)
 
 let arr = [| 4; 3; 2 |];; (* make a literal array *)
 
-arr.(0);; (* access *)
+arr.(2);; (* access - takes constant time, unlike List.nth *)
 
-arr.(0) <- 55;; (* update cell, like with mutable record fields *)
+arr.(2) <- 55;; (* update cell, like with mutable record fields *)
 
 arr;; (* see that arr has changed *)
 
 Array.map (fun x -> x + 1) arr;; (* standard map - produces a new array *)
 
-Array.map_inplace (fun x -> x + 1) arr;; (* This *changes* the array using the map function and returns unit *)
+Array.map_inplace (fun x -> x + 1) arr;; (* This *changes* the array elts in place using the function and returns unit *)
 
 (* Here are some conversions *)
 let a = Array.of_list [1;2;3];;
 let l = Array.to_list a;;
+
+(* Sometimes you want the constant access time and don't need to mutate grow or shrink like a list *)
+(* Solution: use `Iarray` !  Just replace Array with IArray and don't use `<-` *)
+
+let iarrhi = Iarray.init 10 (fun _ -> "hi");;
+
+let iarr : int iarray = [| 4; 3; 2 |];; (* make a literal iarray; type needed to know its immutable *)
+
+iarr.(2);; (* Unfortunately this doesn't work even though it "should" *)
+
+Iarray.get iarr 2;; (* .. so use the longhand version *)
+
+iarr.(2) <- 55;; (* This doesn't work since there is no mutuation allowed on iarrays *)
+
 
 failwith "Oops";; (* Generic code failure - exception is named Failure *)
 invalid_arg "This function works on non-empty lists only";; (* Invalid_argument exception *)
@@ -185,13 +199,13 @@ Exception: Invalid_argument "List.combine".
 
 exception Boom of string;;
 
-let f _ = raise @@ Boom "keyboard on fire";; (* raise is ultimately how all exceptions are raised *)
+let f _ = raise @@ Boom "keyboard on fire";;
 
-f ();; (* this raises the exception *)
+f ();; (* this raises the exception Boom *)
 
 let g () =
   try f () with
-  | Boom s -> printf "exception Boom raised with payload string \"%s\"\n" s
+  | Boom s -> Printf.printf "exception Boom raised with payload string \"%s\"\n" s
 ;;
 
 g ();;
