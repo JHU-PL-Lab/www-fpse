@@ -24,10 +24,11 @@
 * If you find that your code is just a library function, then use the library function. If you find that your code is essentially a composition of two library functions, then use those two libraries functions. That said...
 
 ### Think structurally
-* Using too many combinators clouds the structure of the problem and leads to indirect solutions. **You should not be asking yourself how you can assemble a solution from existing library functions but instead how you can best solve the problem with OCaml.**
-* If you think primarily in terms of library functions, then you are missing out on the power that the language itself provides. Moreover, combinator-heavy code is likely to have many nested function calls without explanatory variable names.
+* Don't make combinators an end in and of themselves
+  - Using too many combinators clouds the structure of the problem and leads to indirect solutions. 
+  - Instead focus on how you can best solve the problem with OCaml, which could be with many, few, or no combinators.
 
-  > For example, something like `List.map (Fun.flip List.cons ls) xs` is over-using combinators. Just write `List.map (fun x -> x :: ls) xs`.
+  > For example, `List.map (Fun.flip List.cons ls) xs` is over-using combinators. `List.map (fun x -> x :: ls) xs` is simpler.
 
 * See [iterators](https://ocaml.org/docs/guidelines#iterators) in the official OCaml Guidelines for an extra terrible example.
 
@@ -35,6 +36,8 @@
 * The most elegant solution is not always the best one. **Readability is about more than just concision.**
 * Write the shorter code if doing so does not drastically increase complexity.
 * Point-free programming (especially excessive function composition and partial application) is often clever but unreadable. Be explicit and simple without being overly verbose.
+
+  > For example, TBA
 
 ### Use the weakest feature
 * **Use the simplest feature that expresses your intent**. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist.
@@ -46,23 +49,47 @@
 ### Use the appropriate data structure
 * Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are.
 * Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution.
-* When an advanced data structure is required, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.
+* When an advanced data structure is required such as a bitmap, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.
 
-### Frameworks: No, Libraries: Yes.
-* Frameworks are opinionated and invite conflicts. They are large dependencies that massively influence the structure of your program. Good luck using more than one of them at a time. Adopt frameworks sparingly, and only when they are fundamental to your project.
+  > For example, TBA
+
+### Libraries vs Frameworks
+* Frameworks are large dependencies that massively influence the structure of your program. 
+  - i.e., Frameworks are a box you are forced to live in whereas with libraries you are in control
+  - It can very be challenging to use more than one of them at a time since you have two parties wrestling for control. 
+  - Moral: adopt frameworks sparingly, and only when they are fundamental to your project.
 * A good library, on the other hand, is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you.
-* In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. **Dependencies can be heavy, and they should be worth their weight.**
-
-  > An example framework is `Lwt` for concurrency. It will take over your code with monads, and you cannot always nest its use, so you may struggle to work with other libraries that use it themselves.
+  > An example framework is `Lwt` for concurrency. It will take over your code with monads, and you cannot always nest its use, so you may struggle to work with other libraries that use it themselves.  Still, it is sometimes necessary to use.
 
   > Some example libraries are the monotonic timing library [`Mtime`](https://erratique.ch/software/mtime), and the priority search queue data structure [`Psq`](https://github.com/pqwy/psq). These define a few types and functions that are tightly contained and are unopinionated.
 
 * [Source](https://watch.ocaml.org/w/arLEkYE7NC4fdCcWz2LBLt) (Malcolm Matalka at FUN Ocaml 2025)
+* In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. **Dependencies can be heavy, make sure they are carrying.  their weight.**
+
 
 ### Abstract appropriately
 * Use abstraction to avoid duplication and to avoid hardcoding.
 * Abstraction should enhance readability by allowing the reader to focus on the fundamental problem the code at hand is solving.
 * **A piece of code lacks abstraction when the main idea is buried under irrelevant detail** or just when the same idea is repeated in several places.
+  > For example, consider this hard-to-read code:
+  ```ocaml
+  let passing_students students =
+  List.filter (fun s ->
+    let sum = List.fold_left (+) 0 s.grades in
+    let count = List.length s.grades in
+    count > 0 && float sum /. float count >= 60.0
+  ) students
+  ```
+  > Instead think about the algorithmic components and make named functions out of them:
+  ```ocaml
+  let average grades =
+    float (List.fold_left (+) 0 grades) /. float (List.length grades)
+  let is_passing student =
+    student.grades <> [] && average student.grades >= 60.0
+  let passing_students students =
+    List.filter is_passing students
+  ```
+
 * It should not hinder readability by being too implicit or clever, so choose the smallest abstraction that captures the common idea (See "Use the weakest feature").
 
 ### Parse, don’t validate
@@ -76,8 +103,13 @@
 ### Put big ideas first
 * Use expression structure to emphasize the main idea. **The semantic center of an expression should draw the reader's eyes.**
 * Use pipelines with `|>` when the sequence of transformations is itself the important idea.
-* Pipelines are a poor fit for code with branching, shared intermediates, or one dominant operation.
-* A `let`-binding can separate data preparation from the important operation; `@@` can help put that operation front and center. Small pipelines are often still useful for preparing arguments.
+  - But, **don't** use pipelines when they are a poor fit: too much branching, shared intermediates, or one dominant operation.
+
+  > For example, TBA (good and bad examples)
+
+* A `let`-binding can separate data preparation from the important operation; `@@` can help put that operation front and center. Small pipelines are often still useful for preparing arguments
+  > For example, TBA
+
 
 ## Specific suggestions
 
@@ -86,6 +118,19 @@
 **Pattern match and destructure.** Pattern matching and `let`-destructuring (e.g. `let a, b = ... in ...`) are some of OCaml's clearest tools, and they express intent very explicitly. Use them liberally.
 
 **Do not write long anonymous functions.** Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous. 
+
+> For example, *don't* write this.
+  ```ocaml
+  let update_prices products =
+  List.map (fun p ->
+    let discount =
+      if p.quantity > 100 then 0.20 else 0.0
+    in
+    let price = p.price *. (1.0 -. discount) in
+    { p with price = max 0.0 (price +. p.shipping) }
+  ) products
+  ```
+> Instead you want `List.map update_price products` where you have named the anonymous `fun p ..` above as `update_price`.
 
 **Options over exceptions.** Exceptions for recoverable failures require the programmer to _remember_ to catch them. Options _force_ the programmer to handle them. Don’t leave anything up to chance, and favor options in your interfaces. Results allow you to express reasons for failure and can be a good alternative to options.
 
@@ -96,6 +141,7 @@
 > For example, for a 2D integer point, prefer `type t = { x : int ; y : int }`, a new record type, instead of `type t = int * int`.
 
 **Prefer records over tuples.** Tuples are useful for transiently packing data together, but they should not be used for meaningful, long-lived groupings of data. When defining types, choose to make a new record instead of abbreviating a tuple type, like the 2D point above.
+
 
 **Label function arguments of the same type.** If any two arguments have the same type, you invite the caller to confuse them, or you require them to read a documenting comment. Instead, use labeled arguments to distinguish them, or, even better, use new types so that it is impossible to mess up.
 
