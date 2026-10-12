@@ -58,27 +58,27 @@
 * Write the shorter code if doing so does not drastically increase complexity.
 * Point-free programming (i.e. living in the higher-order function world too much and not with actual data, e.g. especially excessive function composition and partial function application) is often clever but unreadable. Be explicit and simple without being overly verbose.
 
-  > For example, consider
+  > For example, consider the straightforward
   ```ocaml
   let sum_squares xs =
   let squares = List.map (fun x -> x * x) xs in
   List.fold_left (+) 0 squares
   ```
-  > which is very clear versus
+  > which is very clear versus equivalent 
   ```ocaml
   let sum_squares =
-  Fun.compose
-    (List.fold_left (+) 0)
-    (List.map (fun x -> x * x))
+  Fun.compose (* excessive function composition here *)
+    (List.fold_left (+) 0) (* a partial function application *)
+    (List.map (fun x -> x * x)) (* another one.. so very clever! .. in a bad way *)
   ```
   > which gets "too higher-order" with the compose.
-  
+
 ### Use the weakest feature
 * **Use the simplest feature that expresses your intent**. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist.
 * Every additional capability in the feature you use imposes a cost on the reader because they must be prepared for you to use it!
 * Search for the simplest type or feature that solves your problem, and then introduce mechanisms only when they buy you something.
 
-  > For example, do not use a list where a tuple suffices, or a first class module when you only need a higher order function, or object polymorphism when records and variants get the job done clearly.
+  > For example, do not use a list where a tuple suffices, or a first class module when you only need a higher order function.
 
 ### Use the appropriate data structure
 * Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are.
@@ -105,7 +105,7 @@
 * Use abstraction to avoid duplication and to avoid hardcoding.
 * Abstraction should enhance readability by allowing the reader to focus on the fundamental problem the code at hand is solving.
 * **A piece of code lacks abstraction when the main idea is buried under irrelevant detail** or just when the same idea is repeated in several places.
-  > For example, consider this hard-to-read code:
+  > For example, consider this somewhat hard-to-read code:
   ```ocaml
   let passing_students students =
   List.filter (fun s ->
@@ -243,24 +243,3 @@ module Set = Set.Make (T)
 ```
 
 **`module type S`**. When a module type is implemented by a functor, it is typical to call that module type `S`. While not descriptive by itself, the enclosing module provides the context, just like types named `t`. For example, `Set.S` is the module type of sets, and `Set.Make` is a functor that produces modules with type `Set.S`. This helps to keep modules focused--the `Set` module in the standard library contains little more than `S` and `Make`.
-
-**Contain syntax in submodules**. Sugar does indeed have its place in your code, and that place is in submodules. If you define custom operators or `let`-syntax, then put them in submodules such as `Infix` and `Syntax` respectively, rather than in the top level. This keeps the default interface uncluttered and requires users to explicitly opt into the additional syntax. The [Option](https://ocaml.org/manual/5.5/api/Option.Syntax.html) module in the standard library does this. For example, with a monad,
-
-```ocaml
-(* monad.ml *)
-module type S = sig
-  type 'a m
-  val return : 'a -> 'a m
-  val bind : 'a m -> ('a -> 'b m) -> 'b m
-  module Infix : sig
-    val (>>=) : 'a m -> ('a -> 'b m) -> 'b m
-    val (>>|) : 'a m -> ('a -> 'b) -> 'b m
-  end
-  module Syntax : sig
-    val ( let* ) : 'a m -> ('a -> 'b m) -> 'b m
-    val ( let+ ) : 'a m -> ('a -> 'b) -> 'b m
-  end
-end
-```
-
-The user must make it clear they are using sugar for a monad `M : Monad.S` by writing `open M.Syntax` or `let open M.Syntax in ...`. This tells the reader both what the sugar means and where it comes from.
