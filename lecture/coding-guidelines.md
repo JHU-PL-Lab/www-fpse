@@ -56,7 +56,7 @@
 * See [iterators](https://ocaml.org/docs/guidelines#iterators) in the official OCaml Guidelines for an extra terrible example.
 
 ### Don’t be too clever
-* The most elegant solution is not always the best one. **Readability is about more than just concision.**
+* The most concise solution is not always the best one. **Readability is about more than just concision.**
 * Write the shorter code if doing so does not drastically increase complexity.
 * Point-free programming (i.e. living in the higher-order function world too much and not with actual data, e.g. especially excessive function composition and partial function application) is often clever but unreadable. Be explicit and simple without being overly verbose.
 
@@ -73,7 +73,6 @@
       (List.fold_left (+) 0) (* a partial function application *)
       (List.map (fun x -> x * x)) (* another one.. so very clever! .. in a bad way *)
   ```
-  > which gets "too higher-order" with the compose.
 
 ### Use the weakest feature
 * **Use the simplest feature that expresses your intent**. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist.
@@ -136,7 +135,7 @@
 
 ### Put big ideas first
 * Use expression structure to emphasize the main idea. **The semantic center of an expression should draw the reader's eyes.**
-* Use pipelines with `|>` when the sequence of transformations is itself the important idea.
+* **Do** use pipelines with `|>` when the sequence of transformations is itself the important idea.
   - But, **don't** use pipelines when they are a poor fit: too much branching, shared intermediates, or one dominant operation.
 
   > For example, piping might not be appropriate for the following code where the big idea is to count occurrences of each item in a list.
@@ -182,7 +181,7 @@
 
 **Options over exceptions.** Exceptions for recoverable failures require the programmer to _remember_ to catch them. Options _force_ the programmer to handle them. Don’t leave anything up to chance, and favor options in your interfaces. Results allow you to express reasons for failure and can be a good alternative to options.
 
-> For example, to normalize a vector to a unit vector, you may prefer `val normalize_opt : vector -> vector option` instead of `val normalize : vector -> vector` because normalization is not total: it is not defined on the zero vector, so the second can fail.
+> For example, to normalize a vector to a unit vector, you may prefer `val normalize_opt : vector -> vector option` instead of `val normalize : vector -> vector` because normalization is not total: it is not defined on the zero vector.
 
 **New types, not abbreviations.** New types force structure and separation, while abbreviations may accidentally cross data because they do not create distinct types. New types also document themselves in interfaces.
 
@@ -190,7 +189,7 @@
 
 **Prefer records over tuples.** Tuples are useful for transiently packing data together, but they should not be used for meaningful, long-lived groupings of data. When defining types, choose to make a new record instead of abbreviating a tuple type, like the 2D point above.
 
-**Label function arguments of the same type.** If any two arguments have the same type, you invite the caller to confuse them, or you require them to read a documenting comment. Instead, use labeled arguments to distinguish them, or, even better, use new types so that it is impossible to mess up.
+**Label function arguments of the same type.** If any two arguments have the same type, you invite the caller to confuse them, or you require them to read a documenting comment. Instead, use labeled arguments to distinguish them.
 
 > For example, the standard library function `String.split_first : sep:string -> string -> (string * string) option` uses labels to distinguish its arguments, yet `String.concat : string -> string list -> string` does not because the types are different.
 
@@ -229,7 +228,9 @@ match x with
 
 ## Common patterns
 
-**Name your types `t`.** Most types should be named `t`. This naturally encourages each type to live in its own module, where the module name describes that type `t`. This keeps modules focused and small, and it separates responsibilities by type. For example, `List.t` is the type of lists, and the `List` module is limited to only operations on lists. It also helps composability with functors.
+**Name your types `t`.** Most types should be named `t`. This naturally encourages each type to live in its own module, where the module name describes that type `t`. This keeps modules focused and small, and it separates responsibilities by type. 
+
+> For example, the tree and dictionary types in assignment 3 could both be in one module, but if you tried that you would be violating this rule which is a bad sign!  `Simpledict.t` and `Simpletree.t` was our solution.
 
 **`module T`/`include T`**. When defining a type that will be passed to a functor, it is common practice to wrap the type and its operations in a module called `T`. Suppose you intend to implement this interface:
 
