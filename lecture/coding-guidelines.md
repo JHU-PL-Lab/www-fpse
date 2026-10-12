@@ -66,7 +66,7 @@
     let squares = List.map (fun x -> x * x) xs in
     List.fold_left (+) 0 squares
   ```
-  > which is very clear compared to the equivalent
+  > which is more straightforward than
   ```ocaml
   let sum_squares =
     Fun.compose (* excessive function composition here *)
@@ -82,14 +82,14 @@
   > For example, do not use a list where a tuple suffices, or a first class module when you only need a higher order function.
 
 ### Use the appropriate data structure
-* Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are.
-* Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution.
+* Think carefully about the structure of your problem and the data structure it requires. Much of the time, a standard variant or record type is the appropriate solution.
+  - Don't use integers-as-tags a-la-C, and use lists/maps only when that is exactly the form of data.
 * When an advanced data structure is required, such as a bitmap, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.
 
 ### Libraries vs Frameworks
 * Frameworks are large dependencies that massively influence the structure of your program.
   - i.e. Frameworks are a box you are forced to live in, whereas with libraries you are in control
-  - It can very be challenging to use more than one of them at a time because you have two parties wrestling for control.
+  - It can be very challenging to use more than one of them at a time because you have two parties wrestling for control.
   - Moral: adopt frameworks sparingly, and only when they are fundamental to your project.
 * A good library, on the other hand, is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you.
   > An example framework is `Lwt` for concurrency. It will take over your code with monads, and you cannot always nest its use, so you may struggle to work with other libraries that use it themselves.  Still, it is sometimes necessary to use.

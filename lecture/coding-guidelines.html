@@ -216,7 +216,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="k">let</span> <span class="n">squares</span> <span class="o">=</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="p">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="n">xs</span> <span class="k">in</span>
   <span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span> <span class="n">squares</span>
 </code></pre></div>      </div>
-      <p>which is very clear compared to the equivalent</p>
+      <p>which is more straightforward than</p>
       <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">sum_squares</span> <span class="o">=</span>
   <span class="nn">Fun</span><span class="p">.</span><span class="n">compose</span> <span class="c">(* excessive function composition here *)</span>
     <span class="p">(</span><span class="nn">List</span><span class="p">.</span><span class="n">fold_left</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span><span class="p">)</span> <span class="c">(* a partial function application *)</span>
@@ -241,8 +241,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h3 id="use-the-appropriate-data-structure">Use the appropriate data structure</h3>
 <ul>
-  <li>Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are.</li>
-  <li>Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution.</li>
+  <li>Think carefully about the structure of your problem and the data structure it requires. Much of the time, a standard variant or record type is the appropriate solution.
+    <ul>
+      <li>Don’t use integers-as-tags a-la-C, and use lists/maps only when that is exactly the form of data.</li>
+    </ul>
+  </li>
   <li>When an advanced data structure is required, such as a bitmap, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.</li>
 </ul>
 
@@ -251,7 +254,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Frameworks are large dependencies that massively influence the structure of your program.
     <ul>
       <li>i.e. Frameworks are a box you are forced to live in, whereas with libraries you are in control</li>
-      <li>It can very be challenging to use more than one of them at a time because you have two parties wrestling for control.</li>
+      <li>It can be very challenging to use more than one of them at a time because you have two parties wrestling for control.</li>
       <li>Moral: adopt frameworks sparingly, and only when they are fundamental to your project.</li>
     </ul>
   </li>
