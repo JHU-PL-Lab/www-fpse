@@ -3,8 +3,6 @@
 
 **Be explicit.** Don't make the reader solve a puzzle; tell them what is happening by being explicit. Implicit behavior requires lots of hard thinking to understand, whereas explicit behavior can be read straight off the page. This guide here is all about how to be explicit in your code so that you are clear in your intent and so that others can review, understand, and extend your code easily and correctly.
 
-  > For example, TBA
-
 ## General guidelines
 
 ### Functional first
@@ -17,13 +15,16 @@
   > For an example when state is likely better,
   ```ocaml
   let counter = ref 0
-  let fresh_name () : string = (counter := !counter + 1); "name"^(Int.to_string !counter)
+  let fresh_name () : string =
+    counter := !counter + 1;
+    "name" ^ Int.to_string !counter 
   ```
   > is a function which fully encapsulates the property of "give me a fresh string every time I am called".
   ```ocaml
-  let fresh_name (previous : int) : (string * int) = ("name"^(Int.to_string previous), previous + 1)
-  let (name1,count1) = fresh_name 0 in
-  let (name1,count2) = fresh_name count1 in ...
+  let fresh_name (previous : int) : string * int =
+    ("name" ^ Int.to_string previous, previous + 1)
+  let name1, count1 = fresh_name 0
+  let name1, count2 = fresh_name count1
   ```
   > Is how this would have to be done without state, it exposes unnecessary details.  (Note a state monad is another option, more later on this.)
 
@@ -84,8 +85,6 @@
 * Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are.
 * Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution.
 * When an advanced data structure is required such as a bitmap, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.
-
-  > For example, TBA
 
 ### Libraries vs Frameworks
 * Frameworks are large dependencies that massively influence the structure of your program.
@@ -163,11 +162,7 @@
 
 **DRY**. Don't Repeat Yourself. An oldie but goodie. Repeat yourself maybe once, but only if you did not have to copy/paste code to do so. Higher order functions (functions as arguments to other functions) make it especially easy to avoid repeating yourself.
 
-> For example, TBA
-
 **Pattern match and destructure.** Pattern matching and `let`-destructuring (e.g. `let a, b = ... in ...`) are some of OCaml's clearest tools, and they express intent very explicitly. Use them liberally.
-
-> For example, TBA
 
 **Do not write long anonymous functions.** Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous.
 
