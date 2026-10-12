@@ -64,7 +64,7 @@
   > Some example libraries are the monotonic timing library [`Mtime`](https://erratique.ch/software/mtime), and the priority search queue data structure [`Psq`](https://github.com/pqwy/psq). These define a few types and functions that are tightly contained and are unopinionated.
 
 * [Source](https://watch.ocaml.org/w/arLEkYE7NC4fdCcWz2LBLt) (Malcolm Matalka at FUN Ocaml 2025)
-* In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. **Dependencies can be heavy, make sure they are carrying.  their weight.**
+* In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. **Dependencies can be heavy, make sure they are carrying their weight.**
 
 
 ### Abstract appropriately
@@ -115,7 +115,11 @@
 
 **DRY**. Don't Repeat Yourself. An oldie but goodie. Repeat yourself maybe once, but only if you did not have to copy/paste code to do so. Higher order functions (functions as arguments to other functions) make it especially easy to avoid repeating yourself.
 
+> For example, TBA
+
 **Pattern match and destructure.** Pattern matching and `let`-destructuring (e.g. `let a, b = ... in ...`) are some of OCaml's clearest tools, and they express intent very explicitly. Use them liberally.
+
+> For example, TBA
 
 **Do not write long anonymous functions.** Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous. 
 
@@ -141,7 +145,6 @@
 > For example, for a 2D integer point, prefer `type t = { x : int ; y : int }`, a new record type, instead of `type t = int * int`.
 
 **Prefer records over tuples.** Tuples are useful for transiently packing data together, but they should not be used for meaningful, long-lived groupings of data. When defining types, choose to make a new record instead of abbreviating a tuple type, like the 2D point above.
-
 
 **Label function arguments of the same type.** If any two arguments have the same type, you invite the caller to confuse them, or you require them to read a documenting comment. Instead, use labeled arguments to distinguish them, or, even better, use new types so that it is impossible to mess up.
 
