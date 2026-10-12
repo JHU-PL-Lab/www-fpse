@@ -17,7 +17,7 @@
   let counter = ref 0
   let fresh_name () : string =
     counter := !counter + 1;
-    "name" ^ Int.to_string !counter 
+    "name" ^ Int.to_string !counter
   ```
   > is a function which fully encapsulates the property of "give me a fresh string every time I am called".
   ```ocaml
@@ -62,15 +62,15 @@
   > For example, consider the straightforward
   ```ocaml
   let sum_squares xs =
-  let squares = List.map (fun x -> x * x) xs in
-  List.fold_left (+) 0 squares
+    let squares = List.map (fun x -> x * x) xs in
+    List.fold_left (+) 0 squares
   ```
-  > which is very clear versus equivalent 
+  > which is very clear versus equivalent
   ```ocaml
   let sum_squares =
-  Fun.compose (* excessive function composition here *)
-    (List.fold_left (+) 0) (* a partial function application *)
-    (List.map (fun x -> x * x)) (* another one.. so very clever! .. in a bad way *)
+    Fun.compose (* excessive function composition here *)
+      (List.fold_left (+) 0) (* a partial function application *)
+      (List.map (fun x -> x * x)) (* another one.. so very clever! .. in a bad way *)
   ```
   > which gets "too higher-order" with the compose.
 
@@ -107,11 +107,11 @@
   > For example, consider this somewhat hard-to-read code:
   ```ocaml
   let passing_students students =
-  List.filter (fun s ->
-    let sum = List.fold_left (+) 0 s.grades in
-    let count = List.length s.grades in
-    count > 0 && float sum /. float count >= 60.0
-  ) students
+    List.filter (fun s ->
+      let sum = List.fold_left (+) 0 s.grades in
+      let count = List.length s.grades in
+      count > 0 && float sum /. float count >= 60.0
+    ) students
   ```
   > Instead think about the algorithmic components and make named functions out of them:
   ```ocaml
@@ -169,13 +169,13 @@
 > For example, *don't* write this.
   ```ocaml
   let update_prices products =
-  List.map (fun p ->
-    let discount =
-      if p.quantity > 100 then 0.20 else 0.0
-    in
-    let price = p.price *. (1.0 -. discount) in
-    { p with price = max 0.0 (price +. p.shipping) }
-  ) products
+    List.map (fun p ->
+      let discount =
+        if p.quantity > 100 then 0.20 else 0.0
+      in
+      let price = p.price *. (1.0 -. discount) in
+      { p with price = max 0.0 (price +. p.shipping) }
+    ) products
   ```
 > Instead you want `List.map update_price products` where you have named the anonymous `fun p ..` above as `update_price`.
 
