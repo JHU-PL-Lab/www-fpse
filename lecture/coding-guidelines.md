@@ -3,20 +3,40 @@
 
 **Be explicit.** Don't make the reader solve a puzzle; tell them what is happening by being explicit. Implicit behavior requires lots of hard thinking to understand, whereas explicit behavior can be read straight off the page. This guide here is all about how to be explicit in your code so that you are clear in your intent and so that others can review, understand, and extend your code easily and correctly.
 
+  > For example, TBA
+
 ## General guidelines
 
 ### Functional first
-* Functional code makes effects and data flow explicit because **meaningful outcomes are expressed in the return type** (referential transparency). Imperative code, on the other hand, has side effects and state that you must know about and keep in mind; the returned value, if any, is not the only outcome of calling the function.
+* Functional code makes effects and data flow explicit because **meaningful outcomes are expressed in the return type** (referential transparency). 
+  - Imperative code, on the other hand, has side effects and state that you must know about and keep in mind; the returned value, if any, is not the only outcome of calling the function.
 * Keep the scope small and prefer functional solutions, but remember: this is "functional first", not "functional only". Use imperative style where it is the least cumbersome.
+
+  > For example, lets revisit the [parenthesis matching](../examples/match/match.ml)/[(zipfile)](../examples/zips/match.zip)example from the previous lecture on side effects --  at the end of this file is a purely functional version of paren matching.
+
+  > For an example when state is likely better,
+  ```ocaml
+  let counter = ref 0
+  let fresh_name () : string = (counter := !counter + 1); "name"^(Int.to_string !counter)
+  ```
+  > is a function which fully encapsulates the property of "give me a fresh string every time I am called".
+  ```ocaml
+  let fresh_name (previous : int) : (string * int) = ("name"^(Int.to_string previous), previous + 1)
+  let (name1,count1) = fresh_name 0 in
+  let (name1,count2) = fresh_name count1 in ...
+  ```
+  > Is how this would have to be done without state, it exposes unnecessary details.  (Note a state monad is another option, more later on this.)
 
 ### Encapsulate with modules
 * Your code should be grouped into meaningful, coherent modules. Those **modules should have a single purpose**, and that purpose is often to contain a single type and several functions that work mainly on that type.
 * Writing code in this way separates responsibilities and creates appropriate abstraction boundaries.
 * Then, **document with interface files**. Interfaces are a great place to comment and to think critically about the purpose of your module.
+  > Assignment 3 for example reflects this with separate tree and dictionary modules.
 
 ### Hide representations
 * Modules should expose operations but not representations. Hide implementation details behind interfaces whenever practical so that users depend on the semantics of the module, not its implementation. This prevents misuse and enhances maintainability.
 * However, hiding is not always the best choice. For example, if you are writing getters and setters for every field of a record type, you should instead just expose that type.
+  > The `Histogram` module we made for you in Assignment 4 for example hides the internal keyword map since users of the `Histogram` don't need to see it.
 
 ### Know your standard library
 * It is not too big (and that is a good thing), so you should know [what it provides](https://ocaml.org/manual/5.5/stdlib.html). It will solve many simple problems for you.
@@ -24,7 +44,8 @@
 * If you find that your code is just a library function, then use the library function. If you find that your code is essentially a composition of two library functions, then use those two libraries functions. That said...
 
 ### Think structurally
-* Don't make combinators an end in and of themselves
+* **Do** use combinators when they help make readable code, but
+* **Don't** make combinators an end in and of themselves
   - Using too many combinators clouds the structure of the problem and leads to indirect solutions. 
   - Instead focus on how you can best solve the problem with OCaml, which could be with many, few, or no combinators.
 
@@ -35,10 +56,23 @@
 ### Don’t be too clever
 * The most elegant solution is not always the best one. **Readability is about more than just concision.**
 * Write the shorter code if doing so does not drastically increase complexity.
-* Point-free programming (especially excessive function composition and partial application) is often clever but unreadable. Be explicit and simple without being overly verbose.
+* Point-free programming (i.e. living in the higher-order function world too much and not with actual data, e.g. especially excessive function composition and partial function application) is often clever but unreadable. Be explicit and simple without being overly verbose.
 
-  > For example, TBA
-
+  > For example, consider
+  ```ocaml
+  let sum_squares xs =
+  let squares = List.map (fun x -> x * x) xs in
+  List.fold_left (+) 0 squares
+  ```
+  > which is very clear versus
+  ```ocaml
+  let sum_squares =
+  Fun.compose
+    (List.fold_left (+) 0)
+    (List.map (fun x -> x * x))
+  ```
+  > which gets "too higher-order" with the compose.
+  
 ### Use the weakest feature
 * **Use the simplest feature that expresses your intent**. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist.
 * Every additional capability in the feature you use imposes a cost on the reader because they must be prepared for you to use it!
