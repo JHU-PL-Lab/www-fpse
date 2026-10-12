@@ -10,38 +10,38 @@
   - Imperative code, on the other hand, has side effects and state that you must know about and keep in mind; the returned value, if any, is not the only outcome of calling the function.
 * Keep the scope small and prefer functional solutions, but remember: this is "functional first", not "functional only". Use imperative style where it is the least cumbersome.
 
-  > For example, lets revisit the [parenthesis matching](../examples/match/match.ml)/[(zipfile)](../examples/zips/match.zip)example from the previous lecture on side effects --  at the end of this file is a purely functional version of paren matching.
+  > For example, let's revisit the [parenthesis matching](../examples/match/match.ml)/[(zipfile)](../examples/zips/match.zip) example from the previous lecture on side effects --  at the end of this file is a purely functional version of paren matching.
 
-  > For an example when state is likely better,
+  > For a standard example of when state is likely better,
   ```ocaml
   let counter = ref 0
   let fresh_name () : string =
     counter := !counter + 1;
     "name" ^ Int.to_string !counter
   ```
-  > is a function which fully encapsulates the property of "give me a fresh string every time I am called".
+  > is a function which fully encapsulates the property of "give me a fresh string every time I am called". Without state,
   ```ocaml
   let fresh_name (previous : int) : string * int =
     ("name" ^ Int.to_string previous, previous + 1)
   let name1, count1 = fresh_name 0
   let name1, count2 = fresh_name count1
   ```
-  > Is how this would have to be done without state, it exposes unnecessary details.  (Note a state monad is another option, more later on this.)
+  > it exposes unnecessary details. (Note a state monad is another option, which we will cover in a future lecture.)
 
 ### Encapsulate with modules
 * Your code should be grouped into meaningful, coherent modules. Those **modules should have a single purpose**, and that purpose is often to contain a single type and several functions that work mainly on that type.
 * Writing code in this way separates responsibilities and creates appropriate abstraction boundaries.
 * Then, **document with interface files**. Interfaces are a great place to comment and to think critically about the purpose of your module.
-  
-  > Assignment 3 for example reflects this with separate tree and dictionary modules.
+
+  > Assignment 3, for example, reflects this with separate tree and dictionary modules.
 
 ### Hide representations
 * Modules should expose operations but not representations. Hide implementation details behind interfaces whenever practical so that users depend on the semantics of the module, not its implementation. This prevents misuse and enhances maintainability.
-  > The `Histogram` module we made for you in Assignment 4 for example hides the internal keyword map since users of the `Histogram` don't need to see it.
+  > The `Histogram` module you implemented in Assignment 4, for example, hides the internal keyword map since users of the `Histogram` don't need to see it.
 * However, hiding is not always the best choice. For example, if you are writing getters for every field of a record type, you should instead just expose that type.
 
 ### Know your standard library
-* It is not too big (and that is a good thing), so you should know [what it provides](https://ocaml.org/manual/5.5/stdlib.html). It will solve many simple problems for you.
+* It is not too big (and that is a good thing), so you should know [what it provides](https://ocaml.org/manual/stdlib.html). It will solve many simple problems for you.
 * Never reimplement anything that is in the standard library, and always reach for the standard library when it expresses your intent.
 * If you find that your code is just a library function, then use the library function. If you find that your code is essentially a composition of two library functions, then use those two libraries functions. That said...
 
@@ -49,7 +49,7 @@
 * **Do** use combinators when they help make readable code, but
 * **Don't** make combinators an end in and of themselves
   - Using too many combinators clouds the structure of the problem and leads to indirect solutions.
-  - Instead focus on how you can best solve the problem with OCaml, which could be with many, few, or no combinators.
+  - Instead, focus on how you can best solve the problem with OCaml, which could be with many, few, or no combinators.
 
   > For example, `List.map (Fun.flip List.cons ls) xs` is over-using combinators. `List.map (fun x -> x :: ls) xs` is simpler.
 
@@ -66,7 +66,7 @@
     let squares = List.map (fun x -> x * x) xs in
     List.fold_left (+) 0 squares
   ```
-  > which is very clear versus equivalent
+  > which is very clear compared to the equivalent
   ```ocaml
   let sum_squares =
     Fun.compose (* excessive function composition here *)
@@ -84,20 +84,20 @@
 ### Use the appropriate data structure
 * Lists, ints, and strings are not the solutions to all your problems, as much as C wants you to think they are.
 * Think carefully about the structure of your problem and the data structure it requires. Much of the time, a simple variant or record type is the appropriate solution.
-* When an advanced data structure is required such as a bitmap, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.
+* When an advanced data structure is required, such as a bitmap, there is probably a standard library module or an opam package for it, and these can be easy to drop into your code.
 
 ### Libraries vs Frameworks
 * Frameworks are large dependencies that massively influence the structure of your program.
-  - i.e., Frameworks are a box you are forced to live in whereas with libraries you are in control
-  - It can very be challenging to use more than one of them at a time since you have two parties wrestling for control.
+  - i.e. Frameworks are a box you are forced to live in, whereas with libraries you are in control
+  - It can very be challenging to use more than one of them at a time because you have two parties wrestling for control.
   - Moral: adopt frameworks sparingly, and only when they are fundamental to your project.
 * A good library, on the other hand, is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you.
   > An example framework is `Lwt` for concurrency. It will take over your code with monads, and you cannot always nest its use, so you may struggle to work with other libraries that use it themselves.  Still, it is sometimes necessary to use.
 
   > Some example libraries are the monotonic timing library [`Mtime`](https://erratique.ch/software/mtime), and the priority search queue data structure [`Psq`](https://github.com/pqwy/psq). These define a few types and functions that are tightly contained and are unopinionated.
 
-* [Source](https://watch.ocaml.org/w/arLEkYE7NC4fdCcWz2LBLt) (Malcolm Matalka at FUN Ocaml 2025)
-* In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. **Dependencies can be heavy, make sure they are carrying their weight.**
+* [Source](https://watch.ocaml.org/w/arLEkYE7NC4fdCcWz2LBLt) (Malcolm Matalka at FUN OCaml 2025)
+* In general, avoid depending on too many frameworks and libraries for single-use purposes because every dependency you have is one more that the reader of your code has to understand. **Dependencies can be heavy. Make sure they are carrying their weight.**
 
 
 ### Abstract appropriately
@@ -228,9 +228,9 @@ match x with
 
 ## Common patterns
 
-**Name your types `t`.** Most types should be named `t`. This naturally encourages each type to live in its own module, where the module name describes that type `t`. This keeps modules focused and small, and it separates responsibilities by type. 
+**Name your types `t`.** Most types should be named `t`. This naturally encourages each type to live in its own module, where the module name describes that type `t`. This keeps modules focused and small, and it separates responsibilities by type.
 
-> For example, the tree and dictionary types in assignment 3 could both be in one module, but if you tried that you would be violating this rule which is a bad sign!  `Simpledict.t` and `Simpletree.t` was our solution.
+> For example, the tree and dictionary types in Assignment 3 could both be in one module, but if you tried that, you would be violating this rule which is a bad sign! `Simpledict.t` and `Simpletree.t` was our solution.
 
 **`module T`/`include T`**. When defining a type that will be passed to a functor, it is common practice to wrap the type and its operations in a module called `T`. Suppose you intend to implement this interface:
 
