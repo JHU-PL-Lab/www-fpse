@@ -8,7 +8,7 @@
 ## General guidelines
 
 ### Functional first
-* Functional code makes effects and data flow explicit because **meaningful outcomes are expressed in the return type** (referential transparency). 
+* Functional code makes effects and data flow explicit because **meaningful outcomes are expressed in the return type** (referential transparency).
   - Imperative code, on the other hand, has side effects and state that you must know about and keep in mind; the returned value, if any, is not the only outcome of calling the function.
 * Keep the scope small and prefer functional solutions, but remember: this is "functional first", not "functional only". Use imperative style where it is the least cumbersome.
 
@@ -46,7 +46,7 @@
 ### Think structurally
 * **Do** use combinators when they help make readable code, but
 * **Don't** make combinators an end in and of themselves
-  - Using too many combinators clouds the structure of the problem and leads to indirect solutions. 
+  - Using too many combinators clouds the structure of the problem and leads to indirect solutions.
   - Instead focus on how you can best solve the problem with OCaml, which could be with many, few, or no combinators.
 
   > For example, `List.map (Fun.flip List.cons ls) xs` is over-using combinators. `List.map (fun x -> x :: ls) xs` is simpler.
@@ -72,7 +72,7 @@
     (List.map (fun x -> x * x))
   ```
   > which gets "too higher-order" with the compose.
-  
+
 ### Use the weakest feature
 * **Use the simplest feature that expresses your intent**. More powerful features are valuable when they solve a problem that simpler features cannot, but they should not be used merely because they exist.
 * Every additional capability in the feature you use imposes a cost on the reader because they must be prepared for you to use it!
@@ -88,9 +88,9 @@
   > For example, TBA
 
 ### Libraries vs Frameworks
-* Frameworks are large dependencies that massively influence the structure of your program. 
+* Frameworks are large dependencies that massively influence the structure of your program.
   - i.e., Frameworks are a box you are forced to live in whereas with libraries you are in control
-  - It can very be challenging to use more than one of them at a time since you have two parties wrestling for control. 
+  - It can very be challenging to use more than one of them at a time since you have two parties wrestling for control.
   - Moral: adopt frameworks sparingly, and only when they are fundamental to your project.
 * A good library, on the other hand, is useful and not restrictive. It is easily pluggable and will not steer the direction of your code for you.
   > An example framework is `Lwt` for concurrency. It will take over your code with monads, and you cannot always nest its use, so you may struggle to work with other libraries that use it themselves.  Still, it is sometimes necessary to use.
@@ -139,10 +139,24 @@
 * Use pipelines with `|>` when the sequence of transformations is itself the important idea.
   - But, **don't** use pipelines when they are a poor fit: too much branching, shared intermediates, or one dominant operation.
 
-  > For example, TBA (good and bad examples)
-
-* A `let`-binding can separate data preparation from the important operation; `@@` can help put that operation front and center. Small pipelines are often still useful for preparing arguments
-  > For example, TBA
+  > For example, piping might not be appropriate for the following code where the big idea is to count occurrences of each item in a list.
+  ```ocaml
+  items
+  |> List.sort_uniq compare
+  |> fun l ->
+    List.map (fun x -> count (equal x) items) l
+    |> List.combine l
+  ```
+* A `let`-binding can separate data preparation from the important operation, and `@@` can also help put that operation front and center. Small pipelines are often still useful for preparing arguments.
+  > The above overly-piped code can read more clearly with some `let`-bindings.
+  ```ocaml
+  let item_with_count item =
+    (item, count (equal item) items)
+  and uniq_items =
+    List.sort_uniq compare items
+  in
+  List.map item_with_count uniq_items
+  ```
 
 
 ## Specific suggestions
@@ -155,7 +169,7 @@
 
 > For example, TBA
 
-**Do not write long anonymous functions.** Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous. 
+**Do not write long anonymous functions.** Anonymous functions should always be short. If one becomes long, then help your reader by naming it, thereby making it no longer anonymous.
 
 > For example, *don't* write this.
   ```ocaml
