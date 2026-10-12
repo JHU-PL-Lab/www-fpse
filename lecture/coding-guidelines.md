@@ -32,12 +32,13 @@
 * Your code should be grouped into meaningful, coherent modules. Those **modules should have a single purpose**, and that purpose is often to contain a single type and several functions that work mainly on that type.
 * Writing code in this way separates responsibilities and creates appropriate abstraction boundaries.
 * Then, **document with interface files**. Interfaces are a great place to comment and to think critically about the purpose of your module.
+  
   > Assignment 3 for example reflects this with separate tree and dictionary modules.
 
 ### Hide representations
 * Modules should expose operations but not representations. Hide implementation details behind interfaces whenever practical so that users depend on the semantics of the module, not its implementation. This prevents misuse and enhances maintainability.
-* However, hiding is not always the best choice. For example, if you are writing getters and setters for every field of a record type, you should instead just expose that type.
   > The `Histogram` module we made for you in Assignment 4 for example hides the internal keyword map since users of the `Histogram` don't need to see it.
+* However, hiding is not always the best choice. For example, if you are writing getters for every field of a record type, you should instead just expose that type.
 
 ### Know your standard library
 * It is not too big (and that is a good thing), so you should know [what it provides](https://ocaml.org/manual/5.5/stdlib.html). It will solve many simple problems for you.
