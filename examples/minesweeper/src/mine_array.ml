@@ -45,7 +45,7 @@ let is_mine = Char.equal '*'
 
 let is_field = Fun.negate is_mine
 
-(* Need conversion functions to/from list of strings format since tests are that form *)
+(* Need conversion functions to/from list of strings format for I/O *)
 
 let from_string_list (l : string list) : char iarray iarray =
   Iarray.of_list (List.map (fun s -> Iarray.init (String.length s) (String.get s)) l)
@@ -59,7 +59,7 @@ let to_string_list (board : char Array_2d.t) : string list =
 
 let array_annotate (board : char Array_2d.t) : char Array_2d.t =
   let count_nearby_mines x y =
-    Array_2d.adjacents board x y |> (List.filter is_mine) |> List.length
+    Array_2d.adjacents board x y |> List.filter is_mine |> List.length
   in
   Array_2d.mapxy board (fun y x c ->
       if is_field c then count_nearby_mines x y |> to_char else c)
@@ -69,10 +69,12 @@ let annotate (l : string list) : string list =
   l |> from_string_list |> array_annotate |> to_string_list
 
 (* simple test *)  
-let _  = annotate [
+let b  = [
         "  *  ";
         "  *  ";
         "*****";
         "  *  ";
         "  *  ";
       ]
+
+let _ = annotate b

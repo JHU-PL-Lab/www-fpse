@@ -123,14 +123,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p><a name="examples"></a><br />
 Here are example codebases we will spend time inspecting and critiqueing.</p>
 
-<h3 id="being-functional">Being Functional</h3>
-
-<p>Functional code is not always more concise than stateful code, but it is surprisingly good</p>
-<ul>
-  <li>Let us revisit the <a href="../examples/match/match.ml">parenthesis matching</a>/<a href="../examples/zips/match.zip">(zipfile)</a>example from the previous lecture on side effects.</li>
-  <li>At the end of this file is a purely functional version of paren matching; the code is much more concise.</li>
-</ul>
-
 <h4 id="minesweeper">Minesweeper</h4>
 <ul>
   <li><a href="https://exercism.io/tracks/ocaml/exercises/minesweeper">Minesweeper</a> at Exercism.io</li>
@@ -139,7 +131,7 @@ Here are example codebases we will spend time inspecting and critiqueing.</p>
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">[</span> <span class="s2">"  *  "</span><span class="p">;</span>
     <span class="s2">"  *  "</span><span class="p">;</span>
     <span class="s2">"*****"</span><span class="p">;</span>
-    <span class="s2">"  *  "</span><span class="p">;</span>
+    <span class="s2">"  *  "</span><span class="p">;</span><span class="n">n</span>
     <span class="s2">"  *  "</span><span class="p">;</span> <span class="p">]</span>
 
   <span class="p">[</span> <span class="s2">" 2*2 "</span><span class="p">;</span>
@@ -172,6 +164,12 @@ Here are example codebases we will spend time inspecting and critiqueing.</p>
 
 <h4 id="other-examples">Other Examples</h4>
 <ul>
+  <li>We will review Brandon’s solution to Assignment 4</li>
+</ul>
+
+<p>Here are a few other examples of full projects which are worth looking at:</p>
+
+<ul>
   <li><a href="https://github.com/marcoonroad/ocaml-cuid">ocaml-cuid</a> is a utility to generate highly random string IDs for webpages etc.
     <ul>
       <li>Lots of nice piping here plus use of functors to build Unix and JavaScript variations</li>
@@ -182,7 +180,6 @@ Here are example codebases we will spend time inspecting and critiqueing.</p>
       <li>Shows some nice use of state, <code>include</code>, and a <code>Make</code> functor.</li>
     </ul>
   </li>
-  <li>We may also look at a past homework solution so you can compare it with what you did.</li>
 </ul>
       
           </section>

@@ -34,8 +34,11 @@ Here are example codebases we will spend time inspecting and critiqueing.
     - All of these minesweeper versions are in this [zip file](../examples/zips/minesweeper.zip)
 
 #### Other Examples
+  * We will review Brandon's solution to Assignment 4
+
+Here are a few other examples of full projects which are worth looking at:
+
   * [ocaml-cuid](https://github.com/marcoonroad/ocaml-cuid) is a utility to generate highly random string IDs for webpages etc.
      - Lots of nice piping here plus use of functors to build Unix and JavaScript variations
   * [dolog](https://github.com/UnixJunkie/dolog) is a very simple logging utility
      - Shows some nice use of state, `include`, and a `Make` functor.
-  * We may also look at a past homework solution so you can compare it with what you did.

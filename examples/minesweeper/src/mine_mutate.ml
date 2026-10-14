@@ -11,7 +11,8 @@ From https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae5
 type cell = Mine | Empty of int
 
 (* A very poor abstraction of the board, a 1D array not a 2D array - ! 
-   - requires arithmetic to compute the offset, ouch! *)
+   - requires arithmetic to compute the offset, ouch! 
+   Also the row/culumn size then needs to be explicit - double ouch!! *)
 
 type state = { board : cell Array.t; rows : int; columns : int }
 
@@ -55,7 +56,7 @@ let neighbors length columns i =
       Some ((row * columns) + col) else None
   in
   let row = i / columns in
-  let col = i mod columns in (* mod was % in Core *)
+  let col = i mod columns in
   List.init 8 (function
       | 0 -> row_col_to_idx (row - 1, col - 1)
       | 1 -> row_col_to_idx (row - 1, col)

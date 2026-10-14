@@ -385,7 +385,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <p>For example, the standard library function <code>String.split_first : sep:string -&gt; string -&gt; (string * string) option</code> uses labels to distinguish its arguments, yet <code>String.concat : string -&gt; string list -&gt; string</code> does not because the types are different.</p>
 </blockquote>
 
-<p><strong>Avoid programming with indices.</strong> An index in a list is most often <em>not</em> the right idea. Using indices invites off-by-one errors that are not possible in a structural approach to the problem. Lean into pattern matching and forming your solution with structure rather than numbers because structure can be better visualized and verified.</p>
+<p><strong>Avoid programming with indices.</strong> An index into a list is usually <em>not</em> the right idea. Using indices invites off-by-one errors that are not possible in a structural approach to the problem. Lean into pattern matching and forming your solution with structure rather than numbers because structure can be better visualized and verified.</p>
 
 <blockquote>
   <p>For example, to get the element in a list before the first one satisfying <code>p</code>, this:</p>
@@ -417,7 +417,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="o">|</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="o">...</span>
 </code></pre></div></div>
 
-<h2 id="common-patterns">Common patterns</h2>
+<h2 id="common-module-coding-patterns">Common module coding patterns</h2>
 
 <p><strong>Name your types <code>t</code>.</strong> Most types should be named <code>t</code>. This naturally encourages each type to live in its own module, where the module name describes that type <code>t</code>. This keeps modules focused and small, and it separates responsibilities by type.</p>
 
@@ -430,10 +430,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* my_module.mli *)</span>
 <span class="k">type</span> <span class="n">t</span> <span class="o">=</span> <span class="nc">A</span> <span class="k">of</span> <span class="kt">int</span>
 <span class="k">val</span> <span class="n">compare</span> <span class="o">:</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="n">t</span> <span class="o">-&gt;</span> <span class="kt">int</span>
-<span class="k">module</span> <span class="nc">Set</span> <span class="o">:</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">S</span> <span class="k">with</span> <span class="k">type</span> <span class="n">elt</span> <span class="o">=</span> <span class="n">t</span>
+<span class="k">module</span> <span class="nc">Set</span> <span class="o">:</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">S</span> <span class="k">with</span> <span class="k">type</span> <span class="n">elt</span> <span class="o">=</span> <span class="n">t</span> <span class="c">(* My_module.Set is then your set of t's *)</span>
 </code></pre></div></div>
 
-<p>A good design to avoid redefinitions and aliasing is:</p>
+<p>A good design to avoid redefinitions and aliasing in the <code>.ml</code> file is:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">(* my_module.ml *)</span>
 <span class="k">module</span> <span class="nc">T</span> <span class="o">=</span> <span class="k">struct</span>
@@ -444,7 +444,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <span class="k">module</span> <span class="nc">Set</span> <span class="o">=</span> <span class="nn">Set</span><span class="p">.</span><span class="nc">Make</span> <span class="p">(</span><span class="nc">T</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p><strong><code>module type S</code></strong>. When a module type is implemented by a functor, it is typical to call that module type <code>S</code>. While not descriptive by itself, the enclosing module provides the context, just like types named <code>t</code>. For example, <code>Set.S</code> is the module type of sets, and <code>Set.Make</code> is a functor that produces modules with type <code>Set.S</code>. This helps to keep modules focused–the <code>Set</code> module in the standard library contains little more than <code>S</code> and <code>Make</code>.</p>
+<p><strong><code>module type S</code></strong>. When a module type is implemented (i.e., returned) by a functor, it is typical to call that module type <code>S</code>. While not descriptive by itself, the enclosing module provides the context, just like types named <code>t</code>. For example, <code>Set.S</code> is the module type of sets, and <code>Set.Make</code> is a functor that produces modules with type <code>Set.S</code>. This helps to keep modules focused–the <code>Set</code> module in the standard library contains little more than <code>S</code> and <code>Make</code>.</p>
       
           </section>
         </div>

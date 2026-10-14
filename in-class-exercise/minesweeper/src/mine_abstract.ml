@@ -29,10 +29,10 @@ end
 
 (* Lets make types specifying exactly the cell content types 
    on input and output grids respectively
-   We need different names for mines in the two types, so we use Mine_in and Mine_out *)
+   Note its OK to use `Mine` constructor in both since the usage can tell apart *)
 
-type input_cell = Mine_in | Empty
-type output_cell = Mine_out | Count of int
+type input_cell = Mine | Empty
+type output_cell = Mine | Count of int
 
 let to_result n = Count(n)
 
