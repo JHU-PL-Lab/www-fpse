@@ -59,7 +59,7 @@ let to_string_list (board : char Array_2d.t) : string list =
 
 let array_annotate (board : char Array_2d.t) : char Array_2d.t =
   let count_nearby_mines x y =
-    Array_2d.adjacents board x y |> fun l -> List.length (List.filter is_mine l)
+    Array_2d.adjacents board x y |> (List.filter is_mine) |> List.length
   in
   Array_2d.mapxy board (fun y x c ->
       if is_field c then count_nearby_mines x y |> to_char else c)

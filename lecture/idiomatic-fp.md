@@ -3,12 +3,6 @@
 <a name = "examples"></a>
 Here are example codebases we will spend time inspecting and critiqueing.
 
-### Being Functional
-
-Functional code is not always more concise than stateful code, but it is surprisingly good
-- Let us revisit the [parenthesis matching](../examples/match/match.ml)/[(zipfile)](../examples/zips/match.zip)example from the previous lecture on side effects.
-- At the end of this file is a purely functional version of paren matching; the code is much more concise.
-
 
 #### Minesweeper
   * [Minesweeper](https://exercism.io/tracks/ocaml/exercises/minesweeper) at Exercism.io
@@ -18,7 +12,7 @@ Functional code is not always more concise than stateful code, but it is surpris
       [ "  *  ";
         "  *  ";
         "*****";
-        "  *  ";
+        "  *  ";n
         "  *  "; ]
 
       [ " 2*2 ";

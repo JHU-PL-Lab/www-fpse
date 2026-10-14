@@ -157,7 +157,6 @@
   List.map item_with_count uniq_items
   ```
 
-
 ## Specific suggestions
 
 **DRY**. Don't Repeat Yourself. An oldie but goodie. Repeat yourself maybe once, but only if you did not have to copy/paste code to do so. Higher order functions (functions as arguments to other functions) make it especially easy to avoid repeating yourself.
@@ -193,7 +192,7 @@
 
 > For example, the standard library function `String.split_first : sep:string -> string -> (string * string) option` uses labels to distinguish its arguments, yet `String.concat : string -> string list -> string` does not because the types are different.
 
-**Avoid programming with indices.** An index in a list is most often _not_ the right idea. Using indices invites off-by-one errors that are not possible in a structural approach to the problem. Lean into pattern matching and forming your solution with structure rather than numbers because structure can be better visualized and verified.
+**Avoid programming with indices.** An index into a list is usually _not_ the right idea. Using indices invites off-by-one errors that are not possible in a structural approach to the problem. Lean into pattern matching and forming your solution with structure rather than numbers because structure can be better visualized and verified.
 
 > For example, to get the element in a list before the first one satisfying `p`, this:
 > ```ocaml
@@ -226,7 +225,7 @@ match x with
 | _ -> ...
 ```
 
-## Common patterns
+## Common module coding patterns
 
 **Name your types `t`.** Most types should be named `t`. This naturally encourages each type to live in its own module, where the module name describes that type `t`. This keeps modules focused and small, and it separates responsibilities by type.
 
@@ -238,10 +237,10 @@ match x with
 (* my_module.mli *)
 type t = A of int
 val compare : t -> t -> int
-module Set : Set.S with type elt = t
+module Set : Set.S with type elt = t (* My_module.Set is then your set of t's *)
 ```
 
-A good design to avoid redefinitions and aliasing is:
+A good design to avoid redefinitions and aliasing in the `.ml` file is:
 
 ```ocaml
 (* my_module.ml *)
@@ -253,4 +252,4 @@ include T
 module Set = Set.Make (T)
 ```
 
-**`module type S`**. When a module type is implemented by a functor, it is typical to call that module type `S`. While not descriptive by itself, the enclosing module provides the context, just like types named `t`. For example, `Set.S` is the module type of sets, and `Set.Make` is a functor that produces modules with type `Set.S`. This helps to keep modules focused--the `Set` module in the standard library contains little more than `S` and `Make`.
+**`module type S`**. When a module type is implemented (i.e., returned) by a functor, it is typical to call that module type `S`. While not descriptive by itself, the enclosing module provides the context, just like types named `t`. For example, `Set.S` is the module type of sets, and `Set.Make` is a functor that produces modules with type `Set.S`. This helps to keep modules focused--the `Set` module in the standard library contains little more than `S` and `Make`.
