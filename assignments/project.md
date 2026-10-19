@@ -12,7 +12,8 @@ Here are the high-level requirements for the projects.
 * OCaml excels for non-trivial algorithms, and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.
 * You are also **required** to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
 * A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.
-* While you can use LLMs to aid coding in your project you must have a thorough understanding of what every line of code and how every feature of your project is working.  We will be evaluating this throughout the project.
+* You are welcome to use LLMs to aid coding in your project, but you must have a **thorough** understanding of every line of code and how every feature of your project is working.  We will be evaluating this throughout the project.  Also make sure any code produced is meeting the course guidelines.
+* Note that if your app has a user interface you are encouraged to use an LLM to code that and it can use non-OCaml.  Just keep all the logic in OCaml, not in the UI.
 
 ### Project Topic Thrusts
 
@@ -37,19 +38,20 @@ Here is a list of well-maintained libraries we recommend using for the above app
   * (Note on Macs with homebrew you will need to  `brew install node`, `brew install openssl` and `brew install libev` along with the other install instructions. on Linux or WSL2 you will probably need to use `apt` to install similar libraries if you don't have them already.)
 * [`Vif`](https://opam.ocaml.org/packages/vif/) is a new alternative to `Dream`. It is not built on `Lwt`, but instead `Miou`, which uses OCaml 5 effects for concurrency.
 * `Cohttp` also supports lightweight web server development; it is perfectly fine for a RESTful server protocol.  See the [tutorial](https://github.com/mirage/ocaml-cohttp#basic-server-tutorial) in the `Cohttp` documentation.
-* For the client, you can use [ReScript](https://rescript-lang.org), which is similar to OCaml but with a different looking syntax that compiles to JavaScript and has bindings for React.  Since ReScript is available, we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!
+* For a web client, you can use [ReScript](https://rescript-lang.org), which is very similar to OCaml but with a different looking syntax that compiles to JavaScript and has bindings for React.  If you use ReScript your front-end code can count for your project code, also you can put some logic in the front-end if you use ReScript.
 
 #### Persistence
 
-* For simple persistence, you can just read and write from a file with the standard library. Make sure to use a structured file format such as json or s-expressions. For these, use [`Yojson`](https://github.com/ocaml-community/yojson), [`Jsont`](https://erratique.ch/software/jsont), or [`Sexplib`](https://github.com/janestreet/sexplib), and/or any associated ppx libraries.
+* For simple persistence, you can just read and write from a file with the standard library. Make sure to use a structured file format such as JSON or S-expressions. For these, use [`Yojson`](https://github.com/ocaml-community/yojson), [`Jsont`](https://erratique.ch/software/jsont), or [`Sexplib`](https://github.com/janestreet/sexplib), and/or any associated ppx libraries.
 * If you are familiar with databases, the [sqlite3-ocaml](https://github.com/mmottl/sqlite3-ocaml) and [postgresql-ocaml](https://mmottl.github.io/postgresql-ocaml/) bindings should work for accessing SQLite or Postgres databases from within OCaml.
 
 #### Data Processing
 There are some good libraries here but they don't have many users and we have had **issues with people being able to install these libraries in the past**.  If you wanted to base your project around one of these libraries **you will be required to** (1) get the library successfully installed on all your team members' computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.
-* [Raven](https://github.com/raven-ml/raven) does everything you need for numerical computing, machine learning, and data science. It is still in its alpha release but is worked on very actively.
-* [Owl](https://ocaml.xyz/) is a very well-documented numerical processing library.
-* [ocaml-torch](https://github.com/janestreet/torch) PyTorch bindings for OCaml.   (Note that the OCaml TensorFlow bindings are old and don't seem to work.)
-* [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library.
+* [Raven](https://github.com/raven-ml/raven) does everything you need for numerical computing, machine learning, and data science: it is NumPy / JAX / PyTorch / NumPyro / SciPy / pandas / Matplotlib all in one OCaml package. It is still in its alpha release but is being actively worked on.  
+  - (Note that as of this writing the `quill` package that is part of Raven does not work in 5.5.0; we suggest you instead install the components you need individually, e.g. `opam install nx rune kaun brot sowilo fehu hugin`)
+* [Owl](https://ocaml.xyz/) is a well-documented numerical processing library.  It is not an active project now however and we suggest first trying Raven as it will soon be the library of choice.
+* [ocaml-torch](https://github.com/janestreet/torch) PyTorch bindings for OCaml. Again please try Raven first as it also includes PyTorch bindings.
+* [ocaml-bimage](https://github.com/zshipko/ocaml-bimage) is an image processing library. Note that Raven also has image processing features in its Sowilo library so that might be worth looking at.
 
 #### And more!
 
@@ -66,7 +68,7 @@ You may want to start with a command-line app and add more features later:
   2. In addition to 1., `Dream` supports html templates and you could "reply" to the `http` queries with html and so you can run your app in the browser.
   3. Use [ReScript](https://rescript-lang.org) and React to beef it up and make an OCaml front-end in the browser. Rescript compiles to JavaScript and can run in the browser.
   4. Replace a file-based persistence model with a database; see the list of libraries above for Postgres and MySql bindings for OCaml.
-  5. Rather than using your own ad-hoc format for data in a file or database, make an s-expression representation and convert back and forth.
+  5. Rather than using your own ad-hoc format for data in a file or database, make a JSON or S-expression representation and convert back and forth.
     - You should do this from the beginning in fact, it will be easier and more robust.
   6. Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.
 

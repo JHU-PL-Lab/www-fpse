@@ -5,11 +5,11 @@
 (* ***************************************** *)
 
 (*
-  So far we have seen the advantages of functional programming. But, sometimes
-  it is a handicap to not have side effects.
+  So far we have seen the great advantages of functional programming. 
+  But, also how sometimes it is a handicap to not have side effects.
 
-  A middle ground is sometimes the best: *encode* effects using purely
-  functional code. We already do this a bit when we use the option type instead
+  A middle ground is worth considering: *encode* effects using purely
+  functional code. We already do some of this when we use the option type instead
   of exceptions. Piping a functional data structure feels similar to side
   effects, too:
 *)
@@ -44,7 +44,7 @@ let _ : bool =
 
 (*
   Let's start with monads by using option's Some/None to encode exception
-  effects. We have already seen examples of this, e.g. Minesweeper functional
+  effects. We have already seen examples of this, e.g. in the Minesweeper
   example when array accesses were out of bounds.
 
   Here we want to regularize/generalize it to make an offical monad. First
@@ -551,7 +551,7 @@ module Identity = struct
   let run (a : unit -> 'a t) : 'a monad_result = unwrap @@ a ()
 end
 
-module Identty_test : MONADIC = Identity (* check! *)
+module Identity_test : MONADIC = Identity (* check! *)
 
 
 (* ******************************** *)
