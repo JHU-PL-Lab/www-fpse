@@ -126,13 +126,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Here are the high-level requirements for the projects.</p>
 
 <ul>
-  <li>All the code must be in OCaml (excepting small bits of glue code, or explicit exceptions if you petition).</li>
+  <li>Your code that counts for the project is the OCaml; you can use other languages for glue code or UI code but we will not count that code as part of the project code accomplishment.</li>
   <li>You must use the standard course libraries – e.g. <code>OUnit2</code> – as your basis, plus any other libraries you find useful.</li>
   <li>Project groups can be from 2-4 people.</li>
   <li>OCaml excels for non-trivial algorithms, and you will be <strong>required</strong> to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end OCaml can work but doesn’t have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.</li>
   <li>You are also <strong>required</strong> to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.</li>
   <li>A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.</li>
-  <li>While you can use LLMs to aid coding in your project you must have a thorough understanding of what every line of code and how every feature of your project is working.  We will be evaluating this throughout the project.</li>
+  <li>You are welcome to use LLMs to aid coding in your project, but you must have a <strong>thorough</strong> understanding of every line of code and how every feature of your project is working.  We will be evaluating this throughout the project.  Also make sure any code produced is meeting the course guidelines.</li>
+  <li>Note that if your app has a user interface you are encouraged to use an LLM to code that and it can use non-OCaml.  Just keep all the logic in OCaml, not in the UI.  That code won’t count for OCaml code but it does count for overall project quality.</li>
 </ul>
 
 <h3 id="project-topic-thrusts">Project Topic Thrusts</h3>
@@ -176,23 +177,27 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li><a href="https://opam.ocaml.org/packages/vif/"><code>Vif</code></a> is a new alternative to <code>Dream</code>. It is not built on <code>Lwt</code>, but instead <code>Miou</code>, which uses OCaml 5 effects for concurrency.</li>
   <li><code>Cohttp</code> also supports lightweight web server development; it is perfectly fine for a RESTful server protocol.  See the <a href="https://github.com/mirage/ocaml-cohttp#basic-server-tutorial">tutorial</a> in the <code>Cohttp</code> documentation.</li>
-  <li>For the client, you can use <a href="https://rescript-lang.org">ReScript</a>, which is similar to OCaml but with a different looking syntax that compiles to JavaScript and has bindings for React.  Since ReScript is available, we require that we use it instead of JavaScript for any front-end programming (you can petition the course staff for an exception to this rule).  You can invoke JavaScript libraries from ReScript, of course!</li>
+  <li>For a web client, you can use <a href="https://rescript-lang.org">ReScript</a>, which is very similar to OCaml but with a different looking syntax that compiles to JavaScript and has bindings for React.  If you use ReScript your front-end code can count for your project code, also you can put some logic in the front-end if you use ReScript.</li>
 </ul>
 
 <h4 id="persistence">Persistence</h4>
 
 <ul>
-  <li>For simple persistence, you can just read and write from a file with the standard library. Make sure to use a structured file format such as json or s-expressions. For these, use <a href="https://github.com/ocaml-community/yojson"><code>Yojson</code></a>, <a href="https://erratique.ch/software/jsont"><code>Jsont</code></a>, or <a href="https://github.com/janestreet/sexplib"><code>Sexplib</code></a>, and/or any associated ppx libraries.</li>
+  <li>For simple persistence, you can just read and write from a file with the standard library. Make sure to use a structured file format such as JSON or S-expressions. For these, use <a href="https://github.com/ocaml-community/yojson"><code>Yojson</code></a>, <a href="https://erratique.ch/software/jsont"><code>Jsont</code></a>, or <a href="https://github.com/janestreet/sexplib"><code>Sexplib</code></a>, and/or any associated ppx libraries.</li>
   <li>If you are familiar with databases, the <a href="https://github.com/mmottl/sqlite3-ocaml">sqlite3-ocaml</a> and <a href="https://mmottl.github.io/postgresql-ocaml/">postgresql-ocaml</a> bindings should work for accessing SQLite or Postgres databases from within OCaml.</li>
 </ul>
 
 <h4 id="data-processing">Data Processing</h4>
 <p>There are some good libraries here but they don’t have many users and we have had <strong>issues with people being able to install these libraries in the past</strong>.  If you wanted to base your project around one of these libraries <strong>you will be required to</strong> (1) get the library successfully installed on all your team members’ computers; (2) get a basic demo app running using the library, both at the design proposal submission deadline below.</p>
 <ul>
-  <li><a href="https://github.com/raven-ml/raven">Raven</a> does everything you need for numerical computing, machine learning, and data science. It is still in its alpha release but is worked on very actively.</li>
-  <li><a href="https://ocaml.xyz/">Owl</a> is a very well-documented numerical processing library.</li>
-  <li><a href="https://github.com/janestreet/torch">ocaml-torch</a> PyTorch bindings for OCaml.   (Note that the OCaml TensorFlow bindings are old and don’t seem to work.)</li>
-  <li><a href="https://github.com/zshipko/ocaml-bimage">ocaml-bimage</a> is an image processing library.</li>
+  <li><a href="https://github.com/raven-ml/raven">Raven</a> does everything you need for numerical computing, machine learning, and data science: it is NumPy / JAX / PyTorch / NumPyro / SciPy / pandas / Matplotlib all in one OCaml package. It is still in its alpha release but is being actively worked on.
+    <ul>
+      <li>(Note that as of this writing the <code>quill</code> package that is part of Raven does not work in 5.5.0; we suggest you instead install the components you need individually, e.g. <code>opam install nx rune kaun brot sowilo fehu hugin</code>)</li>
+    </ul>
+  </li>
+  <li><a href="https://ocaml.xyz/">Owl</a> is a well-documented numerical processing library.  It is not an active project now however and we suggest first trying Raven as it will soon be the library of choice.</li>
+  <li><a href="https://github.com/janestreet/torch">ocaml-torch</a> PyTorch bindings for OCaml. Again please try Raven first as it also includes PyTorch bindings.</li>
+  <li><a href="https://github.com/zshipko/ocaml-bimage">ocaml-bimage</a> is an image processing library. Note that Raven also has image processing features in its Sowilo library so that might be worth looking at.</li>
 </ul>
 
 <h4 id="and-more">And more!</h4>
@@ -216,7 +221,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>In addition to 1., <code>Dream</code> supports html templates and you could “reply” to the <code>http</code> queries with html and so you can run your app in the browser.</li>
   <li>Use <a href="https://rescript-lang.org">ReScript</a> and React to beef it up and make an OCaml front-end in the browser. Rescript compiles to JavaScript and can run in the browser.</li>
   <li>Replace a file-based persistence model with a database; see the list of libraries above for Postgres and MySql bindings for OCaml.</li>
-  <li>Rather than using your own ad-hoc format for data in a file or database, make an s-expression representation and convert back and forth.<br />
+  <li>Rather than using your own ad-hoc format for data in a file or database, make a JSON or S-expression representation and convert back and forth.<br />
     - You should do this from the beginning in fact, it will be easier and more robust.</li>
   <li>Add more options to the underlying application.  Think about ways to make the application more generic, which also can give you some practice at abstractions in OCaml.</li>
 </ol>
@@ -395,9 +400,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <p>Here are some defining features of the labs.</p>
 
 <ol>
-  <li>There will be seven labs.  Your group will be required to attend the first lab in-person on Oct 28th.</li>
+  <li>There will be seven labs.  Your group will be required to attend the first lab in-person on Nov 2nd.</li>
   <li>Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework. You won’t get credit for a lab if you show up and choose to work on something other than your FPSE project.</li>
-  <li>Course stall will be there to assist you in all aspects of coding your project.  We will also be asking you to explain the code you have written and will be doling out “dings” if you don’t demonstrate a thorough understanding of your own code.</li>
+  <li>Course staff will be there to assist you in all aspects of coding your project.  We will also be asking you to explain the code you have written and will be doling out “dings” if you don’t demonstrate a thorough understanding of your own code.</li>
   <li>Attendance will be taken at all labs and will be a part of your final grade.</li>
   <li>Your group is required to attend <strong>seven</strong> labs total.  Conveniently, there are seven class periods which are project labs, but you may alternatively select an office hour (the whole hour and it should be your group advisor if at all possible) to be a “lab”.  If you wish to do that, show up in-person at the start of the office hour and notify the advisor that you are doing a lab, and they will mark you down for attendance.  At most two in-class labs can made up in this way.</li>
   <li>All labs must be attended in-person and not on Zoom, but you may petition your project advisor for an exception if you are sick etc.</li>
@@ -406,7 +411,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <h2 id="sample-projects">Sample projects</h2>
 
-<p>Here are a few FPSE projects from 2023 to give you an idea of the scope etc. Please pick a different idea.</p>
+<p>Here are a few FPSE projects from 2023 to give you an idea of the scope etc. Note that we might expect a bit more now since the AI should be able to make a nice front-end.  Also please don’t re-use any of these ideas.</p>
 
 <ul>
   <li>

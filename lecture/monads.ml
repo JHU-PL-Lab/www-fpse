@@ -5,7 +5,7 @@
 (* ***************************************** *)
 
 (*
-  So far we have seen the great advantages of functional programming. 
+  So far we have seen many advantages of functional programming. 
   But, also how sometimes it is a handicap to not have side effects.
 
   A middle ground is worth considering: *encode* effects using purely
@@ -25,9 +25,18 @@ let _ : bool =
 
 (*
   This piping is a concise "hand over fist passing" encoding of what would be a
-  sequence of mutable assignments with a mutable map.
+  sequence of mutable assignments with a mutable map, for example with Hashtbl:
+*)
 
-  Idea: make a more structured encoding which is not informal like the above.
+module StringHash = Hashtbl.Make(String)
+let h1 = StringHash.create (10)
+let _ = 
+    StringHash.add h1 "hi" 3
+  ; StringHash.add h1 "ho" 17
+  ; StringHash.find_all h1 "hi"
+
+(*
+  Idea: make an encoding which is more like the imperative code: state is implicit
 
   Think of it as defining a macro language inside of OCaml in which the code
   will look effectful even though it isn't: "monad-land".
@@ -45,11 +54,11 @@ let _ : bool =
 (*
   Let's start with monads by using option's Some/None to encode exception
   effects. We have already seen examples of this, e.g. in the Minesweeper
-  example when array accesses were out of bounds.
+  example when array accesses were out of bounds we returned `None`.
 
   Here we want to regularize/generalize it to make an offical monad. First
-  recall how we had to "forward" a `None` if an operation failed. Define a few
-  operations that "fail" with `None`:
+  recall how we had to "forward" a `None` if an operation failed. 
+  Let's first define a few demo operations that "fail" with `None`:
 *)
 
 let combine_opt l1 l2 = try Some (List.combine l1 l2) with _ -> None
@@ -57,8 +66,8 @@ let tl_opt = function [] -> None | _ :: tl -> Some tl
 let hd_opt = function [] -> None | hd :: _ -> Some hd
 
 (*
-  Here is an artificial example of lots of hand-over-fist passing of options:
-    Combine two lists, sum pairwise, and return the 2nd element.
+  Here is an artificial example of belabored hand-over-fist passing of options:
+  Combine two lists, sum pairwise, and return the 2nd element.
   Several operations within it can fail with a None, and in each case we need to
   match on that option in order to bubble that None to the top.
   Yes the code is U-G-L-Y !
@@ -77,7 +86,7 @@ let ex l1 l2 =
       end
   | None -> None
 
-(* How would this look with effects? *)
+(* This code is much cleaner-looking with exceptions: *)
 let ex_real_effects l1 l2 =
   let l = List.combine l1 l2 in
   let m = List.map (fun (x, y) -> x + y) l in
@@ -86,17 +95,16 @@ let ex_real_effects l1 l2 =
   hd_tail
 
 (*
-  I think everyone would agree that this version is a lot easier to read.
-  Can the functional version look this nice? Sure it can!
-
-  We will regularize it with a monad.
-  * Think of a monad as a wrapper on regular computations.
+  So, .. let us keep the spirit of avoiding exceptions,
+  but use a **monad** to hide all of the `Some` wrapping / `None` forwarding.
+  * Think of a monad as a wrapper on regular computations (Some/None here).
   * "In Monad-land" here is an option-tagged computation.
   * "Out of the monad" is when we are not option-tagged.
+  * In general we can make many different wrappers, option is just the start.
 
   The key operation of a monad is `bind` which sequences side-effecting
   computations.
-  For Option it exists as Option.bind. Here is its code, for reference.
+  For Option it exists as Option.bind:
 *)
 
 let bind' (opt : 'a option) (f : 'a -> 'b option) : ('b option) =
@@ -105,31 +113,29 @@ let bind' (opt : 'a option) (f : 'a -> 'b option) : ('b option) =
   | Some v -> f v
 
 (**
-  [bind] does the match "for free" compared to the [ex] example code.
+  * If opt fails with [None] the function is ignored.
+  * If it succeeds, the [Some] wrapper is automatically peeled off and the
+    underlying data passed to [f].
+  * The net result is the [Some]/[None] is largely hidden in the code.
 
-  If the combine failed with [None] the function is ignored.
-  If it succeeds, the [Some] wrapper is automatically peeled off and the
-  underlying data passed to [f].
-  The net result is the [Some]/[None] is largely hidden in the code.
-
-  Here is how we might combine and get the LHS of the first pair:
+  Here is a use of bind showing how we could combine and get the LHS of the first pair:
 *)
 
 let _ =
   bind' (combine_opt [1;2] [3;4;5]) (fun l -> match l with (n,_)::_ -> Some n)
 
 (**
-  Yes, there is still a [Some] at the end in the above.
-  That is because the bind result needs to stay in monad-land (since the first
+  * Yes, there is still a [Some] at the end in the above.
+  * That is because the bind result needs to stay in monad-land (since the first
   part could have been [None]).
-  We will in fact hide [Some] below so it is still there but is not explicit.
-  In general once you get into monad-land you tend to stay there a long time ..
+  * (We will in fact hide [Some] below so it is still there but is not explicit.)
+  * In general once you get into monad-land you tend to stay there a long time ..
 
   [bind], generally, sequences ANY two function side effects. Besides just
   bubbling [None], it is a lot like a [let]-expression. E.g. for options:
 
     [bind e1 (fun x -> e2)] first runs [e1], and if it is non-[None], then it
-      runs [e2], which can use the underlying result of [e1].
+      runs [e2], which can use the underlying result of [e1] since its in [x].
 
   This suggests a macro:
 
@@ -139,32 +145,32 @@ let _ =
   pushes the monad into hiding even more.
 *)
 
-let ( let* ) = Option.bind
+let ( let* ) = Option.bind (* let* is built in to OCaml, its a definable let-extension *)
 
-let[@warning "-8"] _ =
+let _ =
   let* (n, _) :: _ = combine_opt [1;2] [3;4] in
   Some n
 
-(* Compare this to the exn version which actually has a side effect: *)
-let[@warning "-8"] _ =
+(* This is very similar-looking to the side-effecting version: *)
+let _ =
   let (n, _) :: _ = List.combine [1;2] [3;4] in
   n
 
 (**
-  One of the difference is that we must finish off the monadic one by writing
-  [Some n]. We want to return [n] to the monad land. In general, we call this
-  [return]:
+  One of the differences is that we must finish off the monadic one by writing
+  [Some n]. We want to return [n] to the monad land. 
+  In general, all monads have a need to return-back-to-monad and we call this operation [return]:
 *)
 let return x = Some x
 
-(* And now we can redo the above example with this nice notation. *)
+(* And now we can redo the above example with this nicer notation. *)
 
 let ex_bind_macro l1 l2 =
   let* l = combine_opt l1 l2 in
   let m = List.map (fun (x, y) -> x + y) l in (* never None, so no let* *)
   let* tail = tl_opt m in
   let* hd_tail = hd_opt tail in
-  return hd_tail (* "return TO the monad" - here that means wrap in Some (..) *)
+  return hd_tail (* "return TO the monad" *)
 
 (* vs effectful (repeating effectful version above): *)
 let ex_real_effects l1 l2 =
@@ -184,7 +190,6 @@ let ex_bind l1 l2 =
       )
     )
   )
-
 (* (vs version with let* above, repeated for easy eyeballing: *)
 let ex_bind_macro' l1 l2 =
   let* l = combine_opt l1 l2 in
@@ -224,25 +229,27 @@ let ex_bind_fixed l1 l2 =
 
 
 (**
-  In other words,
+  In other words, the following two code fragments are equivalent:
     [let* hd_tail = hd_opt tail in return hd_tail]
       ===
-    [option_hd tail]
+    [hd_opt tail]
 
-  This is in fact a *Monad Law*, which we will discuss below, like how
+  This is in fact a *Monad Law*, which we will discuss below.
+  It is very similar to
     [let x = 5 in x]
       ===
     [5]
   in normal OCaml.
 *)
 
-(* Now, we all love pipes but this is just let-like coding; how can we use pipe syntax??
+(* Now, this is all well and good but pipes are sometimes cleaner than let's;
+   how can we use pipe syntax??
 
-Answer: there is also stadard pipe syntax for bind
+Answer: there is also standard pipe syntax for bind
    * a >>= b is just an infix form of bind, it is nothing but
      bind a b
-   * a >>| b is used when b is just a "normal" function which is not returning an option.
-   - the precise encodings in fact are:
+   * a >>| b is used when b is just a "normal" function which is not returning an option (like the map in our example).
+   - the precise encodings are:
      --  a >>| b is      bind a (fun x -> return (b x))
      --  a >>| b is also a >>= (fun x -> return (b x))
    - the additional "return" "lifts" non-monadic f's result back into monad-land
@@ -254,7 +261,7 @@ Answer: there is also stadard pipe syntax for bind
    * If you are just sequencing a bunch of function calls as above it reads better with these two pipes
 *)
 
-(* Here are those definitions *)
+(* Here are those definitions, recall we can (re)define operators in OCaml *)
 let ( >>= ) = Option.bind
 let ( >>| ) m f = Option.map f m
 
@@ -325,7 +332,7 @@ let _ : bool =
 
 (* To make this more clear let us turn the piped version into its exact let* equivalent.
    Look at the top-level (outermost) >>= above to understand why this is what it is meaning *)
-let ( let+ ) f m = Option.map m f
+let ( let+ ) f m = Option.map m f (* let+ is the >>| analogue, its also called "map" *)
 
 let ex_piped_expanded l1 l2 =
   let* tail =
@@ -338,9 +345,8 @@ let ex_piped_expanded l1 l2 =
   hd_opt tail
 
 (*
-  Note let+ is the let analog of |>> which just wraps result in return.
-
-  We can easily get all of this sugar with a functor.
+  Summarizing the above sugar, in practice we want to define it with a functor.
+  - This will allow us to load it all by just a functor application
 *)
 module Make_syntax (M : sig
   type 'a t
@@ -353,9 +359,15 @@ end) = struct
   let ( >>| ) = ( let+ )
 end
 
+(* The following functor application then "loads" this syntax *)
+(* module Syntax = Make_syntax(Option) *)
+(* Note that Option does not have `return` so this will not quite work ..*)
+
 (*
   OK it is finally time for an actual monad -- Option extended to a more general
   Exception monad.
+
+  Basically add the missing `return` we need
 
   Invariant: all values in monad-land for this monad are Some/None's.
 *)
@@ -404,7 +416,7 @@ module Exception = struct
     | Some x -> x
     | None -> failwith "monad failed with None"
 
-  (* Let's get more exception-looking syntax than what is in Option *)
+  (* Let's also add more exception-looking syntax than what is in Option *)
   let raise () : 'a t = None
 
   let try_with (m : 'a t) (f : unit -> 'a t): 'a t =
@@ -419,7 +431,7 @@ end
 *)
 
 open Exception
-open Make_syntax(Exception)
+open Make_syntax(Exception) (* our functor now works since we now have `return` *)
 
 (* Now redo the combine example above using Exception. *)
 
@@ -440,7 +452,7 @@ let _ : int = Exception.run @@ fun () -> ex_exception [1;2;3] [9;8;7]
 
 (*
   Here is yet another example, showing how some really simple computation can be
-  put in monad-land. Note you should not do this, and effect-free code can
+  put in monad-land. Note you should **not** do this, effect-free code can
   remain as-is. This example is just to illustrate how monads sequence.
 *)
 

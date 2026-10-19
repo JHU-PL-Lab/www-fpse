@@ -6,14 +6,14 @@ For the projects you are to conceive, design, and implement your own standalone 
 ### Requirements
 Here are the high-level requirements for the projects.
 
-* All the code must be in OCaml (excepting small bits of glue code, or explicit exceptions if you petition).
+* Your code that counts for the project is the OCaml; you can use other languages for glue code or UI code but we will not count that code as part of the project code accomplishment.
 * You must use the standard course libraries -- e.g. `OUnit2` -- as your basis, plus any other libraries you find useful.
 * Project groups can be from 2-4 people.
 * OCaml excels for non-trivial algorithms, and you will be **required** to make a non-trivial algorithm(s) a key feature of your app.  If you are just doing some simple webpage front-end with a database back-end OCaml can work but doesn't have any real advantage.  Non-trivial algorithms can either be that the algorithm itself is complex, or that things need to be composed/combined in ways that higher-order functions can really help.
 * You are also **required** to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
 * A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.
 * You are welcome to use LLMs to aid coding in your project, but you must have a **thorough** understanding of every line of code and how every feature of your project is working.  We will be evaluating this throughout the project.  Also make sure any code produced is meeting the course guidelines.
-* Note that if your app has a user interface you are encouraged to use an LLM to code that and it can use non-OCaml.  Just keep all the logic in OCaml, not in the UI.
+* Note that if your app has a user interface you are encouraged to use an LLM to code that and it can use non-OCaml.  Just keep all the logic in OCaml, not in the UI.  That code won't count for OCaml code but it does count for overall project quality.
 
 ### Project Topic Thrusts
 
@@ -219,9 +219,9 @@ The project labs are classes later in the semester where your group can collabor
 
 Here are some defining features of the labs.
 
-1. There will be seven labs.  Your group will be required to attend the first lab in-person on Oct 28th.
+1. There will be seven labs.  Your group will be required to attend the first lab in-person on Nov 2nd.
 2. Attending a lab means showing up and spending the whole period working on your FPSE project, not on homework or other coursework. You won't get credit for a lab if you show up and choose to work on something other than your FPSE project.
-3. Course stall will be there to assist you in all aspects of coding your project.  We will also be asking you to explain the code you have written and will be doling out "dings" if you don't demonstrate a thorough understanding of your own code.
+3. Course staff will be there to assist you in all aspects of coding your project.  We will also be asking you to explain the code you have written and will be doling out "dings" if you don't demonstrate a thorough understanding of your own code.
 3. Attendance will be taken at all labs and will be a part of your final grade.
 4. Your group is required to attend **seven** labs total.  Conveniently, there are seven class periods which are project labs, but you may alternatively select an office hour (the whole hour and it should be your group advisor if at all possible) to be a "lab".  If you wish to do that, show up in-person at the start of the office hour and notify the advisor that you are doing a lab, and they will mark you down for attendance.  At most two in-class labs can made up in this way.
 5. All labs must be attended in-person and not on Zoom, but you may petition your project advisor for an exception if you are sick etc.
@@ -229,7 +229,7 @@ Here are some defining features of the labs.
 
 ## Sample projects
 
-Here are a few FPSE projects from 2023 to give you an idea of the scope etc. Please pick a different idea.
+Here are a few FPSE projects from 2023 to give you an idea of the scope etc. Note that we might expect a bit more now since the AI should be able to make a nice front-end.  Also please don't re-use any of these ideas.
 
 * [Sudoku solver](https://github.com/TheHarcker/FPSE_Project)
 
