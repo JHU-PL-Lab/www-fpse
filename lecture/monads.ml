@@ -78,7 +78,7 @@ let ex l1 l2 =
       let m = List.map (fun (x, y) -> x + y) l in
       begin match tl_opt m with
       | Some tail ->
-          begin match tl_opt tail with
+          begin match hd_opt tail with
           | Some hd_tail -> Some hd_tail
           | None -> None
           end
@@ -148,12 +148,18 @@ let _ =
 let ( let* ) = Option.bind (* let* is built in to OCaml, its a definable let-extension *)
 
 let _ =
-  let* (n, _) :: _ = combine_opt [1;2] [3;4] in
+  let* l = combine_opt [1;2] [3;4;5] in
+  let (n, _) :: _ = l in 
   Some n
+
+(* vs previous version with bind' *)
+let _ =
+  bind' (combine_opt [1;2] [3;4]) (fun l -> match l with (n,_)::_ -> Some n)
 
 (* This is very similar-looking to the side-effecting version: *)
 let _ =
-  let (n, _) :: _ = List.combine [1;2] [3;4] in
+  let l = List.combine [1;2] [3;4;5] in
+  let (n, _) :: _ = l in
   n
 
 (**
@@ -180,7 +186,7 @@ let ex_real_effects l1 l2 =
   let hd_tail = hd_opt tail in
   hd_tail
 
-(* Let us write out the bind calls (expand the macro) to show why the macro is more readable: *)
+(* Let us write out the bind calls (expand the let* macro) to show why the macro is more readable: *)
 let ex_bind l1 l2 =
   Option.bind (combine_opt l1 l2) (fun l ->
     let m = List.map (fun (x, y) -> x + y) l in
@@ -190,21 +196,26 @@ let ex_bind l1 l2 =
       )
     )
   )
-(* (vs version with let* above, repeated for easy eyeballing: *)
-let ex_bind_macro' l1 l2 =
-  let* l = combine_opt l1 l2 in
-  let m = List.map (fun (x, y) -> x + y) l in
-  let* tail = tl_opt m in
-  let* hd_tail = hd_opt tail in
-  return hd_tail
+
+(* Let's also remind ourselves that this is all just sugar for the original match version above, 
+   lets in-line the first `bind` call: *)
+let ex_bind l1 l2 =
+  match combine_opt l1 l2 with
+  | Some l ->
+    let m = List.map (fun (x, y) -> x + y) l in
+    Option.bind (tl_opt m) (fun tail ->
+      Option.bind (hd_opt tail) (fun hd_tail ->
+        return hd_tail
+      )
+    )
+  | None -> None
 
 (**
-  Observe in the above that we can invoke functions which are in monad-land like
+  Observe in the above that we can invoke functions which return values monad-land like
   [combine_opt]. We can also invoke non-option-returning functions like
   [List.map], and we simply do not bind on them.
 
-  Just make sure to keep track of what is in and what is out of monad land!
-  That last [return] is important!
+  Just make sure to keep track of what is in and what is out of monad land
 *)
 
 (*
@@ -225,7 +236,7 @@ let ex_bind_fixed l1 l2 =
   let* l = combine_opt l1 l2 in
   let m = List.map (fun (x, y) -> x + y) l in
   let* tail = tl_opt m in
-  hd_opt tail (* this is in monad-land, all good! *)
+  hd_opt tail (* this is already in monad-land, all good! *)
 
 
 (**
@@ -234,8 +245,11 @@ let ex_bind_fixed l1 l2 =
       ===
     [hd_opt tail]
 
+  -- the let* unwraps the monad to put the underlying value in [hd_tail], 
+  then it re-wraps it with [return], so its a no-op overall.
+
   This is in fact a *Monad Law*, which we will discuss below.
-  It is very similar to
+  It is very similar to the equivalence
     [let x = 5 in x]
       ===
     [5]
@@ -243,7 +257,7 @@ let ex_bind_fixed l1 l2 =
 *)
 
 (* Now, this is all well and good but pipes are sometimes cleaner than let's;
-   how can we use pipe syntax??
+   how can we use pipe syntax with a monad?
 
 Answer: there is also standard pipe syntax for bind
    * a >>= b is just an infix form of bind, it is nothing but
@@ -320,13 +334,13 @@ let _ : bool =
   |> StringMap.for_all (fun _ -> fun i -> i > 10)
 
 
-(* There is something subtle going on here with the operator ordering..
+(* There is something subtle going on here in let notation vs pipe notation..
    - We all know that a;(b;c) "is the same order as" (a;b);c (e.g. in OCaml they give same results)
-   - for let and let-bind, there is an analogous principle:
+   - for let and let*, there is an analogous principle:
       let x = a in (let y = b in c)   ===   let y = (let x = a in b) in c
        (provided x is not in c - on the left the c won't know what x is)
-   - Key point: the let* notation is doing the former and the pipes the latter - !!
-   - Monads (including Option here) should have this let-bind associative property
+   - Key point: the let* notation is by default doing the former and the pipes the latter - !!
+   - Monads (including Option here) should also have this let-bind associative property
    - More formally this is another *monad law* for the mathematical definition of monad (more later on that)
 *)
 
@@ -345,8 +359,8 @@ let ex_piped_expanded l1 l2 =
   hd_opt tail
 
 (*
-  Summarizing the above sugar, in practice we want to define it with a functor.
-  - This will allow us to load it all by just a functor application
+  (Summarizing the above let*/>>= etc sugar, in practice we want to define it with a functor.
+  - This will allow us to load it all by just a functor application)
 *)
 module Make_syntax (M : sig
   type 'a t
@@ -359,17 +373,28 @@ end) = struct
   let ( >>| ) = ( let+ )
 end
 
-(* The following functor application then "loads" this syntax *)
-(* module Syntax = Make_syntax(Option) *)
-(* Note that Option does not have `return` so this will not quite work ..*)
+(* Note that Option does not have `return` so we can't pass Option as M.  Here is one solution *)
+module Optional = struct
+  include Option
+  let return (x : 'a) : 'a option = Some x
+end
+
+(* Now we can make and open the syntax to make it available at the top level *)
+
+module Syntax = Make_syntax(Optional)
+open Syntax
+
+(* Shorthand of the above .. no need to name a module before opening it *)
+open Make_syntax(Optional)
 
 (*
-  OK it is finally time for an actual monad -- Option extended to a more general
-  Exception monad.
+  In general there are a few other things we also want in a monad
+  So, lets start from the beginning and define a "real" monad, Exception.
 
-  Basically add the missing `return` we need
+  Its going to be like `Optional` but with a few other additions
 
-  Invariant: all values in monad-land for this monad are Some/None's.
+  Invariant: all values in monad-land for Exception are Some/None's.
+  (other monads will have other types of wrappers on their data)
 *)
 
 module Exception = struct
@@ -409,39 +434,36 @@ module Exception = struct
     2) run a computation in monad-land;
     3) transfer the final result back to normal-land.
 
-    [Option.get] is the name for this from the [Option] module.
+    [Option.get] is the name for [run] in the [Option] module.
+
+    Note that it just raises a real OCaml exception to remove the [Some].
+
   *)
   let run (m : unit -> 'a t) : 'a monad_result =
     match m () with
     | Some x -> x
-    | None -> failwith "monad failed with None"
+    | None -> failwith "uncaught None-exception in monad Exception"
 
-  (* Let's also add more exception-looking syntax than what is in Option *)
+  (* Let's also add more exception-looking syntactic sugar  *)
   let raise () : 'a t = None
 
-  let try_with (m : 'a t) (f : unit -> 'a t): 'a t =
-    match m with
-    | None -> f ()
+  let try_with (try_block : 'a t) (with_block : unit -> 'a t): 'a t =
+    match try_block with
+    | None -> with_block () (* this is a function otherwise it would always run when `try_with` called *)
     | Some x -> Some x
 end
 
 (*
-  Let's open these up now, overriding the open of Option we did above for the
-  monad functions like bind.
+  Open these up now for easy use
 *)
 
 open Exception
-open Make_syntax(Exception) (* our functor now works since we now have `return` *)
+open Make_syntax(Exception) (* `Make_syntax` works since Exception has `t`, `bind`, and `return` *)
 
 (* Now redo the combine example above using Exception. *)
 
-let combine_monad l1 l2 =
-  match combine_opt l1 l2 with
-  | None -> raise ()
-  | Some l -> return l
-
 let ex_exception l1 l2 =
-  let* l = combine_monad l1 l2 in
+  let* l = combine_opt l1 l2 in
   let m = List.map (fun (x, y) -> x + y) l in
   let* tail = tl_opt m in
   let* hd_tail = hd_opt tail in
@@ -470,7 +492,19 @@ let oneplustwo' =
   let* twov = return 2 in
   return (onev + twov)
 
-let _ : int = run (fun () -> oneplustwo')
+(** Note that 
+  [let* x = e in return e']
+  ===
+  [let+ x = e in e'] 
+ -- thats all let+ is doing, its implicitly putting in that return 
+ So we could also write *)
+  
+let oneplustwo'' =
+  let* onev = return 1 in
+  let+ twov = return 2 in
+  onev + twov 
+
+let _ : int = run (fun () -> oneplustwo'')
 
 (*
   Let us now encode some normal OCaml code raising an exception into Exception.
@@ -485,8 +519,7 @@ let test_normal_ocaml x =
   | Failure _ -> 101
 
 (*
-  Now here is the near-equivalent in a monad. We just have to let-bind the
-  possibly-erroring code.
+  Now here is a near-equivalent in a monad.
 
   Remember, the key here is that it looks like there are side effects, but it is
   actually all functional code. No side effects here!
@@ -494,27 +527,27 @@ let test_normal_ocaml x =
 
 let test_exn_monad x =
   try_with
-    (let+ hundo = if x = 0 then raise () else return (100 / x) in hundo + 1)
-    (fun () -> return 101)
-
-let _ : int = run @@ fun () -> test_exn_monad 4
-let _ : int = run @@ fun () -> test_exn_monad 0
-
-(*
-  This was just a little ugly (monads can do that), but we can move the +1 in,
-  which makes it a little nicer.
-*)
-let f x =
-  try_with
     (if x = 0 then raise () else return (100 / x + 1))
     (fun () -> return 101)
+
+(* Note that this is not exactly the same spirit, the `+ 1` moved inside the if-then-else
+   This is how you would code it, but if you wanted to exactly follow the OCaml do this *)
+let test_exn_monad' x =
+  try_with
+    (let* ite = if x = 0 then raise () else return (100 / x) in return (ite + 1))
+    (fun () -> return 101)
+(* -- the if-then-else as a whole is in monad-land so a let* binding is needed 
+   (well a let+ would be better here since its a `let* .... return`) *)
+
+let _ : int = run @@ fun () -> test_exn_monad' 4
+let _ : int = run @@ fun () -> test_exn_monad' 0
 
 
 (* *********** *)
 (* More Monads *)
 (* *********** *)
 
-(* Generally a monad for us is anything matching this module type *)
+(* Generally a monad is anything matching this module type *)
 
 module type MONADIC = sig
   (* a "wrapper" on 'a-typed data *)
@@ -536,7 +569,7 @@ module Exception_test : MONADIC = Exception
 (*
   General principle: side effects are result "plus other stuff".
 
-  Monad principle: make a type which wraps underlying data with that arbitrary
+  General monad principle: make a type which wraps underlying data with that arbitrary
   "other stuff".
 
   When you are working over that type, you are "in monad land". Then make the
@@ -544,12 +577,12 @@ module Exception_test : MONADIC = Exception
   monad-land like a sublanguage: hop into e.g. `Exception` when effects are
   needed.
 
-  We now show how the underlying monad infrastructure can encode many other
-  effects.
+  We next show how the underlying monad infrastructure can encode many other
+  effects: state, I/O, coroutines, etc, just by changing the wrapper type and bind/return
 *)
 
 (**
-  First, it is good to look at the no-op monad, which does nothing. It is the
+  First, it is good to look at the no-op monad, which does basicall nothing. It is the
   effective identity, and we put an explicit [Wrapped] constructor around
   monadic values to be clear where monad-land starts and stops.
 *)
@@ -575,28 +608,29 @@ module Identity_test : MONADIC = Identity (* check! *)
   i.e. the `'a t` type is `'a * ... more stuff ...`
   Here is one such simple monad, a Logger which accumulates log messages.
   A common name for these are "writers" since they are writing things.
-  Note that logging is a side-effect; it is like state but is write-only.
+  Note that logging is a side-effect; it is a write-only state.
 *)
 
 module Logger = struct
-  (* we will tack a string list on the side which is the log messages *)
+  (* We will tack a string list on the side which is the sequence of log messages *)
   type log = string list
 
   type 'a t = 'a * log
 
-  (* Beyond the type, the key to a monad is the bind/return functions. *)
+  (* Beyond the type, the key to a monad is how bind and return are defined *)
   let bind (m : 'a t) (f : 'a -> 'b t): 'b t =
     let a, l = m in (* the underlying value and its log *)
-    let b, l' = f a in  (* the next underyling value and additional log *)
-    (b, l @ l') (* append the logs *)
+    let b, l' = f a in  (* unwrap and pass underlying data a to f, producing the next value/log *)
+    (b, l @ l') (* append the logs from m and f computations *)
 
-  (* return logs nothing. The log is empty *)
+  (* Return logs nothing so the log is empty *)
   let return (a : 'a) : 'a t = (a, [])
 
+  (* For the final result we want to return the log so it can be seen *)
   type 'a monad_result = 'a * log
 
   let run (m : unit -> 'a t): 'a monad_result = m ()
-
+  (* Now the all-important operation to actually add something to the log! *)
   let log msg : unit t = ((), [msg])
 end
 
@@ -615,8 +649,8 @@ let oneplustwo_logged =
   let* onev = return 1 in
   let* twov = return 2 in
   let* r = return (onev + twov) in
-  let* () = log "Ending!" in
-  return r
+  let+ () = log "Ending!" in
+  r
 
 (*
   The idea of this monad (rather than Some/None wrapping like the exception
@@ -627,7 +661,7 @@ let oneplustwo_logged =
 let oneplustwo_logged_nomonad =
   let (), log1 = (), ["Starting!"] in (* each let* is now a let defining a pair of value,log-to-date *)
   let onev, log2 = 1, log1 @ [] in (* by the nature of bind we are always passing the previous log onward *)
-  let twov, log3 = 2, log2 @ [] in (* return adds [] since there is no log side effect *)
+  let twov, log3 = 2, log2 @ [] in (* return adds [] since there are no log side effect *)
   let r, log4 = (onev + twov), log3 @ [] in
   let (), log5 = (), log4 @ ["Ending!"] in
   (r, log5)
@@ -641,14 +675,14 @@ let oneplustwo_logged_nomonad =
   All the monads up to now were "first order"; the "wrapping" type has no
   function types.
 
-  Monads get *really* useful with higher-order monads, *functions* in the .t
+  Monads get *really* useful with higher-order monads, *functions* in the `t`
   type. They also get more subtle to decipher what is actually happening.
 
-  The simplest example is "Reader", which is like state but READ-only.
+  The simplest example is "Reader", which is a READ-only state.
   Don't think of it as "input" but more like a bunch of global constants.
 
   The intuition is we are going to pass the constants along so they are always
-  accessible to any expression in monad land.
+  implicitly accessible to any expression in monad land.
 *)
 
 
@@ -684,9 +718,9 @@ end
 
 (* Examples *)
 open Reader
-let ( let* ) = bind
+let ( let* ) = bind (* We can't use our functor here since there the type is ('a, 'e) t not 'a t *)
 
-(* Here is a simple environment type, think of it as a set of global constants *)
+(* Here is a simple environment `e` type, think of it as a set of global constants *)
 type globals =
   { name: string
   ; age: int
@@ -722,20 +756,20 @@ let _ = is_retired''' {name = "Gobo"; age = 88}
 
 (* Monads, mathematically *)
 
-(*
+(**
   To *really* be a monad you need to satisfy some invariants:
 
-    1) bind (return a) f  ===  f a
-    2) bind a (fun x -> return x)  ===  a
-    3) bind a (fun x -> bind b (fun y -> c))  ===
-       bind (bind a (fun x -> b)) (fun y -> c)
-       (where c doesn't use x)
+    1) [bind (return a) f]  ===  [f a]
+    2) [bind a (fun x -> return x)]  ===  [a]
+    3) [bind a (fun x -> bind b (fun y -> c))]  ===
+       [bind (bind a (fun x -> b)) (fun y -> c)]
+       (where [c] doesn't use [x])
 
     Let us focus on the equivalent let* versions which are easier to read:
-    1) let* x = return a in f x  ===  f a
-    2) let* x = m in return x  ===  m
-    3) let* x = m in let* y = m' in m'' ===
-       let* y = (let* x = m in m') in m''
+    1) [let* x = return a in f x]  ===  [f a]
+    2) [let* x = m in return x]  ===  [m]
+    3) [let* x = m in let* y = m' in m''] ===
+       [let* y = (let* x = m in m') in m'']
 
   * (Note "===" here means we can replace one with the other and notice no difference)
   * These are called the "Monad Laws"
@@ -747,8 +781,8 @@ let _ = is_retired''' {name = "Gobo"; age = 88}
 
 (*
   We in fact used all the monad laws on the initial Option example above.
-  We will review that now. Recall that our Exception module is just a monadic
-  wrapper for Option.
+  We will review that now. Recall that our Exception module is just an
+  extension of Option.
 *)
 open Exception
 open Make_syntax(Exception)

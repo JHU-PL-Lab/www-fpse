@@ -1,89 +1,105 @@
-open Core
-
 (* 
   In this exercise, we'll replace the 'a option with ('a, string) result in
   the lecture Exception monad.
 
   You will change `raise` to have a string parameter, which will be put in result's Error constructor.
   You will chase all type errors to port this code over.
+
+  When you redo `run` below have it fail with the string error message if there was an error
+    i.e. make it behave more like OCaml exceptions.
 *)
-module Exception = struct
-  (* We are going to include this T below here, we just need to name this stuff. *)
-  module T = struct
-    (* This type has been updated to ('a, string) result for you, but other code mostly the same. *)
-    type 'a t = ('a,string) result
+module Exceptional = struct
+  (* This type has been updated to ('a, string) result for you, but other code mostly the same. *)
 
-    (* return injects a normal-land computation into monad-land. *)
-    let return (x: 'a) : 'a t = Some x
+  type 'a t = ('a,string) result
 
-    (* bind sequences two monad-land computations where the 2nd can use 1st's underlying value *)
-    let bind (m: 'a t) ~(f: 'a -> 'b t): 'b t =
-      match m with
-      | Some x -> f x
-      | None -> None 
+  (** [return] injects a normal-land computation into monad-land *)
+  let return (x : 'a) : 'a t = Some x
 
-    (* We let Core define `map` for us by using the `bind` we just defined. *)
-    let map = `Define_using_bind
+  (**
+    [bind] sequences two monad-land computations where the 2nd can use 1st's
+    value result.
+  *)
+  let bind (m : 'a t) (f : 'a -> 'b t) : 'b t =
+    match m with
+    | None -> None
+    | Some x -> f x
 
-    (* `run` is the standard name for 
-        1) enter monad-land from normal-land 
-        2) run a computation in monad-land;
-        3) transfer the final result back to normal-land 
+  (**
+    [map m f] is a standard monad operation which is easily defined with [bind].
+    - [map] is like [bind] but the [f] is just a normal-land function.
+    - It is called "map" because if you think of the option as a 0/1 length list
+      then the [map] operation here is analogous to [List.map].
+  *)
+  let map (m : 'a t) (f : 'a -> 'b) : 'b t =
+    bind m (fun x -> return (f x))
 
-      You should make a change here so that string message inside Error is used for failwith.
-    *)
+  (**
+    ['a monad_result] is the type transferred out of monad-land when we finally
+    want to exit.
+  *)
+  type 'a monad_result = 'a
 
-    type 'a monad_result = 'a (* 'a monad_result is the type transferred out of monad-land at end of run *)
-    let run (m : unit -> 'a t) : 'a monad_result =
-      match m () with 
-      | Some x -> x 
-      | None -> failwith "monad failed" (* CHANGE to fail with the string of the Error! *)
-    (*
-      For exception-looking syntax, we'll define a `raise` function. You should change
-      this to have a string message, which gets put in the Error constructor.
-    *)
-    let raise () : 'a t = None (* CHANGE! raise now takes a string parameter *)
+  (**
+    [run] is the standard name for
+    1) enter monad-land from normal-land;
+    2) run a computation in monad-land;
+    3) transfer the final result back to normal-land.
 
-    let try_with (m : 'a t) (f : unit -> 'a t): 'a t =
-      match m with 
-      | Some x -> Some x
-      | None -> f () 
-  end
-  include T (* The same naming trick used here as with Comparable *)
-  include Monad.Make(T) (* Core.Monad functor to add lots of extra goodies inclduing let%bind etc*)
+    [Option.get] is the name for [run] in the [Option] module.
+
+    Note that it just raises a real OCaml exception to remove the [Some].
+
+  *)
+  let run (m : unit -> 'a t) : 'a monad_result =
+    match m () with
+    | Some x -> x
+    | None -> failwith "uncaught None-exception in monad Exception"
+
+  (* Let's also add more exception-looking syntactic sugar  *)
+  let raise () : 'a t = None
+
+  let try_with (try_block : 'a t) (with_block : unit -> 'a t): 'a t =
+    match try_block with
+    | None -> with_block () (* this is a function otherwise it would always run when `try_with` called *)
+    | Some x -> Some x
 end
 
-open Exception
-open Exception.Let_syntax
+(* Lets use our usual functor to get nice syntax *)
+module Make_syntax (M : sig
+  type 'a t
+  val return : 'a -> 'a t
+  val bind : 'a t -> ('a -> 'b t) -> 'b t
+end) = struct
+  let ( let* ) = M.bind
+  let ( let+ ) x f = M.bind x (fun a -> M.return (f a))
+  let ( >>= ) = ( let* )
+  let ( >>| ) = ( let+ )
+end
 
-(* Redoing the zipping example above using Exception now *)
+open Exceptional
+open Make_syntax(Exceptional)
 
-let zip_monad l1 l2 = match List.zip l1 l2 with Unequal_lengths -> raise () | Ok l -> return l
+(* Here are some tests from the lecture notes ported to Exceptional
+   Note we have to redefine the auxiliary functions to work over Exceptional *)
 
-(* List.hd/tl return Some/None but we need Exception versions of them: *)
-let tl_or_error = function
-  | [] -> Error "No tail of empty list"
-  | _ :: tl -> Ok tl
+let combine_opt l1 l2 = try return (List.combine l1 l2) with _ -> raise ()
+let tl_opt = function [] -> raise () | _ :: tl -> return tl
+let hd_opt = function [] -> raise () | hd :: _ -> return hd
 
-let hd_or_error = function
-  | [] -> Error "No head of empty list"
-  | hd :: _ -> Ok hd
+let ex l1 l2 =
+  let* l = combine_opt l1 l2 in
+  let m = List.map (fun (x, y) -> x + y) l in (* never None, so no let* *)
+  let* tail = tl_opt m in
+  let* hd_tail = hd_opt tail in
+  return hd_tail (* "return TO the monad" *)
 
-let ex_exception l1 l2 =
-  let%bind l = zip_monad l1 l2 in 
-  let m = List.fold l ~init:[] ~f:(fun acc (x,y) -> x + y :: acc) in
-  let%bind tail = List.tl m in (* use hd_or_error etc here instead, we need Ok/Error results *)
-  let%bind hd_tail = List.hd tail in
-  return(hd_tail)
+let _ : int = run @@ fun () -> ex [1;2;3] [9;8;7]
 
-(* tests *)
-
-let _ : int = run @@ fun () -> ex_exception [1;2;3] [9;8;7]
-
-let test_exn_monad x =
+let test_exn x =
   try_with 
     (if x = 0 then raise () else return(1 + 100 / x))
     (fun () -> return(101))
 
-let _ : int = run @@ fun () -> test_exn_monad 4
-let _ : int = run @@ fun () -> test_exn_monad 0
+let _ : int = run @@ fun () -> test_exn 4
+let _ : int = run @@ fun () -> test_exn 0

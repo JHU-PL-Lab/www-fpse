@@ -13,7 +13,7 @@ Here are the high-level requirements for the projects.
 * You are also **required** to make a general library as part of your project, to get more experience with modules and functors in OCaml. You can/should do this by making an abstraction of something more concrete or specific to your project such that it is more widely usable as a library.
 * A very rough idea of the scope of the project is around 1000-2000 lines of code per person.  This will depend a lot on the particular application; we will not be making line count an explicit part of your grade.
 * You are welcome to use LLMs to aid coding in your project, but you must have a **thorough** understanding of every line of code and how every feature of your project is working.  We will be evaluating this throughout the project.  Also make sure any code produced is meeting the course guidelines.
-* Note that if your app has a user interface you are encouraged to use an LLM to code that and it can use non-OCaml.  Just keep all the logic in OCaml, not in the UI.  That code won't count for OCaml code but it does count for overall project quality.
+* Note that if your app has a user interface you are welcome to use an LLM to code that and it can use non-OCaml.  Just keep all the logic in OCaml, not in the UI.  That code won't count for OCaml code but it does count for overall project quality.
 
 ### Project Topic Thrusts
 
@@ -22,9 +22,9 @@ You will need to make a standalone application as in Assignment 6. Here are are 
 1. A command-line app with persistence.
     * The focus is on complex user interaction through the command line.
 2. A web interface app.
-    * The focus is on interaction through a UI.
+    * The focus is on interaction through a UI.  Note the underlying logic needs to be on the server.
 3. A complex library.
-    * The focus is on some sophisticated algorithm, and there may be a simple usage through the command line.
+    * The focus is on some sophisticated algorithms, and there may be a simple usage through the command line.
 
 ### Libraries Catalog
 Here is a list of well-maintained libraries we recommend using for the above approaches, as well as some resources where you can find other libraries.
