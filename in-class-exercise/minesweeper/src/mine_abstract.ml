@@ -1,3 +1,5 @@
+(* TODO: this was too hard in 2026, simplify it *)
+
 (* Make the grid more well-typed and not just characters *)
 (* Builds on mine_array.ml *)
 

@@ -238,7 +238,6 @@ let ex_bind_fixed l1 l2 =
   let* tail = tl_opt m in
   hd_opt tail (* this is already in monad-land, all good! *)
 
-
 (**
   In other words, the following two code fragments are equivalent:
     [let* hd_tail = hd_opt tail in return hd_tail]
@@ -578,12 +577,12 @@ module Exception_test : MONADIC = Exception
   needed.
 
   We next show how the underlying monad infrastructure can encode many other
-  effects: state, I/O, coroutines, etc, just by changing the wrapper type and bind/return
+  effects: state, I/O, nondeterminism, etc, just by changing the wrapper type and bind/return
 *)
 
 (**
-  First, it is good to look at the no-op monad, which does basicall nothing. It is the
-  effective identity, and we put an explicit [Wrapped] constructor around
+  First lets take a quick look at the no-op monad, which does basically nothing. It is the
+  effective identity, but we put an explicit [Wrapped] constructor around
   monadic values to be clear where monad-land starts and stops.
 *)
 
@@ -676,7 +675,7 @@ let oneplustwo_logged_nomonad =
   function types.
 
   Monads get *really* useful with higher-order monads, *functions* in the `t`
-  type. They also get more subtle to decipher what is actually happening.
+  type. They also get MUCH more subtle to decipher what is actually happening.
 
   The simplest example is "Reader", which is a READ-only state.
   Don't think of it as "input" but more like a bunch of global constants.
@@ -684,20 +683,21 @@ let oneplustwo_logged_nomonad =
   The intuition is we are going to pass the constants along so they are always
   implicitly accessible to any expression in monad land.
 *)
-
-
 module Reader = struct
   (*
     In Logger above we *returned* extra stuff, here we are *passing in* extra
     stuff. Here we let the stuff be arbitrary, of type 'e for environment.
-    This means 'e is another type parameter -- this is an "indexed monad".
+    This means 'e is another type parameter -- this is called an "indexed monad".
   *)
-  type ('a, 'e) t = 'e -> 'a (* as usual, 'a is the underlying data *)
+  type ('a, 'e) t = 'e -> 'a (* as usual, 'a is the underlying data wrapped *)
 
   (*
+    So, what is happening here is we are *implicitly* passing an extra parameter e to
+    all computations in the monad, and they can use it "for free".
+    
     bind needs to return a `'e -> 'a` so it starts with `fun e -> ...`
-    This means it gets in the envt e from its caller
-    bind's job is then to pass on the envt to its two sequenced computations
+    This means the contract is it gets in the envt e from its caller
+    bind's job is then to pass on `e` to its two sequenced computations
   *)
   let bind (m : ('a, 'e) t) (f : 'a -> ('b,'e) t) : ('b, 'e) t =
     fun (e : 'e) ->
@@ -708,7 +708,6 @@ module Reader = struct
 
   (*
     The monad is only interesting if we have an accessor for the envt.
-    Observe from the type we will be able to let* sequence this.
   *)
   let get : ('e, 'e) t = fun (e : 'e) -> e
 
@@ -718,7 +717,7 @@ end
 
 (* Examples *)
 open Reader
-let ( let* ) = bind (* We can't use our functor here since there the type is ('a, 'e) t not 'a t *)
+let ( let* ) = bind (* We can't use our functor here since the type here is ('a, 'e) t not 'a t *)
 
 (* Here is a simple environment `e` type, think of it as a set of global constants *)
 type globals =
@@ -735,11 +734,11 @@ let is_retired =
 
 let _ : bool = run is_retired {name = "Gobo"; age = 88}
 
-(* let's expand the let* to a bind: *)
+(* To understand is_retired better let's expand the let* to a bind: *)
 let is_retired' =
   bind get (fun {age;_} -> return (age > 65))
 
-(* Now let's inline the bind definition to see whats actually happening: *)
+(* Now let's inline the bind definition to see whats *actually* happening: *)
 
 let is_retired'' =
   fun e -> (fun {age;_} -> return (age > 65)) (get e) e
@@ -757,7 +756,7 @@ let _ = is_retired''' {name = "Gobo"; age = 88}
 (* Monads, mathematically *)
 
 (**
-  To *really* be a monad you need to satisfy some invariants:
+  To *truly* be a monad you need to satisfy some invariants:
 
     1) [bind (return a) f]  ===  [f a]
     2) [bind a (fun x -> return x)]  ===  [a]
