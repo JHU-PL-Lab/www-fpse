@@ -1,3 +1,5 @@
+(* TODO: make a bit harder *)
+
 (* 
   In this exercise, we'll replace the 'a option with ('a, string) result in
   the lecture Exception monad.

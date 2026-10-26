@@ -158,7 +158,7 @@ let _ =
 
 (* This is very similar-looking to the side-effecting version: *)
 let _ =
-  let l = List.combine [1;2] [3;4;5] in
+  let l = List.combine [1;2] [3;4] in
   let (n, _) :: _ = l in
   n
 
@@ -662,7 +662,8 @@ let oneplustwo_logged_nomonad =
   let onev, log2 = 1, log1 @ [] in (* by the nature of bind we are always passing the previous log onward *)
   let twov, log3 = 2, log2 @ [] in (* return adds [] since there are no log side effect *)
   let r, log4 = (onev + twov), log3 @ [] in
-  let (), log5 = (), log4 @ ["Ending!"] in
+  let (), log5 = () , ["Ending!"] in
+  let (), log6 = (), log4 @ log5 in
   (r, log5)
 
 
@@ -753,114 +754,7 @@ let is_retired''' =
 
 let _ = is_retired''' {name = "Gobo"; age = 88}
 
-(* Monads, mathematically *)
 
-(**
-  To *truly* be a monad you need to satisfy some invariants:
-
-    1) [bind (return a) f]  ===  [f a]
-    2) [bind a (fun x -> return x)]  ===  [a]
-    3) [bind a (fun x -> bind b (fun y -> c))]  ===
-       [bind (bind a (fun x -> b)) (fun y -> c)]
-       (where [c] doesn't use [x])
-
-    Let us focus on the equivalent let* versions which are easier to read:
-    1) [let* x = return a in f x]  ===  [f a]
-    2) [let* x = m in return x]  ===  [m]
-    3) [let* x = m in let* y = m' in m''] ===
-       [let* y = (let* x = m in m') in m'']
-
-  * (Note "===" here means we can replace one with the other and notice no difference)
-  * These are called the "Monad Laws"
-  * The last one is the trickiest but we hit on it earlier, it is associativity of bind
-  * The first two are mostly intuitive properties of injecting normal values into a monad
-  * Note the laws are more invariants, and can be concretely be tested on examples.
-  * All of the monads we are doing here should "pass" any such invariant tests
-*)
-
-(*
-  We in fact used all the monad laws on the initial Option example above.
-  We will review that now. Recall that our Exception module is just an
-  extension of Option.
-*)
-open Exception
-open Make_syntax(Exception)
-
-(* here is the version above we had that mostly used let* *)
-let ex_initial l1 l2 =
-  let* l = combine_opt l1 l2 in
-  let m = List.map (fun (x, y) -> x + y) l in
-  let* tail = tl_opt m in
-  let* hd_tail = hd_opt tail in
-  return hd_tail
-
-(*
-  The "let m" (non-bind) here could be changed to a let* if we wrapped
-  the defined value in a return -- this is using monad law 1) right-to-left.
-  (the "a" in the law is the List.fold .. which we abbreviated m with the let)
-*)
-let ex_first_law_applied l1 l2 =
-  let* l = combine_opt l1 l2 in
-  let* m = return (List.map (fun (x, y) -> x + y) l) in
-  let* tail = tl_opt m in
-  let* hd_tail = hd_opt tail in
-  return hd_tail
-
-(*
-  We also noticed that the last let* followed by return was just a no-op so we
-  could have done the following which is using monad law 2) right-to-left
-  (letting a be `hd_opt tail`)
-*)
-let ex_second_law_applied l1 l2 =
-  let* l = combine_opt l1 l2 in
-  let* m = return (List.map (fun (x, y) -> x + y) l) in
-  let* tail = tl_opt m in
-  hd_opt tail
-
-(*
-  Lastly we observed that pipes naturally associate like the rhs of the third
-  monad law, and the let* natural structure above is the lhs. So, with several
-  applications of the third law left-to-right on the previous we get this
-  version.
-*)
-let ex_third_law_applied l1 l2 =
-  let* tail =
-    let* m =
-      let* l = combine_opt l1 l2 in
-      return (List.map (fun (x, y) -> x + y) l)
-    in
-    tl_opt m
-  in
-  hd_opt tail
-
-(* which can be written in piped style, like this: *)
-
-let ex_piped_version_of_previous l1 l2 =
-  combine_opt l1 l2
-  >>= (fun l -> return @@ List.map (fun acc (x,y) -> x + y) l)
-  >>= tl_opt
-  >>= hd_opt
-
-(* Here is a smaller example of the third law to make it easier to see *)
-let ex_before_third_law l1 l2 =
-  let* l = combine_opt l1 l2 in
-  let* tail = tl_opt l in
-  return tail
-
-let ex_after_third_law l1 l2 =
-  let* tail =
-    (let* l = combine_opt l1 l2 in tl_opt l)
-  in
-  return tail
-
-(*
-  The following code is IDENTICAL to ex_after_third_law, just different macros
-  used.
-*)
-let ex_after_third_law_piped l1 l2 =
-  ((combine_opt l1 l2) >>= tl_opt) >>= return
-
-(* Moral: monad pipes work only because the third law works! *)
 
 (* ***** *)
 (* State *)
@@ -876,28 +770,6 @@ let ex_after_third_law_piped l1 l2 =
   return the new state.
 *)
 
-
-(* previous hand-over fist map state passing functionally *)
-let _ : bool =
-  StringMap.empty
-  |> StringMap.add "hi" 3
-  |> StringMap.add "ho" 17
-  |> StringMap.for_all (fun _ -> fun i -> i > 10)
-
-(*
-  Let's regularize it to be a bit more how the state monad works: each Map op
-  gets old map state, AND returns PAIR of value if any and new state
-*)
-let map_set key data = fun m -> ((), StringMap.add key data m)
-let map_for_all f = fun m -> ((StringMap.for_all m f), m)
-
-let _ : bool =
-  let m = StringMap.empty in
-  let (), m' = (fun m -> map_set "hi" 3 m) m in
-  let (), m'' = (fun m -> map_set "hi" 3 m) m' in
-  let b, _ = (fun m -> map_for_all m (fun _ -> fun i -> i > 10)) m'' in
-  b
-
 (*
   Let us do a simple version of State, the whole state is just one value of type
   's. This models a program with only one ref cell (e.g. one int, one StringMap,
@@ -905,10 +777,10 @@ let _ : bool =
 *)
 module State = struct
   (* Here is the monad type:
-    - 's is the type of the stateful value we are keeping
-    - We need to *thread* the 's through all computations just like we
+    - `'s` is the type of the stateful value we are keeping
+    - We need to *thread* the `'s` through all computations just like we
       informally did above
-    - So, pass the 's in like Reader *and* return it like Logger
+    - So, pass the `'s` in like Reader *and* return it like Logger *and* thread it along
   *)
   type ('a, 's) t = 's -> 'a * 's
 
@@ -918,6 +790,7 @@ module State = struct
     2) First we pass e to the first computation x
     3) x returns a pair with a potentially **different** state, s'
     4) Then, thread that latest state on to f so it gets any state updates in s'
+      - this means the monad will pass the latest state on implicitly, mirroring functional code
   *)
   (* expanding type abreviations, x : 's -> 'a * 's
                                   f : 'a -> ('s -> 'b * 's)
@@ -928,11 +801,11 @@ module State = struct
       (f x') s'
 
   let return (x : 'a) : ('a, 's) t =
-    fun s -> (x, s) (* just pass on the state we got in *)
+    fun s -> (x, s) (* just pass on the state we got in, don't drop it! *)
 
   type ('a, 's) monad_result = 'a * 's
 
-  (* Run needs to get passed in an init state *)
+  (* Run needs to get passed in an init state, like Reader but monad can "change" values *)
   let run (e : ('a, 's) t) (init : 's) : ('a, 's) monad_result =
     e init
 
@@ -946,7 +819,6 @@ end
 open State
 let ( let* ) = bind
 
-
 (* Here is an OCaml state example for review, side effect is in compiler *)
 let actual_state () =
   let r = ref 0 in
@@ -957,15 +829,14 @@ let actual_state () =
 
 let simple_state () =
   (* let r = ref 0 is in the `run` below - initial value at run launch *)
-  let* rv = (get : (int, int) t) in
-  let* () = (set(rv + 1) : (unit, int) t) in
-  (get : (int, int) t)
+  let* rv = get in
+  let* () = set(rv + 1) in get
 
 let _ = run (simple_state ()) 0
 
 (* turning the above let* into the underlying bind to be more explicit *)
 
-let simple_state () =
+let simple_state' () =
   (* let r = ref 0 is implicit - initial value at run time *)
   bind get (fun rv ->
     bind (set (rv + 1)) (fun () ->
@@ -973,7 +844,18 @@ let simple_state () =
     )
   )
 
-let _ = run (simple_state ()) 0
+let _ = run (simple_state' ()) 0
+
+(* Finally lets inline the bind to see the hand-over fist passing
+   The compiler probably optimizes the code to this -- exact same logic just some inlining!  *)
+
+let simple_state'' () =
+  fun s -> let rv, s' = get s in 
+    let (), s'' = set (rv + 1) s' in get s''
+
+let _ = run (simple_state'' ()) 0
+
+(* Notice how the threading of state here is a lot like our functional Map example up top.. *)
 
 (* Here is a bit larger example using statefulness of State
    -- sum the elements of a list with a "mutable" counter *)
@@ -995,11 +877,11 @@ let _ : (int, int) State.monad_result = run (sumlist [1;2;3;4;5]) 0
     any (one) type
   - Note a real heap is harder, can have values of different types there.
 
-   We will not cover this in lecture as it is nearly identical to the above
+   We will only skim this in lecture as it is nearly identical to State
  *)
 
 module State_map = struct
-  type 'v m = 'v StringMap.t (* shorthand name for map w/string keys anf 'v values *)
+  type 'v m = 'v StringMap.t (* shorthand name for map w/string keys and 'v values *)
   type ('a, 'v) t = 'v m -> 'a * 'v m
 
   let bind (x : ('a, 'v) t) (f: 'a -> ('b,'v) t) : ('b,'v) t =
@@ -1061,7 +943,7 @@ let _ : bool =
 
 (*
   OK now let's use our State instead. Observe that there is no m1/m2 threading
-  needed.
+  needed, the monad does that.
 *)
 let map_eg_state =
   let* () = set "hi" 3 in
@@ -1071,12 +953,134 @@ let map_eg_state =
 
 let _ = run map_eg_state
 
-let rec sum = function
-  | [] -> get "r"
-  | hd :: tl ->
-    let* n = get "r" in
-    let* _ = set "r" (n + hd) in
-    sum tl
+(* Let us now expand out the binds to reveal the hand-over-fist passing: *)
+
+let _ : bool =
+  let m = StringMap.empty in
+  let (), m' = (fun m -> set "hi" 3 m) m in
+  let (), m'' = (fun m -> set "hi" 3 m) m' in
+  let b, m''' = (fun m -> StringMap.for_all (fun _ -> fun i -> i > 10) m , m) m'' in
+  b
+
+(* and to see a bit more clearly inline the fun m calls 
+   -- observe how this is almost identical to our functional hand-over-fist version! *)
+
+let _ : bool =
+  let m = StringMap.empty in
+  let (), m' = set "hi" 3 m in
+  let (), m'' = set "hi" 3 m' in
+  let b, m''' = StringMap.for_all (fun _ -> fun i -> i > 10) m'' , m'' in
+  b
+
+
+(* Monads, mathematically *)
+
+(**
+  To *truly* be a monad you need to satisfy some invariants:
+
+    1) [bind (return a) f]  ===  [f a]
+    2) [bind a (fun x -> return x)]  ===  [a]
+    3) [bind a (fun x -> bind b (fun y -> c))]  ===
+       [bind (bind a (fun x -> b)) (fun y -> c)]
+       (where [c] doesn't use [x])
+
+    Let us focus on the equivalent let* versions which are easier to read:
+    1) [let* x = return a in f x]  ===  [f a] (* in (with return) then out (as x) is a no-op *)
+    2) [let* x = m in return x]  ===  [m]     (* out (as x) then back in is also a no-op *)
+    3) [let* x = m in let* y = m' in m''] ===
+       [let* y = (let* x = m in m') in m'']   (* associativity of bind *)
+
+  * (Note "===" here means we can replace one with the other and notice no difference)
+  * These are called the "Monad Laws"
+  * The first two are mostly intuitive properties of bind and return
+  * The last one is the trickiest but we hit on it earlier, it is associativity of bind
+  * Note the laws are invariants, and can be concretely be tested on examples.
+  * All of the monads we are doing here should "pass" any such invariant tests
+*)
+
+(*
+  We in fact used all the monad laws when rewriting the initial Option example above.
+  We will review that now. Recall that our Exception module is just an
+  extension of Option.
+*)
+open Exception
+open Make_syntax(Exception)
+
+(* here is the version above we had that mostly used let* *)
+let ex_initial l1 l2 =
+  let* l = combine_opt l1 l2 in
+  let m = List.map (fun (x, y) -> x + y) l in
+  let* tail = tl_opt m in
+  let* hd_tail = hd_opt tail in
+  return hd_tail
+
+(*
+  The "let m" (non-bind) here could be changed to a let* if we wrapped
+  the defined value in a return -- this is using monad law 1) right-to-left.
+  (the "a" in the law is the List.map .. which we abbreviated m with the let)
+*)
+let ex_first_law_applied l1 l2 =
+  let* l = combine_opt l1 l2 in
+  let* m = return (List.map (fun (x, y) -> x + y) l) in
+  let* tail = tl_opt m in
+  let* hd_tail = hd_opt tail in
+  return hd_tail
+
+(*
+  We also noticed that the last let* followed by return was just a no-op so we
+  could have done the following which is using monad law 2) right-to-left
+  (letting a be `hd_opt tail`)
+*)
+let ex_second_law_applied l1 l2 =
+  let* l = combine_opt l1 l2 in
+  let* m = return (List.map (fun (x, y) -> x + y) l) in
+  let* tail = tl_opt m in
+  hd_opt tail
+
+(*
+  Lastly we observed that pipes naturally associate like the rhs of the third
+  monad law, and the let* natural structure above is the lhs. So, with several
+  applications of the third law left-to-right on the previous we get this
+  version.
+*)
+let ex_third_law_applied l1 l2 =
+  let* tail =
+    let* m =
+      let* l = combine_opt l1 l2 in
+      return (List.map (fun (x, y) -> x + y) l)
+    in
+    tl_opt m
+  in
+  hd_opt tail
+
+(* which can be written in piped style, like this: *)
+
+let ex_piped_version_of_previous l1 l2 =
+  combine_opt l1 l2
+  >>= (fun l -> return @@ List.map (fun acc (x,y) -> x + y) l)
+  >>= tl_opt
+  >>= hd_opt
+
+(* Here is a smaller example of the third law to make it easier to see *)
+let ex_before_third_law l1 l2 =
+  let* l = combine_opt l1 l2 in
+  let* tail = tl_opt l in
+  return tail
+
+let ex_after_third_law l1 l2 =
+  let* tail =
+    (let* l = combine_opt l1 l2 in tl_opt l)
+  in
+  return tail
+
+(*
+  The following code is basically IDENTICAL to ex_after_third_law once macros expanded
+*)
+let ex_after_third_law' l1 l2 =
+  combine_opt l1 l2 >>= tl_opt >>= return (* recall monad pipes associate left *)
+  (* i.e. same as (combine_opt l1 l2 >>= tl_opt) >>= return *)
+
+(* Moral: monad pipes work only because the third law works! *)
 
 (*
   Type-directed monads:
@@ -1088,7 +1092,7 @@ let rec sum = function
 module List_monad = struct
   type 'a t = 'a list
 
-  (* Let us just try to write non-trivial bind/return that type check *)
+  (* Let us just try to write non-trivial bind/return that will type check *)
 
   let bind (m : 'a t) (f : 'a -> 'a t) : 'a t =
     List.concat (List.map f m) (* i.e. List.concat_map f m *)
@@ -1103,7 +1107,7 @@ end
 
 (*
   In a nondeterministic program, the output is a list of values, and subsequent
-  computations try all of them.
+  computations try all of them.  The above list monad is a good start for it!
 
   This allows some programming patterns to be much more simply coded.
   (We will just barely touch on this in lecture)
