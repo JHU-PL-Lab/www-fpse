@@ -823,16 +823,18 @@ let ( let* ) = bind
 let actual_state () =
   let r = ref 0 in
   let rv = !r in
-  let () = r := rv + 1 in !r
+  let () = r := rv + 1 in
+  let x = !r in x + 22
 
 (* Here is the same example re-coded in the State monad - no mutation at runtime *)
 
-let simple_state () =
+let simple_state =
   (* let r = ref 0 is in the `run` below - initial value at run launch *)
   let* rv = get in
-  let* () = set(rv + 1) in get
+  let* () = set(rv + 1) in 
+  let* x = get in return (x + 22)
 
-let _ = run (simple_state ()) 0
+let _ = run simple_state 0
 
 (* turning the above let* into the underlying bind to be more explicit *)
 
@@ -989,7 +991,6 @@ let _ : bool =
     2) [let* x = m in return x]  ===  [m]     (* out (as x) then back in is also a no-op *)
     3) [let* x = m in let* y = m' in m''] ===
        [let* y = (let* x = m in m') in m'']   (* associativity of bind *)
-
   * (Note "===" here means we can replace one with the other and notice no difference)
   * These are called the "Monad Laws"
   * The first two are mostly intuitive properties of bind and return

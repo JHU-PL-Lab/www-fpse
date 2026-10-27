@@ -123,13 +123,16 @@ To run `Lwt` from `utop` do
 ```ocaml
 #require "lwt";;
 #require "lwt.unix";; (* if you also want Lwt-ized I/O functions like file read/write etc *)
-#require "lwt_ppx";; (* for the let* syntax; need to `opam install lwt_ppx` first *)
+let ( let* ) = Lwt.bind;; (* to get the let* sugar we love *)
 ```
+Note that Lwt code often uses `let%lwt` instead of `let*`  but its historical, they are the same.  
+If you are importing code with `let%lwt` you will need to `opam install lwt_ppx`.
 
-And you might also want to do this to put the functions at the top level.
+You might also want to do this to put the functions at the top level.
 ```ocaml
 open Lwt;;
 ```
+
 
 ### Promise basics
 
@@ -161,7 +164,7 @@ What is going on here?
     - `Return v` means it has been fulfilled with `v` as the value (the input string in above case)
     - `Fail exn` means it failed with exception condition `exn`.
     - Both `Return` and `Fail` are *resolved* (finished) promises
-* The `let*` above is `let*` but for `Lwt` - syntactic sugar for `bind`
+* The `let*` above is the ususal sugar for monadic `bind`
     - `Lwt` is a monad where `'a Lwt.t` is a promise for a `'a` value.
     - As in any monad, `let* x = <a promise> in .. x normal here .. ` will take a promise back to normal-land
     - To do this, the `in` of the `let*` will need to block until that resolution.
@@ -197,7 +200,7 @@ state p;; (* now a Return "hello" *)
 
 * So far we have only shown promises, not general coroutines
 * For coroutines we need to call `Lwt_main.run` which works best in a standalone executable
-* See [lwteg.zip](../examples/lwteg.zip) for a zipfile of the examples below (most from Lwt manual)
+* See [lwt-examples.zip](../examples/zips/lwt-examples.zip) for a zipfile of the examples below (most from Lwt manual)
 * Note you can also invoke `Lwt_main.run` in the top loop but it could run forever
 
 ### A simple Example

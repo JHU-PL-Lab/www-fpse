@@ -1,0 +1,33 @@
+
+(executable
+  (name manual_examples)
+  (modules
+    manual_examples)
+  (libraries
+    lwt
+    lwt.unix
+    )    
+) 
+
+(executable
+  (name counter_server)
+  (modules
+    counter_server)
+  (libraries
+    lwt
+    lwt.unix
+    logs
+    logs.lwt
+    )
+)
+
+
+(executable
+  (name simple_counter)
+  (modules
+    simple_counter)
+  (libraries
+    lwt
+    lwt.unix
+    )    
+) 
