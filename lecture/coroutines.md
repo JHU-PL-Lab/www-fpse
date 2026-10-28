@@ -52,7 +52,7 @@ Coroutines are found in most modern PLs
   - Some loads could be from dead URLs so will time out on those
 * There are some sequencing requirements as well
   - Resize each image as it comes in (e.g. make 100x100)
-  - Once all images are in and resized or timed out, a collage is created.
+  - Add each resized image as it completes to the collage
 
 #### Idea of the implementation
 
@@ -70,20 +70,36 @@ A: Use coroutines to split I/O actions in two:
 
 #### More details on photomontage
  * Suppose for simplicity there are only two images.
- * We eventually need to wait for these loads to finish, here is how.
+ * Here is the code to request the load, and set up the continuation to run when it completes.
+
+ ```ocaml
+let img_load url =
+bind (* code to issue image request and pause *)
+     (fun img -> (* the continuation: processing code to run after this image loaded *) )
+```
+which is, in `let*` notation,
+```ocaml
+let img_load url =
+let* img = (* code to issue image request and pause *) in
+  (* image resize code to run after this image loaded; return resized image *)
+```
+
+* Observe how `bind` is naturally making the continuation a function
+* We will be using `bind` a lot when writing coroutine code in OCaml
+* Here is how we can use this to load and process two images (for simplicity)
 
 ```ocaml
 let p1 = img_load url1 in
 let p2 = img_load url2 in
-(* We immediately get to this line; the above just kicks off the requests *)
-(* p1 and p2 are called "promises" for the actual values: "I promise I'll eventually be an image" *)
+(* We *immediately* get to this line, the above didn't block only the continuations block *)
+(* the resizing code above is stashed and will automatically run when loads complete *)
+(* p1 and p2 are **promises** for the actual values: "I promise I'll eventually be an image" *)
 (* They are the underlying monadic ("wrapped") values *)
 
-(* When we need some results we use bind *)
-(* Lwt.choose picks one finished promise from p1 or p2 (the first load to complete) *)
+(* Lwt.choose picks one finished promise from p1 or p2 (the first load/resize to complete) *)
 (* The bind will block if no image has been returned so far: *)
-let* image_1 = Lwt.choose [ p1; p2 ] in (* resize the first image that finished *)
-let* image_2 = Lwt.choose [ p1; p2 ] in (* resize the second image that finished *)
+let* image_1 = Lwt.choose [ p1; p2 ] in (* add image_1 to the montage *) ;
+let* image_2 = Lwt.choose [ p1; p2 ] in (* add image_2 to the montage *)
 ```
 
 * When `let* image_1 = ...` is hit, recall this is a `bind` and all the rest of the code is in fact a function:
@@ -91,9 +107,8 @@ let* image_2 = Lwt.choose [ p1; p2 ] in (* resize the second image that finished
 * The monad behind the scenes has a data structure holding this function (aka continuation)
 * If no image load requests have returned this code will block
  - Other coroutines if any can run while waiting (including coroutines for the low-level loads)
-* It will call the continuation function `fun image_1 -> ...` when one load has completed
+* It will call the continuation function `fun image_1 -> ...` when one load/resize has completed
   - in Lwt terminology, *when promise p1 or p2 is fulfilled*.
-  - we can then process `image_1`, and next we block for the next `image_2`.
 
 ## Running Lwt
 * The above is a high level idea of the use of coroutines

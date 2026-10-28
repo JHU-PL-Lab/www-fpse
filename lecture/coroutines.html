@@ -202,7 +202,7 @@ In OCaml<br />
   <li>There are some sequencing requirements as well
     <ul>
       <li>Resize each image as it comes in (e.g. make 100x100)</li>
-      <li>Once all images are in and resized or timed out, a collage is created.</li>
+      <li>Add each resized image as it completes to the collage</li>
     </ul>
   </li>
 </ul>
@@ -228,20 +228,36 @@ In OCaml<br />
 <h4 id="more-details-on-photomontage">More details on photomontage</h4>
 <ul>
   <li>Suppose for simplicity there are only two images.</li>
-  <li>We eventually need to wait for these loads to finish, here is how.</li>
+  <li>Here is the code to request the load, and set up the continuation to run when it completes.</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
+<span class="n">bind</span> <span class="c">(* code to issue image request and pause *)</span>
+     <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* the continuation: processing code to run after this image loaded *)</span> <span class="p">)</span>
+</code></pre></div></div>
+<p>which is, in <code>let*</code> notation,</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">img</span> <span class="o">=</span> <span class="c">(* code to issue image request and pause *)</span> <span class="k">in</span>
+  <span class="c">(* image resize code to run after this image loaded; return resized image *)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Observe how <code>bind</code> is naturally making the continuation a function</li>
+  <li>We will be using <code>bind</code> a lot when writing coroutine code in OCaml</li>
+  <li>Here is how we can use this to load and process two images (for simplicity)</li>
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url1</span> <span class="k">in</span>
 <span class="k">let</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url2</span> <span class="k">in</span>
-<span class="c">(* We immediately get to this line; the above just kicks off the requests *)</span>
-<span class="c">(* p1 and p2 are called "promises" for the actual values: "I promise I'll eventually be an image" *)</span>
+<span class="c">(* We *immediately* get to this line, the above didn't block only the continuations block *)</span>
+<span class="c">(* the resizing code above is stashed and will automatically run when loads complete *)</span>
+<span class="c">(* p1 and p2 are **promises** for the actual values: "I promise I'll eventually be an image" *)</span>
 <span class="c">(* They are the underlying monadic ("wrapped") values *)</span>
 
-<span class="c">(* When we need some results we use bind *)</span>
-<span class="c">(* Lwt.choose picks one finished promise from p1 or p2 (the first load to complete) *)</span>
+<span class="c">(* Lwt.choose picks one finished promise from p1 or p2 (the first load/resize to complete) *)</span>
 <span class="c">(* The bind will block if no image has been returned so far: *)</span>
-<span class="k">let</span><span class="o">*</span> <span class="n">image_1</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">choose</span> <span class="p">[</span> <span class="n">p1</span><span class="p">;</span> <span class="n">p2</span> <span class="p">]</span> <span class="k">in</span> <span class="c">(* resize the first image that finished *)</span>
-<span class="k">let</span><span class="o">*</span> <span class="n">image_2</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">choose</span> <span class="p">[</span> <span class="n">p1</span><span class="p">;</span> <span class="n">p2</span> <span class="p">]</span> <span class="k">in</span> <span class="c">(* resize the second image that finished *)</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">image_1</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">choose</span> <span class="p">[</span> <span class="n">p1</span><span class="p">;</span> <span class="n">p2</span> <span class="p">]</span> <span class="k">in</span> <span class="c">(* add image_1 to the montage *)</span> <span class="p">;</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">image_2</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">choose</span> <span class="p">[</span> <span class="n">p1</span><span class="p">;</span> <span class="n">p2</span> <span class="p">]</span> <span class="k">in</span> <span class="c">(* add image_2 to the montage *)</span>
 </code></pre></div></div>
 
 <ul>
@@ -250,10 +266,9 @@ In OCaml<br />
   <li>The monad behind the scenes has a data structure holding this function (aka continuation)</li>
   <li>If no image load requests have returned this code will block</li>
   <li>Other coroutines if any can run while waiting (including coroutines for the low-level loads)</li>
-  <li>It will call the continuation function <code>fun image_1 -&gt; ...</code> when one load has completed
+  <li>It will call the continuation function <code>fun image_1 -&gt; ...</code> when one load/resize has completed
     <ul>
       <li>in Lwt terminology, <em>when promise p1 or p2 is fulfilled</em>.</li>
-      <li>we can then process <code>image_1</code>, and next we block for the next <code>image_2</code>.</li>
     </ul>
   </li>
 </ul>
