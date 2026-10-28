@@ -119,12 +119,14 @@ module type EQ = sig type t val equal : t -> t -> bool end
 (* Module type hiding and un-hiding review *)
 (* *************************************** *)
 
-(* We are picking up from the funtors.md lecture, start with some review.. *)
+(* We are picking up from the functors.md lecture here, let's start with some review.. *)
+
+(* Recall that "module type" and "signature" are synonyms, we will generally use the former *)
 
 (* An abstract pairing module type: *)
 
 module type PAIR = sig
-  type l
+  type l (* l and r here are hidden, i.e. they are existental types *)
   type r
   type t = l * r
   val create : l -> r -> t
@@ -133,7 +135,7 @@ module type PAIR = sig
   val equal : t -> t -> bool
 end
 
-(* Arbitrary Data with equality module type *)
+(* Arbitrary-data-with-equality module type *)
 module type DATUM = sig
   type t
   val equal : t -> t -> bool
@@ -174,7 +176,7 @@ module Example_pair = Make_pair(Int)(String)
 *)
 
 (*
-  Here is the module type for Example_pair above This is the type inferred for
+  Here is the module type for Example_pair above; this is the type inferred for
   the resulting module from the functor.
 *)
 module type EP_TYPE = sig
@@ -186,16 +188,14 @@ module type EP_TYPE = sig
 end
 
 (*
-  Also note we can just do this.
+  Also we can use this shorthand to extract the type:
 *)
 module type EPS = module type of Example_pair
 
 (**
 
-  Here we put the module into a value, making it a module-as-data, a first class
-  module.
-  [(module M)] is the syntax (parentheses necessary) to make a first class
-  module.
+  Now lets show how we can use modules as regular values aka a first class module.
+  [(module M)] is the syntax (parentheses necessary) to make a first class module.
   [(module M : MODULE_TYPE)] is the syntax when the type checker needs some help
   (which is frequently the case) to know the module type into which you intend
   to pack the module.
@@ -225,10 +225,12 @@ let _ : int =
 (* ************************************************************************** *)
 
 (*
-  When should you use first class modules? Nowadays, they can be used to avoid
-  single-purpose functors--functors that derive a module with just one function.
+  When should you use first class modules? Not very often is the first answer.
+  But, there are some cases where they are extremely handy.
+  They can be used to avoid single-purpose functors--functors that derive a module 
+  with just one function.
 
-  We all love monads, no?
+  Lets used a simplified MONAD as an example here (leaving off bind run map etc)
 *)
 
 module type MONAD = sig
@@ -238,21 +240,23 @@ module type MONAD = sig
 end
 
 (**
-  If we want to define a list-fold with a monad, we usually would use a functor.
+  If we want to define a generic list-fold working over any monad, we could use a functor.
+  (Note that "folding over a monad" means the accumulated value is a *monadic result* )
 *)
 
 module Make_list_fold (M : MONAD) = struct
-  let list_fold_leftM f init_m ls =
+  let list_fold_leftM (f : 'a -> 'b -> 'a M.m) (init_m : 'a M.m) (ls : 'b list) : 'a M.m =
     let rec fold acc_m = function
     | [] -> acc_m
     | hd :: tl ->
-      let open M in
+      let open M in (* locally open so let* works *)
       let* acc = acc_m in
       fold (f acc hd) tl
     in
     fold init_m ls
 end
 
+(* A sample monad to test our functor on *)
 module Opt = struct
   type 'a m = 'a option
   let ( let* ) = Option.Syntax.( let* )
@@ -260,7 +264,7 @@ module Opt = struct
 end
 
 (**
-  To get a [list_fold_leftM] function that works on options, we have to call the
+  Now to get a [list_fold_leftM] function that works on options, we have to call the
   functor, then name the resulting module, and then project from that module.
 *)
 module Opt_fold = Make_list_fold (Opt)
@@ -274,11 +278,13 @@ let sum_if_pos ls =
   ) (Some 0) ls
 
 (**
-  But this is a lot of heavy machinery for a single function. Module-dependent
-  functions come to our rescue!
+  But this is a lot of heavy machinery for a single function...
+  Module-dependent functions come to our rescue
 
-  We can define [list_fold_leftM] not inside a functor, but just as a function
-  that takes a module (the would-be functor parameter) itself!
+  We can instead define [list_fold_leftM] just as a function 
+  (no need for functor) that takes a module as parameter
+  - it looks a whole lot like a functor but is just a function
+  - why not just do away with functors?? Can't do this if result has types in it
 *)
 
 let list_fold_leftM (module M : MONAD) f init_m ls =
@@ -291,7 +297,11 @@ let list_fold_leftM (module M : MONAD) f init_m ls =
   in
   fold init_m ls
 
-(* With module-dependent functions, we just pass in the module on the fly! *)
+(* The above is called a module dependent function because the *types* 
+   of the later parameters depend on the *value* M in the module type MONAD. *)
+
+(* With module-dependent functions, we just pass in the module as a function parameter 
+   using first-class module syntax *)
 let sum_if_pos' ls =
   list_fold_leftM (module Opt) (fun acc a ->
     if a > 0 then

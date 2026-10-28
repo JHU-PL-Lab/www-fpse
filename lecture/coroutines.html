@@ -286,10 +286,12 @@ In OCaml<br />
 <p>To run <code>Lwt</code> from <code>utop</code> do</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">#</span><span class="n">require</span> <span class="s2">"lwt"</span><span class="p">;;</span>
 <span class="o">#</span><span class="n">require</span> <span class="s2">"lwt.unix"</span><span class="p">;;</span> <span class="c">(* if you also want Lwt-ized I/O functions like file read/write etc *)</span>
-<span class="o">#</span><span class="n">require</span> <span class="s2">"lwt_ppx"</span><span class="p">;;</span> <span class="c">(* for the let* syntax; need to `opam install lwt_ppx` first *)</span>
+<span class="k">let</span> <span class="p">(</span> <span class="k">let</span><span class="o">*</span> <span class="p">)</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">bind</span><span class="p">;;</span> <span class="c">(* to get the let* sugar we love *)</span>
 </code></pre></div></div>
+<p>Note that Lwt code often uses <code>let%lwt</code> instead of <code>let*</code>  but its historical, they are the same.  <br />
+If you are importing code with <code>let%lwt</code> you will need to <code>opam install lwt_ppx</code>.</p>
 
-<p>And you might also want to do this to put the functions at the top level.</p>
+<p>You might also want to do this to put the functions at the top level.</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Lwt</span><span class="p">;;</span>
 </code></pre></div></div>
 
@@ -329,7 +331,7 @@ In OCaml<br />
       </li>
     </ul>
   </li>
-  <li>The <code>let*</code> above is <code>let*</code> but for <code>Lwt</code> - syntactic sugar for <code>bind</code>
+  <li>The <code>let*</code> above is the ususal sugar for monadic <code>bind</code>
     <ul>
       <li><code>Lwt</code> is a monad where <code>'a Lwt.t</code> is a promise for a <code>'a</code> value.</li>
       <li>As in any monad, <code>let* x = &lt;a promise&gt; in .. x normal here .. </code> will take a promise back to normal-land</li>
@@ -368,7 +370,7 @@ In OCaml<br />
 <ul>
   <li>So far we have only shown promises, not general coroutines</li>
   <li>For coroutines we need to call <code>Lwt_main.run</code> which works best in a standalone executable</li>
-  <li>See <a href="../examples/lwteg.zip">lwteg.zip</a> for a zipfile of the examples below (most from Lwt manual)</li>
+  <li>See <a href="../examples/zips/lwt-examples.zip">lwt-examples.zip</a> for a zipfile of the examples below (most from Lwt manual)</li>
   <li>Note you can also invoke <code>Lwt_main.run</code> in the top loop but it could run forever</li>
 </ul>
 
