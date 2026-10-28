@@ -2,6 +2,7 @@
  From https://www.baturin.org/code/files/counter-server.ml
 
     Clients can increment a shared counter or read its current value.
+    telnet localhost 9000 to connect once it is running
 
 *)
 

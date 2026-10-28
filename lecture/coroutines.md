@@ -1,13 +1,15 @@
 
 ## Coroutines for Asynchronous Concurrent Programming
 
-Concurrency is needed for two main reasons
+Concurrency is needed for two distinct reasons
  1. You want to run things in **parallel** for speed gain (multi-core, cluster, etc)
  2. You are **waiting** for a result from an I/O action and want to do other work while waiting
      - Disk read/write, network request, remote API call, internal timer, etc
 In OCaml
-  * Concurrency for speed gain is new, its in OCaml 5
-  * Concurrency to support asynchronous waiting via **coroutines**: the `Lwt` library ("light weight threads").
+  * Concurrency for speed gain is relatively new in OCaml; we won't be covering it here
+  * Concurrency to support asynchronous waiting via **coroutines**
+    - in OCaml, usually via the `Lwt` library ("light weight threads") which uses monads.
+    - There is also a new algebraic effects feature which allows coroutines to be coded; future lecture topic
 
 #### Threads
  * Concurrency for speed is usually done via *threads*
@@ -20,17 +22,17 @@ In OCaml
  * So if all you need is to wait for some I/O, its often better to use coroutines
  * Key difference of a coroutine is **no preemption** - routine runs un-interrupted until it *chooses* to "yield"/"pause".
  * Means that computations are still *deterministic*, much easier to debug!
+ * Yes they may hang (loop forever) if they don't ever yield, but its relatively easy to find hanging spots
  * Such an approach is called *coroutines* due to that term being used in some early PLs.
 
 ### Coroutines in different languages
 
 Coroutines are found in most modern PLs
- * Python has the built-in [asyncio library](https://docs.python.org/3/library/asyncio-task.html)
- * JavaScript has built-in `async/await` syntax
+ * Python has the [asyncio library](https://docs.python.org/3/library/asyncio-task.html)
+ * JavaScript has `async/await` which is a key feature for web programming
+  - Don't want webpage to hang when a request is sent to server
+  - JavaScript has no parallelism so always use coroutines
  * All other commonly-used languages have some third-party library
-
- * In OCaml, `Lwt` is the standard library for coroutines in OCaml.
- * We will cover `Lwt` since most useful libraries are built over `Lwt`: `Cohttp`, `Dream`, and `Opium` for example.
 
 ### Principles of Coroutines
 
@@ -40,13 +42,14 @@ Coroutines are found in most modern PLs
 * Scenario: You want you algorithm to do ten seconds of searching for a best answer, and return the best answer when the timer goes off
   - The timer is an action that will complete in the future and you indeed want to get some work done meanwhile: use a coroutine!
 
-### A Larger Example of Coroutines: Photomontage App
+### A Larger Example of Coroutines: a Photomontage App
 
 * Suppose you want to read a bunch of images from different URLs on the Internet and make a collage of them
 * You would like to resize them in the order they show up, no need to wait for all the images to come in
-* Also if one load is slow don't block all the subsequent loads
-  - Kick them all off at the start, then process as they come in
-  - Some loads could be from dead URLs so will need to time out on those
+* Also if one load is slow don't block all the subsequent loads.
+* Solution
+  - Kick off all the requests for the images at the start, and process them as they come in
+  - Some loads could be from dead URLs so will time out on those
 * There are some sequencing requirements as well
   - Resize each image as it comes in (e.g. make 100x100)
   - Once all images are in and resized or timed out, a collage is created.
@@ -56,32 +59,16 @@ Coroutines are found in most modern PLs
 Q: How do we allow these loads to happen concurrently without fork/threads/parallelism?
 
 A: Use coroutines to split I/O actions in two:
-  1. Issue each image GET request
-  2. Package up the resizing code (the *continuation*, the "rest of the work") as a function which will run when each load completes
+  1. Issue each image GET request which fires off a system coroutine to get the image, and which will *immediately* return to user's code (no blocking)
+  2. Package up the resizing code (the *continuation*, the "rest of the work") as a function which will run when an image load completes
   3. The coroutine system will run the continuation function for each load when that load is done.
 
-It might seem odd to package up the continuation as a function, but we already did that, with Monads!
-
-Monad-think on the above:
-
-```ocaml
-let img_load url =
-bind (* code to issue image request and pause *)
-     (fun img -> (* the continuation: processing code to run after this image loaded *) )
-```
-which is, in `let*` notation,
-```ocaml
-let img_load url =
-let* img = (* code to issue image request and pause *) in
-  (* processing code to run after this image loaded*)
-```
-
-* Observe how `bind` is naturally making the continuation a function
-* So we will be using `bind` a lot when writing coroutine code in OCaml
-* In general `Lwt` is a *monad*
+* It might seem odd to package up the continuation as a function, but we already did that, with bind!
+ - recall `let* x = a in b` is `bind a (fun x -> b)` - we packaged up the "rest of the code `b`" in a function `(fun x -> b)`.
+* In general `Lwt` is a *monad* with `bind`, `return`, `run`, etc.
 * We won't be looking at the underlying structure of the `Lwt` monad, but the type `Lwt.t` is keeping a list of active coroutines and swapping between them.
 
-#### More details on phtomontage
+#### More details on photomontage
  * Suppose for simplicity there are only two images.
  * We eventually need to wait for these loads to finish, here is how.
 
@@ -89,33 +76,28 @@ let* img = (* code to issue image request and pause *) in
 let p1 = img_load url1 in
 let p2 = img_load url2 in
 (* We immediately get to this line; the above just kicks off the requests *)
-(* p1 and p2 are called "promises" for the actual values: "I promise I'll eventually be the value" *)
-(* They are the underlying monadic ("wrapped") values, we will see that below *)
-(* .. we can do any other processing here .. *)
-(* When we finally need the results of the above we use bind *)
-(* The bind will block if value not there yet: *)
-let* load1 = p1 in
-let* load2 = p2 in ...
-(* ... we will get to this line once both loads are finished -- promises fulfulled
-   If we had other coroutines they can wake up and run while waiting for these loads
-   Note we could have instead used Lwt.choose to get the *first* one completed:
-     let* a_load = Lwt.choose [ p1; p2 ]
-   For this application Lwt.choose is important to get the advantage of coroutines: block minimally
-*)
+(* p1 and p2 are called "promises" for the actual values: "I promise I'll eventually be an image" *)
+(* They are the underlying monadic ("wrapped") values *)
+
+(* When we need some results we use bind *)
+(* Lwt.choose picks one finished promise from p1 or p2 (the first load to complete) *)
+(* The bind will block if no image has been returned so far: *)
+let* image_1 = Lwt.choose [ p1; p2 ] in (* resize the first image that finished *)
+let* image_2 = Lwt.choose [ p1; p2 ] in (* resize the second image that finished *)
 ```
 
-* When `let* load1 = ...` is hit, recall this is a `bind` and all the rest of the code is in fact a function:
-  `fun load1 -> let* load2 = p2 in ...`
+* When `let* image_1 = ...` is hit, recall this is a `bind` and all the rest of the code is in fact a function:
+  `fun image_1 -> let* image_2 = p2 in ...`
 * The monad behind the scenes has a data structure holding this function (aka continuation)
-* Other coroutines if any can run while waiting, this code is just sitting
-* It will call the continuation when the low-level URL load has completed
-  - in Lwt terminology, *when the promise is fulfilled*.
-  - this will then allow the second load to happen.
+* If no image load requests have returned this code will block
+ - Other coroutines if any can run while waiting (including coroutines for the low-level loads)
+* It will call the continuation function `fun image_1 -> ...` when one load has completed
+  - in Lwt terminology, *when promise p1 or p2 is fulfilled*.
+  - we can then process `image_1`, and next we block for the next `image_2`.
 
 ## Running Lwt
-* The above is some high level idea of the use of coroutines
-* We will now fire up `Lwt`, first in the top-loop
-* See [The manual](https://ocsigen.org/lwt/latest/manual/manual) for all the details
+* The above is a high level idea of the use of coroutines
+* We will now get into the details, firing up `Lwt` in the top-loop
 
 <a name="lwt"></a>
 
@@ -125,10 +107,10 @@ To run `Lwt` from `utop` do
 #require "lwt.unix";; (* if you also want Lwt-ized I/O functions like file read/write etc *)
 let ( let* ) = Lwt.bind;; (* to get the let* sugar we love *)
 ```
-Note that Lwt code often uses `let%lwt` instead of `let*`  but its historical, they are the same.  
-If you are importing code with `let%lwt` you will need to `opam install lwt_ppx`.
+(Note that existing Lwt code often uses `let%lwt` instead of `let*`  but its historical, they are the same.)
 
-You might also want to do this to put the functions at the top level.
+You might also want to do this to put the functions at the top level.  
+We will assume it was done in the examples below.
 ```ocaml
 open Lwt;;
 ```
@@ -145,14 +127,14 @@ let* str = Lwt_io.read_line Lwt_io.stdin in Lwt_io.printf "You typed %S\n" str;;
 
 ```ocaml
 let p = Lwt_io.read_line Lwt_io.stdin in
-printf "See how read not blocking now\n"; Stdio.Out_channel.flush stdout;
+Printf.printf "DEBUG: See how read not blocking now\n"; Out_channel.flush stdout;
 let* str = p in Lwt_io.printf "You typed %S\n" str;;
 ```
 
 Lets expand the `let*` to `bind` to make this more clear:
 ```ocaml
 let p = Lwt_io.read_line Lwt_io.stdin in
-printf "See how read not blocking now\n"; Stdio.Out_channel.flush stdout;
+Printf.printf "DEBUG: See how read not blocking now\n"; Out_channel.flush stdout;
 Lwt.bind p (fun str -> Lwt_io.printf "You typed %S\n" str);;
 ```
 What is going on here?
@@ -164,20 +146,23 @@ What is going on here?
     - `Return v` means it has been fulfilled with `v` as the value (the input string in above case)
     - `Fail exn` means it failed with exception condition `exn`.
     - Both `Return` and `Fail` are *resolved* (finished) promises
-* The `let*` above is the ususal sugar for monadic `bind`
+* The `let*` above is the usual sugar for monadic `bind`
     - `Lwt` is a monad where `'a Lwt.t` is a promise for a `'a` value.
     - As in any monad, `let* x = <a promise> in .. x normal here .. ` will take a promise back to normal-land
     - To do this, the `in` of the `let*` will need to block until that resolution.
 
-Here is a top-loop example showing some of these promise states; code is a bit convoluted to be able to see results.
+Here is a top-loop test showing some of these promise states
 
 ```ocaml
- let s,p = let p0 = Lwt_io.read_line Lwt_io.stdin in (Lwt.state p0, p0);; (* state is Sleep - input not read yet*)
+ let (state,p) = let p0 = Lwt_io.read_line Lwt_io.stdin in (Lwt.state p0, p0);; (* state is Sleep - input not read yet *)
  (* type something at utop and hit return now - not shown for some reason - this is the input *)
- Lwt.state p;; (* returns `Return <the string you typed>` *)
- (* Here we artificially make  a failure state.  It is an exception internal to `Lwt`,
-    it doesn't get `raise`d in OCaml except at top *)
- let p' = Lwt.fail Exit in Lwt.state p';;
+ Lwt.state p;; (* returns `Return <the string you typed>` - promise fulfilled *)
+```
+ Here we artificially make a *failure* state.  
+ It is an exception internal to `Lwt`, it doesn't get `raise`d in OCaml except at top
+```ocaml
+ let p' = Lwt.fail Exit;;
+ Lwt.state p';;
 ```
 
 ## Making our own promises
@@ -186,7 +171,7 @@ We can make (and directly resolve) our own promises; this also shows what `Lwt_i
 ```ocaml
 let p = return "done";; (* This is the return of Lwt monad - inject a regular value as a "fulfilled" promise *)
 state p;; (* indeed it is already resolved to a `Return`. *)
-let p, r = wait ();; (* `wait` returns a pair of a sleeped promise and a resolver for it *)
+let p, r = wait ();; (* `Lwt.wait` returns a pair of a sleeped promise and a resolver for it *)
 state p;; (* Sleep *)
 wakeup_exn r Exit;; (* `wakeup_exn` uses r to resolve p to failure  *)
 state p;; (* p is now a `Fail Exit`.  Note once resolved it can't change any more. *)
@@ -200,8 +185,10 @@ state p;; (* now a Return "hello" *)
 
 * So far we have only shown promises, not general coroutines
 * For coroutines we need to call `Lwt_main.run` which works best in a standalone executable
+  - `run` here is analogous to `run` in our monads: enter the monad.
 * See [lwt-examples.zip](../examples/zips/lwt-examples.zip) for a zipfile of the examples below (most from Lwt manual)
-* Note you can also invoke `Lwt_main.run` in the top loop but it could run forever
+* We will run the simple ones in `../examples/lwt-examples/manual_examples.ml` the top loop; if all promises resolve it will exit
+  - (don't `Lwt_main.run` in the top loop if promises are not all resolved, can't return to top loop)
 
 ### A simple Example
 * Here is an example of promise resolution in an executable
@@ -231,6 +218,7 @@ Lwt_main.run (return "hello")
 ### More operations on Promises
 
 * One common operation is when you have launched a bunch of I/O requests to be able to respond when only one of them has come back
+ - Similar to the photomontage example above
 * The `Lwt` combinator for that is `choose` which picks a resolved promise from a list of promises
 * This example also terminates so we can test it in the top loop.
 
@@ -240,13 +228,14 @@ let () =
      let* () = Lwt_unix.sleep 3. in
      Lwt_io.printl "Three seconds elapsed"
    in
-
+  (* note that the print of "Three seconds elapsed" is blocking but we immediately come here 
+     - the Lwt.bind doesn't block only the invocation of its continuation, the print here *)
    let p_2 =
      let* () = Lwt_unix.sleep 5. in
      Lwt_io.printl "Five seconds elapsed"
    in
 
-   let p_3 = Lwt.choose [ p_1; p_2 ] in (* Lwt.join will resolve when both finish *)
+   let p_3 = Lwt.choose [ p_1; p_2 ] in
    Lwt_main.run p_3
 ```
 
@@ -261,8 +250,8 @@ let () =
 * The examples above had only one *user* routine running at a time, but multiple routines possible
 * `Lwt.async` launches a new coroutine
 * The engine will then round-robin between all the active coroutines
-* The coroutine will at some point need to do an Lwt operation so it can yield to others
-* Here is an example which asynchronously keeps nagging user for input:
+* The coroutine will at some point need to do an `Lwt` operation so it can yield to others
+* Here is an example which asynchronously keeps nagging the user for input:
 ```ocaml
 let () =
    let rec show_nag (n : int) : _ Lwt.t =
@@ -280,7 +269,7 @@ let () =
    end
 ```
 * In this case the `Lwt.sleep` will yield, so the read line can happen if data appeared.
-* Note the `n` counter is used so this won't nag forever.
+* Note the `n` counter is used so it will terminate, and we can run in top loop
 
 #### Pausing
 
@@ -312,13 +301,16 @@ let () =
 
 ### Using Libraries that are built on Lwt
 
-* Web libraries Cohttp, Dream, and Opium all use `Lwt`.
+* Web libraries Cohttp and Dream use `Lwt`.
 * For example for Dream when you say `Dream.run` at the top of your main program it in turn will call `Lwt_main.run`
 * `Lwt` then is running the whole time the server is up, and all of your own server code is running inside the Lwt monad.
-* The `simple_counter.ml` example in the zip gives a very high-level idea how a server like Dream works, but this example just works from stdio.
-  - In this example the `handle_connection` function is repeatedly listening for input and invoking `handle_message` to handle messages.  This is a super simplified idea of what the Dream library is doing
+* The `simple_counter.ml` example in the zip gives a very high-level idea how a server like Dream works; this example just works from stdio.
+  - The `handle_connection` function here is repeatedly listening for input and invoking `handle_message` to handle messages.  This is a super simplified idea of what the Dream library is doing
   - Your code in Dream is something like `handle_message`, it is just OCaml code which is not directly aware of `Lwt` etc.
 * The `counter_server.ml` example in the above zip is actually listening on a network port so is one step closer to a web server.
   - Again the "user" of the server just writes `handle_message` here and the server invokes that on each input to get the output.
 
-If you want to learn more about Lwt internals, see  [This `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html)
+### Docs
+
+* [Here](https://ocsigen.org/lwt/2.4.3/manual/manual) is the Lwt manual
+* If you want to learn more about Lwt internals, see  [This `Lwt` tutorial](https://raphael-proust.github.io/code/lwt-part-1.html).  

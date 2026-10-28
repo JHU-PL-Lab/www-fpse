@@ -121,15 +121,17 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     
 <h2 id="coroutines-for-asynchronous-concurrent-programming">Coroutines for Asynchronous Concurrent Programming</h2>
 
-<p>Concurrency is needed for two main reasons</p>
+<p>Concurrency is needed for two distinct reasons</p>
 <ol>
   <li>You want to run things in <strong>parallel</strong> for speed gain (multi-core, cluster, etc)</li>
   <li>You are <strong>waiting</strong> for a result from an I/O action and want to do other work while waiting
     <ul>
       <li>Disk read/write, network request, remote API call, internal timer, etc<br />
 In OCaml<br />
-       * Concurrency for speed gain is new, its in OCaml 5<br />
-       * Concurrency to support asynchronous waiting via <strong>coroutines</strong>: the <code>Lwt</code> library (“light weight threads”).</li>
+       * Concurrency for speed gain is relatively new in OCaml; we won’t be covering it here<br />
+       * Concurrency to support asynchronous waiting via <strong>coroutines</strong></li>
+      <li>in OCaml, usually via the <code>Lwt</code> library (“light weight threads”) which uses monads.</li>
+      <li>There is also a new algebraic effects feature which allows coroutines to be coded; future lecture topic</li>
     </ul>
   </li>
 </ol>
@@ -154,6 +156,7 @@ In OCaml<br />
   <li>So if all you need is to wait for some I/O, its often better to use coroutines</li>
   <li>Key difference of a coroutine is <strong>no preemption</strong> - routine runs un-interrupted until it <em>chooses</em> to “yield”/”pause”.</li>
   <li>Means that computations are still <em>deterministic</em>, much easier to debug!</li>
+  <li>Yes they may hang (loop forever) if they don’t ever yield, but its relatively easy to find hanging spots</li>
   <li>Such an approach is called <em>coroutines</em> due to that term being used in some early PLs.</li>
 </ul>
 
@@ -161,13 +164,11 @@ In OCaml<br />
 
 <p>Coroutines are found in most modern PLs</p>
 <ul>
-  <li>Python has the built-in <a href="https://docs.python.org/3/library/asyncio-task.html">asyncio library</a></li>
-  <li>JavaScript has built-in <code>async/await</code> syntax</li>
-  <li>
-    <p>All other commonly-used languages have some third-party library</p>
-  </li>
-  <li>In OCaml, <code>Lwt</code> is the standard library for coroutines in OCaml.</li>
-  <li>We will cover <code>Lwt</code> since most useful libraries are built over <code>Lwt</code>: <code>Cohttp</code>, <code>Dream</code>, and <code>Opium</code> for example.</li>
+  <li>Python has the <a href="https://docs.python.org/3/library/asyncio-task.html">asyncio library</a></li>
+  <li>JavaScript has <code>async/await</code> which is a key feature for web programming</li>
+  <li>Don’t want webpage to hang when a request is sent to server</li>
+  <li>JavaScript has no parallelism so always use coroutines</li>
+  <li>All other commonly-used languages have some third-party library</li>
 </ul>
 
 <h3 id="principles-of-coroutines">Principles of Coroutines</h3>
@@ -186,15 +187,16 @@ In OCaml<br />
   </li>
 </ul>
 
-<h3 id="a-larger-example-of-coroutines-photomontage-app">A Larger Example of Coroutines: Photomontage App</h3>
+<h3 id="a-larger-example-of-coroutines-a-photomontage-app">A Larger Example of Coroutines: a Photomontage App</h3>
 
 <ul>
   <li>Suppose you want to read a bunch of images from different URLs on the Internet and make a collage of them</li>
   <li>You would like to resize them in the order they show up, no need to wait for all the images to come in</li>
-  <li>Also if one load is slow don’t block all the subsequent loads
+  <li>Also if one load is slow don’t block all the subsequent loads.</li>
+  <li>Solution
     <ul>
-      <li>Kick them all off at the start, then process as they come in</li>
-      <li>Some loads could be from dead URLs so will need to time out on those</li>
+      <li>Kick off all the requests for the images at the start, and process them as they come in</li>
+      <li>Some loads could be from dead URLs so will time out on those</li>
     </ul>
   </li>
   <li>There are some sequencing requirements as well
@@ -211,33 +213,19 @@ In OCaml<br />
 
 <p>A: Use coroutines to split I/O actions in two:</p>
 <ol>
-  <li>Issue each image GET request</li>
-  <li>Package up the resizing code (the <em>continuation</em>, the “rest of the work”) as a function which will run when each load completes</li>
+  <li>Issue each image GET request which fires off a system coroutine to get the image, and which will <em>immediately</em> return to user’s code (no blocking)</li>
+  <li>Package up the resizing code (the <em>continuation</em>, the “rest of the work”) as a function which will run when an image load completes</li>
   <li>The coroutine system will run the continuation function for each load when that load is done.</li>
 </ol>
 
-<p>It might seem odd to package up the continuation as a function, but we already did that, with Monads!</p>
-
-<p>Monad-think on the above:</p>
-
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
-<span class="n">bind</span> <span class="c">(* code to issue image request and pause *)</span>
-     <span class="p">(</span><span class="k">fun</span> <span class="n">img</span> <span class="o">-&gt;</span> <span class="c">(* the continuation: processing code to run after this image loaded *)</span> <span class="p">)</span>
-</code></pre></div></div>
-<p>which is, in <code>let*</code> notation,</p>
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">img_load</span> <span class="n">url</span> <span class="o">=</span>
-<span class="k">let</span><span class="o">*</span> <span class="n">img</span> <span class="o">=</span> <span class="c">(* code to issue image request and pause *)</span> <span class="k">in</span>
-  <span class="c">(* processing code to run after this image loaded*)</span>
-</code></pre></div></div>
-
 <ul>
-  <li>Observe how <code>bind</code> is naturally making the continuation a function</li>
-  <li>So we will be using <code>bind</code> a lot when writing coroutine code in OCaml</li>
-  <li>In general <code>Lwt</code> is a <em>monad</em></li>
+  <li>It might seem odd to package up the continuation as a function, but we already did that, with bind!</li>
+  <li>recall <code>let* x = a in b</code> is <code>bind a (fun x -&gt; b)</code> - we packaged up the “rest of the code <code>b</code>” in a function <code>(fun x -&gt; b)</code>.</li>
+  <li>In general <code>Lwt</code> is a <em>monad</em> with <code>bind</code>, <code>return</code>, <code>run</code>, etc.</li>
   <li>We won’t be looking at the underlying structure of the <code>Lwt</code> monad, but the type <code>Lwt.t</code> is keeping a list of active coroutines and swapping between them.</li>
 </ul>
 
-<h4 id="more-details-on-phtomontage">More details on phtomontage</h4>
+<h4 id="more-details-on-photomontage">More details on photomontage</h4>
 <ul>
   <li>Suppose for simplicity there are only two images.</li>
   <li>We eventually need to wait for these loads to finish, here is how.</li>
@@ -246,39 +234,34 @@ In OCaml<br />
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url1</span> <span class="k">in</span>
 <span class="k">let</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">img_load</span> <span class="n">url2</span> <span class="k">in</span>
 <span class="c">(* We immediately get to this line; the above just kicks off the requests *)</span>
-<span class="c">(* p1 and p2 are called "promises" for the actual values: "I promise I'll eventually be the value" *)</span>
-<span class="c">(* They are the underlying monadic ("wrapped") values, we will see that below *)</span>
-<span class="c">(* .. we can do any other processing here .. *)</span>
-<span class="c">(* When we finally need the results of the above we use bind *)</span>
-<span class="c">(* The bind will block if value not there yet: *)</span>
-<span class="k">let</span><span class="o">*</span> <span class="n">load1</span> <span class="o">=</span> <span class="n">p1</span> <span class="k">in</span>
-<span class="k">let</span><span class="o">*</span> <span class="n">load2</span> <span class="o">=</span> <span class="n">p2</span> <span class="k">in</span> <span class="o">...</span>
-<span class="c">(* ... we will get to this line once both loads are finished -- promises fulfulled
-   If we had other coroutines they can wake up and run while waiting for these loads
-   Note we could have instead used Lwt.choose to get the *first* one completed:
-     let* a_load = Lwt.choose [ p1; p2 ]
-   For this application Lwt.choose is important to get the advantage of coroutines: block minimally
-*)</span>
+<span class="c">(* p1 and p2 are called "promises" for the actual values: "I promise I'll eventually be an image" *)</span>
+<span class="c">(* They are the underlying monadic ("wrapped") values *)</span>
+
+<span class="c">(* When we need some results we use bind *)</span>
+<span class="c">(* Lwt.choose picks one finished promise from p1 or p2 (the first load to complete) *)</span>
+<span class="c">(* The bind will block if no image has been returned so far: *)</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">image_1</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">choose</span> <span class="p">[</span> <span class="n">p1</span><span class="p">;</span> <span class="n">p2</span> <span class="p">]</span> <span class="k">in</span> <span class="c">(* resize the first image that finished *)</span>
+<span class="k">let</span><span class="o">*</span> <span class="n">image_2</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">choose</span> <span class="p">[</span> <span class="n">p1</span><span class="p">;</span> <span class="n">p2</span> <span class="p">]</span> <span class="k">in</span> <span class="c">(* resize the second image that finished *)</span>
 </code></pre></div></div>
 
 <ul>
-  <li>When <code>let* load1 = ...</code> is hit, recall this is a <code>bind</code> and all the rest of the code is in fact a function:<br />
-<code>fun load1 -&gt; let* load2 = p2 in ...</code></li>
+  <li>When <code>let* image_1 = ...</code> is hit, recall this is a <code>bind</code> and all the rest of the code is in fact a function:<br />
+<code>fun image_1 -&gt; let* image_2 = p2 in ...</code></li>
   <li>The monad behind the scenes has a data structure holding this function (aka continuation)</li>
-  <li>Other coroutines if any can run while waiting, this code is just sitting</li>
-  <li>It will call the continuation when the low-level URL load has completed
+  <li>If no image load requests have returned this code will block</li>
+  <li>Other coroutines if any can run while waiting (including coroutines for the low-level loads)</li>
+  <li>It will call the continuation function <code>fun image_1 -&gt; ...</code> when one load has completed
     <ul>
-      <li>in Lwt terminology, <em>when the promise is fulfilled</em>.</li>
-      <li>this will then allow the second load to happen.</li>
+      <li>in Lwt terminology, <em>when promise p1 or p2 is fulfilled</em>.</li>
+      <li>we can then process <code>image_1</code>, and next we block for the next <code>image_2</code>.</li>
     </ul>
   </li>
 </ul>
 
 <h2 id="running-lwt">Running Lwt</h2>
 <ul>
-  <li>The above is some high level idea of the use of coroutines</li>
-  <li>We will now fire up <code>Lwt</code>, first in the top-loop</li>
-  <li>See <a href="https://ocsigen.org/lwt/latest/manual/manual">The manual</a> for all the details</li>
+  <li>The above is a high level idea of the use of coroutines</li>
+  <li>We will now get into the details, firing up <code>Lwt</code> in the top-loop</li>
 </ul>
 
 <p><a name="lwt"></a></p>
@@ -288,10 +271,10 @@ In OCaml<br />
 <span class="o">#</span><span class="n">require</span> <span class="s2">"lwt.unix"</span><span class="p">;;</span> <span class="c">(* if you also want Lwt-ized I/O functions like file read/write etc *)</span>
 <span class="k">let</span> <span class="p">(</span> <span class="k">let</span><span class="o">*</span> <span class="p">)</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">bind</span><span class="p">;;</span> <span class="c">(* to get the let* sugar we love *)</span>
 </code></pre></div></div>
-<p>Note that Lwt code often uses <code>let%lwt</code> instead of <code>let*</code>  but its historical, they are the same.  <br />
-If you are importing code with <code>let%lwt</code> you will need to <code>opam install lwt_ppx</code>.</p>
+<p>(Note that existing Lwt code often uses <code>let%lwt</code> instead of <code>let*</code>  but its historical, they are the same.)</p>
 
-<p>You might also want to do this to put the functions at the top level.</p>
+<p>You might also want to do this to put the functions at the top level.  <br />
+We will assume it was done in the examples below.</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">open</span> <span class="nc">Lwt</span><span class="p">;;</span>
 </code></pre></div></div>
 
@@ -306,13 +289,13 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
 </ul>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span>
-<span class="n">printf</span> <span class="s2">"See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Stdio</span><span class="p">.</span><span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span>
+<span class="nn">Printf</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"DEBUG: See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span>
 <span class="k">let</span><span class="o">*</span> <span class="n">str</span> <span class="o">=</span> <span class="n">p</span> <span class="k">in</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <p>Lets expand the <code>let*</code> to <code>bind</code> to make this more clear:</p>
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span>
-<span class="n">printf</span> <span class="s2">"See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Stdio</span><span class="p">.</span><span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span>
+<span class="nn">Printf</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"DEBUG: See how read not blocking now</span><span class="se">\n</span><span class="s2">"</span><span class="p">;</span> <span class="nn">Out_channel</span><span class="p">.</span><span class="n">flush</span> <span class="n">stdout</span><span class="p">;</span>
 <span class="nn">Lwt</span><span class="p">.</span><span class="n">bind</span> <span class="n">p</span> <span class="p">(</span><span class="k">fun</span> <span class="n">str</span> <span class="o">-&gt;</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printf</span> <span class="s2">"You typed %S</span><span class="se">\n</span><span class="s2">"</span> <span class="n">str</span><span class="p">);;</span>
 </code></pre></div></div>
 <p>What is going on here?</p>
@@ -331,7 +314,7 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
       </li>
     </ul>
   </li>
-  <li>The <code>let*</code> above is the ususal sugar for monadic <code>bind</code>
+  <li>The <code>let*</code> above is the usual sugar for monadic <code>bind</code>
     <ul>
       <li><code>Lwt</code> is a monad where <code>'a Lwt.t</code> is a promise for a <code>'a</code> value.</li>
       <li>As in any monad, <code>let* x = &lt;a promise&gt; in .. x normal here .. </code> will take a promise back to normal-land</li>
@@ -340,14 +323,16 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
   </li>
 </ul>
 
-<p>Here is a top-loop example showing some of these promise states; code is a bit convoluted to be able to see results.</p>
+<p>Here is a top-loop test showing some of these promise states</p>
 
-<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">let</span> <span class="n">s</span><span class="o">,</span><span class="n">p</span> <span class="o">=</span> <span class="k">let</span> <span class="n">p0</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> <span class="p">(</span><span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p0</span><span class="o">,</span> <span class="n">p0</span><span class="p">);;</span> <span class="c">(* state is Sleep - input not read yet*)</span>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">let</span> <span class="p">(</span><span class="n">state</span><span class="o">,</span><span class="n">p</span><span class="p">)</span> <span class="o">=</span> <span class="k">let</span> <span class="n">p0</span> <span class="o">=</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">read_line</span> <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">stdin</span> <span class="k">in</span> <span class="p">(</span><span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p0</span><span class="o">,</span> <span class="n">p0</span><span class="p">);;</span> <span class="c">(* state is Sleep - input not read yet *)</span>
  <span class="c">(* type something at utop and hit return now - not shown for some reason - this is the input *)</span>
- <span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* returns `Return &lt;the string you typed&gt;` *)</span>
- <span class="c">(* Here we artificially make  a failure state.  It is an exception internal to `Lwt`,
-    it doesn't get `raise`d in OCaml except at top *)</span>
- <span class="k">let</span> <span class="n">p'</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">fail</span> <span class="nc">Exit</span> <span class="k">in</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p'</span><span class="p">;;</span>
+ <span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* returns `Return &lt;the string you typed&gt;` - promise fulfilled *)</span>
+</code></pre></div></div>
+<p>Here we artificially make a <em>failure</em> state.  <br />
+ It is an exception internal to <code>Lwt</code>, it doesn’t get <code>raise</code>d in OCaml except at top</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">let</span> <span class="n">p'</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">fail</span> <span class="nc">Exit</span><span class="p">;;</span>
+ <span class="nn">Lwt</span><span class="p">.</span><span class="n">state</span> <span class="n">p'</span><span class="p">;;</span>
 </code></pre></div></div>
 
 <h2 id="making-our-own-promises">Making our own promises</h2>
@@ -355,7 +340,7 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="n">return</span> <span class="s2">"done"</span><span class="p">;;</span> <span class="c">(* This is the return of Lwt monad - inject a regular value as a "fulfilled" promise *)</span>
 <span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* indeed it is already resolved to a `Return`. *)</span>
-<span class="k">let</span> <span class="n">p</span><span class="o">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">wait</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* `wait` returns a pair of a sleeped promise and a resolver for it *)</span>
+<span class="k">let</span> <span class="n">p</span><span class="o">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">wait</span> <span class="bp">()</span><span class="p">;;</span> <span class="c">(* `Lwt.wait` returns a pair of a sleeped promise and a resolver for it *)</span>
 <span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* Sleep *)</span>
 <span class="n">wakeup_exn</span> <span class="n">r</span> <span class="nc">Exit</span><span class="p">;;</span> <span class="c">(* `wakeup_exn` uses r to resolve p to failure  *)</span>
 <span class="n">state</span> <span class="n">p</span><span class="p">;;</span> <span class="c">(* p is now a `Fail Exit`.  Note once resolved it can't change any more. *)</span>
@@ -369,9 +354,17 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
 
 <ul>
   <li>So far we have only shown promises, not general coroutines</li>
-  <li>For coroutines we need to call <code>Lwt_main.run</code> which works best in a standalone executable</li>
+  <li>For coroutines we need to call <code>Lwt_main.run</code> which works best in a standalone executable
+    <ul>
+      <li><code>run</code> here is analogous to <code>run</code> in our monads: enter the monad.</li>
+    </ul>
+  </li>
   <li>See <a href="../examples/zips/lwt-examples.zip">lwt-examples.zip</a> for a zipfile of the examples below (most from Lwt manual)</li>
-  <li>Note you can also invoke <code>Lwt_main.run</code> in the top loop but it could run forever</li>
+  <li>We will run the simple ones in <code>../examples/lwt-examples/manual_examples.ml</code> the top loop; if all promises resolve it will exit
+    <ul>
+      <li>(don’t <code>Lwt_main.run</code> in the top loop if promises are not all resolved, can’t return to top loop)</li>
+    </ul>
+  </li>
 </ul>
 
 <h3 id="a-simple-example">A simple Example</h3>
@@ -411,6 +404,7 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
 
 <ul>
   <li>One common operation is when you have launched a bunch of I/O requests to be able to respond when only one of them has come back</li>
+  <li>Similar to the photomontage example above</li>
   <li>The <code>Lwt</code> combinator for that is <code>choose</code> which picks a resolved promise from a list of promises</li>
   <li>This example also terminates so we can test it in the top loop.</li>
 </ul>
@@ -420,13 +414,14 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
      <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">3</span><span class="o">.</span> <span class="k">in</span>
      <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Three seconds elapsed"</span>
    <span class="k">in</span>
-
+  <span class="c">(* note that the print of "Three seconds elapsed" is blocking but we immediately come here 
+     - the Lwt.bind doesn't block only the invocation of its continuation, the print here *)</span>
    <span class="k">let</span> <span class="n">p_2</span> <span class="o">=</span>
      <span class="k">let</span><span class="o">*</span> <span class="bp">()</span> <span class="o">=</span> <span class="nn">Lwt_unix</span><span class="p">.</span><span class="n">sleep</span> <span class="mi">5</span><span class="o">.</span> <span class="k">in</span>
      <span class="nn">Lwt_io</span><span class="p">.</span><span class="n">printl</span> <span class="s2">"Five seconds elapsed"</span>
    <span class="k">in</span>
 
-   <span class="k">let</span> <span class="n">p_3</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">choose</span> <span class="p">[</span> <span class="n">p_1</span><span class="p">;</span> <span class="n">p_2</span> <span class="p">]</span> <span class="k">in</span> <span class="c">(* Lwt.join will resolve when both finish *)</span>
+   <span class="k">let</span> <span class="n">p_3</span> <span class="o">=</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">choose</span> <span class="p">[</span> <span class="n">p_1</span><span class="p">;</span> <span class="n">p_2</span> <span class="p">]</span> <span class="k">in</span>
    <span class="nn">Lwt_main</span><span class="p">.</span><span class="n">run</span> <span class="n">p_3</span>
 </code></pre></div></div>
 
@@ -450,8 +445,8 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
   <li>The examples above had only one <em>user</em> routine running at a time, but multiple routines possible</li>
   <li><code>Lwt.async</code> launches a new coroutine</li>
   <li>The engine will then round-robin between all the active coroutines</li>
-  <li>The coroutine will at some point need to do an Lwt operation so it can yield to others</li>
-  <li>Here is an example which asynchronously keeps nagging user for input:
+  <li>The coroutine will at some point need to do an <code>Lwt</code> operation so it can yield to others</li>
+  <li>Here is an example which asynchronously keeps nagging the user for input:
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="bp">()</span> <span class="o">=</span>
  <span class="k">let</span> <span class="k">rec</span> <span class="n">show_nag</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="kt">int</span><span class="p">)</span> <span class="o">:</span> <span class="n">_</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">t</span> <span class="o">=</span>
    <span class="k">if</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="nn">Lwt</span><span class="p">.</span><span class="n">return</span> <span class="bp">()</span>
@@ -469,7 +464,7 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
 </code></pre></div>    </div>
   </li>
   <li>In this case the <code>Lwt.sleep</code> will yield, so the read line can happen if data appeared.</li>
-  <li>Note the <code>n</code> counter is used so this won’t nag forever.</li>
+  <li>Note the <code>n</code> counter is used so it will terminate, and we can run in top loop</li>
 </ul>
 
 <h4 id="pausing">Pausing</h4>
@@ -503,12 +498,12 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
 <h3 id="using-libraries-that-are-built-on-lwt">Using Libraries that are built on Lwt</h3>
 
 <ul>
-  <li>Web libraries Cohttp, Dream, and Opium all use <code>Lwt</code>.</li>
+  <li>Web libraries Cohttp and Dream use <code>Lwt</code>.</li>
   <li>For example for Dream when you say <code>Dream.run</code> at the top of your main program it in turn will call <code>Lwt_main.run</code></li>
   <li><code>Lwt</code> then is running the whole time the server is up, and all of your own server code is running inside the Lwt monad.</li>
-  <li>The <code>simple_counter.ml</code> example in the zip gives a very high-level idea how a server like Dream works, but this example just works from stdio.
+  <li>The <code>simple_counter.ml</code> example in the zip gives a very high-level idea how a server like Dream works; this example just works from stdio.
     <ul>
-      <li>In this example the <code>handle_connection</code> function is repeatedly listening for input and invoking <code>handle_message</code> to handle messages.  This is a super simplified idea of what the Dream library is doing</li>
+      <li>The <code>handle_connection</code> function here is repeatedly listening for input and invoking <code>handle_message</code> to handle messages.  This is a super simplified idea of what the Dream library is doing</li>
       <li>Your code in Dream is something like <code>handle_message</code>, it is just OCaml code which is not directly aware of <code>Lwt</code> etc.</li>
     </ul>
   </li>
@@ -519,7 +514,12 @@ If you are importing code with <code>let%lwt</code> you will need to <code>opam 
   </li>
 </ul>
 
-<p>If you want to learn more about Lwt internals, see  <a href="https://raphael-proust.github.io/code/lwt-part-1.html">This <code>Lwt</code> tutorial</a></p>
+<h3 id="docs">Docs</h3>
+
+<ul>
+  <li><a href="https://ocsigen.org/lwt/2.4.3/manual/manual">Here</a> is the Lwt manual</li>
+  <li>If you want to learn more about Lwt internals, see  <a href="https://raphael-proust.github.io/code/lwt-part-1.html">This <code>Lwt</code> tutorial</a>.</li>
+</ul>
       
           </section>
         </div>

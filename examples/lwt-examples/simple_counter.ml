@@ -22,7 +22,7 @@ let handle_message msg =
   | _ -> "Unknown command"
 
 let rec handle_connection () =
-  let* msg = Lwt_io.read_line_opt Lwt_io.stdin in
+  let* msg = Lwt_io.read_line_opt Lwt_io.stdin in (* blocks here until message entered *)
   match msg with
   | Some msg ->
       let reply = handle_message msg in
