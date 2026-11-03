@@ -4,10 +4,13 @@
     aka (more precisely) *one-shot* resumable exceptions
     aka The mother of all side effects
     -- they are another way to encode state, coroutines, etc. but instead of
-      using pure functions, just have one side-effect
+      using pure functions, just have one side effect
 *)
 
-(* First let us warm up with exceptions *)
+(*
+  First let us warm up with exceptions.
+  Exceptions are an extensible variant type. We will add the FPSE constructor.
+*)
 type exn += FPSE of string
 
 let except () =
@@ -33,11 +36,11 @@ let () =
   We can do this with effects, i.e. "resumable exceptions".
 
   Think of it as the "Pause" button on the movie you are watching.
-    - You can go off and do anything else and that movie stays on pause
-    - But, you can resume the movie any time in the future from the exact same spot!
-    - Also, when you resume the old "pause point" is gone, no re-resuming from
-    the same spot twice. (Of course you can "pause" again in the future from
-    another point.)
+  - You can go off and do anything else and that movie stays on pause
+  - But, you can resume the movie any time in the future from the exact same spot!
+  - Also, when you resume the old "pause point" is gone, no re-resuming from
+  the same spot twice. (Of course you can "pause" again in the future from
+  another point.)
 *)
 
 (* Uses the Effect system of OCaml 5 *)
@@ -79,14 +82,14 @@ let () =
   What if when we yield, we want to give a value to the catcher?
 *)
 
-(** [Printme s] gives the string [s] to whoever catches the effect. Any value
-  [Printme s] still has type [unit t], so the performer only gets the value
-  [() : unit] back when the continuation is resumed. *)
-type _ Effect.t += Printme : string -> unit t
+(** [Print_me s] gives the string [s] to whoever catches the effect. Any value
+    [Print_me s] still has type [unit t], so the performer only gets the value
+    [() : unit] back when the continuation is resumed. *)
+  type _ Effect.t += Print_me : string -> unit t
 
 let printme () =
   print_endline "Here";
-  perform (Printme "There, but where?");
+  perform (Print_me "There, but where?");
   print_endline "Back again"
 
 (* This will print:
@@ -96,36 +99,8 @@ let printme () =
 *)
 let () =
   try printme () with
-  | effect Printme s, k ->
+  | effect Print_me s, k ->
     print_endline s; (* Print the string contained in the effect *)
-    continue k ()
-
-(**
-  Since [Effect.t] is just a extensible variant, we can pass them around like
-  first class values. The above examples can be deduplicated.
-*)
-
-let deduped eff =
-  print_endline "Here";
-  perform eff; (* perform the effect that was passed in *)
-  print_endline "Back again"
-
-
-(* This will print:
-    Here
-    Yielded
-    Back again
-    Here
-    Printing me
-    Back again
-*)
-let () =
-  try deduped Yield; deduped (Printme "Printing me") with
-  | effect Yield, k ->
-    print_endline "Yielded";
-    continue k ()
-  | effect Printme s, k ->
-    print_endline s;
     continue k ()
 
 (*
@@ -134,16 +109,17 @@ let () =
   continuation is resumed, we want a value with which to continue?
 
   To demo this we will keep using our printing example, but instead of
-  "Back again", we will print some provided string. *)
+  "Back again", we will print some provided string.
+*)
 
-(** The [Printyou] effect has type [string t], so the performer will get back
+(** The [Print_you] effect has type [string t], so the performer will get back
   a value with type [string] when resumed. Above, it was always unit. *)
-type _ Effect.t += Printyou : string t
+type _ Effect.t += Print_you : string t
 
 let printyou () =
   print_endline "Here";
   (* Assign the name to_print to the value that we get back when resuming. *)
-  let to_print = perform Printyou in
+  let to_print = perform Print_you in
   print_endline to_print (* print that string *)
 
 (* This will print:
@@ -153,7 +129,7 @@ let printyou () =
 *)
 let () =
   try printyou () with
-  | effect Printyou, k ->
+  | effect Print_you, k ->
     print_endline "Caught";
     (* We pass the string "Resumed" back to where the effect was performed. *)
     continue k "Resumed"
@@ -176,7 +152,8 @@ let newdiv x y =
 let _ : int = newdiv 33 0
 
 (*
-  Now let's overwrite the division operator. To use our new division.
+  Now let's overwrite the division operator to use our new division.
+  Whenever it divides by 0, we will print so, and return 1 instead.
 *)
 let (/) n m =
   try newdiv n m with
@@ -191,11 +168,11 @@ let _ : int = (3 / 0) + (8 / 0) + 1 (* same as 1 + 1 + 1 *)
 let div_list (l : int list) : int =
   List.fold_right (fun n acc -> n / acc) l 1
 
-let _ = div_list [1000;100;2];; (* 1000/(100/2) = 20, no failures *)
+let _ = div_list [1000;100;2] (* 1000/(100/2) = 20, no failures *)
 
-let _ = div_list [10;100;20;2];; (* 10/(100/(20/2)) = 1, still no failures *)
+let _ = div_list [10;100;20;2] (* 10/(100/(20/2)) = 1, still no failures *)
 
-let _ = div_list [20;4;2;1000;100;2;4];; (* multiple failures here *)
+let _ = div_list [20;4;2;1000;100;2;4] (* multiple failures here *)
 
 (* The above exception can only be resumed (continued) once;
    thus it is a **one-shot** resumable exception *)
@@ -221,46 +198,47 @@ let _ = (adding_div 3 0) + (adding_div 8 2) + 1
 
 (*
   How is this implemented?  It is fairly intuitive.
-  1) For each try/with which might raise an effect, run the try on its own stack
+  1) For each try/with that catches an effect, run the try on its own stack
   2) If an effect is performed, *freeze* that runtime stack and program counter
   3) Run the effect handler code on a forked stack
   4) If there is a continue, thaw the frozen stack/pc and re-start
 
-  Note there is also a `discontinue` which is for the case you want to keep
-  raising the failure as an actual exception instead of resiming the
-  continuation.
+  Note there is also a `discontinue` which is for the case you do not want to
+  continue at all. Every continuation must be resumed once, so instead of
+  resuming it with a value, we resume by raising an exception from that point.
 *)
 
-(* OK hopefully one-shot resumable exceptions make some sense now.
+(*
+  OK hopefully one-shot resumable exceptions make some sense now.
 
-   But this is only the beginning: it turns out just about any side effect can
-   be encoded with only resumable exceptions - !  Its fairly complex though so
-   we will skip in lecture.   See below if interested.
+  But this is only the beginning: it turns out that just about any side effect
+  can be encoded with only resumable exceptions - !  Its fairly complex though
+  so we will skip in lecture.   See below if interested.
 *)
 
 
-(* Encoding state with resumable exceptions
+(*
+  Encoding state with resumable exceptions.
 
-The high level idea of the encoding is as follows:
+  The high level idea of the encoding is as follows:
 
-1) at the very top level we have a try block as with the previous example
-2) for any state operation we throw a resumable exception
-3) .. this gets us back to the top level try
-4) where we can (functionally) make any state operations and
-5) resume by possibly returning the get result if needed.
+  1) at the very top level we have a try block as with the previous example
+  2) for any state operation we throw a resumable exception
+  3) .. this gets us back to the top level try
+  4) where we can (functionally) make any state operations and
+  5) resume by possibly returning the "get" result if needed.
 
-It ends up being more complex because the state has to get threaded along
+  It ends up being complex because the state has to get threaded along.
 
-Note for this example we will have a global state consisting of one integer only, but in
-general that `int` could be any OCaml type.
-
+  Note for this example we will have a global state consisting of one integer
+  only, but in general that `int` could be any OCaml type.
 *)
 
 type _ Effect.t +=
   | Get: int t (* get the int state *)
   | Set: int -> unit t (* set the int state *)
 
-let run (type a) ~init (main : unit -> a) : int * a =
+let run (type a) ~(init : int) (main : unit -> a) : int * a =
   let handle =
     match main () with
     | effect Get, k ->
@@ -292,7 +270,7 @@ let run (type a) ~init (main : unit -> a) : int * a =
 
 let simple () : unit =
   assert (0 = perform Get);
-  perform @@ Set 42;
+  perform (Set 42);
   assert (42 = perform Get)
 
 let test = run ~init:0 simple
@@ -370,7 +348,7 @@ See https://github.com/ocamllabs/ocaml-effects-tutorial/blob/master/sources/solv
 *)
 
 (* Appendix: another version of run for state that uses try/with *)
-let run' ~(init: int) (main : unit -> unit) : unit =
+let run' ~(init : int) (main : unit -> unit) : unit =
   let comp : int -> unit =
     try main (); fun (_ : int) -> () with
     | effect Get, k ->
