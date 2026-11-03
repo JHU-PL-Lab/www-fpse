@@ -1,39 +1,44 @@
 
-(* Minesweeper implementation with mutation
-   Largely an example of poor programming style
+(*
+  Minesweeper implementation with mutation.
+  This is largely an example of poor programming style.
 
-From https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae59540d18f3c18615dcbb956
-
+  From
+    https://exercism.io/tracks/ocaml/exercises/minesweeper/solutions/384efbcae59540d18f3c18615dcbb956
 *)
 
 (* Better abstraction of the board cells here: *)
 
 type cell = Mine | Empty of int
 
-(* A very poor abstraction of the board, a 1D array not a 2D array - ! 
-   - requires arithmetic to compute the offset, ouch! 
-   Also the row/culumn size then needs to be explicit - double ouch!! *)
+(*
+  A very poor abstraction of the board, a 1D array not a 2D array - !
+  This requires arithmetic to compute the offset, ouch!
+  Also the row/column size then needs to be explicit - double ouch!!
+*)
 
-type state = { board : cell Array.t; rows : int; columns : int }
+type state = { board : cell Array.t ; rows : int ; columns : int }
 
 let create_state rows columns =
-  { board = Array.make (rows * columns) @@ Empty 0; rows; columns }
+  { board = Array.make (rows * columns) @@ Empty 0 ; rows ; columns }
 
 let string_of_cell = function
   | Mine -> "*"
   | Empty 0 -> " "
   | Empty n -> Int.to_string n
 
-(* The conversion code to/from the test format is extremely ugly now, its C-style *)  
-let serialize { board; rows; columns } =
+(* The conversion code to/from the test format is extremely ugly now, it is C-style *)
+let serialize { board ; rows ; columns } =
   let converted_board = Array.map string_of_cell board in
   let rec to_list l i acc =
-    if i = Array.length board then (List.rev acc |> String.concat "") :: l
+    if i = Array.length board then
+      (List.rev acc |> String.concat "") :: l
     else if List.length acc = columns then
       to_list
         ((List.rev acc |> String.concat "") :: l)
         (i + 1) [ converted_board.(i) ]
-    else to_list l (i + 1) (converted_board.(i) :: acc)
+    else
+      to_list l (i + 1) (converted_board.(i) :: acc)
   in
   if rows = 0 then [] else to_list [] 0 [] |> List.rev
 
@@ -44,16 +49,19 @@ let parse = function
     let rows = List.length l in
     let state = create_state rows columns in
     l
-    |> List.concat_map (fun s -> String.to_seq s |> List.of_seq)
-    |> List.iteri (fun i c ->
-        state.board.(i) <- (match c with '*' -> Mine | _ -> Empty 0));
+    |> String.concat ""
+    |> String.iteri (fun i c ->
+        state.board.(i) <- (match c with '*' -> Mine | _ -> Empty 0)
+    );
     state
 
 let neighbors length columns i =
   let rows = length / columns in
   let row_col_to_idx (row, col) =
-    if (row >= 0 && row < rows && col >= 0 && col < columns) then
-      Some ((row * columns) + col) else None
+    if row >= 0 && row < rows && col >= 0 && col < columns then
+      Some ((row * columns) + col)
+    else
+      None
   in
   let row = i / columns in
   let col = i mod columns in
@@ -75,7 +83,8 @@ let handle_cell state i = function
     |> List.iter (fun idx ->
         match state.board.(idx) with
         | Mine -> ()
-        | Empty n -> state.board.(idx) <- Empty (n + 1))
+        | Empty n -> state.board.(idx) <- Empty (n + 1)
+    )
   | Empty _ -> ()
 
 let annotate input =
