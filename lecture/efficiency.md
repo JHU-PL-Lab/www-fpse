@@ -21,7 +21,7 @@ let rec fold_right f ls acc =
 ```
 * A tail-recursive function is a function where there is no work to do after returning from recursive calls
   - See how the last thing `fold_left` does is call `fold_left`.
-  - Just bubble up the result
+  - Just directly return the result
 * Observation: since there is no need to mark the call point to resume from, no stack is needed
   - We can overwrite the parameters going "down", and return the base case as the final result of the recursion.
   - There is no need to pop off the stack.
@@ -33,7 +33,7 @@ let rec fold_right f ls acc =
 
 Let us warm up by reviewing `'a list` efficiency.
 
-* `hd` and `tl` are O(1)
+* `hd` and `tl` are O(1); that is to say, _pattern matching_ is O(1).
 * `List.nth` is O(n) -- lists are not random access
 * `append l1 l2` is O(`length l1`) - cons each `l1` elt onto `l2` one by one
 
@@ -74,7 +74,7 @@ Summary: functional data structures...
 - in a few cases are actually better because past states "persist for free"
   - e.g. sub-lists can be shared since copying never needed, etc
   - See [Real World OCaml Hash table vs Map comparison (scroll down)](https://dev.realworldocaml.org/maps-and-hashtables.html#time-complexity-of-hash-tables) for example benchmarks.
-    - For standard, uses a mutable hashtable will be "O(1)" vs O(log n) for the corresponding `Map` operations
+    - For standard uses, a mutable hashtable will be "O(1)" vs O(log n) for the corresponding `Map` operations
     - But if there are many minor variations on the Map/Hashset being created, the functional data structure will in fact be faster due to the sharing immutability can support.
 
 In a few cases, speed is critical, and mutable structures are required.
@@ -95,7 +95,7 @@ Our implementation [using a functional 2D array](../examples/minesweeper/src/min
 * O(1) for each inc operation so O(n) in total.
 
 Stateful version [using an array](../examples/minesweeper/src/mine_mutate.ml)
-* Instead of counting mines around each empty square once and for all, for each mine increment all its non-mine neighbors
+* Instead of counting mines around each empty square once and for all, for each mine increments all its non-mine neighbors
 * It is a fundamentally mutating alternative algorithm.
 * O(n) as with the previous functional array version
 
