@@ -130,43 +130,53 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <h3 id="tail-recursion">Tail recursion</h3>
 
 <ul>
-  <li>We covered this earlier: <code>List.fold_left</code> is tail-recursive whereas <code>List.fold_right</code> is not<br />
-```ocaml<br />
-let rec fold_left f acc ls =<br />
-match ls with<br />
-| [] -&gt; acc<br />
-| hd :: tl -&gt; fold_left f (f acc hd) tl</li>
+  <li>We covered this earlier: <code>List.fold_left</code> is tail-recursive whereas <code>List.fold_right</code> is not</li>
 </ul>
 
-<p>let rec fold_right f ls acc =<br />
-  match ls with<br />
-  | [] -&gt; acc<br />
-  | hd :: tl -&gt; f hd (fold_right f tl acc)</p>
-<pre><code>* A tail-recursive function is a function where there is no work to do after returning from recursive calls
-  - See how the last thing `fold_left` does is call `fold_left`.
-  - Just directly return the result
-* Observation: since there is no need to mark the call point to resume from, no stack is needed
-  - We can overwrite the parameters going "down", and return the base case as the final result of the recursion.
-  - There is no need to pop off the stack.
-  - See how in `fold_right`, once the recursive call to `fold_right` returns, we still need to do work: call `f`.
-* Compilers can see which functions are tail recursive and then eliminate the stack.
-* Moral: to save space/time, you may need to tail-call
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">rec</span> <span class="n">fold_left</span> <span class="n">f</span> <span class="n">acc</span> <span class="n">ls</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">ls</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">acc</span>
+  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">fold_left</span> <span class="n">f</span> <span class="p">(</span><span class="n">f</span> <span class="n">acc</span> <span class="n">hd</span><span class="p">)</span> <span class="n">tl</span>
 
-### Imperative vs functional data structures
+<span class="k">let</span> <span class="k">rec</span> <span class="n">fold_right</span> <span class="n">f</span> <span class="n">ls</span> <span class="n">acc</span> <span class="o">=</span>
+  <span class="k">match</span> <span class="n">ls</span> <span class="k">with</span>
+  <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">acc</span>
+  <span class="o">|</span> <span class="n">hd</span> <span class="o">::</span> <span class="n">tl</span> <span class="o">-&gt;</span> <span class="n">f</span> <span class="n">hd</span> <span class="p">(</span><span class="n">fold_right</span> <span class="n">f</span> <span class="n">tl</span> <span class="n">acc</span><span class="p">)</span>
+</code></pre></div></div>
+<ul>
+  <li>A tail-recursive function is a function where there is no work to do after returning from recursive calls
+    <ul>
+      <li>See how the last thing <code>fold_left</code> does is call <code>fold_left</code>.</li>
+      <li>Just directly return the result</li>
+    </ul>
+  </li>
+  <li>Observation: since there is no need to mark the call point to resume from, no stack is needed
+    <ul>
+      <li>We can overwrite the parameters going “down”, and return the base case as the final result of the recursion.</li>
+      <li>There is no need to pop off the stack.</li>
+      <li>See how in <code>fold_right</code>, once the recursive call to <code>fold_right</code> returns, we still need to do work: call <code>f</code>.</li>
+    </ul>
+  </li>
+  <li>Compilers can see which functions are tail recursive and then eliminate the stack.</li>
+  <li>Moral: to save space/time, you may need to tail-call</li>
+</ul>
 
-Let us warm up by reviewing `'a list` efficiency.
+<h3 id="imperative-vs-functional-data-structures">Imperative vs functional data structures</h3>
 
-* `hd` and `tl` are O(1); that is to say, _pattern matching_ is O(1).
-* `List.nth` is O(n) -- lists are not random access
-* `append l1 l2` is O(`length l1`) - cons each `l1` elt onto `l2` one by one
+<p>Let us warm up by reviewing <code>'a list</code> efficiency.</p>
 
-Remember that sub-lists are shared since they are immutable.
+<ul>
+  <li><code>hd</code> and <code>tl</code> are O(1); that is to say, <em>pattern matching</em> is O(1).</li>
+  <li><code>List.nth</code> is O(n) – lists are not random access</li>
+  <li><code>append l1 l2</code> is O(<code>length l1</code>) - cons each <code>l1</code> elt onto <code>l2</code> one by one</li>
+</ul>
 
-```ocaml
-let l1 = [1;2;3;... n] in
-let l2 = 0    :: l1 in
-let l3 = (-1) :: l1 in ..
-</code></pre>
+<p>Remember that sub-lists are shared since they are immutable.</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">l1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">;</span><span class="mi">3</span><span class="p">;</span><span class="o">...</span> <span class="n">n</span><span class="p">]</span> <span class="k">in</span>
+<span class="k">let</span> <span class="n">l2</span> <span class="o">=</span> <span class="mi">0</span>    <span class="o">::</span> <span class="n">l1</span> <span class="k">in</span>
+<span class="k">let</span> <span class="n">l3</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">::</span> <span class="n">l1</span> <span class="k">in</span> <span class="o">..</span>
+</code></pre></div></div>
 
 <ul>
   <li><code>l2</code> and <code>l3</code> share <code>l1</code>.</li>

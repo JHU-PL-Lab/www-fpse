@@ -8,6 +8,7 @@
 ### Tail recursion
 
 * We covered this earlier: `List.fold_left` is tail-recursive whereas `List.fold_right` is not
+
 ```ocaml
 let rec fold_left f acc ls =
   match ls with
