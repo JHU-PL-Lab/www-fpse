@@ -206,7 +206,87 @@ let _ = (adding_div 3 0) + (adding_div 8 2) + 1
   Note there is also a `discontinue` which is for the case you do not want to
   continue at all. Every continuation must be resumed once, so instead of
   resuming it with a value, we resume by raising an exception from that point.
+
+  We will demonstrate discontinuing by writing a timeout effect.
 *)
+
+(*
+  The timed function must cooperate and perform this effect occasionally,
+  yielding control to the timer.
+*)
+type _ Effect.t += Yield_to_timer : unit Effect.t
+
+type exn += Timeout
+
+(*
+  We will use the Mtime library for counters and time span comparisons. Here is
+  a helper to print how much time passed before finishing.
+*)
+let print_finished counter =
+  let elapsed = Mtime_clock.count counter in
+  let seconds = Mtime.Span.(to_float_ns elapsed /. to_float_ns s) in
+  Printf.printf "Finished in %.4f seconds\n" seconds
+
+let run_with_timeout t_limit f a =
+  let counter = Mtime_clock.counter () in
+  match f a with
+  | effect Yield_to_timer, k ->
+    let elapsed = Mtime_clock.count counter in
+    if Mtime.Span.is_longer elapsed ~than:t_limit then
+      (* Ran out of time. Now free the continuation by discontinuing. *)
+      try discontinue k Timeout with
+      | Timeout -> None
+    else
+      (* There is still time left. *)
+      continue k ()
+  | x ->
+    print_finished counter;
+    Some x
+
+let rec yielding_fib n =
+  if n <= 0 then
+    (perform Yield_to_timer; 0)
+  else if n = 1 then
+    1
+  else
+    yielding_fib (n - 1) + yielding_fib (n - 2)
+
+let t_limit = Mtime.Span.(50 * ms)
+let _ = run_with_timeout t_limit yielding_fib 20
+let _ = run_with_timeout t_limit yielding_fib 25
+let _ = run_with_timeout t_limit yielding_fib 30
+
+(*
+  How much time are we spending yielding control and checking for timeout?
+  Let's write an uncooperative fib function that never yields. How fast does it
+  finish?
+*)
+let rec fib n =
+  if n <= 0 then
+    0
+  else if n = 1 then
+    1
+  else
+    fib (n - 1) + fib (n - 2)
+
+let _ = run_with_timeout t_limit fib 30
+
+(*
+  We can spend less time yielding by only yielding before a slightly expensive
+  operation, like fib 15.
+*)
+let rec faster_fib n =
+  if n = 15 then perform Yield_to_timer;
+  (* Otherwise, all the same as the non-yielding fib *)
+  if n <= 0 then
+    0
+  else if n = 1 then
+    1
+  else
+    faster_fib (n - 1) + faster_fib (n - 2)
+
+(* Not too much slower than plain fib. *)
+let _ = run_with_timeout t_limit faster_fib 30
 
 (*
   OK hopefully one-shot resumable exceptions make some sense now.
