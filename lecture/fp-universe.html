@@ -123,7 +123,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>“This is the Dawn of the Age of FP”, there are now many choices of FP languages</li>
   <li>There are both viable functional-focused languages as well as FP extensions to existing languages</li>
-  <li>We review the landscape here so you can us some FP on your next Python/Java(Script)/C++/… project</li>
+  <li>FP is also the basis of modern automated theorem provers which are becoming very popular now</li>
+  <li>We review the landscape here so you can take advantage of the power of FP even if not using OCaml</li>
 </ul>
 
 <p>Along with the FP there are some other things we covered that you can re-use in other langauges:</p>
@@ -267,7 +268,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Haskell is an ML descendant, it shares a lot of the same syntax</li>
-  <li>It is hard-core FP: no direct side effects at all, must use monads for every side-effect (ouch!)</li>
+  <li>It is hard-core FP: no direct side effects at all, must use monads for <em>every</em> side-effect (ouch!)</li>
   <li>It was gaining in popularity but interest has leveled off in the last few years
     <ul>
       <li>monads are too hard-core for your average programmer</li>
@@ -304,6 +305,184 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   </li>
   <li>Additionally, Smalltalk, Ruby, Python, and JavaScript are descended from Lisp (more below on those)</li>
   <li>The Lisp school is generally in decline these days, <code>(the syntax (sucks) (since everything is just an s-expression (like this)))</code></li>
+</ul>
+
+<h2 id="the-functional-language-inside-theorem-provers-lean">The Functional language inside Theorem Provers: Lean</h2>
+
+<ul>
+  <li>You may have heard the recent news about how LLMs have solved many open problems in math
+    <ul>
+      <li>Not only proving them but <em>verifying the proofs are correct</em> in an automated theorem prover.</li>
+      <li>This means a computer has verified every single line of every proof.</li>
+      <li>It is right now <a href="https://www.quantamagazine.org/is-ai-the-end-of-math-as-we-know-it-20261005/">turning the research field of mathematics upside-down</a>.</li>
+    </ul>
+  </li>
+  <li>The main prover being used is a tool called <a href="https://lean-lang.org">Lean</a> which we will cover briefly now.  <a href="https://rocq-prover.org">Rocq</a> is another popular one.</li>
+</ul>
+
+<p>Here is some Lean code from their homepage:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">/--</span> <span class="nc">A</span> <span class="n">binary</span> <span class="n">search</span> <span class="n">funtion</span> <span class="k">in</span> <span class="nc">Lean</span> <span class="o">-/</span>
+<span class="n">def</span> <span class="n">bsearch</span> <span class="p">(</span><span class="n">a</span> <span class="o">:</span> <span class="nc">Array</span> <span class="nc">UInt64</span><span class="p">)</span> <span class="p">(</span><span class="n">x</span> <span class="o">:</span> <span class="nc">UInt64</span><span class="p">)</span> <span class="p">(</span><span class="n">lo</span> <span class="n">hi</span> <span class="o">:</span> <span class="nc">Nat</span><span class="p">)(</span><span class="n">h</span> <span class="o">:</span> <span class="n">hi</span> <span class="err">≤</span> <span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">:</span> <span class="nc">Option</span> <span class="nc">Nat</span> <span class="o">:=</span>
+  <span class="k">if</span> <span class="n">_</span> <span class="o">:</span> <span class="n">lo</span> <span class="o">&lt;</span> <span class="n">hi</span> <span class="k">then</span>
+    <span class="k">let</span> <span class="n">m</span> <span class="o">:=</span> <span class="n">lo</span> <span class="o">+</span> <span class="p">(</span><span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="k">then</span> <span class="n">bsearch</span> <span class="n">a</span> <span class="n">x</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="n">hi</span> <span class="n">h</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="k">then</span> <span class="n">bsearch</span> <span class="n">a</span> <span class="n">x</span> <span class="n">lo</span> <span class="n">m</span> <span class="p">(</span><span class="n">by</span> <span class="n">lia</span><span class="p">)</span>
+    <span class="k">else</span> <span class="n">some</span> <span class="n">m</span>
+  <span class="k">else</span> <span class="n">none</span>
+<span class="n">termination_by</span> <span class="n">hi</span> <span class="o">-</span> <span class="n">lo</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Looks spookily familiar, no?
+    <ul>
+      <li><code>Array/UInt64/Option</code> are exactly OCaml’s <code>iarray/uint64/option</code> types</li>
+      <li><code>def</code> is <code>let rec</code>, <code>let m := ...</code> is <code>let m = ...</code>, <code>a[m]</code> is <code>a.(m)</code></li>
+      <li>Lean is really just a fancy functional programming language!</li>
+    </ul>
+  </li>
+  <li>Lean is in several ways more powerful than OCaml
+    <ul>
+      <li>It has much much richer types (believe it or not), so rich that typechecking is not even decidible!</li>
+      <li>So, you need to <em>prove</em> your programs typecheck</li>
+      <li>Additionally functions are all <em>total</em>, they must terminate on all inputs</li>
+      <li>The <code>termination_by hi - lo</code> in the above allows Lean to automatically prove this function terminates: <code>(hi - lo)</code> is strictly decreasing in each recursive call</li>
+    </ul>
+  </li>
+  <li>Lean’s types are so rich that they are also a <em>logic</em> (which is what does the math stuff)
+    <ul>
+      <li>Notice the odd looking <code>if _ : lo &lt; hi then ...</code> - whats the <code>_ :</code> doing there??</li>
+      <li>Answer: Lean lets types represent truth values (!)
+        <ul>
+          <li>An empty type (i.e. it has no members) represents “false”</li>
+          <li>A type with <em>any</em> member at all represents “true”</li>
+          <li>(Since there are no diverging functions some types will really be empty - not in OCaml)</li>
+          <li>In this example, <code>lo &lt; hi</code> is a <em>type</em>, not an expression</li>
+          <li>The <code>_ : ..</code> means the type has <em>some</em> member that we don’t care about, <code>_</code></li>
+          <li>In general to “prove” a proposition means to find <em>any</em> member of the corresponding type.</li>
+        </ul>
+      </li>
+      <li>The parameter <code>(h : hi ≤ a.size)</code> is another example of this, it is a type expressing <code>hi</code> is in-bounds
+        <ul>
+          <li>it would be a <em>type error</em> to invoke this function with <code>hi</code> being out of bounds</li>
+        </ul>
+      </li>
+      <li>In general, all of logic can be expressed as types using this interpretation</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="dependent-types-and-type">Dependent Types and <code>Type</code></h4>
+
+<ul>
+  <li>Lets do some smaller examples now to better understand this stuff</li>
+  <li>Here is list <code>cons</code> in Lean (its in fact built-in but this shows the types):</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">def</span> <span class="n">cons</span> <span class="p">(</span><span class="err">α</span> <span class="o">:</span> <span class="nc">Type</span><span class="p">)</span> <span class="p">(</span><span class="n">a</span> <span class="o">:</span> <span class="err">α</span><span class="p">)</span> <span class="p">(</span><span class="k">as</span> <span class="o">:</span> <span class="nc">List</span> <span class="err">α</span><span class="p">)</span> <span class="o">:</span> <span class="nc">List</span> <span class="err">α</span> <span class="o">:=</span>
+  <span class="nn">List</span><span class="p">.</span><span class="n">cons</span> <span class="n">a</span> <span class="k">as</span>
+</code></pre></div></div>
+
+<ul>
+  <li>The <code>(α : Type)</code> is similar to <code>(type a)</code> in OCaml, its a parametric type</li>
+  <li>But, here <code>Type</code> is <em>itself</em> a type - !  So, <code>α</code> is just another function parameter, types can be <em>values</em> as well - !</li>
+  <li>Next observe how <code>α</code> is then used later, in e.g. <code>(a : α)</code> - the <em>value</em> of the first parameter to this function is used in the <em>type</em> of the second (and third) parameters
+    <ul>
+      <li>This is called a <em>dependent type</em></li>
+    </ul>
+  </li>
+</ul>
+
+<p>Here is another example of dependent types in action:</p>
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="err">∨</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="err">∨</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+<ul>
+  <li>This looks like like a function type at first glance, but its <em>dependent</em> - the argument <code>n</code> is used in the <em>type</em> of the result, which is a type being used as a logic assertion like the <code>lo &lt; hi</code> above.</li>
+  <li>Now lets think about what “programs” are in this type: it needs to be a function which takes an integer <code>n</code> and produces a member of one of those three types (<code>∨</code> is logical-or which is like a variant) – Thats easy to do intuitively</li>
+  <li>Notice that any function with this type constitutes a <em>proof</em> that any integer is either positive, negative, or zero!</li>
+</ul>
+
+<p>Here in fact is a Lean function in that type:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">example</span> <span class="o">:</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="err">∨</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="err">∨</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:=</span>
+  <span class="k">fun</span> <span class="n">n</span> <span class="o">=&gt;</span>
+    <span class="k">match</span> <span class="nn">Int</span><span class="p">.</span><span class="n">lt_trichotomy</span> <span class="n">n</span> <span class="mi">0</span> <span class="k">with</span>
+    <span class="o">|</span> <span class="nn">Or</span><span class="p">.</span><span class="n">inl</span> <span class="n">h</span>          <span class="o">=&gt;</span> <span class="nn">Or</span><span class="p">.</span><span class="n">inr</span> <span class="p">(</span><span class="nn">Or</span><span class="p">.</span><span class="n">inl</span> <span class="n">h</span><span class="p">)</span>
+    <span class="o">|</span> <span class="nn">Or</span><span class="p">.</span><span class="n">inr</span> <span class="p">(</span><span class="nn">Or</span><span class="p">.</span><span class="n">inl</span> <span class="n">h</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nn">Or</span><span class="p">.</span><span class="n">inr</span> <span class="p">(</span><span class="nn">Or</span><span class="p">.</span><span class="n">inr</span> <span class="n">h</span><span class="p">)</span>
+    <span class="o">|</span> <span class="nn">Or</span><span class="p">.</span><span class="n">inr</span> <span class="p">(</span><span class="nn">Or</span><span class="p">.</span><span class="n">inr</span> <span class="n">h</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nn">Or</span><span class="p">.</span><span class="n">inl</span> <span class="n">h</span>
+</code></pre></div></div>
+<ul>
+  <li>
+    <p>the trichotomy property is built in as <code>Int.lt_trichotomy</code>, but in a different order so it “shuffles” the proofs.</p>
+  </li>
+  <li>Logically, <code>(n : Int) →</code> is hypothesizing “for all integers <code>n</code>”</li>
+  <li>Lean has syntactic sugar for this so it looks more like logic not types (<code>∀</code> is the standard symbol for “for all”)</li>
+</ul>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">∀</span> <span class="n">n</span> <span class="o">:</span> <span class="nc">Int</span><span class="o">,</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="err">∨</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="err">∨</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+</code></pre></div></div>
+
+<h4 id="implications">Implications</h4>
+
+<ul>
+  <li>Proving a logical implication <code>A → B</code> is just finding a function in type <code>A → B</code>
+    <ul>
+      <li>given a member of <code>A</code> (i.e. showing <code>A</code> is true), the function will construct a member of <code>B</code> (i.e. show <code>B</code> is true).</li>
+    </ul>
+  </li>
+  <li>Here is an example in Lean, of the fact that subtracting one from a negative number also is negative.
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>The <code>(0 &gt; n) → (0 &gt; n - 1)</code> type needs to have as a member a <em>function</em> taking a proof of the former to the latter</li>
+  <li>Here is a member of the above type:
+    <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">example</span> <span class="o">:</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">:=</span>
+<span class="k">fun</span> <span class="n">n</span> <span class="o">=&gt;</span> <span class="k">fun</span> <span class="n">h</span> <span class="o">=&gt;</span> <span class="n">by</span> <span class="n">omega</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Here <code>n</code> is the arbitrary integer and <code>h</code> is the hypothesized proof that <code>(0 &gt; n)</code>.</li>
+  <li>The <code>by omega</code> is something new, it’s a <em>tactic</em> - think of it as a macro which builds a proof that <code>(0 &gt; n - 1)</code> using <code>h</code></li>
+  <li>Tactics are important because they can automatically build proofs (i.e. programs) having certain types.</li>
+  <li>Note that proving a proposition in Lean is in some sense the <em>opposite</em> of type inference in OCaml:
+    <ul>
+      <li>OCaml type inference: from an expression get me a type for that expression</li>
+      <li>Lean proving: from a type, get me an expression in the type.</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="larger-proofs">Larger Proofs</h4>
+
+<p>Getting back to the example at the start, we can prove properties of that function:</p>
+
+<div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">theorem</span> <span class="n">bsearch_none</span> <span class="p">(</span><span class="n">a</span> <span class="o">:</span> <span class="nc">Array</span> <span class="nc">UInt64</span><span class="p">)</span> <span class="p">(</span><span class="n">x</span> <span class="n">lo</span> <span class="n">hi</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">h</span> <span class="o">:</span> <span class="n">hi</span> <span class="err">≤</span> <span class="n">a</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">sorted</span> <span class="o">:</span> <span class="n">a</span><span class="o">.</span><span class="n">toList</span><span class="o">.</span><span class="nc">Pairwise</span> <span class="p">(</span><span class="err">·</span> <span class="err">≤</span> <span class="err">·</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">hn</span> <span class="o">:</span> <span class="n">bsearch</span> <span class="n">a</span> <span class="n">x</span> <span class="n">lo</span> <span class="n">hi</span> <span class="n">h</span> <span class="o">=</span> <span class="n">none</span><span class="p">)</span> <span class="o">:</span>
+    <span class="err">∀</span> <span class="n">i</span> <span class="p">(</span><span class="n">_</span> <span class="o">:</span> <span class="n">lo</span> <span class="err">≤</span> <span class="n">i</span><span class="p">)</span> <span class="p">(</span><span class="n">_</span> <span class="o">:</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">hi</span><span class="p">)</span><span class="o">,</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="err">≠</span> <span class="n">x</span> <span class="o">:=</span> <span class="n">by</span>
+  <span class="n">fun_induction</span> <span class="n">bsearch</span> <span class="o">&lt;;&gt;</span>
+    <span class="n">grind</span> <span class="p">[</span><span class="nn">List</span><span class="p">.</span><span class="n">pairwise_iff_getElem</span><span class="p">]</span>
+</code></pre></div></div>
+
+<ul>
+  <li>The assertion is: for all immutable arrays <code>a</code>, and integers <code>x lo hi</code> (types inferred there), if
+    <ul>
+      <li><code>hi ≤ a.size</code> holds (<code>h</code> is the witness for that)</li>
+      <li><code>a</code> is sorted using <code>≤</code> as the comparison operator (<code>sorted</code> is the witness)</li>
+      <li><code>bsearch</code> for <code>x</code> returned <code>none</code> as its result (i.e. <code>x</code> was not found)</li>
+      <li>then, forall indexes <code>i</code> into the array, <code>a[i] ≠ x</code> (mathematically it is not in the array)</li>
+    </ul>
+  </li>
+</ul>
+
+<p>The above covers much of what is needed to do any math but Lean includes other things:</p>
+<ul>
+  <li>“exists” (∃), e.g. <code>∀ n, 1 &lt; n → ∃ k, IsPrime k ∧ (k ∣ n)</code> (“every number has a prime factor”)
+    <ul>
+      <li>Exists is also a type, it is similar to the <code>type t</code> in module types: there is <em>something</em> there.</li>
+    </ul>
+  </li>
+  <li>Inductive definitions, e.g. to define a grammar.</li>
 </ul>
 
 <h2 id="what-is-needed-to-have-fp-in-yourlang">What is needed to have FP in YourLang</h2>
@@ -473,7 +652,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
 </ul>
-
       
           </section>
         </div>

@@ -3,8 +3,8 @@ The Functional Programming Language Universe
 
 * "This is the Dawn of the Age of FP", there are now many choices of FP languages
 * There are both viable functional-focused languages as well as FP extensions to existing languages
-* We review the landscape here so you can us some FP on your next Python/Java(Script)/C++/... project
-
+* FP is also the basis of modern automated theorem provers which are becoming very popular now
+* We review the landscape here so you can take advantage of the power of FP even if not using OCaml
 
 Along with the FP there are some other things we covered that you can re-use in other langauges:
 
@@ -103,7 +103,7 @@ printfn "The area of the square is %f" (getArea square)
 ### Haskell
 
 * Haskell is an ML descendant, it shares a lot of the same syntax
-* It is hard-core FP: no direct side effects at all, must use monads for every side-effect (ouch!)
+* It is hard-core FP: no direct side effects at all, must use monads for _every_ side-effect (ouch!)
 * It was gaining in popularity but interest has leveled off in the last few years
    - monads are too hard-core for your average programmer
 * Has some very cool features that OCaml does not have, e.g. type classes for principled operator overloading
@@ -123,6 +123,142 @@ printfn "The area of the square is %f" (getArea square)
   - Runs on the Java JVM so lots of libraries
 * Additionally, Smalltalk, Ruby, Python, and JavaScript are descended from Lisp (more below on those)
 * The Lisp school is generally in decline these days, `(the syntax (sucks) (since everything is just an s-expression (like this)))`
+
+
+## The Functional language inside Theorem Provers: Lean
+
+* You may have heard the recent news about how LLMs have solved many open problems in math
+  - Not only proving them but _verifying the proofs are correct_ in an automated theorem prover.
+  - This means a computer has verified every single line of every proof.
+  - It is right now [turning the research field of mathematics upside-down](https://www.quantamagazine.org/is-ai-the-end-of-math-as-we-know-it-20261005/).
+* The main prover being used is a tool called [Lean](https://lean-lang.org) which we will cover briefly now.  [Rocq](https://rocq-prover.org) is another popular one.
+
+Here is some Lean code from their homepage:
+
+```ocaml
+/-- A binary search funtion in Lean -/
+def bsearch (a : Array UInt64) (x : UInt64) (lo hi : Nat)(h : hi ≤ a.size) : Option Nat :=
+  if _ : lo < hi then
+    let m := lo + (hi - lo) / 2
+    if a[m] < x then bsearch a x (m + 1) hi h
+    else if x < a[m] then bsearch a x lo m (by lia)
+    else some m
+  else none
+termination_by hi - lo
+```
+
+* Looks spookily familiar, no? 
+  - `Array/UInt64/Option` are exactly OCaml's `iarray/uint64/option` types
+  - `def` is `let rec`, `let m := ...` is `let m = ...`, `a[m]` is `a.(m)`
+  - Lean is really just a fancy functional programming language!
+
+* Lean is in several ways more powerful than OCaml
+  - It has much much richer types (believe it or not), so rich that typechecking is not even decidible!
+  - So, you need to _prove_ your programs typecheck
+  - Additionally functions are all _total_, they must terminate on all inputs
+  - The `termination_by hi - lo` in the above allows Lean to automatically prove this function terminates: `(hi - lo)` is strictly decreasing in each recursive call
+
+* Lean's types are so rich that they are also a _logic_ (which is what does the math stuff)
+  - Notice the odd looking `if _ : lo < hi then ...` - whats the `_ :` doing there??
+  - Answer: Lean lets types represent truth values (!)
+    - An empty type (i.e. it has no members) represents "false"
+    - A type with _any_ member at all represents "true"
+    - (Since there are no diverging functions some types will really be empty - not in OCaml)
+    - In this example, `lo < hi` is a _type_, not an expression
+    - The `_ : ..` means the type has _some_ member that we don't care about, `_`
+    - In general to "prove" a proposition means to find _any_ member of the corresponding type.
+  - The parameter `(h : hi ≤ a.size)` is another example of this, it is a type expressing `hi` is in-bounds
+    - it would be a _type error_ to invoke this function with `hi` being out of bounds
+  - In general, all of logic can be expressed as types using this interpretation
+
+#### Dependent Types and `Type`
+
+* Lets do some smaller examples now to better understand this stuff
+* Here is list `cons` in Lean (its in fact built-in but this shows the types):
+
+```ocaml
+def cons (α : Type) (a : α) (as : List α) : List α :=
+  List.cons a as
+```
+
+* The `(α : Type)` is similar to `(type a)` in OCaml, its a parametric type
+* But, here `Type` is _itself_ a type - !  So, `α` is just another function parameter, types can be _values_ as well - !
+* Next observe how `α` is then used later, in e.g. `(a : α)` - the _value_ of the first parameter to this function is used in the _type_ of the second (and third) parameters
+  - This is called a _dependent type_
+
+Here is another example of dependent types in action:
+```ocaml
+(n : Int) → (0 < n ∨ n < 0 ∨ n = 0)
+```
+* This looks like like a function type at first glance, but its _dependent_ - the argument `n` is used in the _type_ of the result, which is a type being used as a logic assertion like the `lo < hi` above.
+* Now lets think about what "programs" are in this type: it needs to be a function which takes an integer `n` and produces a member of one of those three types (`∨` is logical-or which is like a variant) -- Thats easy to do intuitively
+* Notice that any function with this type constitutes a _proof_ that any integer is either positive, negative, or zero!
+
+Here in fact is a Lean function in that type:
+
+```ocaml
+example : (n : Int) → (0 < n ∨ n < 0 ∨ n = 0) :=
+  fun n =>
+    match Int.lt_trichotomy n 0 with
+    | Or.inl h          => Or.inr (Or.inl h)
+    | Or.inr (Or.inl h) => Or.inr (Or.inr h)
+    | Or.inr (Or.inr h) => Or.inl h
+```
+- the trichotomy property is built in as `Int.lt_trichotomy`, but in a different order so it "shuffles" the proofs.
+
+* Logically, `(n : Int) →` is hypothesizing "for all integers `n`"
+* Lean has syntactic sugar for this so it looks more like logic not types (`∀` is the standard symbol for "for all")
+
+```ocaml
+∀ n : Int, 0 < n ∨ n < 0 ∨ n = 0
+```
+
+#### Implications
+
+* Proving a logical implication `A → B` is just finding a function in type `A → B`
+  - given a member of `A` (i.e. showing `A` is true), the function will construct a member of `B` (i.e. show `B` is true).
+* Here is an example in Lean, of the fact that subtracting one from a negative number also is negative.
+```ocaml
+(n : Int) → (0 > n) → (0 > n - 1)
+```
+* The `(0 > n) → (0 > n - 1)` type needs to have as a member a _function_ taking a proof of the former to the latter
+* Here is a member of the above type:
+```ocaml
+example : (n : Int) → (0 > n) → (0 > n - 1) :=
+  fun n => fun h => by omega
+```
+* Here `n` is the arbitrary integer and `h` is the hypothesized proof that `(0 > n)`.
+* The `by omega` is something new, it's a _tactic_ - think of it as a macro which builds a proof that `(0 > n - 1)` using `h`
+* Tactics are important because they can automatically build proofs (i.e. programs) having certain types.
+* Note that proving a proposition in Lean is in some sense the _opposite_ of type inference in OCaml:
+  - OCaml type inference: from an expression get me a type for that expression
+  - Lean proving: from a type, get me an expression in the type.
+
+#### Larger Proofs
+
+Getting back to the example at the start, we can prove properties of that function:
+
+```ocaml
+theorem bsearch_none (a : Array UInt64) (x lo hi)
+    (h : hi ≤ a.size)
+    (sorted : a.toList.Pairwise (· ≤ ·))
+    (hn : bsearch a x lo hi h = none) :
+    ∀ i (_ : lo ≤ i) (_ : i < hi), a[i] ≠ x := by
+  fun_induction bsearch <;>
+    grind [List.pairwise_iff_getElem]
+```
+
+* The assertion is: for all immutable arrays `a`, and integers `x lo hi` (types inferred there), if
+  - `hi ≤ a.size` holds (`h` is the witness for that)
+  - `a` is sorted using `≤` as the comparison operator (`sorted` is the witness)
+  - `bsearch` for `x` returned `none` as its result (i.e. `x` was not found)
+  - then, forall indexes `i` into the array, `a[i] ≠ x` (mathematically it is not in the array)
+
+The above covers much of what is needed to do any math but Lean includes other things:
+* "exists" (∃), e.g. `∀ n, 1 < n → ∃ k, IsPrime k ∧ (k ∣ n)` ("every number has a prime factor")
+  - Exists is also a type, it is similar to the `type t` in module types: there is _something_ there.
+* Inductive definitions, e.g. to define a grammar.
+
 
 ## What is needed to have FP in YourLang
 You need the following elements:
@@ -252,4 +388,3 @@ function adder(a)
 * `const` declarations bring the FP immutable variable default to JS - use it!
 * JavaScript has no immutable data structures however
   - means e.g. lists won't be able to share sub-structures so "FP programming" will be less efficient in JavaScript.
-
