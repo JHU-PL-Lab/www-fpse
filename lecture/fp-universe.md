@@ -115,21 +115,17 @@ printfn "The area of the square is %f" (getArea square)
   - Allows mutation everywhere (no immutable `let` or immutable lists), but "only mutate when really needed".
 * Scheme was a clean-up of Lisp in the 70's-80's, there were several errors in the Lisp design
   - e.g. dynamic scoping -- closures were not computed in Lisp. (see [closures tangent below](./fp-universe.html#closures))
-* [Racket](https://racket-lang.org) is a popular modern dialect of Scheme with many added features including types
-* [Clojure](https://clojure.org) is another more modern Lisp dialect
-  - Has more immutablility by default than Scheme and so can more cleanly support parallelism 
-     - Avoids race conditions on stateful data strutures
-  - Runs on the Java JVM so lots of libraries
+* [Racket](https://racket-lang.org) and [Clojure](https://clojure.org) are other more modern Lisp dialects
 * Additionally, Smalltalk, Ruby, Python, and JavaScript are descended from Lisp (more below on those)
-* The Lisp school is generally in decline these days, `(the syntax (sucks) (since everything is just an s-expression (like this)))`
+* The Lisp school is generally in decline these days, `(the code syntax (sucks) (since all code is just an s-expression (like this)))`
 
 
-## The Functional language inside Theorem Provers: Lean
+## FP inside a Theorem Prover: Lean
 
 * You may have heard the recent news about how LLMs have solved many open problems in math
   - Not only proving them but _verifying the proofs are correct_ in an automated theorem prover.
   - This means a computer has verified every single line of every proof is correct.
-  - It is right now [turning the research field of mathematics upside-down](https://www.quantamagazine.org/is-ai-the-end-of-math-as-we-know-it-20261005/).
+  - This is right now [turning the research field of mathematics upside-down](https://www.quantamagazine.org/is-ai-the-end-of-math-as-we-know-it-20261005/).
 * The main prover being used is a tool called [Lean](https://lean-lang.org) which we will cover briefly now.  [Rocq](https://rocq-prover.org) is another popular one.
 
 Here is some Lean code from their homepage:
@@ -146,10 +142,10 @@ def bsearch (a : Array UInt64) (x : UInt64) (lo hi : Nat)(h : hi ≤ a.size) : O
 termination_by hi - lo
 ```
 
-* Looks spookily familiar, no? 
+* Looks familiar, eh? 
   - `Array/UInt64/Option` are exactly OCaml's `iarray/uint64/option` types
   - `def` is `let rec`, `let m := ...` is `let m = ...`, `a[m]` is `a.(m)`, etc
-  - Lean is really just a fancy (pure) functional programming language!
+  - Lean is really just a fancy (pure) functional programming language - no side effects at all.
 
 * Lean is in several ways more powerful than OCaml
   - It has much much richer types (believe it or not), so rich that typechecking is not even decidible!
@@ -161,12 +157,13 @@ termination_by hi - lo
 
 * Lean's types are so rich that they are also a _logic_ (which is why it is a theorem prover and not just a PL)
   - Notice the odd looking `if _ : lo < hi then ...` - whats the `_ :` doing there??
-  - Answer: Lean lets types represent truth values (!)
+  - Answer: Lean lets types represent truth valued propositions (!)
     - An empty type (i.e. it has no members) represents "false"
     - A type with _any_ member at all represents "true"
     - (Since there are no diverging functions some types will really be empty - not so in OCaml)
     - In this example, `lo < hi` is a _type_, not an expression
     - The `_ : ..` means the type has _some_ member that we don't care about, `_`
+    - And, it will only have that member if `lo` is less than `hi`.
     - In general to "prove" a proposition means to find _any_ member of the corresponding type.
   - The parameter `(h : hi ≤ a.size)` is another example of this, it is a type expressing `hi` is in-bounds
     - it would be a _type error_ to invoke this function with `hi` being out of bounds
@@ -224,7 +221,7 @@ example : (n : Int) → (0 < n ∨ n < 0 ∨ n = 0) :=
 ```ocaml
 (n : Int) → (0 > n) → (0 > n - 1)
 ```
-* The `(0 > n) → (0 > n - 1)` type needs to have as a member a _function_ taking a proof of the former to the latter
+* The `(0 > n) → (0 > n - 1)` type needs to have as a member a _function_ taking a proof of the former to a proof of the latter
 * Here is a member of the above type which thus consititutes a proof of this fact:
 ```ocaml
 example : (n : Int) → (0 > n) → (0 > n - 1) :=
@@ -256,24 +253,30 @@ theorem bsearch_none (a : Array UInt64) (x lo hi)
   - `a` is sorted using `≤` as the comparison operator (`sorted` is the witness)
   - `bsearch` for `x` returned `none` as its result (i.e. `x` was not found)
   - then, forall indexes `i` into the array, `a[i] ≠ x` (mathematically it is not in the array)
-* the body of the function here can all be constructed by tactics (macros)
-  - Note that tactics are themselves just functional programs that someone wrote; the LLMs don't write tactics they just put them together (like in the above).
+* The body of the function here can all be constructed by tactics (macros)
+  - Note that tactics are themselves just functional programs that someone wrote; the LLMs don't write tactics they just put them together (like in the `by ... ` above).
 
 The above covers much of what is needed to do any math but Lean includes other important things:
 * "exists" (∃), e.g. `∀ n, 1 < n → ∃ k, IsPrime k ∧ (k ∣ n)` ("every number has a prime factor")
   - Exists is also a type under the hood, `∃ k, k > 0` for example is approximately (`(k : Int) * (k > 0)`)
   - This is a _dependent product_, notice the type on the right of the pair depends on the value on the left
+  - a pair like `(1,..)` is then a member of that type (where `..` is the proof that `1 > 0` i.e. a member of that type)
   - the `sig type t ... val add : t -> int -> t ... end` in OCaml is also a dependent product, `t` on left used on right.
 * Inductive definitions, e.g. to define a grammar.
 * We may glimpse at a few other Lean definitions/proofs of mathematical properties
 
-## What is needed to have FP in YourLang
+### Lean and the future
+* Lean is already making a huge impact on mathematical research
+* It is starting to extend into other fields as well where there are rigorous notions, e.g. physics
+* It will soon be making a big impact in verifying programs are correct
+
+## What is needed to "have FP" in a PL
 You need the following elements:
  * Higher-order functions: functions can be put in variables, passed to other functions, and returned as results of functions
  * Currying: the ability to partially apply function arguments because the type is `a1 -> (a2 -> r)`
  * Anonymous (un-named) functions: e.g. in the OCaml `(fun x -> x) 4`
  * Closures: to implement the above FP features, the compiler/interpreter needs *closures*.
- * (Also, FP languages often have pattern matching and immutable data structures)
+ * Also, FP languages usually have pattern matching and immutable data structures
  
  Lets cover closures briefly now.
 
@@ -294,14 +297,65 @@ val bangit : string -> string = <fun> (* bangit is at runtime the *closure* "< f
 * Note how `x` is a function parameter and is remembered in spite of function returning, means `x` needs to be remembered, in the closure
 * Closures are the key thing missing from C and other similar lanuages: C has *function pointers* you can pass in and out of other functions, but no closures
 
-## FP in YourFavoriteLang
+## Basic FP in Your Favorite PL
 
-* It is now possible to do somewhat-FP-style programming in Java, C++, Python, JavaScript, etc.
+* It is now possible to do some FP-style programming in Python, JavaScript, Java, C++, etc.
 * All of these languages have the core elements outlined above (higher-order, currying, anon. functions, closures)
 * There is however often not good library support or integration
   - So, at this point it is more a "slice of FP" and not the whole pizza
   - With good FP libraries added and enough discipline, many FP coding idioms will still work.
 * [Here](https://en.wikipedia.org/wiki/Anonymous_function) is a list of languages that do and don't support basic FP.
+
+### FP In Python
+
+* Python as a descendant of Lisp "already has" FP including lambda, closures and Currying.  Here is a Curried add function.
+
+```python
+adder =  lambda x: lambda y: x + y
+  
+adder(4)(18)
+
+r = adder(4)
+r(18)
+```
+* `map`, `filter`, `reduce` etc are already in the core libraries
+ - Note that lists are mutable unfortunately (no sharing) but you can make a list out of tuples which are immutable
+* In addition, the [`functools`](https://docs.python.org/3/library/functools.html) standard library supports other convenience higher-order function operations
+* Plus, if you want even more FP-ism, there are additional libraries such as [PyToolz](https://toolz.readthedocs.io/en/latest/index.html)
+
+```python
+from toolz import curry
+@curry
+ def add(x, y):
+     return x + y
+
+plusfour = add(4)     
+```
+
+* PyToolz is a port of the Clojure FP libraries to Python; still the data structures are not immutable
+* Use [Pyrsistant](https://github.com/tobgu/pyrsistent) to have immutable maps, lists, etc
+* Python is weak on immutable variables
+    - but Python tuples and `frozenset` are immutable data structures
+    - and Python 3.8 finally has `final`
+* Python 3.10 has pattern matching.
+  - [tutorial 1](https://www.python.org/dev/peps/pep-0636/) [tutorial 2](https://www.infoworld.com/article/3609208/how-to-use-structural-pattern-matching-in-python.html)
+
+
+### FP In JavaScript or TypeScript
+
+* JavaScript is similar to Python, it has the basics built-in already
+
+```javascript
+function adder(a) 
+{ return function uni_adder(b) 
+    { return a + b;
+    };
+};
+```
+
+* `const` declarations bring the FP immutable variable default to JS - use it!
+* JavaScript has no immutable data structures however
+  - means e.g. lists won't be able to share sub-structures so "FP programming" will be less efficient in JavaScript.
 
 ### FP in Java
 
@@ -344,54 +398,3 @@ let sum = add(2)(y: 3)
 ```
 
 Note that application requires a named parameter on the 2nd parameter due to some quirks of the representation used.
-
-### FP In Python
-
-* Python as a descendant of Lisp "already has" FP including lambda, closures and Currying.  Here is a Curried add function.
-
-```python
-adder =  lambda x: lambda y: x + y
-  
-adder(4)(18)
-
-r = adder(4)
-r(18)
-```
-* `map`, `filter`, `reduce` etc are already in the core libraries
- - Note that lists are mutable unfortunately (no sharing) but you can make a list out of tuples which are immutable
-* In addition, the [`functools`](https://docs.python.org/3/library/functools.html) standard library supports other convenience higher-order function operations
-* Plus, if you want even more FP-ism, there are additional libraries such as [PyToolz](https://toolz.readthedocs.io/en/latest/index.html)
-
-```python
-from toolz import curry
-@curry
- def add(x, y):
-     return x + y
-
-plusfour = add(4)     
-```
-
-* PyToolz is a port of the Clojure FP libraries to Python; still the data structures are not immutable
-* Use [Pyrsistant](https://github.com/tobgu/pyrsistent?utm_source=chatgpt.com) to have immutable maps, lists, etc
-* Python is weak on immutable variables, there is no `const`/`final`
-    - but Python tuples and `frozenset` are immutable data structures
-    - and Python 3.8 finally has `final`
-* Python 3.10 has pattern matching.
-  - [tutorial 1](https://www.python.org/dev/peps/pep-0636/) [tutorial 2](https://www.infoworld.com/article/3609208/how-to-use-structural-pattern-matching-in-python.html)
-
-
-### FP In JavaScript or TypeScript
-
-* JavaScript is similar to Python, it has the basics built-in already
-
-```javascript
-function adder(a) 
-{ return function uni_adder(b) 
-    { return a + b;
-    };
-};
-```
-
-* `const` declarations bring the FP immutable variable default to JS - use it!
-* JavaScript has no immutable data structures however
-  - means e.g. lists won't be able to share sub-structures so "FP programming" will be less efficient in JavaScript.

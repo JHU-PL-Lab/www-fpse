@@ -291,29 +291,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>e.g. dynamic scoping – closures were not computed in Lisp. (see <a href="./fp-universe.html#closures">closures tangent below</a>)</li>
     </ul>
   </li>
-  <li><a href="https://racket-lang.org">Racket</a> is a popular modern dialect of Scheme with many added features including types</li>
-  <li><a href="https://clojure.org">Clojure</a> is another more modern Lisp dialect
-    <ul>
-      <li>Has more immutablility by default than Scheme and so can more cleanly support parallelism
-        <ul>
-          <li>Avoids race conditions on stateful data strutures</li>
-        </ul>
-      </li>
-      <li>Runs on the Java JVM so lots of libraries</li>
-    </ul>
-  </li>
+  <li><a href="https://racket-lang.org">Racket</a> and <a href="https://clojure.org">Clojure</a> are other more modern Lisp dialects</li>
   <li>Additionally, Smalltalk, Ruby, Python, and JavaScript are descended from Lisp (more below on those)</li>
-  <li>The Lisp school is generally in decline these days, <code>(the syntax (sucks) (since everything is just an s-expression (like this)))</code></li>
+  <li>The Lisp school is generally in decline these days, <code>(the code syntax (sucks) (since all code is just an s-expression (like this)))</code></li>
 </ul>
 
-<h2 id="the-functional-language-inside-theorem-provers-lean">The Functional language inside Theorem Provers: Lean</h2>
+<h2 id="fp-inside-a-theorem-prover-lean">FP inside a Theorem Prover: Lean</h2>
 
 <ul>
   <li>You may have heard the recent news about how LLMs have solved many open problems in math
     <ul>
       <li>Not only proving them but <em>verifying the proofs are correct</em> in an automated theorem prover.</li>
       <li>This means a computer has verified every single line of every proof is correct.</li>
-      <li>It is right now <a href="https://www.quantamagazine.org/is-ai-the-end-of-math-as-we-know-it-20261005/">turning the research field of mathematics upside-down</a>.</li>
+      <li>This is right now <a href="https://www.quantamagazine.org/is-ai-the-end-of-math-as-we-know-it-20261005/">turning the research field of mathematics upside-down</a>.</li>
     </ul>
   </li>
   <li>The main prover being used is a tool called <a href="https://lean-lang.org">Lean</a> which we will cover briefly now.  <a href="https://rocq-prover.org">Rocq</a> is another popular one.</li>
@@ -333,11 +323,11 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <ul>
-  <li>Looks spookily familiar, no?
+  <li>Looks familiar, eh?
     <ul>
       <li><code>Array/UInt64/Option</code> are exactly OCaml’s <code>iarray/uint64/option</code> types</li>
       <li><code>def</code> is <code>let rec</code>, <code>let m := ...</code> is <code>let m = ...</code>, <code>a[m]</code> is <code>a.(m)</code>, etc</li>
-      <li>Lean is really just a fancy (pure) functional programming language!</li>
+      <li>Lean is really just a fancy (pure) functional programming language - no side effects at all.</li>
     </ul>
   </li>
   <li>Lean is in several ways more powerful than OCaml
@@ -356,13 +346,14 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Lean’s types are so rich that they are also a <em>logic</em> (which is why it is a theorem prover and not just a PL)
     <ul>
       <li>Notice the odd looking <code>if _ : lo &lt; hi then ...</code> - whats the <code>_ :</code> doing there??</li>
-      <li>Answer: Lean lets types represent truth values (!)
+      <li>Answer: Lean lets types represent truth valued propositions (!)
         <ul>
           <li>An empty type (i.e. it has no members) represents “false”</li>
           <li>A type with <em>any</em> member at all represents “true”</li>
           <li>(Since there are no diverging functions some types will really be empty - not so in OCaml)</li>
           <li>In this example, <code>lo &lt; hi</code> is a <em>type</em>, not an expression</li>
           <li>The <code>_ : ..</code> means the type has <em>some</em> member that we don’t care about, <code>_</code></li>
+          <li>And, it will only have that member if <code>lo</code> is less than <code>hi</code>.</li>
           <li>In general to “prove” a proposition means to find <em>any</em> member of the corresponding type.</li>
         </ul>
       </li>
@@ -440,7 +431,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
 </code></pre></div>    </div>
   </li>
-  <li>The <code>(0 &gt; n) → (0 &gt; n - 1)</code> type needs to have as a member a <em>function</em> taking a proof of the former to the latter</li>
+  <li>The <code>(0 &gt; n) → (0 &gt; n - 1)</code> type needs to have as a member a <em>function</em> taking a proof of the former to a proof of the latter</li>
   <li>Here is a member of the above type which thus consititutes a proof of this fact:
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">example</span> <span class="o">:</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">:=</span>
 <span class="k">fun</span> <span class="n">n</span> <span class="o">=&gt;</span> <span class="k">fun</span> <span class="n">h</span> <span class="o">=&gt;</span> <span class="n">by</span> <span class="n">omega</span>
@@ -479,9 +470,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>then, forall indexes <code>i</code> into the array, <code>a[i] ≠ x</code> (mathematically it is not in the array)</li>
     </ul>
   </li>
-  <li>the body of the function here can all be constructed by tactics (macros)
+  <li>The body of the function here can all be constructed by tactics (macros)
     <ul>
-      <li>Note that tactics are themselves just functional programs that someone wrote; the LLMs don’t write tactics they just put them together (like in the above).</li>
+      <li>Note that tactics are themselves just functional programs that someone wrote; the LLMs don’t write tactics they just put them together (like in the <code>by ... </code> above).</li>
     </ul>
   </li>
 </ul>
@@ -492,6 +483,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <ul>
       <li>Exists is also a type under the hood, <code>∃ k, k &gt; 0</code> for example is approximately (<code>(k : Int) * (k &gt; 0)</code>)</li>
       <li>This is a <em>dependent product</em>, notice the type on the right of the pair depends on the value on the left</li>
+      <li>a pair like <code>(1,..)</code> is then a member of that type (where <code>..</code> is the proof that <code>1 &gt; 0</code> i.e. a member of that type)</li>
       <li>the <code>sig type t ... val add : t -&gt; int -&gt; t ... end</code> in OCaml is also a dependent product, <code>t</code> on left used on right.</li>
     </ul>
   </li>
@@ -499,14 +491,21 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>We may glimpse at a few other Lean definitions/proofs of mathematical properties</li>
 </ul>
 
-<h2 id="what-is-needed-to-have-fp-in-yourlang">What is needed to have FP in YourLang</h2>
+<h3 id="lean-and-the-future">Lean and the future</h3>
+<ul>
+  <li>Lean is already making a huge impact on mathematical research</li>
+  <li>It is starting to extend into other fields as well where there are rigorous notions, e.g. physics</li>
+  <li>It will soon be making a big impact in verifying programs are correct</li>
+</ul>
+
+<h2 id="what-is-needed-to-have-fp-in-a-pl">What is needed to “have FP” in a PL</h2>
 <p>You need the following elements:</p>
 <ul>
   <li>Higher-order functions: functions can be put in variables, passed to other functions, and returned as results of functions</li>
   <li>Currying: the ability to partially apply function arguments because the type is <code>a1 -&gt; (a2 -&gt; r)</code></li>
   <li>Anonymous (un-named) functions: e.g. in the OCaml <code>(fun x -&gt; x) 4</code></li>
   <li>Closures: to implement the above FP features, the compiler/interpreter needs <em>closures</em>.</li>
-  <li>(Also, FP languages often have pattern matching and immutable data structures)</li>
+  <li>Also, FP languages usually have pattern matching and immutable data structures</li>
 </ul>
 
 <p>Lets cover closures briefly now.</p>
@@ -531,10 +530,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Closures are the key thing missing from C and other similar lanuages: C has <em>function pointers</em> you can pass in and out of other functions, but no closures</li>
 </ul>
 
-<h2 id="fp-in-yourfavoritelang">FP in YourFavoriteLang</h2>
+<h2 id="basic-fp-in-your-favorite-pl">Basic FP in Your Favorite PL</h2>
 
 <ul>
-  <li>It is now possible to do somewhat-FP-style programming in Java, C++, Python, JavaScript, etc.</li>
+  <li>It is now possible to do some FP-style programming in Python, JavaScript, Java, C++, etc.</li>
   <li>All of these languages have the core elements outlined above (higher-order, currying, anon. functions, closures)</li>
   <li>There is however often not good library support or integration
     <ul>
@@ -543,6 +542,72 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     </ul>
   </li>
   <li><a href="https://en.wikipedia.org/wiki/Anonymous_function">Here</a> is a list of languages that do and don’t support basic FP.</li>
+</ul>
+
+<h3 id="fp-in-python">FP In Python</h3>
+
+<ul>
+  <li>Python as a descendant of Lisp “already has” FP including lambda, closures and Currying.  Here is a Curried add function.</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">adder</span> <span class="o">=</span>  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+  
+<span class="n">adder</span><span class="p">(</span><span class="mi">4</span><span class="p">)(</span><span class="mi">18</span><span class="p">)</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">adder</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">r</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
+</code></pre></div></div>
+<ul>
+  <li><code>map</code>, <code>filter</code>, <code>reduce</code> etc are already in the core libraries</li>
+  <li>Note that lists are mutable unfortunately (no sharing) but you can make a list out of tuples which are immutable</li>
+  <li>In addition, the <a href="https://docs.python.org/3/library/functools.html"><code>functools</code></a> standard library supports other convenience higher-order function operations</li>
+  <li>Plus, if you want even more FP-ism, there are additional libraries such as <a href="https://toolz.readthedocs.io/en/latest/index.html">PyToolz</a></li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">toolz</span> <span class="kn">import</span> <span class="n">curry</span>
+<span class="o">@</span><span class="n">curry</span>
+ <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="n">plusfour</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>     
+</code></pre></div></div>
+
+<ul>
+  <li>PyToolz is a port of the Clojure FP libraries to Python; still the data structures are not immutable</li>
+  <li>Use <a href="https://github.com/tobgu/pyrsistent">Pyrsistant</a> to have immutable maps, lists, etc</li>
+  <li>Python is weak on immutable variables
+    <ul>
+      <li>but Python tuples and <code>frozenset</code> are immutable data structures</li>
+      <li>and Python 3.8 finally has <code>final</code></li>
+    </ul>
+  </li>
+  <li>Python 3.10 has pattern matching.
+    <ul>
+      <li><a href="https://www.python.org/dev/peps/pep-0636/">tutorial 1</a> <a href="https://www.infoworld.com/article/3609208/how-to-use-structural-pattern-matching-in-python.html">tutorial 2</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="fp-in-javascript-or-typescript">FP In JavaScript or TypeScript</h3>
+
+<ul>
+  <li>JavaScript is similar to Python, it has the basics built-in already</li>
+</ul>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">adder</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> 
+<span class="p">{</span> <span class="k">return</span> <span class="kd">function</span> <span class="nx">uni_adder</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> 
+    <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+    <span class="p">};</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code>const</code> declarations bring the FP immutable variable default to JS - use it!</li>
+  <li>JavaScript has no immutable data structures however
+    <ul>
+      <li>means e.g. lists won’t be able to share sub-structures so “FP programming” will be less efficient in JavaScript.</li>
+    </ul>
+  </li>
 </ul>
 
 <h3 id="fp-in-java">FP in Java</h3>
@@ -600,72 +665,6 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 
 <p>Note that application requires a named parameter on the 2nd parameter due to some quirks of the representation used.</p>
-
-<h3 id="fp-in-python">FP In Python</h3>
-
-<ul>
-  <li>Python as a descendant of Lisp “already has” FP including lambda, closures and Currying.  Here is a Curried add function.</li>
-</ul>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">adder</span> <span class="o">=</span>  <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
-  
-<span class="n">adder</span><span class="p">(</span><span class="mi">4</span><span class="p">)(</span><span class="mi">18</span><span class="p">)</span>
-
-<span class="n">r</span> <span class="o">=</span> <span class="n">adder</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-<span class="n">r</span><span class="p">(</span><span class="mi">18</span><span class="p">)</span>
-</code></pre></div></div>
-<ul>
-  <li><code>map</code>, <code>filter</code>, <code>reduce</code> etc are already in the core libraries</li>
-  <li>Note that lists are mutable unfortunately (no sharing) but you can make a list out of tuples which are immutable</li>
-  <li>In addition, the <a href="https://docs.python.org/3/library/functools.html"><code>functools</code></a> standard library supports other convenience higher-order function operations</li>
-  <li>Plus, if you want even more FP-ism, there are additional libraries such as <a href="https://toolz.readthedocs.io/en/latest/index.html">PyToolz</a></li>
-</ul>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">toolz</span> <span class="kn">import</span> <span class="n">curry</span>
-<span class="o">@</span><span class="n">curry</span>
- <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-     <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
-
-<span class="n">plusfour</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>     
-</code></pre></div></div>
-
-<ul>
-  <li>PyToolz is a port of the Clojure FP libraries to Python; still the data structures are not immutable</li>
-  <li>Use <a href="https://github.com/tobgu/pyrsistent?utm_source=chatgpt.com">Pyrsistant</a> to have immutable maps, lists, etc</li>
-  <li>Python is weak on immutable variables, there is no <code>const</code>/<code>final</code>
-    <ul>
-      <li>but Python tuples and <code>frozenset</code> are immutable data structures</li>
-      <li>and Python 3.8 finally has <code>final</code></li>
-    </ul>
-  </li>
-  <li>Python 3.10 has pattern matching.
-    <ul>
-      <li><a href="https://www.python.org/dev/peps/pep-0636/">tutorial 1</a> <a href="https://www.infoworld.com/article/3609208/how-to-use-structural-pattern-matching-in-python.html">tutorial 2</a></li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="fp-in-javascript-or-typescript">FP In JavaScript or TypeScript</h3>
-
-<ul>
-  <li>JavaScript is similar to Python, it has the basics built-in already</li>
-</ul>
-
-<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">adder</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> 
-<span class="p">{</span> <span class="k">return</span> <span class="kd">function</span> <span class="nx">uni_adder</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> 
-    <span class="p">{</span> <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
-    <span class="p">};</span>
-<span class="p">};</span>
-</code></pre></div></div>
-
-<ul>
-  <li><code>const</code> declarations bring the FP immutable variable default to JS - use it!</li>
-  <li>JavaScript has no immutable data structures however
-    <ul>
-      <li>means e.g. lists won’t be able to share sub-structures so “FP programming” will be less efficient in JavaScript.</li>
-    </ul>
-  </li>
-</ul>
       
           </section>
         </div>
