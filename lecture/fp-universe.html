@@ -121,10 +121,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <h1 id="the-functional-programming-language-universe">The Functional Programming Language Universe</h1>
 
 <ul>
-  <li>“This is the Dawn of the Age of FP”, there are now many choices of FP languages</li>
+  <li>“This is the Dawn of the Age of FP”, there are now many FP languages</li>
   <li>There are both viable functional-focused languages as well as FP extensions to existing languages</li>
   <li>FP is also the basis of modern automated theorem provers which are becoming very popular now</li>
-  <li>We review the landscape here so you can take advantage of the power of FP even if not using OCaml</li>
+  <li>We review the broader FP landscape here so you can take advantage of the power of FP even if not using OCaml</li>
 </ul>
 
 <p>Along with the FP there are some other things we covered that you can re-use in other langauges:</p>
@@ -132,12 +132,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 <ul>
   <li>Quickchecking aka property-based testing aka random testing
     <ul>
-      <li>Originated with Haskell but being ported to many languages now</li>
+      <li>Originated with the functional language Haskell but ported to many languages now</li>
     </ul>
   </li>
   <li>Type-directed programming
     <ul>
-      <li>You need a typed functional language subset for this (e.g. C++, TypeScript, etc)</li>
+      <li>You need a typed functional language subset for this (e.g. TypeScript)</li>
       <li>Note that it doesn’t work nearly as well with imperative code, types have less info in them
         <ul>
           <li>In functional programming, everything is in the function’s type (e.g. any state is passed in/out)</li>
@@ -154,8 +154,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>These are languages designed with FP in mind from the start</li>
   <li>Key features include
     <ul>
-      <li>Immutable variables by default</li>
-      <li>Libraries have immutable aka persistent data structures (immutable lists, trees, maps, etc)</li>
+      <li>Immutable variables and data structures by default</li>
       <li>Full higher-order functions (can pass and return functions to functions), currying, anonymous (<code>fun x -&gt; ...</code>) functions, etc.</li>
       <li>May include pattern matching, types, and type inference, but not always</li>
     </ul>
@@ -166,7 +165,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>Lisp school, dynamically typed: more flexible but no type-directed programming (Lisp, Scheme, Racket, Clojure, Elixir, etc)</li>
     </ul>
   </li>
-  <li>All of these true functional languages should be easy to learn now that you know OCaml.</li>
+  <li>All of these languages should be very easy to learn now that you know OCaml.</li>
 </ul>
 
 <h2 id="ml-dialects">ML Dialects</h2>
@@ -268,10 +267,10 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>Haskell is an ML descendant, it shares a lot of the same syntax</li>
-  <li>It is hard-core FP: no direct side effects at all, must use monads for <em>every</em> side-effect (ouch!)</li>
+  <li>It is hard-core FP: no direct side effects <em>at all</em>, must use monads for <em>every</em> side-effect (ouch!)</li>
   <li>It was gaining in popularity but interest has leveled off in the last few years
     <ul>
-      <li>monads are too hard-core for your average programmer</li>
+      <li>100% monads is too hard-core for your average programmer; even I/O requires a monad.</li>
     </ul>
   </li>
   <li>Has some very cool features that OCaml does not have, e.g. type classes for principled operator overloading</li>
@@ -313,7 +312,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>You may have heard the recent news about how LLMs have solved many open problems in math
     <ul>
       <li>Not only proving them but <em>verifying the proofs are correct</em> in an automated theorem prover.</li>
-      <li>This means a computer has verified every single line of every proof.</li>
+      <li>This means a computer has verified every single line of every proof is correct.</li>
       <li>It is right now <a href="https://www.quantamagazine.org/is-ai-the-end-of-math-as-we-know-it-20261005/">turning the research field of mathematics upside-down</a>.</li>
     </ul>
   </li>
@@ -337,8 +336,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <li>Looks spookily familiar, no?
     <ul>
       <li><code>Array/UInt64/Option</code> are exactly OCaml’s <code>iarray/uint64/option</code> types</li>
-      <li><code>def</code> is <code>let rec</code>, <code>let m := ...</code> is <code>let m = ...</code>, <code>a[m]</code> is <code>a.(m)</code></li>
-      <li>Lean is really just a fancy functional programming language!</li>
+      <li><code>def</code> is <code>let rec</code>, <code>let m := ...</code> is <code>let m = ...</code>, <code>a[m]</code> is <code>a.(m)</code>, etc</li>
+      <li>Lean is really just a fancy (pure) functional programming language!</li>
     </ul>
   </li>
   <li>Lean is in several ways more powerful than OCaml
@@ -349,14 +348,19 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>The <code>termination_by hi - lo</code> in the above allows Lean to automatically prove this function terminates: <code>(hi - lo)</code> is strictly decreasing in each recursive call</li>
     </ul>
   </li>
-  <li>Lean’s types are so rich that they are also a <em>logic</em> (which is what does the math stuff)
+</ul>
+
+<h4 id="logical-propositions-are-expressed-as-types">Logical Propositions are Expressed as Types</h4>
+
+<ul>
+  <li>Lean’s types are so rich that they are also a <em>logic</em> (which is why it is a theorem prover and not just a PL)
     <ul>
       <li>Notice the odd looking <code>if _ : lo &lt; hi then ...</code> - whats the <code>_ :</code> doing there??</li>
       <li>Answer: Lean lets types represent truth values (!)
         <ul>
           <li>An empty type (i.e. it has no members) represents “false”</li>
           <li>A type with <em>any</em> member at all represents “true”</li>
-          <li>(Since there are no diverging functions some types will really be empty - not in OCaml)</li>
+          <li>(Since there are no diverging functions some types will really be empty - not so in OCaml)</li>
           <li>In this example, <code>lo &lt; hi</code> is a <em>type</em>, not an expression</li>
           <li>The <code>_ : ..</code> means the type has <em>some</em> member that we don’t care about, <code>_</code></li>
           <li>In general to “prove” a proposition means to find <em>any</em> member of the corresponding type.</li>
@@ -367,7 +371,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
           <li>it would be a <em>type error</em> to invoke this function with <code>hi</code> being out of bounds</li>
         </ul>
       </li>
-      <li>In general, all of logic can be expressed as types using this interpretation</li>
+      <li>In general, all of mathematical logic can be expressed as types using this interpretation</li>
     </ul>
   </li>
 </ul>
@@ -385,7 +389,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 
 <ul>
   <li>The <code>(α : Type)</code> is similar to <code>(type a)</code> in OCaml, its a parametric type</li>
-  <li>But, here <code>Type</code> is <em>itself</em> a type - !  So, <code>α</code> is just another function parameter, types can be <em>values</em> as well - !</li>
+  <li>But, here <code>Type</code> is <em>itself</em> a type, the type of types - !  So, <code>α</code> is just another function parameter; types can be <em>values</em> as well - !</li>
   <li>Next observe how <code>α</code> is then used later, in e.g. <code>(a : α)</code> - the <em>value</em> of the first parameter to this function is used in the <em>type</em> of the second (and third) parameters
     <ul>
       <li>This is called a <em>dependent type</em></li>
@@ -398,11 +402,12 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div></div>
 <ul>
   <li>This looks like like a function type at first glance, but its <em>dependent</em> - the argument <code>n</code> is used in the <em>type</em> of the result, which is a type being used as a logic assertion like the <code>lo &lt; hi</code> above.</li>
-  <li>Now lets think about what “programs” are in this type: it needs to be a function which takes an integer <code>n</code> and produces a member of one of those three types (<code>∨</code> is logical-or which is like a variant) – Thats easy to do intuitively</li>
+  <li>Now lets think about what “programs” are in this type: it needs to be a function which takes an integer <code>n</code> and produces a member of one of those three types (<code>∨</code> is logical-or which is like a variant type) – Thats easy to do intuitively</li>
   <li>Notice that any function with this type constitutes a <em>proof</em> that any integer is either positive, negative, or zero!</li>
+  <li>This is the core of how Lean can do verified math.</li>
 </ul>
 
-<p>Here in fact is a Lean function in that type:</p>
+<p>Here is a Lean function in that type:</p>
 
 <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">example</span> <span class="o">:</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="err">∨</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="err">∨</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:=</span>
   <span class="k">fun</span> <span class="n">n</span> <span class="o">=&gt;</span>
@@ -412,8 +417,9 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
     <span class="o">|</span> <span class="nn">Or</span><span class="p">.</span><span class="n">inr</span> <span class="p">(</span><span class="nn">Or</span><span class="p">.</span><span class="n">inr</span> <span class="n">h</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nn">Or</span><span class="p">.</span><span class="n">inl</span> <span class="n">h</span>
 </code></pre></div></div>
 <ul>
+  <li>The trichotomy property is built in as <code>Int.lt_trichotomy</code>, but in a different order so it “shuffles” the proofs.</li>
   <li>
-    <p>the trichotomy property is built in as <code>Int.lt_trichotomy</code>, but in a different order so it “shuffles” the proofs.</p>
+    <p>The fact that this function typechecks consitutes a machine-verified <em>proof</em> of this property.</p>
   </li>
   <li>Logically, <code>(n : Int) →</code> is hypothesizing “for all integers <code>n</code>”</li>
   <li>Lean has syntactic sugar for this so it looks more like logic not types (<code>∀</code> is the standard symbol for “for all”)</li>
@@ -435,7 +441,7 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
 </code></pre></div>    </div>
   </li>
   <li>The <code>(0 &gt; n) → (0 &gt; n - 1)</code> type needs to have as a member a <em>function</em> taking a proof of the former to the latter</li>
-  <li>Here is a member of the above type:
+  <li>Here is a member of the above type which thus consititutes a proof of this fact:
     <div class="language-ocaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">example</span> <span class="o">:</span> <span class="p">(</span><span class="n">n</span> <span class="o">:</span> <span class="nc">Int</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">)</span> <span class="err">→</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&gt;</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">:=</span>
 <span class="k">fun</span> <span class="n">n</span> <span class="o">=&gt;</span> <span class="k">fun</span> <span class="n">h</span> <span class="o">=&gt;</span> <span class="n">by</span> <span class="n">omega</span>
 </code></pre></div>    </div>
@@ -463,8 +469,8 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
   <span class="n">fun_induction</span> <span class="n">bsearch</span> <span class="o">&lt;;&gt;</span>
     <span class="n">grind</span> <span class="p">[</span><span class="nn">List</span><span class="p">.</span><span class="n">pairwise_iff_getElem</span><span class="p">]</span>
 </code></pre></div></div>
-
 <ul>
+  <li><code>theorem</code> here is just sugar for <code>def</code> where the type is a proposition and the function is a member of that type</li>
   <li>The assertion is: for all immutable arrays <code>a</code>, and integers <code>x lo hi</code> (types inferred there), if
     <ul>
       <li><code>hi ≤ a.size</code> holds (<code>h</code> is the witness for that)</li>
@@ -473,16 +479,24 @@ Released for free under the Creative Commons Attribution 3.0 license (templated.
       <li>then, forall indexes <code>i</code> into the array, <code>a[i] ≠ x</code> (mathematically it is not in the array)</li>
     </ul>
   </li>
+  <li>the body of the function here can all be constructed by tactics (macros)
+    <ul>
+      <li>Note that tactics are themselves just functional programs that someone wrote; the LLMs don’t write tactics they just put them together (like in the above).</li>
+    </ul>
+  </li>
 </ul>
 
-<p>The above covers much of what is needed to do any math but Lean includes other things:</p>
+<p>The above covers much of what is needed to do any math but Lean includes other important things:</p>
 <ul>
   <li>“exists” (∃), e.g. <code>∀ n, 1 &lt; n → ∃ k, IsPrime k ∧ (k ∣ n)</code> (“every number has a prime factor”)
     <ul>
-      <li>Exists is also a type, it is similar to the <code>type t</code> in module types: there is <em>something</em> there.</li>
+      <li>Exists is also a type under the hood, <code>∃ k, k &gt; 0</code> for example is approximately (<code>(k : Int) * (k &gt; 0)</code>)</li>
+      <li>This is a <em>dependent product</em>, notice the type on the right of the pair depends on the value on the left</li>
+      <li>the <code>sig type t ... val add : t -&gt; int -&gt; t ... end</code> in OCaml is also a dependent product, <code>t</code> on left used on right.</li>
     </ul>
   </li>
   <li>Inductive definitions, e.g. to define a grammar.</li>
+  <li>We may glimpse at a few other Lean definitions/proofs of mathematical properties</li>
 </ul>
 
 <h2 id="what-is-needed-to-have-fp-in-yourlang">What is needed to have FP in YourLang</h2>
